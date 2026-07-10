@@ -1,4 +1,4 @@
-package com.pos.flightmanagementsystem;
+package com.pos.flightmanagementsystem.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
