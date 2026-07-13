@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.SVGPath?>
+
+<!-- Root အနေဖြင့် HBox ကိုပြောင်းသုံးထားပြီး Full Screen အတွက် hgrow ကို ALWAYS ပေးထားပါတယ် -->
+<HBox fx:controller="com.pos.flightmanagementsystem.controller.LoginController" styleClass="root-layout" stylesheets="@/com/pos/flightmanagementsystem/Style/Login.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+
+    <!-- Left Side: အနီရောင် အပြည့် Background -->
+    <VBox alignment="CENTER" spacing="25.0" styleClass="side-panel" HBox.hgrow="ALWAYS" prefWidth="600.0">
+        <!-- Airplane Icon -->
+        <StackPane>
+            <Circle fill="TRANSPARENT" radius="65.0" stroke="WHITE" strokeWidth="2.0" />
+            <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="WHITE" scaleX="2.5" scaleY="2.5" />
+        </StackPane>
+
+        <Label styleClass="brand-title" text="ArrLuuu Airline">
+            <VBox.margin>
+                <Insets top="30.0" />
+            </VBox.margin>
+        </Label>
+        <Label styleClass="brand-subtitle" text="Manage flights, bookings and more" />
+    </VBox>
+
+    <!-- Right Side: အလယ်မှာ Card လေးနဲ့ Form -->
+    <StackPane styleClass="right-panel" HBox.hgrow="ALWAYS" prefWidth="600.0">
+
+        <!-- Form ဝင်မည့် Floating Card အဖြူရောင် -->
+        <VBox alignment="CENTER_LEFT" spacing="18.0" styleClass="form-card" maxWidth="450.0" maxHeight="520.0">
+
+            <!-- Header Texts -->
+            <VBox spacing="8.0">
+                <Label styleClass="welcome-label" text="Welcome Back 👋" />
+                <Label styleClass="subtitle-label" text="Sign in to continue" />
+                <VBox.margin>
+                    <Insets bottom="15.0" />
+                </VBox.margin>
+            </VBox>
+
+            <!-- Username Input -->
+            <VBox spacing="8.0">
+                <Label styleClass="input-label" text="Username" />
+                <HBox alignment="CENTER_LEFT" styleClass="input-box">
+                    <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="#9ca3af" />
+                    <TextField fx:id="txtUsername" promptText="Enter username" styleClass="clean-input" HBox.hgrow="ALWAYS" />
+                </HBox>
+            </VBox>
+
+            <!-- Email Input -->
+            <VBox spacing="8.0">
+                <Label styleClass="input-label" text="Email" />
+                <HBox alignment="CENTER_LEFT" styleClass="input-box">
+                    <SVGPath content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#9ca3af" />
+                    <TextField fx:id="txtEmail" promptText="Enter email address" styleClass="clean-input" HBox.hgrow="ALWAYS" />
+                </HBox>
+            </VBox>
+
+            <!-- Password Input -->
+            <VBox spacing="8.0">
+                <Label styleClass="input-label" text="Password" />
+                <HBox alignment="CENTER_LEFT" styleClass="input-box">
+                    <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="#9ca3af" />
+                    <PasswordField fx:id="txtPassword" promptText="Enter password" styleClass="clean-input" HBox.hgrow="ALWAYS" />
+                </HBox>
+            </VBox>
+
+            <!-- Forgot Password Link -->
+            <HBox alignment="CENTER_RIGHT">
+                <Hyperlink fx:id="forgotPasswordLink" onAction="#handleForgotPassword" styleClass="forgot-password-link" text="Forgot Password?" />
+            </HBox>
+
+            <!-- Login Button -->
+            <Button fx:id="btnLogin" maxWidth="Infinity" onAction="#clickLogin" styleClass="login-button" text="Login">
+                <VBox.margin>
+                    <Insets top="15.0" />
+                </VBox.margin>
+            </Button>
+
+        </VBox>
+    </StackPane>
+</HBox>

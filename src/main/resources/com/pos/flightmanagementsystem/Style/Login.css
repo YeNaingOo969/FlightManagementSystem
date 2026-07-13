@@ -1,0 +1,108 @@
+/* Login.css */
+
+.root-layout {
+    -fx-background-color: #f3f4f6; /* Right side background */
+}
+
+/* --- Left Side: Full Height Brand Panel --- */
+.side-panel {
+    -fx-background-color: linear-gradient(to bottom right, #9b1c31, #690a1a);
+    /* ဘေးမှာ အပြည့်ပေါ်ဖို့အတွက် Border Radius ကို ဖယ်လိုက်ပါပြီ */
+    -fx-background-radius: 0;
+}
+
+.brand-title {
+    -fx-font-size: 36px; /* မျက်နှာပြင် အပြည့်ဆိုတော့ စာလုံးပိုကြီးပေးထားပါတယ် */
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: bold;
+}
+
+.brand-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* --- Right Side: Panel and Floating Form Card --- */
+.right-panel {
+    -fx-background-color: #f3f4f6; /* Light gray background */
+}
+
+/* ပုံထဲကလို Card လေး ပေါ်နေအောင် ဖန်တီးထားတဲ့ Class */
+.form-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 45 50 45 50;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 5); /* Soft shadow for the floating effect */
+}
+
+.welcome-label {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.subtitle-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6b7280;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.input-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.input-box {
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 6;
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-padding: 0 12 0 12;
+    -fx-pref-height: 46px;
+    -fx-spacing: 12;
+}
+
+.clean-input {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1f2937;
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 0;
+}
+
+.clean-input:focused {
+    -fx-background-color: transparent;
+}
+
+.forgot-password-link {
+    -fx-text-fill: #9b1c31;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.forgot-password-link:hover {
+    -fx-underline: true;
+}
+
+.login-button {
+    -fx-background-radius: 6;
+    -fx-background-color: #9b1c31;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 48px;
+    -fx-cursor: hand;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.login-button:hover {
+    -fx-background-color: #7a1526;
+}
