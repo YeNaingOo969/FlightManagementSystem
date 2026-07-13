@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="640.0" prefWidth="638.0" style="-fx-background-color: white; -fx-background-radius: 30px;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox alignment="CENTER" layoutX="120.0" layoutY="39.0" prefHeight="560.0" prefWidth="397.0" spacing="20" style="-fx-background-color: white; -fx-background-radius: 30px; -fx-padding: 30px; -fx-border-radius: 30px; -fx-effect: dropshadow(three-pass-box, rgb(117, 14, 14), 10, 0.3, 0, 0);">
+
+        <Label alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="335.0" style="-fx-text-fill: rgb(117, 14, 14); -fx-font-size: 22px; -fx-font-weight: bold; -fx-font-family: Georgia;" text="Edit User Information" />
+        <Label alignment="TOP_LEFT" style="-fx-font-family: Georgia; -fx-font-weight: bold; -fx-font-size: 12px;" text="Update the user information below" textFill="#8f9d9e" />
+        <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="323.0" prefWidth="335.0" spacing="10">
+            <TextField fx:id="txtFullName" cache="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="270.0" promptText="Full Name..." style="-fx-background-radius: 25px; -fx-padding: 10px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box, white, 5, 0.1, 0, 0); -fx-border-radius: 25px; -fx-border-color: white; -fx-font-family: Georgia;" />
+            <Label style="-fx-font-weight: bold; -fx-font-family: Georgia; -fx-font-size: 12px;" text="Full Name" />
+            <TextField fx:id="txtFullName" layoutX="10.0" layoutY="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="333.0" promptText="Enter Full Name..." style="-fx-background-radius: 25px; -fx-padding: 10px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box,  rgb(117, 14, 14), 10, 0.1, 0, 0); -fx-border-radius: 25px; -fx-font-family: Georgia;" />
+            <Label style="-fx-font-weight: bold; -fx-font-family: Georgia; -fx-font-size: 12px;" text="Email Address" />
+            <TextField fx:id="txtEmail" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="333.0" promptText="Enter Email..." style="-fx-background-radius: 25px; -fx-padding: 10px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box,  rgb(117, 14, 14), 10, 0.1, 0, 0); -fx-border-radius: 25px; -fx-font-family: Georgia;" />
+            <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-font-family: georgia;" text="Password" />
+            <TextField fx:id="txtPassword" layoutX="10.0" layoutY="61.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="36.0" prefWidth="331.0" promptText="Enter Password..." style="-fx-background-radius: 25px; -fx-padding: 10px; -fx-background-color: white; -fx-effect: dropshadow(three-pass-box,  rgb(117, 14, 14), 10, 0.1, 0, 0); -fx-border-radius: 25px; -fx-font-family: Georgia;" />
+            <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-font-family: georgia;" text="Role" />
+            <ComboBox fx:id="roleComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="43.0" prefWidth="330.0" promptText="Select Role..." style="-fx-border-radius: 25px; -fx-padding: 5px; -fx-effect: dropshadow(three-pass-box,  rgb(117, 14, 14), 10, 0.1, 0, 0); -fx-background-radius: 25px; -fx-background-color: white; -fx-border-color: white;" />
+        </VBox>
+
+        <HBox alignment="CENTER" prefHeight="45.0" prefWidth="335.0" spacing="15" style="-fx-padding: 10px 0 0 0;">
+            <Button fx:id="btnUpdate" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#clickUpdate" prefHeight="44.0" prefWidth="78.0" style="-fx-background-color: rgb(117, 14, 14); -fx-text-fill: white; -fx-background-radius: 25px; -fx-font-weight: bold; -fx-padding: 12; -fx-font-family: Georgia; -fx-effect: dropshadow(three-pass-box, white, 5, 0.1, 0, 0); -fx-font-size: 12px; -fx-border-radius: 25px;" text="Update" />
+            <Button fx:id="btnCancel" layoutX="164.0" layoutY="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#clickCancel" prefHeight="44.0" prefWidth="78.0" style="-fx-background-color: rgb(117, 14, 14); -fx-text-fill: white; -fx-background-radius: 25px; -fx-font-weight: bold; -fx-padding: 12; -fx-font-family: Georgia; -fx-effect: dropshadow(three-pass-box, white, 5, 0.1, 0, 0); -fx-font-size: 12px; -fx-border-radius: 25px;" text="Cancel" />
+        </HBox>
+    </VBox>
+</AnchorPane>

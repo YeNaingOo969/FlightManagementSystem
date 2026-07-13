@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #f0f0f0;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <HBox alignment="CENTER" maxHeight="500.0" maxWidth="800.0" style="-fx-background-color: white; -fx-background-radius: 30; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);">
+        <VBox alignment="CENTER_LEFT" prefWidth="400.0" spacing="20.0" style="-fx-padding: 50; -fx-background-color: rgb(20, 43, 61); -fx-border-radius: 0 30 30 0; -fx-background-radius: 30 0 0 30; -fx-effect: dropshadow(three-pass-box, rgb(178, 210, 214), 20, 0.3, 0, 0);">
+
+            <Label style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: rgb(206, 221, 233); -fx-font-family: Georgia;" text="Update Password" textFill="WHITE">
+                <font>
+                    <Font name="Century Gothic" size="14.769230842590332" />
+                </font></Label>
+            <Label style="-fx-font-family: Georgia; -fx-font-weight: bold; -fx-font-size: 15px;" text="Enter your OTP to Update Password" textFill="#8f9d9e" />
+            <TextField fx:id="txtOTP" promptText="Enter OTP..." style="-fx-background-radius: 25; -fx-padding: 12; -fx-border-color: white; -fx-border-radius: 25; -fx-font-family: Georgia; -fx-effect: dropshadow(three-pass-box, rgb(178, 210, 214), 10, 0.1, 0, 0);" />
+         <TextField fx:id="txtNewPwd" layoutX="60.0" layoutY="234.0" promptText="Create New Password" style="-fx-background-radius: 25; -fx-padding: 12; -fx-border-color: white; -fx-border-radius: 25; -fx-font-family: Georgia; -fx-effect: dropshadow(three-pass-box, rgb(178, 210, 214), 10, 0.1, 0, 0);" />
+
+            <Button fx:id="btnUpdatePassword" maxWidth="Infinity" onAction="#clickUpdatePassword" style="-fx-background-radius: 25; -fx-background-color: rgb(178, 210, 214); -fx-text-fill: black; -fx-font-weight: bold; -fx-padding: 12; -fx-font-family: Georgia; -fx-effect: dropshadow(three-pass-box,  rgb(196, 230, 235), 5, 0.1, 0, 0);" text="Update Password" />
+
+            <Hyperlink fx:id="BacktoLogin" onAction="#handleBackToLogin" style="-fx-text-fill: rgb(206, 221, 233); -fx-font-family: Georgia; -fx-font-size: 12px;" text="Back to Login" />
+
+        </VBox>
+        <VBox alignment="CENTER" prefWidth="400.0" style="-fx-background-color: rgb(196, 230, 235); -fx-background-radius: 0 30 30 0; -fx-effect: dropshadow(three-pass-box, rgb(178, 210, 214), 20, 0.3, 0, 0); -fx-border-radius: 0 30 30 0;" />
+
+    </HBox>
+</StackPane>
