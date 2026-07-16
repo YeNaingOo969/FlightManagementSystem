@@ -1,0 +1,158 @@
+/* LoginDark.css - Navy & Cyan Dark Mode */
+
+.root-layout {
+    -fx-background-color: #0f172a;
+}
+
+.bg-image-layer {
+    -fx-background-image: url("/com/pos/flightmanagementsystem/Image/AirplaneDark.jpg");
+    -fx-background-size: 130% auto;
+    -fx-background-position: 48% center;
+}
+
+.bg-gradient-overlay {
+    -fx-background-color: linear-gradient(to bottom, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.95));
+}
+
+/* --- Glassmorphism Card --- */
+.glass-panel {
+    -fx-background-color: rgba(30, 41, 59, 0.45);
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 20;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 20, 0, 0, 5);
+}
+
+/* --- Typography with Accent Color --- */
+.brand-title {
+    -fx-font-size: 34px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: bold;
+}
+
+.brand-title-accent {
+    -fx-font-size: 34px;
+    -fx-text-fill: #06b6d4;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: bold;
+}
+
+.brand-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #67e8f9;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* --- Right Side: Panel and Form --- */
+.right-panel {
+    -fx-background-color: #0f172a;
+}
+
+.form-card {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 16;
+    -fx-padding: 40 50 40 50;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 20, 0, 0, 8);
+    -fx-border-color: #334155;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+}
+
+.welcome-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.subtitle-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.input-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* --- Form Box ကို ပိုကွေးအောင် Radius ကို 20 အထိ တိုးထားသည် --- */
+.input-box {
+    -fx-border-color: #334155;
+    -fx-border-radius: 20;
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 20;
+    -fx-padding: 0 15 0 15;
+    -fx-pref-height: 48px;
+    -fx-spacing: 12;
+}
+
+/* --- နှိပ်လိုက်သောအခါ Form ပတ်လည်တွင် Theme နှင့်လိုက်ဖက်စွာ လင်းထွက်လာမည့် Effect --- */
+.input-box.focused-box {
+    -fx-border-color: #06b6d4; /* Theme နှင့်လိုက်ဖက်သော Cyan အရောင်ပြောင်းမည် */
+    /* အပြင်ဘက်သို့ အလင်းရောင်ပျံ့ထွက်စေမည့် DropShadow Effect */
+    -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.5), 15, 0.3, 0, 0);
+}
+
+.clean-input {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 0;
+}
+
+.clean-input:focused {
+    -fx-background-color: transparent;
+}
+
+/* --- Individual OTP Boxes (အသစ်) --- */
+.otp-box {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #334155;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-pref-width: 48px;
+    -fx-pref-height: 52px;
+}
+
+.otp-box:focused {
+    -fx-border-color: #06b6d4;
+}
+
+.forgot-password-link {
+    -fx-text-fill: #22d3ee;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: normal;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.forgot-password-link:hover {
+    -fx-underline: true;
+    -fx-text-fill: #67e8f9;
+}
+
+.login-button {
+    -fx-background-radius: 8;
+    -fx-background-color: linear-gradient(to right, #06b6d4, #0891b2);
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 48px;
+    -fx-cursor: hand;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(to right, #22d3ee, #06b6d4);
+}

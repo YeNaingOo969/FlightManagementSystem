@@ -1,0 +1,115 @@
+/* Login.css - Cyan & White Professional Theme */
+
+.root-layout {
+    -fx-background-color: #f4f9f9; /* Clean Light Background */
+}
+
+/* --- Left Side: Cyan Brand Panel --- */
+/* --- Left Side: Image Background Panel --- */
+.side-panel {
+    /* ဒီနေရာမှာ သင့်ရဲ့ ပုံလမ်းကြောင်းကို ပြောင်းထည့်ပေးပါ */
+    -fx-background-image: url("/com/pos/flightmanagementsystem/Image/AirPlaneFinal.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-radius: 0;
+
+    /* အကယ်၍ ပုံမပေါ်လာခဲ့ရင် အရန်သုံးဖို့အတွက် မူလ Cyan Gradient ကို နောက်ခံအဖြစ် ချန်ထားပေးထားပါတယ် */
+    -fx-background-color: linear-gradient(to bottom right, #e0f7fa, #b2ebf2);
+}
+
+.brand-title {
+    -fx-font-size: 36px;
+    -fx-text-fill: #006064; /* Dark Cyan Text */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: bold;
+}
+
+.brand-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: #00838f; /* Medium Cyan Text */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* --- Right Side: Panel and Floating Form Card --- */
+.right-panel {
+    -fx-background-color: #f4f9f9;
+}
+
+.form-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 45 50 45 50;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 20, 0, 0, 5);
+}
+
+.welcome-label {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.subtitle-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6b7280;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.input-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.input-box {
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 6;
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-padding: 0 12 0 12;
+    -fx-pref-height: 46px;
+    -fx-spacing: 12;
+}
+
+.clean-input {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1f2937;
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 0;
+}
+
+.clean-input:focused {
+    -fx-background-color: transparent;
+}
+
+/* Forgot Password Link - Cyan Theme */
+.forgot-password-link {
+    -fx-text-fill: #0097a7;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.forgot-password-link:hover {
+    -fx-underline: true;
+}
+
+/* Login Button - Cyan Theme */
+.login-button {
+    -fx-background-radius: 6;
+    -fx-background-color: #00bcd4; /* Cyan */
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 48px;
+    -fx-cursor: hand;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.login-button:hover {
+    -fx-background-color: #0097a7; /* Darker Cyan on hover */
+}
