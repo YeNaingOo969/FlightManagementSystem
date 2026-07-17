@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="904.0" stylesheets="@../CssFile/PwdCard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackPane layoutX="246.0" layoutY="63.0" prefHeight="478.0" prefWidth="349.0">
+         <children>
+            <VBox prefHeight="396.0" prefWidth="350.0" styleClass="password-card">
+               <children>
+                  <HBox prefHeight="62.0" prefWidth="391.0">
+                     <children>
+                        <StackPane prefHeight="62.0" prefWidth="64.0">
+                           <children>
+                              <StackPane prefHeight="87.0" prefWidth="72.0" styleClass="icon-circle-bg">
+                                 <children>
+                                    <SVGPath content="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 0 1 6 0v3H9V7zm3 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </StackPane>
+                        <VBox prefHeight="87.0" prefWidth="216.0" styleClass="form-section">
+                           <children>
+                              <Label styleClass="header-title" text="Change Password" />
+                              <Label prefHeight="15.0" styleClass="header-subtitle" text="Update password for enhanced account security." />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" styleClass="line" />
+                  <VBox prefHeight="58.0" prefWidth="350.0">
+                     <children>
+                        <Label styleClass="field-label" text="Current Password">
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <PasswordField editable="false" styleClass="password-field-modern" text="12345678" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="58.0" prefWidth="350.0">
+                     <children>
+                        <Label styleClass="field-label" text="New Password">
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <PasswordField styleClass="password-field-modern" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="70.0" prefWidth="350.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="26.0" prefWidth="350.0">
+                           <children>
+                              <Label styleClass="field-label" text="Confirm Password" />
+                              <Hyperlink styleClass="clear-link-modern" text="Clear">
+                                 <HBox.margin>
+                                    <Insets left="128.0" />
+                                 </HBox.margin>
+                              </Hyperlink>
+                           </children>
+                        </HBox>
+                        <PasswordField styleClass="password-field-modern" />
+                     </children>
+                  </VBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" styleClass="button-row">
+                     <children>
+                        <Button mnemonicParsing="false" styleClass="btn-secondary-modern" text="Discard" />
+                        <Button mnemonicParsing="false" styleClass="btn-primary-modern" text="Apply Changes" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>
