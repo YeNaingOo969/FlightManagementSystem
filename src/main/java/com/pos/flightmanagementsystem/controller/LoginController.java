@@ -18,7 +18,16 @@ import javafx.util.Duration;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Random;
@@ -26,53 +35,43 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
-    // --- Animation Components ---
     @FXML private StackPane animationContainer;
     @FXML private Circle orbitPath;
     @FXML private Group smallPlane;
 
-    // --- FXML UI Components ---
+    @FXML private StackPane leftPanel;
+    @FXML private StackPane rightPanel;
+
     @FXML private VBox loginSection;
     @FXML private VBox emailRequestSection;
     @FXML private VBox otpSection;
 
     @FXML private TextField txtUsername;
-
-    // --- Password Toggle Components ---
     @FXML private PasswordField txtPasswordHidden;
     @FXML private TextField txtPasswordVisible;
     @FXML private SVGPath eyeIcon;
     private boolean isPasswordVisible = false;
 
     @FXML private Button btnLogin;
-
     @FXML private TextField emailField;
     @FXML private Button sendButton;
 
-    // --- OTP 6 Boxes Components ---
     @FXML private TextField otp1, otp2, otp3, otp4, otp5, otp6;
     private TextField[] otpFields;
 
     @FXML private Button verifyButton;
     @FXML private Label statusLabel;
 
-    // --- Email Configurations ---
     private String generatedOTP = "";
     private final String senderEmail = "luuarr344@gmail.com";
     private final String senderPassword = "ifwo vnqq vmok ayan";
 
-    // ==========================================
-    // INITIALIZE & ANIMATIONS
-    // ==========================================
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        // --- Password Fields Binding ---
         if (txtPasswordHidden != null && txtPasswordVisible != null) {
             txtPasswordVisible.textProperty().bindBidirectional(txtPasswordHidden.textProperty());
         }
 
-        // --- Setup OTP Auto-Focus Array ---
         if (otp1 != null) {
             otpFields = new TextField[]{otp1, otp2, otp3, otp4, otp5, otp6};
             setupOTPInputs();
@@ -81,7 +80,6 @@ public class LoginController implements Initializable {
         setupInputFocusEffects();
 
         if (orbitPath != null && smallPlane != null) {
-            // ၁။ လေယာဉ်
             PathTransition planeTransition = new PathTransition();
             planeTransition.setDuration(Duration.seconds(5));
             planeTransition.setPath(orbitPath);
@@ -91,14 +89,11 @@ public class LoginController implements Initializable {
             planeTransition.setCycleCount(Timeline.INDEFINITE);
             planeTransition.play();
 
-            // ၂။ အငွေ့
             Timeline smokeEmitter = new Timeline(new KeyFrame(Duration.millis(80), e -> spawnSmokeParticle()));
             smokeEmitter.setCycleCount(Timeline.INDEFINITE);
             smokeEmitter.play();
 
-            // ၃။ နောက်ခံ Animations များ
             createTwinklingStars();
-//            createDriftingClouds();
             createRadarPulse();
         }
     }
@@ -156,8 +151,6 @@ public class LoginController implements Initializable {
         for (int i = 0; i < 80; i++) {
             Circle star = new Circle(Math.random() * 1.5 + 0.8, Color.WHITE);
             star.setTranslateX((Math.random() - 0.5) * 1200);
-
-            // အနီလိုင်းအောက်သို့ မကျစေရန် Y ကို -350 သတ်မှတ်ထားပါသည်
             star.setTranslateY(-350 + Math.random() * 530);
 
             FadeTransition blink = new FadeTransition(Duration.seconds(0.5 + Math.random() * 1.0), star);
@@ -173,50 +166,6 @@ public class LoginController implements Initializable {
         animationContainer.getChildren().add(0, starGroup);
     }
 
-//    private void createDriftingClouds() {
-//        Group cloudGroup = new Group();
-//        cloudGroup.setManaged(false);
-//
-//        for (int i = 0; i < 12; i++) {
-//            SVGPath cloud = new SVGPath();
-//            cloud.setContent("M 25 60 a 20 20 0 0 1 15 -15 a 30 30 0 0 1 50 0 a 20 20 0 0 1 15 15 Z");
-//            cloud.setFill(Color.web("#ffffff", 0.08));
-//
-//            double scale = 2.0 + Math.random() * 3.5;
-//            cloud.setScaleX(scale);
-//            cloud.setScaleY(scale);
-//
-//            // အနီလိုင်းအောက်သို့ မကျစေရန် Y ကို ကန့်သတ်ထားသည်
-//            cloud.setTranslateY(-450 + Math.random() * 400);
-//
-//            double startX = -600 + Math.random() * 1200;
-//            cloud.setTranslateX(startX);
-//
-//            double fullDuration = 8 + Math.random() * 10;
-//            double initialDuration = Math.max(0.1, ((600 - startX) / 1200) * fullDuration);
-//
-//            TranslateTransition t1 = new TranslateTransition(Duration.seconds(initialDuration), cloud);
-//            t1.setFromX(startX);
-//            t1.setToX(600);
-//            t1.setInterpolator(Interpolator.LINEAR);
-//
-//            TranslateTransition t2 = new TranslateTransition(Duration.seconds(fullDuration), cloud);
-//            t2.setFromX(-600);
-//            t2.setToX(600);
-//            t2.setInterpolator(Interpolator.LINEAR);
-//            t2.setCycleCount(Timeline.INDEFINITE);
-//
-//            SequentialTransition seq = new SequentialTransition(t1, t2);
-//            seq.play();
-//
-//            cloudGroup.getChildren().add(cloud);
-//        }
-//        animationContainer.getChildren().add(0, cloudGroup);
-//    }
-
-    // ==========================================
-    // OTP INPUT LOGIC (Auto Focus & Backspace)
-    // ==========================================
     private void setupOTPInputs() {
         for (int i = 0; i < otpFields.length; i++) {
             TextField currentField = otpFields[i];
@@ -246,28 +195,21 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 4. FOCUS EFFECT LOGIC (Glow Effect)
-    // ==========================================
     private void setupInputFocusEffects() {
-        // Focus Effect ထည့်လိုသော Field အားလုံးကို စာရင်းသွင်းမည်
         TextField[] fields = {txtUsername, txtPasswordHidden, txtPasswordVisible, emailField};
 
         for (TextField field : fields) {
             if (field != null) {
                 field.focusedProperty().addListener((obs, oldVal, isFocused) -> {
-                    // Parent HBox (Input Box ကြီးတစ်ခုလုံး) ကို ရှာမည်
                     javafx.scene.Parent parent = field.getParent();
                     javafx.scene.layout.HBox inputBox = null;
 
                     if (parent instanceof javafx.scene.layout.HBox) {
                         inputBox = (javafx.scene.layout.HBox) parent;
                     } else if (parent.getParent() instanceof javafx.scene.layout.HBox) {
-                        // Password Field တွင် StackPane ဖြင့်ထပ်ထားသဖြင့် Parent ကို ၂ ခါကျော်ရှာရန်
                         inputBox = (javafx.scene.layout.HBox) parent.getParent();
                     }
 
-                    // Focus ရလျှင် Glow Class ထည့်မည်၊ မရလျှင် ပြန်ဖြုတ်မည်
                     if (inputBox != null) {
                         if (isFocused) {
                             if (!inputBox.getStyleClass().contains("focused-box")) {
@@ -282,9 +224,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 1. SECTION NAVIGATION METHODS
-    // ==========================================
     @FXML
     void showLoginSection(ActionEvent event) {
         switchSection(loginSection);
@@ -309,9 +248,6 @@ public class LoginController implements Initializable {
         targetSection.setManaged(true);
     }
 
-    // ==========================================
-    // 2. STANDARD LOGIN LOGIC
-    // ==========================================
     @FXML
     void clickLogin(ActionEvent event) {
         String username = txtUsername.getText().trim();
@@ -322,16 +258,77 @@ public class LoginController implements Initializable {
             return;
         }
 
-        if (username.equals("admin") && password.equals("admin123")) {
-            showAlert(Alert.AlertType.INFORMATION, "Login Success", "Welcome back, " + username + "!");
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.");
+        String query = "SELECT role FROM users WHERE username = ? AND password = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+
+                if (role.equalsIgnoreCase("Super Admin") || role.equalsIgnoreCase("superadmin")) {
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml");
+                }
+                else if (role.equalsIgnoreCase("Admin")) {
+                    showAlert(Alert.AlertType.INFORMATION, "Coming Soon", "Admin Dashboard is not ready yet.");
+                }
+                else if (role.equalsIgnoreCase("Staff")) {
+                    showAlert(Alert.AlertType.INFORMATION, "Coming Soon", "Staff Dashboard is not ready yet.");
+                }
+                else {
+                    showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
+                }
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to connect to the database.");
         }
     }
 
-    // ==========================================
-    // SHOW / HIDE PASSWORD LOGIC
-    // ==========================================
+    private void playExitAnimation(Stage stage, String fxmlPath) {
+        TranslateTransition leftAnim = new TranslateTransition(Duration.millis(700), leftPanel);
+        leftAnim.setByX(-800);
+        leftAnim.setInterpolator(Interpolator.EASE_IN);
+
+        TranslateTransition rightAnim = new TranslateTransition(Duration.millis(700), rightPanel);
+        rightAnim.setByX(800);
+        rightAnim.setInterpolator(Interpolator.EASE_IN);
+
+        ParallelTransition pt = new ParallelTransition(leftAnim, rightAnim);
+        pt.setOnFinished(e -> loadDashboard(stage, fxmlPath));
+        pt.play();
+    }
+
+    private void loadDashboard(Stage stage, String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            stage.setScene(new Scene(root));
+            if (stage.isMaximized()) {
+                stage.setMaximized(false);
+            }
+            stage.setMaximized(true);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 💡 Animation ပြီးသွားတဲ့အချိန်မှာ Error တက်ရင် Alert Box ပြဖို့ Platform.runLater သုံးထားပေးပါတယ်
+            Platform.runLater(() -> {
+                showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not load the dashboard file.");
+            });
+        }
+    }
+
     @FXML
     void togglePassword(ActionEvent event) {
         isPasswordVisible = !isPasswordVisible;
@@ -349,9 +346,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 3. OTP & EMAIL LOGIC
-    // ==========================================
     @FXML
     void handleSendEmail(ActionEvent event) {
         String targetEmail = emailField.getText().trim();
@@ -387,7 +381,6 @@ public class LoginController implements Initializable {
 
     @FXML
     void handleVerifyOTP(ActionEvent event) {
-        // Box ၆ ခုလုံးမှ ဂဏန်းများကို ပေါင်းယူခြင်း
         String enteredOTP = otp1.getText() + otp2.getText() + otp3.getText() +
                 otp4.getText() + otp5.getText() + otp6.getText();
 

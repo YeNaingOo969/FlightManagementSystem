@@ -5,8 +5,8 @@
 .root {
     -fx-font-family: Georgia, 'Times New Roman', Times, serif;
     -fx-font-size: 13px;
-    
-    -fx-background-color: #ffffff; 
+
+    -fx-background-color: #ffffff;
 }
 
 /* =========================================================================
@@ -15,18 +15,18 @@
 .grey-glass-hbox {
     /* 🎯 Card Background - အဖြူဘက်သန်းသော မီးခိုးနုရောင်ကို သုံးပြီး Transparency ညှိခြင်း */
     -fx-background-color: rgba(255, 255, 255, 0.75);
-    
+
     /* ကတ်ပြားပုံစံ ထောင့်ဝိုင်းဒီဇိုင်း */
     -fx-background-radius: 16;
     -fx-border-radius: 16;
-    
+
     /* 🎯 Border လိုင်းကို အနုစားလေးသာခတ်ပြီး အနားသတ်များကို ထင်ရှားစေခြင်း */
     -fx-border-color: rgba(200, 210, 220, 0.4);
     -fx-border-width: 1px;
-    
+
     /* ကတ်ပြားအတွင်းပိုင်း အကွာအဝေး (စိတ်ကြိုက်ညှိနိုင်သည်) */
     -fx-padding: 18px;
-    
+
     /* 🎯 အဓိကအချက် - နောက်ခံကနေ ကတ်ပြားကြီး လုံးဝကြွတက်နေစေမည့် Soft & Deep Drop Shadow */
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 20, 0.1, 0, 8);
 }
@@ -35,7 +35,7 @@
 .grey-glass-hbox:hover {
     -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-border-color: rgba(0, 198, 255, 0.3); /* Hover ဖြစ်ချိန် Card ဘောင်ကို Cyan နုနုလေးသန်းစေခြင်း */
-    
+
     /* Hover ဖြစ်ချိန် ကတ်ပြား ပိုမိုအပေါ်သို့ ကြွတက်လာသလို အရိပ်ကို ပိုကျယ်စေခြင်း */
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.12), 25, 0.15, 0, 12);
 }
@@ -44,15 +44,15 @@
    ========================================================================= */
 .top-bar-container {
     /* 🎨 HBox ရဲ့ Background အရောင်ဖျော့ကို သတ်မှတ်ခြင်း */
-    -fx-background-color: #ffffff; 
-    
+    -fx-background-color: #ffffff;
+
     /* 📐 အတွင်းဘက် Padding (အပေါ် ၂၀၊ ညာ ၂၅၊ အောက် ၂၀၊ ဘယ် ၂၅) ထည့်ပြီး ဘောင်နှင့် မကပ်အောင်လုပ်ထားသည် */
     -fx-padding: 20 25 20 25;
-    
+
     /* ↔️ ကတ်ပြားများနှင့် ခလုတ်တစ်ခုချင်းစီကြား အကွာအဝေး (Spacing) */
-    -fx-spacing: 20;            
-    
-    -fx-alignment: CENTER_LEFT; 
+    -fx-spacing: 20;
+
+    -fx-alignment: CENTER_LEFT;
     -fx-background-radius: 12; /* လိုအပ်ပါက HBox ကိုပါ ထောင့်ဝိုင်းရန် */
 }
 /* Left Sidebar Panel Styling */
@@ -68,12 +68,12 @@
    SIDEBAR BUTTONS (ပုံထဲက အနီရောင်ကို အခြေခံ၍ Gradient နှင့် Shadow ညှိထားသည်)
    ========================================================================= */
 .sidebar-button {
-    -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9))s; 
+    -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9))s;
     -fx-background-radius: 12;
     -fx-border-color: transparent;
     -fx-border-radius: 12;
     -fx-border-width: 1;
-    -fx-text-fill: #103340;  
+    -fx-text-fill: #103340;
     -fx-padding: 12 14;
     -fx-pref-height: 42;
     -fx-pref-width: 210;
@@ -87,15 +87,15 @@
 /* Hover ထောက်လိုက်ချိန် */
 .sidebar-button:hover {
 	/* 🎨 Background ကို အဖြူဖျော့အစား ပိုမိုစိုပြည်ပြီး ရင့်သော Cyan/Teal Gradient သို့ ပြောင်းလဲခြင်း */
-	    -fx-background-color: linear-gradient(to bottom, #4DEEEA, #00A8B5); 
-	    
+	    -fx-background-color: linear-gradient(to bottom, #4DEEEA, #00A8B5);
+
 	    /* 🎯 ဘောင်လိုင်း (Border) ကို အဖြူရောင်အစား ထင်ရှားသော Deep Teal (အရောင်ရင့်) သို့ ပြောင်းလဲခြင်း */
 	    -fx-border-color: #007A87;
 	    -fx-border-width: 1px;
-	    
+
 	    /* Shadow Glow ကို အရောင်ရင့်နှင့် လိုက်ဖက်အောင် ညှိခြင်း */
 	    -fx-effect: dropshadow(three-pass-box, rgba(0, 168, 181, 0.5), 16, 0.1, 0, 4);
-	    
+
 	    /* Smooth Pop-up Effect */
 	    -fx-scale-x: 1.03;
 	    -fx-scale-y: 1.03;
@@ -103,7 +103,7 @@
 }
 
 /* ဖိနှိပ်ထားချိန် */
-.sidebar-button:pressed { 
+.sidebar-button:pressed {
 	/* လက်တွေ့နှိပ်လိုက်သလို ခံစားချက်ရစေရန် အနည်းငယ်ပြန်ကျုံ့သွားမည် */
 	    -fx-scale-x: 0.97;
 	    -fx-scale-y: 0.97;
@@ -116,13 +116,13 @@
 	    -fx-scale-y: 0.97;
 	    -fx-effect: dropshadow(three-pass-box, rgba(0, 122, 135, 0.3), 6, 0.0, 0, 1);
 }
-.sidebar-button .label, 
+.sidebar-button .label,
 .sidebar-button .text,
 .sidebar-button .glyph-icon {
     /* 🎯 ရွှေရောင်နေရာတွင် နောက်ခံနှင့်လိုက်ဖက်သော Deep Teal (အရောင်ရင့်) သို့ ပြောင်းလဲထားသည် */
 	-fx-text-fill: #000000;
 	    -fx-fill: #000000;
-    
+
     -fx-font-weight: bold;
     -fx-font-size: 12px;
 }
@@ -134,9 +134,9 @@
     -fx-border-color: transparent transparent transparent #005f60;
     -fx-border-radius: 12;
     -fx-border-width: 0 0 0 3;
-    -fx-text-fill: #E6C687; 
+    -fx-text-fill: #E6C687;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(230, 198, 135, 0.3), 10, 0, 0, 2); 
+    -fx-effect: dropshadow(gaussian, rgba(230, 198, 135, 0.3), 10, 0, 0, 2);
 }
 
 
@@ -147,10 +147,10 @@
    ========================================================================= */
 .cards-row {
     -fx-background-color: #ffffff; /* သို့မဟုတ် ပတ်ဝန်းကျင်နှင့် လိုက်ဖက်မည့် အရောင် */
-    
+
     /* 📐 ကတ်ပြားများ ဘောင်နှင့် လုံးဝမကပ်စေရန် Padding စနစ်တကျထည့်သွင်းခြင်း */
-    -fx-padding: 20 25 20 25; 
-    
+    -fx-padding: 20 25 20 25;
+
     /* ↔️ ကတ်တစ်ခုနှင့်တစ်ခုကြား သင့်တော်သော အကွာအဝေး */
     -fx-spacing: 20;
 	-fx-background-radius: 12;
@@ -162,10 +162,10 @@
    ========================================================================= */
 .charts-container {
     -fx-background-color: #ffffff;
-    
+
     /* 📐 Chart Area ဘေးပတ်ပတ်လည် မကပ်စေရန် Padding ထည့်သွင်းခြင်း */
     -fx-padding: 20 25 20 25;
-    
+
     /* ↔️ Chart ကတ်များကြား အကွာအဝေး */
     -fx-spacing: 25;
 	-fx-background-radius: 12;
@@ -181,29 +181,29 @@
     -fx-text-fill: #133C45; /* Deep Navy Teal */
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-	
+
 }
 
 /* 🏷️ Date Picker အပေါ်က Label စာသား (စာသားနှင့် Date Field ကြား အကွာအဝေး ညှိထားသည်) */
 .field-label {
-    -fx-text-fill: #1F4B5D; 
+    -fx-text-fill: #1F4B5D;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
-    
+
     /* 🎯 အောက်ခြေ Padding ကို 6px မှ 12px သို့ တိုးမြှင့်ပြီး အကွာအဝေး ညှိထားသည် */
-    -fx-padding: 0 0 12 2; 
+    -fx-padding: 0 0 12 2;
 }
 
 /* 📅 2. DATEPICKER INNER NODES PERFECT FIT FIX (တစ်သားတည်းဖြစ်စေရန် အဓိကပြင်ဆင်ချက်) */
 .date-picker {
-    -fx-background-color: #FFFFFF; 
+    -fx-background-color: #FFFFFF;
     -fx-background-radius: 8;
     -fx-border-radius: 8;
-    -fx-border-color: rgba(31, 75, 93, 0.3); 
+    -fx-border-color: rgba(31, 75, 93, 0.3);
     -fx-border-width: 1px;
-    
-    -fx-pref-width: 166px;   
-    -fx-pref-height: 32px;  
+
+    -fx-pref-width: 166px;
+    -fx-pref-height: 32px;
 }
 /* =========================================================================
    📅 DATE PICKER CARDS (Solid Vibrant Cyan Border Style)
@@ -211,16 +211,16 @@
 .date-picker-card {
     -fx-background-color: rgba(248, 250, 252, 0.85);
     -fx-background-radius: 16;
-    
+
     /* 🎯 Solid Vibrant Cyan Border အသေခတ်ထားသည် */
-    -fx-border-color: #24B3C8; 
+    -fx-border-color: #24B3C8;
     -fx-border-width: 1.5px;
     -fx-border-radius: 16;
-    
-    -fx-padding: 10 16 10 16; 
-    -fx-pref-width: 230; 
+
+    -fx-padding: 10 16 10 16;
+    -fx-pref-width: 230;
     -fx-pref-height: 72;
-    
+
     -fx-effect: dropshadow(three-pass-box, rgba(36, 179, 200, 0.25), 16, 0.0, 0, 5);
     -fx-transition: all 0.3s ease;
 }
@@ -230,7 +230,7 @@
     -fx-background-radius: 7 0 0 7; /* ဘယ်ဘက်အပေါ်အောက် ထောင့်ကွေးများကိုသာ ယူသည် */
     -fx-border-radius: 7 0 0 7;
     -fx-padding: 0 0 0 10;
-    -fx-text-fill: #1F1E19; 
+    -fx-text-fill: #1F1E19;
     -fx-font-weight: 500;
     -fx-font-size: 12px;
 }
@@ -260,45 +260,45 @@
 .btn-view-report {
     /* 🎨 ပေးထားသော အရောင်ကို အခြေခံ၍ အထက်အောက် ပိုမိုကြည်လင်တောက်ပစေသော Glass Gradient */
     -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9));
-    
+
     /* 🖋️ စာသားကို ပိုမိုထင်ရှားပြတ်သားပြီး ဖတ်ရလွယ်ကူစေမည့် Deep Slate Green */
-    -fx-text-fill: #103340; 
-    
+    -fx-text-fill: #103340;
+
     /* 📐 ပိုမိုဝိုင်းစက်ပြီး Modern ကျစေမည့် Border Radius */
     -fx-background-radius: 12;
     -fx-border-radius: 12;
-    
+
     /* ✨ မှန်သားအနားသတ်အလင်းပြန်လိုင်း (Frosted White Inner-border Accent) */
     -fx-border-color: rgba(255, 255, 255, 0.7);
-    -fx-border-width: 1px; 
-    
+    -fx-border-width: 1px;
+
     -fx-pref-width: 140px;
-    -fx-pref-height: 40px;  
-    
+    -fx-pref-height: 40px;
+
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
-    
-    -fx-margin: 20 0 0 0; 
-    
+
+    -fx-margin: 20 0 0 0;
+
     /* ☁️ ခလုတ်အောက်ခြေကို လင်းထိန်စေမည့် Soft Cyan Aura Shadow (အလင်းဝါးဝါးကျဆင်းမှု) */
     -fx-effect: dropshadow(three-pass-box, rgba(104, 207, 235, 0.35), 12, 0.0, 0, 3);
-    
+
     -fx-transition: all 0.25s ease-in-out;
 }
 
 /* ⚡️ Mouse Hover State (ခလုတ်ပေါ် Mouse တင်လိုက်ချိန်) */
-.btn-view-report:hover { 
+.btn-view-report:hover {
     /* 🎨 Background ကို အဖြူဖျော့အစား ပိုမိုစိုပြည်ပြီး ရင့်သော Cyan/Teal Gradient သို့ ပြောင်းလဲခြင်း */
-    -fx-background-color: linear-gradient(to bottom, #4DEEEA, #00A8B5); 
-    
+    -fx-background-color: linear-gradient(to bottom, #4DEEEA, #00A8B5);
+
     /* 🎯 ဘောင်လိုင်း (Border) ကို အဖြူရောင်အစား ထင်ရှားသော Deep Teal (အရောင်ရင့်) သို့ ပြောင်းလဲခြင်း */
     -fx-border-color: #007A87;
     -fx-border-width: 1px;
-    
+
     /* Shadow Glow ကို အရောင်ရင့်နှင့် လိုက်ဖက်အောင် ညှိခြင်း */
     -fx-effect: dropshadow(three-pass-box, rgba(0, 168, 181, 0.5), 16, 0.1, 0, 4);
-    
+
     /* Smooth Pop-up Effect */
     -fx-scale-x: 1.03;
     -fx-scale-y: 1.03;
@@ -329,13 +329,13 @@
     /* 🔮 Glassmorphism Soft Base for Pure White Background */
     -fx-background-color: rgba(248, 250, 252, 0.8);
     -fx-background-radius: 16;
-    -fx-border-color: rgba(255, 255, 255, 0.9); 
+    -fx-border-color: rgba(255, 255, 255, 0.9);
     -fx-border-width: 1.5px;
     -fx-border-radius: 16;
-    -fx-padding: 18 20; 
-    -fx-pref-width: 230; 
+    -fx-padding: 18 20;
+    -fx-pref-width: 230;
     -fx-pref-height: 100;
-    
+
     /* 🌟 Modern Cyan Drop Shadow & Blur Effect */
     -fx-effect: dropshadow(three-pass-box, rgba(104, 207, 235, 0.22), 16, 0.0, 0, 5);
     -fx-transition: all 0.3s ease;
@@ -344,9 +344,9 @@
 
 /* Mouse ထောက်လိုက်ချိန် 3D ကြွတက်မည့် Hover Effect */
 .card:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.95); 
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-border-color: rgba(104, 207, 235, 0.8);
-    
+
     /* Hover ဖြစ်ချိန်တွင် Cyan Shadow ပိုမိုတောက်ပပြီး ကြွလာစေခြင်း */
     -fx-effect: dropshadow(three-pass-box, rgba(104, 207, 235, 0.45), 22, 0.0, 0, 8);
     -fx-scale-x: 1.03;
@@ -479,7 +479,7 @@
 
    /* 2️⃣ MAIN HEADER BACKGROUND (အပြာရောင် Gradient တစ်ခုလုံးကို အုပ်ပေးထားသည့်နေရာ) */
    .table-view .column-header-background {
-       -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9))s; 
+       -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9))s;
        -fx-background-radius: 12 12 0 0;
        -fx-pref-height: 40px;
    }
@@ -487,11 +487,11 @@
    /* 3️⃣ INDIVIDUAL HEADERS (ခေါင်းစဉ် တစ်ခုချင်းစီ၏ နောက်ခံကို transparent လုပ်၍ အရောင်ပြန်ဖော်ခြင်း) */
    .table-view .column-header {
        /* 🎯 မူလအပြာရောင်ကို ကွယ်စေသော Default Gray Background ကို ဖျောက်ချလိုက်ခြင်း */
-       -fx-background-color: transparent; 
-       
+       -fx-background-color: transparent;
+
        /* 🎯 ခေါင်းစဉ်တစ်ခုချင်းစီကြားတွင် အဖြူရောင်ဖျော့ဖျော့ ဒေါင်လိုက်လိုင်းလေး ခြားပေးခြင်း */
        -fx-border-color: transparent rgba(255, 255, 255, 0.3) transparent transparent;
-       -fx-border-width: 0 1 0 0; 
+       -fx-border-width: 0 1 0 0;
    }
 
    /* အဆုံးစွန်ဆုံး ညာဘက် Column header ၏ လိုင်းကို ဖျောက်ခြင်း */
@@ -505,7 +505,7 @@
        -fx-font-weight: bold;
        -fx-font-size: 13px;
        -fx-alignment: CENTER;
-       -fx-padding: 0 0 0 15; 
+       -fx-padding: 0 0 0 15;
    }
 
    /* 4️⃣ TABLE DATA CELLS (အောက်ခြေ အချက်အလက်ပြ ကွက်လပ်များကြား လိုင်းခြားခြင်း) */
@@ -513,8 +513,8 @@
        -fx-text-fill: #333333;
        -fx-font-size: 13px;
        -fx-alignment: CENTER_LEFT;
-       -fx-padding: 0 0 0 15; 
-       
+       -fx-padding: 0 0 0 15;
+
        /* 🎯 Data Cell များကြားတွင် မီးခိုးနုရောင် ဒေါင်လိုက်လိုင်း ခြားခြင်း */
        -fx-border-color: transparent rgba(0, 0, 0, 0.06) transparent transparent;
        -fx-border-width: 0 1 0 0;
@@ -528,7 +528,7 @@
    /* 5️⃣ TABLE ROWS CONFIGURATION (အလျားလိုက်လိုင်းများနှင့် Hover Effect) */
    .table-row-cell {
        -fx-background-color: transparent;
-       -fx-padding: 10 0 10 0; 
+       -fx-padding: 10 0 10 0;
    }
 
    /* Rows များကြား အလျားလိုက်လိုင်းနုနုလေး */
@@ -539,7 +539,7 @@
 
    /* Mouse Hover Effect */
    .table-row-cell:filled:hover {
-       -fx-background-color: rgba(0, 198, 255, 0.08); 
+       -fx-background-color: rgba(0, 198, 255, 0.08);
    }
 
 /* Row ကို ကလစ်နှိပ်ပြီး ရွေးချယ်ထားချိန် အရောင် */
@@ -740,6 +740,7 @@
     -fx-background-color:
         radial-gradient(center 90% 5%, radius 70%, rgba(35,211,182,0.16), transparent 55%),
         linear-gradient(to bottom right, #f7faff, #edf3f8);
+
 }
 
 .super-topbar,

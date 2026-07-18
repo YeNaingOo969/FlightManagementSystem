@@ -6,80 +6,130 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="904.0" stylesheets="@../CssFile/PwdCard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" stylesheets="@/com/pos/flightmanagementsystem/Style/PwdCard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.PwdChangeController">
    <children>
-      <StackPane layoutX="246.0" layoutY="63.0" prefHeight="478.0" prefWidth="349.0">
+      <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox prefHeight="396.0" prefWidth="350.0" styleClass="password-card">
+            <VBox maxHeight="-Infinity" maxWidth="520.0" prefWidth="520.0" spacing="22.0" styleClass="password-card">
+               <padding>
+                  <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+               </padding>
                <children>
-                  <HBox prefHeight="62.0" prefWidth="391.0">
+                  <!-- Header Section -->
+                  <HBox alignment="CENTER_LEFT" spacing="18.0">
                      <children>
-                        <StackPane prefHeight="62.0" prefWidth="64.0">
+                        <StackPane styleClass="icon-circle-bg">
                            <children>
-                              <StackPane prefHeight="87.0" prefWidth="72.0" styleClass="icon-circle-bg">
-                                 <children>
-                                    <SVGPath content="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 0 1 6 0v3H9V7zm3 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-                                 </children>
-                              </StackPane>
+                              <SVGPath content="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 0 1 6 0v3H9V7zm3 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                            </children>
+                           <padding>
+                              <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                           </padding>
                         </StackPane>
-                        <VBox prefHeight="87.0" prefWidth="216.0" styleClass="form-section">
+                        <VBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
                               <Label styleClass="header-title" text="Change Password" />
-                              <Label prefHeight="15.0" styleClass="header-subtitle" text="Update password for enhanced account security." />
+                              <Label styleClass="header-subtitle" text="Update password for enhanced account security." wrapText="true" />
                            </children>
                         </VBox>
                      </children>
                   </HBox>
-                  <Separator prefWidth="200.0" styleClass="line" />
-                  <VBox prefHeight="58.0" prefWidth="350.0">
+
+                  <Separator styleClass="line" />
+
+                  <!-- Status Label (Error/Success မက်ဆေ့ချ်များပြရန်) -->
+                  <Label fx:id="lblPwdStatus" text="" wrapText="true" style="-fx-font-size: 13px;"/>
+
+                  <!-- ========================================== -->
+                  <!-- State 1: Current Password တောင်းသည့်အပိုင်း -->
+                  <!-- ========================================== -->
+                  <VBox fx:id="sectionCurrentPwd" spacing="10.0">
                      <children>
-                        <Label styleClass="field-label" text="Current Password">
-                           <VBox.margin>
-                              <Insets bottom="10.0" />
-                           </VBox.margin>
-                        </Label>
-                        <PasswordField editable="false" styleClass="password-field-modern" text="12345678" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="58.0" prefWidth="350.0">
-                     <children>
-                        <Label styleClass="field-label" text="New Password">
-                           <VBox.margin>
-                              <Insets bottom="10.0" />
-                           </VBox.margin>
-                        </Label>
-                        <PasswordField styleClass="password-field-modern" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="70.0" prefWidth="350.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="26.0" prefWidth="350.0">
+                        <Label styleClass="field-label" text="Current Password" />
+                        <PasswordField fx:id="txtCurrentPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                        <Hyperlink onAction="#showEmailSection" styleClass="clear-link-modern" text="Try another way?" />
+                        <HBox alignment="CENTER_RIGHT" spacing="16.0" styleClass="button-row">
+                           <VBox.margin><Insets top="12.0" /></VBox.margin>
                            <children>
-                              <Label styleClass="field-label" text="Confirm Password" />
-                              <Hyperlink styleClass="clear-link-modern" text="Clear">
-                                 <HBox.margin>
-                                    <Insets left="128.0" />
-                                 </HBox.margin>
-                              </Hyperlink>
+                              <Button mnemonicParsing="false" onAction="#hidePasswordView" prefHeight="44.0" prefWidth="130.0" styleClass="btn-secondary-modern" text="Cancel" />
+                              <Button mnemonicParsing="false" onAction="#verifyCurrentPassword" prefHeight="44.0" prefWidth="160.0" styleClass="btn-primary-modern" text="Confirm" />
                            </children>
                         </HBox>
-                        <PasswordField styleClass="password-field-modern" />
                      </children>
                   </VBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0" styleClass="button-row">
+
+                  <!-- ========================================== -->
+                  <!-- State 2: Email တောင်းသည့်အပိုင်း (Try another way နှိပ်လျှင်) -->
+                  <!-- ========================================== -->
+                  <VBox fx:id="sectionEmail" managed="false" visible="false" spacing="10.0">
                      <children>
-                        <Button mnemonicParsing="false" styleClass="btn-secondary-modern" text="Discard" />
-                        <Button mnemonicParsing="false" styleClass="btn-primary-modern" text="Apply Changes" />
+                        <Label styleClass="field-label" text="Enter Registered Email" />
+                        <TextField fx:id="txtEmailReset" prefHeight="48.0" styleClass="password-field-modern" promptText="example@email.com" />
+                        <HBox alignment="CENTER_RIGHT" spacing="16.0" styleClass="button-row">
+                           <VBox.margin><Insets top="12.0" /></VBox.margin>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#showCurrentPwdSection" prefHeight="44.0" prefWidth="130.0" styleClass="btn-secondary-modern" text="Back" />
+                              <Button fx:id="btnSendOTP" mnemonicParsing="false" onAction="#sendOTP" prefHeight="44.0" prefWidth="160.0" styleClass="btn-primary-modern" text="Send OTP" />
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
+                  </VBox>
+
+                  <!-- ========================================== -->
+                  <!-- State 3: OTP ထည့်သွင်းသည့်အပိုင်း -->
+                  <!-- ========================================== -->
+                  <VBox fx:id="sectionOTP" managed="false" visible="false" spacing="15.0">
+                     <children>
+                        <Label styleClass="field-label" text="Enter 6-digit OTP Code" />
+                        <HBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <TextField fx:id="otp1" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="password-field-modern" />
+                              <TextField fx:id="otp2" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="password-field-modern" />
+                              <TextField fx:id="otp3" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="password-field-modern" />
+                              <TextField fx:id="otp4" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="password-field-modern" />
+                              <TextField fx:id="otp5" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="password-field-modern" />
+                              <TextField fx:id="otp6" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="password-field-modern" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="16.0" styleClass="button-row">
+                           <VBox.margin><Insets top="12.0" /></VBox.margin>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#showEmailSection" prefHeight="44.0" prefWidth="130.0" styleClass="btn-secondary-modern" text="Cancel" />
+                              <Button fx:id="btnVerifyOTP" mnemonicParsing="false" onAction="#verifyOTP" prefHeight="44.0" prefWidth="160.0" styleClass="btn-primary-modern" text="Verify" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
+                  <!-- ========================================== -->
+                  <!-- State 4: Password အသစ်ပေးသည့်အပိုင်း -->
+                  <!-- ========================================== -->
+                  <VBox fx:id="sectionNewPwd" managed="false" visible="false" spacing="10.0">
+                     <children>
+                        <Label styleClass="field-label" text="New Password" />
+                        <PasswordField fx:id="txtNewPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                        <Label styleClass="field-label" text="Confirm Password">
+                           <VBox.margin><Insets top="10.0" /></VBox.margin>
+                        </Label>
+                        <PasswordField fx:id="txtConfirmPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                        <HBox alignment="CENTER_RIGHT" spacing="16.0" styleClass="button-row">
+                           <VBox.margin><Insets top="12.0" /></VBox.margin>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#hidePasswordView" prefHeight="44.0" prefWidth="130.0" styleClass="btn-secondary-modern" text="Discard" />
+                              <Button mnemonicParsing="false" onAction="#applyNewPassword" prefHeight="44.0" prefWidth="160.0" styleClass="btn-primary-modern" text="Apply Changes" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
                </children>
             </VBox>
          </children>

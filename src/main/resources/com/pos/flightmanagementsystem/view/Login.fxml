@@ -9,7 +9,7 @@
 
 <HBox styleClass="root-layout" stylesheets="@/com/pos/flightmanagementsystem/Style/LoginDark.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.LoginController">
 
-    <StackPane HBox.hgrow="ALWAYS" prefWidth="600.0">
+    <StackPane fx:id="leftPanel" HBox.hgrow="ALWAYS" prefWidth="600.0">
 
         <Region styleClass="bg-image-layer" />
         <Region styleClass="bg-gradient-overlay" />
@@ -45,7 +45,7 @@
         </VBox>
     </StackPane>
 
-    <StackPane prefWidth="600.0" styleClass="right-panel" HBox.hgrow="ALWAYS">
+    <StackPane fx:id="rightPanel" prefWidth="600.0" styleClass="right-panel" HBox.hgrow="ALWAYS">
 
         <VBox fx:id="formCard" alignment="CENTER_LEFT" maxHeight="520.0" maxWidth="450.0" spacing="18.0" styleClass="form-card">
 
