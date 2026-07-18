@@ -1,5 +1,6 @@
 package com.pos.flightmanagementsystem.controller;
 
+import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -9,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -23,6 +25,7 @@ public class ProfileController implements Initializable {
 
     @FXML private AnchorPane profileRoot;
     @FXML private StackPane profileView;
+    @FXML private HBox notificationToast;
 
     @FXML private Label lblFullName;
     @FXML private Label lblEmail;
@@ -30,8 +33,6 @@ public class ProfileController implements Initializable {
     @FXML private Label lblEmployeeId;
 
     private Parent pwdChangeView;
-
-    // လက်ရှိ Login ဝင်ထားသူ၏ နာမည်ကို သိမ်းထားရန်
     private String loggedInUser = "";
 
     @Override
@@ -52,7 +53,6 @@ public class ProfileController implements Initializable {
                 String role = rs.getString("role");
                 int userId = rs.getInt("user_id");
 
-                // Database မှ ရလာသော Username အား Variable ထဲသို့ ထည့်သိမ်းခြင်း
                 loggedInUser = username;
 
                 Platform.runLater(() -> {
@@ -91,8 +91,6 @@ public class ProfileController implements Initializable {
                 PwdChangeController pwdController = loader.getController();
                 if (pwdController != null) {
                     pwdController.setParentController(this);
-
-                    // Username အစစ်ကို PwdChangeController ဆီသို့ လှမ်းပို့ပေးခြင်း
                     pwdController.setCurrentUser(loggedInUser);
                 }
 
@@ -134,5 +132,51 @@ public class ProfileController implements Initializable {
         TranslateTransition profileIn = new TranslateTransition(Duration.millis(400), profileView);
         profileIn.setToX(0);
         profileIn.play();
+    }
+
+    // ==========================================
+    // Notification Animation Methods များ
+    // ==========================================
+    // ==========================================
+    // Notification Animation Methods များ
+    // ==========================================
+    public void showSuccessNotification() {
+        notificationToast.setVisible(true);
+        // မြင်ကွင်းအပြင် (အောက်ဘက်) ကနေ စတင်မည်
+        notificationToast.setTranslateY(150);
+
+        TranslateTransition popUp = new TranslateTransition(Duration.millis(600), notificationToast);
+        popUp.setToY(0);
+
+        // 💡 ကိုယ်ပိုင် Overshoot (ခုန်ထွက်လာသည့်) Effect လေး ဖန်တီးခြင်း
+        javafx.animation.Interpolator overshootInterpolator = new javafx.animation.Interpolator() {
+            @Override
+            protected double curve(double t) {
+                double tension = 2.0; // ဒီဂဏန်းကို အတိုးအလျှော့လုပ်ပြီး ခုန်တဲ့အားကို ပြင်နိုင်ပါတယ်
+                t -= 1.0;
+                return t * t * ((tension + 1) * t + tension) + 1.0;
+            }
+        };
+
+        popUp.setInterpolator(overshootInterpolator); // ဖန်တီးထားသော Effect ကို ထည့်သွင်းခြင်း
+        popUp.play();
+
+        // ၅ စက္ကန့်ကြာလျှင် အလိုအလျောက်ပျောက်သွားရန်
+        javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(Duration.seconds(5));
+        delay.setOnFinished(e -> closeNotificationAnimation());
+        delay.play();
+    }
+
+    @FXML
+    void closeNotification(ActionEvent event) {
+        closeNotificationAnimation();
+    }
+
+    private void closeNotificationAnimation() {
+        TranslateTransition slideDown = new TranslateTransition(Duration.millis(400), notificationToast);
+        slideDown.setToY(150);
+        slideDown.setInterpolator(Interpolator.EASE_IN);
+        slideDown.setOnFinished(e -> notificationToast.setVisible(false));
+        slideDown.play();
     }
 }

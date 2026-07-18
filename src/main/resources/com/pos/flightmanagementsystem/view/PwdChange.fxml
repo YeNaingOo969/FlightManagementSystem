@@ -45,16 +45,29 @@
 
                   <Separator styleClass="line" />
 
-                  <!-- Status Label (Error/Success မက်ဆေ့ချ်များပြရန်) -->
-                  <Label fx:id="lblPwdStatus" text="" wrapText="true" style="-fx-font-size: 13px;"/>
+                  <!-- Status Label -->
+                  <Label fx:id="lblPwdStatus" style="-fx-font-size: 13px;" text="" wrapText="true" />
 
                   <!-- ========================================== -->
-                  <!-- State 1: Current Password တောင်းသည့်အပိုင်း -->
+                  <!-- State 1: Current Password -->
                   <!-- ========================================== -->
                   <VBox fx:id="sectionCurrentPwd" spacing="10.0">
                      <children>
                         <Label styleClass="field-label" text="Current Password" />
-                        <PasswordField fx:id="txtCurrentPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                        <StackPane alignment="CENTER_RIGHT">
+                           <children>
+                              <TextField fx:id="txtCurrentPwdVisible" prefHeight="48.0" styleClass="password-field-modern" visible="false" />
+                              <PasswordField fx:id="txtCurrentPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                              <Button mnemonicParsing="false" onAction="#toggleCurrentPwd" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                                 <graphic>
+                                    <SVGPath fx:id="eyeIconCurrent" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#9ca3af" />
+                                 </graphic>
+                                 <StackPane.margin>
+                                    <Insets right="8.0" />
+                                 </StackPane.margin>
+                              </Button>
+                           </children>
+                        </StackPane>
                         <Hyperlink onAction="#showEmailSection" styleClass="clear-link-modern" text="Try another way?" />
                         <HBox alignment="CENTER_RIGHT" spacing="16.0" styleClass="button-row">
                            <VBox.margin><Insets top="12.0" /></VBox.margin>
@@ -67,12 +80,12 @@
                   </VBox>
 
                   <!-- ========================================== -->
-                  <!-- State 2: Email တောင်းသည့်အပိုင်း (Try another way နှိပ်လျှင်) -->
+                  <!-- State 2: Email -->
                   <!-- ========================================== -->
-                  <VBox fx:id="sectionEmail" managed="false" visible="false" spacing="10.0">
+                  <VBox fx:id="sectionEmail" managed="false" spacing="10.0" visible="false">
                      <children>
                         <Label styleClass="field-label" text="Enter Registered Email" />
-                        <TextField fx:id="txtEmailReset" prefHeight="48.0" styleClass="password-field-modern" promptText="example@email.com" />
+                        <TextField fx:id="txtEmailReset" prefHeight="48.0" promptText="example@email.com" styleClass="password-field-modern" />
                         <HBox alignment="CENTER_RIGHT" spacing="16.0" styleClass="button-row">
                            <VBox.margin><Insets top="12.0" /></VBox.margin>
                            <children>
@@ -84,9 +97,9 @@
                   </VBox>
 
                   <!-- ========================================== -->
-                  <!-- State 3: OTP ထည့်သွင်းသည့်အပိုင်း -->
+                  <!-- State 3: OTP -->
                   <!-- ========================================== -->
-                  <VBox fx:id="sectionOTP" managed="false" visible="false" spacing="15.0">
+                  <VBox fx:id="sectionOTP" managed="false" spacing="15.0" visible="false">
                      <children>
                         <Label styleClass="field-label" text="Enter 6-digit OTP Code" />
                         <HBox alignment="CENTER" spacing="10.0">
@@ -110,16 +123,44 @@
                   </VBox>
 
                   <!-- ========================================== -->
-                  <!-- State 4: Password အသစ်ပေးသည့်အပိုင်း -->
+                  <!-- State 4: New Password -->
                   <!-- ========================================== -->
-                  <VBox fx:id="sectionNewPwd" managed="false" visible="false" spacing="10.0">
+                  <VBox fx:id="sectionNewPwd" managed="false" spacing="10.0" visible="false">
                      <children>
                         <Label styleClass="field-label" text="New Password" />
-                        <PasswordField fx:id="txtNewPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                        <StackPane alignment="CENTER_RIGHT">
+                           <children>
+                              <TextField fx:id="txtNewPwdVisible" prefHeight="48.0" styleClass="password-field-modern" visible="false" />
+                              <PasswordField fx:id="txtNewPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                              <Button mnemonicParsing="false" onAction="#toggleNewPwd" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                                 <graphic>
+                                    <SVGPath fx:id="eyeIconNew" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#9ca3af" />
+                                 </graphic>
+                                 <StackPane.margin>
+                                    <Insets right="8.0" />
+                                 </StackPane.margin>
+                              </Button>
+                           </children>
+                        </StackPane>
+
                         <Label styleClass="field-label" text="Confirm Password">
                            <VBox.margin><Insets top="10.0" /></VBox.margin>
                         </Label>
-                        <PasswordField fx:id="txtConfirmPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                        <StackPane alignment="CENTER_RIGHT">
+                           <children>
+                              <TextField fx:id="txtConfirmPwdVisible" prefHeight="48.0" styleClass="password-field-modern" visible="false" />
+                              <PasswordField fx:id="txtConfirmPwd" prefHeight="48.0" styleClass="password-field-modern" />
+                              <Button mnemonicParsing="false" onAction="#toggleConfirmPwd" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                                 <graphic>
+                                    <SVGPath fx:id="eyeIconConfirm" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#9ca3af" />
+                                 </graphic>
+                                 <StackPane.margin>
+                                    <Insets right="8.0" />
+                                 </StackPane.margin>
+                              </Button>
+                           </children>
+                        </StackPane>
+
                         <HBox alignment="CENTER_RIGHT" spacing="16.0" styleClass="button-row">
                            <VBox.margin><Insets top="12.0" /></VBox.margin>
                            <children>

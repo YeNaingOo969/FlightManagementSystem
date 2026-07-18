@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -23,7 +24,12 @@ public class PwdChangeController implements Initializable {
 
     @FXML private VBox sectionCurrentPwd, sectionEmail, sectionOTP, sectionNewPwd;
     @FXML private Label lblPwdStatus;
+
+    // Password Fields နှင့် မြင်ရမည့် TextFields များ
     @FXML private PasswordField txtCurrentPwd, txtNewPwd, txtConfirmPwd;
+    @FXML private TextField txtCurrentPwdVisible, txtNewPwdVisible, txtConfirmPwdVisible;
+    @FXML private SVGPath eyeIconCurrent, eyeIconNew, eyeIconConfirm;
+
     @FXML private TextField txtEmailReset;
     @FXML private TextField otp1, otp2, otp3, otp4, otp5, otp6;
     @FXML private Button btnSendOTP, btnVerifyOTP;
@@ -34,15 +40,20 @@ public class PwdChangeController implements Initializable {
     private String generatedOTP = "";
     private final String senderEmail = "luuarr344@gmail.com";
     private final String senderPassword = "ifwo vnqq vmok ayan";
-
-    // Hardcode အစား ပြောင်းလဲနိုင်သော Variable အဖြစ်သတ်မှတ်ထားခြင်း
     private String currentUser = "";
+
+    // Eye Icons ၏ Paths များ
+    private final String eyeOpenPath = "M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z";
+    private final String eyeClosedPath = "M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z";
+
+    private boolean isCurrentPwdVisible = false;
+    private boolean isNewPwdVisible = false;
+    private boolean isConfirmPwdVisible = false;
 
     public void setParentController(ProfileController parentController) {
         this.parentController = parentController;
     }
 
-    // ProfileController မှ လက်ရှိ Username ကို လှမ်းထည့်ပေးမည့် Method
     public void setCurrentUser(String user) {
         this.currentUser = user;
     }
@@ -52,8 +63,48 @@ public class PwdChangeController implements Initializable {
         otpFields = new TextField[]{otp1, otp2, otp3, otp4, otp5, otp6};
         setupOTPInputs();
         resetPasswordForms();
+
+        // Password Field များနှင့် Visible TextField များကို ချိတ်ဆက်ခြင်း
+        txtCurrentPwdVisible.textProperty().bindBidirectional(txtCurrentPwd.textProperty());
+        txtNewPwdVisible.textProperty().bindBidirectional(txtNewPwd.textProperty());
+        txtConfirmPwdVisible.textProperty().bindBidirectional(txtConfirmPwd.textProperty());
     }
 
+    // ==========================================
+    // Toggle Password Visibility
+    // ==========================================
+    private void toggleVisibility(boolean isVisible, TextField visibleField, PasswordField hiddenField, SVGPath icon) {
+        if (isVisible) {
+            visibleField.setVisible(true);
+            hiddenField.setVisible(false);
+            icon.setContent(eyeOpenPath);
+            icon.setFill(Color.web("#06b6d4"));
+        } else {
+            visibleField.setVisible(false);
+            hiddenField.setVisible(true);
+            icon.setContent(eyeClosedPath);
+            icon.setFill(Color.web("#9ca3af"));
+        }
+    }
+
+    @FXML void toggleCurrentPwd(ActionEvent event) {
+        isCurrentPwdVisible = !isCurrentPwdVisible;
+        toggleVisibility(isCurrentPwdVisible, txtCurrentPwdVisible, txtCurrentPwd, eyeIconCurrent);
+    }
+
+    @FXML void toggleNewPwd(ActionEvent event) {
+        isNewPwdVisible = !isNewPwdVisible;
+        toggleVisibility(isNewPwdVisible, txtNewPwdVisible, txtNewPwd, eyeIconNew);
+    }
+
+    @FXML void toggleConfirmPwd(ActionEvent event) {
+        isConfirmPwdVisible = !isConfirmPwdVisible;
+        toggleVisibility(isConfirmPwdVisible, txtConfirmPwdVisible, txtConfirmPwd, eyeIconConfirm);
+    }
+
+    // ==========================================
+    // Main Functions
+    // ==========================================
     @FXML
     void hidePasswordView(ActionEvent event) {
         if (parentController != null) {
@@ -77,6 +128,12 @@ public class PwdChangeController implements Initializable {
         txtCurrentPwd.clear(); txtEmailReset.clear();
         txtNewPwd.clear(); txtConfirmPwd.clear();
         for (TextField f : otpFields) f.clear();
+
+        // Reset လုပ်ချိန်တွင် မျက်လုံးပုံများကို မူလအတိုင်း (ပိတ်လျက်) ပြန်ထားရန်
+        isCurrentPwdVisible = false; isNewPwdVisible = false; isConfirmPwdVisible = false;
+        toggleVisibility(false, txtCurrentPwdVisible, txtCurrentPwd, eyeIconCurrent);
+        toggleVisibility(false, txtNewPwdVisible, txtNewPwd, eyeIconNew);
+        toggleVisibility(false, txtConfirmPwdVisible, txtConfirmPwd, eyeIconConfirm);
     }
 
     @FXML void showCurrentPwdSection() {
@@ -214,6 +271,7 @@ public class PwdChangeController implements Initializable {
             if (updated > 0) {
                 if (parentController != null) {
                     parentController.hidePasswordView();
+                    parentController.showSuccessNotification();
                     resetPasswordForms();
                 }
             }
