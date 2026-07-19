@@ -1,0 +1,338 @@
+.super-content {
+	    -fx-background-color:
+	        radial-gradient(center 90% 5%, radius 70%, rgba(35,211,182,0.16), transparent 55%),
+	        linear-gradient(to bottom right, #f7faff, #edf3f8);
+    -fx-font-family:"Inter","Segoe UI";
+}
+/* ==========================================================
+   PAGE TITLE
+========================================================== */
+
+.page-title{
+
+    -fx-font-size: 22px;
+
+    -fx-font-weight:bold;
+
+    -fx-text-fill:#1F1E19;
+
+}
+/* 📅 2. DATEPICKER INNER NODES PERFECT FIT FIX (တစ်သားတည်းဖြစ်စေရန် အဓိကပြင်ဆင်ချက်) */
+.date-picker {
+    -fx-background-color: #FFFFFF; 
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(31, 75, 93, 0.3); 
+    -fx-border-width: 1px;
+    
+    -fx-pref-width: 166px;   
+    -fx-pref-height: 32px;  
+}
+/* =========================================================================
+   📅 DATE PICKER CARDS (Solid Vibrant Cyan Border Style)
+   ========================================================================= */
+.date-picker-card {
+    -fx-background-color: rgba(248, 250, 252, 0.85);
+    -fx-background-radius: 16;
+    
+    /* 🎯 Solid Vibrant Cyan Border အသေခတ်ထားသည် */
+    -fx-border-color: #24B3C8; 
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 16;
+    
+    -fx-padding: 10 16 10 16; 
+    -fx-pref-width: 230; 
+    -fx-pref-height: 72;
+    
+    -fx-effect: dropshadow(three-pass-box, rgba(36, 179, 200, 0.25), 16, 0.0, 0, 5);
+    -fx-transition: all 0.3s ease;
+}
+/* ✏️ DatePicker ရဲ့ အတွင်းက စာရေးတဲ့ Text Field ကို ထောင့်ကွေးညှိခြင်း */
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-radius: 7 0 0 7; /* ဘယ်ဘက်အပေါ်အောက် ထောင့်ကွေးများကိုသာ ယူသည် */
+    -fx-border-radius: 7 0 0 7;
+    -fx-padding: 0 0 0 10;
+    -fx-text-fill: #1F1E19; 
+    -fx-font-weight: 500;
+    -fx-font-size: 12px;
+}
+
+/* 🗓️ DatePicker ရဲ့ ညာဘက်ခြမ်း ပြက္ခဒိန် Button အား ဘောင်နှင့် ကပ်ရပ်ညီညာစေခြင်း */
+.date-picker > .arrow-button {
+    -fx-background-color: rgba(31, 75, 93, 0.05); /* Soft Blue Tint ဖြည့်ထားသည် */
+    -fx-background-radius: 0 7 7 0; /* ညာဘက်အပေါ်အောက် ထောင့်ကွေးများကိုသာ ယူသည် */
+    -fx-border-radius: 0 7 7 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0 8 0 8;
+}
+
+/* ပြက္ခဒိန် Icon လေးကို ချိန်ညှိခြင်း */
+.date-picker > .arrow-button > .graphic {
+    -fx-background-color: #1F4B5D;
+}
+
+.date-picker:focused {
+    -fx-border-color: #68CFEB; /* Focus ဖြစ်ချိန်တွင် လှပသော Aqua ဘောင်လိုင်းပြောင်းလဲမည် */
+	-fx-effect: dropshadow(gaussian, rgba(53, 141, 156, 0.15), 6, 0, 0, 0);
+}
+/* 📂 Search Box တစ်ခုလုံးကို ငုံထားတဲ့ HBox */
+.search-container {
+    -fx-background-color: transparent;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center-left;
+    -fx-spacing: 8px;
+}
+
+/* 🔎 မှန်ဘီလူး Icon အရောင်ကို ခပ်မှိုင်းမှိုင်း Slate Gray လေး ပေးထားခြင်း */
+.search-icon {
+    -fx-fill: #94A3B8;
+}
+
+/* ⌨️ Search Input Field (ဘောင်လိုင်းတွေကို ဖျက်ပြီး Container နဲ့ တစ်သားတည်းလုပ်ခြင်း) */
+.search-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-text-fill: #334155;
+    -fx-prompt-text-fill: #94A3B8;
+    -fx-font-size: 14px;
+}
+
+/* Search Box ကို ကလစ်နှိပ်လိုက်တဲ့အခါ Dashboard Theme အတိုင်း လင်းလာစေရန် */
+.search-container:focused-within {
+    -fx-border-color: #38BDF8; /* အပြာနုရောင် Border */
+    -fx-effect: dropshadow(three-pass-box, rgba(56, 189, 248, 0.15), 8, 0, 0, 0);
+	-fx-background-color: transparent;
+}
+/* =========================================================================
+   📜 SCROLL PANE CLEAN UP (ဘောင်နှင့် နောက်ခံ အားလုံးဖျောက်ခြင်း)
+   ========================================================================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/* Scroll Pane ရဲ့ အတွင်းဘက် Viewport ကိုပါ Transparent လုပ်ခြင်း */
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* မလိုအပ်သော Border လိုင်းများကို လုံးဝဖျောက်ခြင်း */
+.scroll-pane:focused {
+    -fx-background-color: transparent;
+}
+
+.page-subtitle{
+
+    -fx-text-fill:#1687d9;
+
+    -fx-font-size: 13px;
+
+}
+.super-section-title {
+    -fx-text-fill: #10243f;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+
+/* ==========================================================
+   SEARCH FIELD
+========================================================== */
+
+.search-field{
+
+    -fx-pref-height:42;
+
+    -fx-background-color:white;
+
+    -fx-background-radius:12;
+
+    -fx-border-radius:12;
+
+    -fx-border-color:#D9E4EC;
+
+    -fx-padding:0 15;
+
+}
+
+.search-field:focused{
+
+    -fx-border-color:#68CFEB;
+
+}
+
+
+/* 📦 COMBO BOX MODERN STYLE */
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1.5px;
+    -fx-padding: 4px 8px 4px 8px;
+    -fx-font-size: 13px;
+}
+
+.combo-box:focused {
+    -fx-border-color: #08775e; /* Active ဖြစ်ချိန် အစိမ်းရောင်ပြောင်းခြင်း */
+}
+
+/* 🔻 ComboBox ရဲ့ ညာဘက်က မြှားအောက်စိုက် (Arrow) ပုံစံကို ပြင်ဆင်ခြင်း */
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: #64748B; /* မြှားအရောင်ကို Slate Gray ပြောင်းခြင်း */
+}
+
+/* 📋 Dropdown List (နှိပ်လိုက်ရင် အောက်ကိုကျလာမယ့် Menu အကွက်) ကို ပြင်ဆင်ခြင်း */
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);
+}
+
+/* Dropdown ထဲက စာသားများကို Hover (မောက်စ်တင်လိုက်ချိန်) ရွေးချယ်မှု စတိုင် */
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #F1F5F9; /* Off-White Gray */
+    -fx-text-fill: #08775e; /* Hover တင်ချိန် စာလုံးအစိမ်းရောင် ပြောင်းလဲခြင်း */
+}
+/* Table Card */
+.super-table {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #dce6f2;
+    -fx-border-width: 1;
+}
+
+
+/* ==========================================================
+   TABLEVIEW
+========================================================== */
+
+.table-view{
+
+    -fx-background-radius:16;
+
+    -fx-border-radius:16;
+
+    -fx-border-color:#E5EDF3;
+
+}
+
+.table-view .column-header{
+	-fx-background-color:#F5F8FB;
+
+}
+
+.table-view .column-header .label{
+
+    -fx-text-fill:#1F4B5D;
+
+    -fx-font-weight:bold;
+
+}
+
+.table-row-cell{
+
+    -fx-background-color:white;
+
+}
+
+.table-row-cell:hover{
+
+    -fx-background-color:#F4FBFD;
+
+}
+
+.table-row-cell:selected{
+
+    -fx-background-color:#DDF7FF;
+
+}
+.super-metric-icon {
+    -fx-min-width: 46;
+    -fx-min-height: 46;
+    -fx-max-width: 46;
+    -fx-max-height: 46;
+    -fx-background-color: rgba(255,255,255,0.22);
+    -fx-background-radius: 999;
+    -fx-border-color: rgba(255,255,255,0.32);
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+}
+
+.super-metric-icon-glyph {
+    -fx-fill: #ffffff;
+    -fx-scale-x: 0.92;
+    -fx-scale-y: 0.92;
+}
+/* ==========================================================
+   PRIMARY BUTTON
+========================================================== */
+
+.primary-button{
+	-fx-background-color:#fca5a5;
+	-fx-background-radius: 12;
+	   -fx-border-radius: 12;
+	   -fx-border-width: 1;
+	   -fx-padding: 11 22 11 22;
+	   -fx-font-weight: bold;
+	   -fx-font-size: 14px;
+	   -fx-cursor: hand;
+	   -fx-content-display: LEFT;
+	   -fx-graphic-text-gap: 12;
+	    -fx-border-color: rgba(255,255,255,0.72);
+	    -fx-text-fill: #10243f;
+	    -fx-effect: dropshadow(gaussian, rgba(49,136,149,0.20), 14, 0.16, 0, 5);
+}
+
+.primary-button:hover {
+	-fx-background-color: #EF4444; /* True Red နောက်ခံပြောင်းသွားမည် */
+	   -fx-text-fill: #FFFFFF;        /* စာသားကို အဖြူရောင်ပြောင်းပြီး ထင်ရှားစေခြင်း */
+	   -fx-border-color: #DC2626;
+	   /* ခလုတ်ပတ်ပတ်လည် အနီရောင်အလင်း Soft Shadow ပါဝင်ခြင်း */
+	   -fx-effect: dropshadow(three-pass-box, rgba(239, 68, 68, 0.3), 10, 0, 0, 3);
+}
+/* Button ကို ကလစ်နှိပ်လိုက်သည့်အချိန် (Pressed Effect) */
+.primary-button:pressed {
+    -fx-background-color: #B91C1C; /* Dark Red နောက်ခံ */
+    -fx-border-color: #991B1B;
+}
+/* 🟢 Export Button - မျက်စိပသာဒဖြစ်ပြီး ကျော့ရှင်းသော အစိမ်းနုရောင်စတိုင် */
+.button-export {
+    -fx-background-color: #DCFCE7; /* Soft Pastel Green Background (အစိမ်းနုဖျော့) */
+    -fx-text-fill: #15803D;        /* Deep Forest Green စာသားအရောင် (ဖတ်ရလွယ်စေရန်) */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-color: #86EFAC;     /* Thinner Soft Green Border */
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.2px;
+    
+    /* အပေါ်က Clear Button နှင့် အမြင့် ညီနေစေရန် တူညီသော Height ပေးခြင်း */
+    -fx-pref-height: 34px;
+    -fx-padding: 0 20px;
+    -fx-cursor: hand;
+}
+
+/* Mouse ထောက်လိုက်လျှင် (Hover Effect) အစိမ်းရောင် ပိုမိုတောက်ပြောင်လာစေရန် */
+.button-export:hover {
+    -fx-background-color: #22C55E; /* Modern Emerald Green နောက်ခံပြောင်းသွားမည် */
+    -fx-text-fill: #FFFFFF;        /* Сာသားကို အဖြူရောင်ပြောင်း၍ ထင်ရှားစေခြင်း */
+    -fx-border-color: #16A34A;
+    /* ခလုတ်ပတ်ပတ်လည် အစိမ်းရောင်အလင်း Soft Shadow ထွက်လာစေခြင်း */
+    -fx-effect: dropshadow(three-pass-box, rgba(34, 197, 94, 0.3), 10, 0, 0, 3);
+}
+
+/* Button ကို ကလစ်နှိပ်လိုက်သည့်အချိန် (Pressed Effect) */
+.button-export:pressed {
+    -fx-background-color: #16A34A; /* Darker Green နောက်ခံ */
+    -fx-border-color: #15803D;
+}
