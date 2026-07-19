@@ -1,0 +1,310 @@
+.root{
+    -fx-background-color:#F4F7FC;
+    -fx-font-family:"Segoe UI";
+}
+
+/* Card */
+
+.form-card{
+
+    -fx-background-color:white;
+
+    -fx-background-radius:18;
+
+    -fx-padding:35;
+
+    -fx-effect:dropshadow(gaussian,
+            rgba(0,0,0,0.10),
+            20,
+            0.2,
+            0,
+            8);
+}
+
+/* Heading */
+
+.page-title{
+
+	-fx-text-fill: #2f6678;
+	    -fx-font-size: 23px;
+	    -fx-font-weight: bold;
+}
+
+.subtitle{
+
+    -fx-font-size:13px;
+
+    -fx-text-fill:#94A3B8;
+}
+
+/* Labels */
+
+.form-label{
+
+    -fx-font-size:14px;
+
+    -fx-font-weight:bold;
+
+    -fx-text-fill:#334155;
+}
+
+/* TextField */
+
+.text-field{
+
+	-fx-background-color: #FFFFFF;
+	    -fx-background-radius: 8px;
+	    -fx-border-color: transparent;
+	    -fx-border-radius: 8px;
+	    -fx-border-width: 1px;
+	    -fx-padding: 10px 12px;
+	    -fx-font-size: 14px;
+	    -fx-text-fill: #334155;
+}
+
+.text-field:hover{
+
+    -fx-border-color:#93C5FD;
+}
+
+/* Focused ဖြစ်သွားချိန် အပြာနုရောင် အလင်းထွက်စေရန် */
+.search-box-container:focused-within {
+	-fx-border-color: #38BDF8;
+	   -fx-effect: dropshadow(three-pass-box, rgba(56, 189, 248, 0.25), 12, 0, 0, 4);
+}
+/* 📂 Search Box + Icon ကို ငုံထားသည့် Container */
+.search-box-container {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center-left;
+    -fx-spacing: 8px;
+    -fx-pref-height: 36px;
+    -fx-pref-width: 250px; /* ချုံထားရန် */
+	/* 🎯 မျက်စိမရှုပ်စေမယ့် အလွန်နူးညံ့ပြီး Premium ဆန်သော Shadow ထည့်ခြင်း */
+	    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 10, 0, 0, 3);
+}
+
+/* 🔎 မှန်ဘီလူး Icon */
+.search-box-container .svg-path {
+    -fx-fill: #94A3B8;
+}
+
+/* DatePicker */
+
+.date-picker{
+
+    -fx-background-color:white;
+
+    -fx-background-radius:10;
+
+    -fx-border-radius:10;
+
+    -fx-border-color: #E2E8F0;
+
+    -fx-border-width:1.5;
+}
+
+/* 🗓️ DatePicker ရဲ့ ညာဘက်ခြမ်း ပြက္ခဒိန် Button အား ဘောင်နှင့် ကပ်ရပ်ညီညာစေခြင်း */
+.date-picker > .arrow-button {
+    -fx-background-color: rgba(31, 75, 93, 0.05); /* Soft Blue Tint ဖြည့်ထားသည် */
+    -fx-background-radius: 0 7 7 0; /* ညာဘက်အပေါ်အောက် ထောင့်ကွေးများကိုသာ ယူသည် */
+    -fx-border-radius: 0 7 7 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0 8 0 8;
+}
+
+/* ပြက္ခဒိန် Icon လေးကို ချိန်ညှိခြင်း */
+.date-picker > .arrow-button > .graphic {
+    -fx-background-color: #1F4B5D;
+}
+
+.date-picker:focused {
+	-fx-border-color: #00C6FF; /* Accent Cyan Line */
+		    -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.15), 8, 0, 0, 0);
+}
+
+/* Primary Button */
+
+.btn-primary{
+
+     -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
+
+    -fx-background-radius:10;
+
+    -fx-text-fill:white;
+
+    -fx-font-size:14px;
+
+    -fx-font-weight:bold;
+
+    -fx-padding:10 24;
+
+    -fx-cursor:hand;
+	-fx-effect: dropshadow(gaussian, rgba(49,136,149,0.20), 14, 0.16, 0, 5);
+}
+
+.btn-primary:hover{
+	-fx-background-color: linear-gradient(to bottom right, #22D3EE, #0EA5E9); /* လျှံပယ်သော အပြာနုရောင် */
+	-fx-text-fill: #1e293b; 
+	    -fx-effect: dropshadow(three-pass-box, rgba(34, 211, 238, 0.4), 10, 0, 0, 3);
+	}
+
+	/* ⚡️ [Pressed] ခလုတ်ကို အားရပါးရ နှိပ်လိုက်သည့်အချိန် (သိသာထင်ရှားသော အပြာရင့်ရောင်သို ကျွံဝင်သွားမည်) */
+	.btn-primary:pressed {
+	    -fx-background-color: linear-gradient(to bottom right, #0369A1, #075985); 
+		-fx-text-fill: #1e293b; 
+	    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.3), 5, 0, 0, 2); /* ခလုတ်ထဲ ကျွံဝင်သွားသလို Depth ပေးခြင်း */
+	}
+
+/* Secondary Button */
+
+.btn-secondary{
+
+	-fx-background-color: #FCA5A5; /* ပိုမိုရင့်ပြီး ထင်ရှားသော Pastel Red နောက်ခံ */
+	   -fx-text-fill: #1e293b;        /* Deep Crimson Red စာသားရောင် (ဖတ်ရလွယ်ကူစေရန်) */
+	   -fx-font-family: "Segoe UI", sans-serif;
+	   -fx-font-size: 14px;
+	   -fx-font-weight: bold;
+	   -fx-background-radius: 8px;
+	   -fx-border-color: #EF4444;     /* True Red အနားသတ်လိုင်း */
+	   -fx-border-radius: 8px;
+	   -fx-border-width: 1.2px;
+	   -fx-padding: 10px 24px;
+	   -fx-cursor: hand;
+}
+
+.btn-secondary:hover{
+
+-fx-background-color: #EF4444; 
+    -fx-text-fill: white;
+    -fx-border-color: #DC2626;
+    -fx-effect: dropshadow(three-pass-box, rgba(239, 68, 68, 0.25), 8, 0, 0, 2);
+}
+
+/* ⚡️ [Pressed] ခလုတ်ကို နှိပ်လိုက်သည့်အချိန် (သိသာထင်ရှားသော အနီရင့်ရောင်သို ပြောင်းလဲခြင်း) */
+.btn-secondary:pressed {
+    -fx-background-color: #991B1B;
+    -fx-border-color: #7F1D1D;
+    -fx-text-fill: white;
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
+}
+
+/* Optional Flight Number Prefix */
+
+.flight-prefix{
+
+    -fx-background-color:#DBEAFE;
+
+    -fx-background-radius:10;
+
+    -fx-padding:8 14;
+
+    -fx-text-fill:#2563EB;
+
+    -fx-font-weight:bold;
+}
+.super-brand {
+    -fx-padding: 8 4 16 4;
+}
+
+.super-brand-logo {
+    -fx-min-width: 44;
+    -fx-min-height: 44;
+    -fx-max-width: 44;
+    -fx-max-height: 44;
+    -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.62);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(22,135,158,0.24), 18, 0.20, 0, 7);
+}
+
+.super-brand-logo-glyph {
+    -fx-fill: #ffffff;
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
+/* ==========================================================
+   TABLEVIEW
+========================================================== */
+
+.table-view{
+
+    -fx-background-radius:16;
+
+    -fx-border-radius:16;
+
+    -fx-border-color:#E5EDF3;
+
+}
+
+.table-view .column-header{
+	-fx-background-color:#F5F8FB;
+
+}
+
+.table-view .column-header .label{
+
+    -fx-text-fill:#1F4B5D;
+
+    -fx-font-weight:bold;
+
+}
+
+.table-row-cell{
+
+    -fx-background-color:white;
+
+}
+
+.table-row-cell:hover{
+
+    -fx-background-color:#F4FBFD;
+
+}
+
+.table-row-cell:selected{
+
+    -fx-background-color:#DDF7FF;
+
+}
+/* Table Card */
+.super-table {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #dce6f2;
+    -fx-border-width: 1;
+}
+/* JavaFX Pagination control ကို Flat Modern UI စတိုင်ပြောင်းခြင်း */
+.pagination .control-box {
+    -fx-background-color: transparent;
+    -fx-spacing: 5px;
+}
+
+/* နံပါတ်ခလုတ်များ */
+.pagination .control-box .number-button {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #475569;
+    -fx-background-radius: 6px;
+}
+
+.pagination .control-box .number-button:hover {
+    -fx-background-color: #E2E8F0;
+}
+
+/* လက်ရှိ ရွေးထားတဲ့စာမျက်နှာ */
+.pagination .control-box .number-button:selected {
+    -fx-background-color: #38BDF8;
+    -fx-text-fill: white;
+}
+
+/* မြှားခလုတ်များ */
+.pagination .control-box .left-arrow-button,
+.pagination .control-box .right-arrow-button {
+    -fx-background-color: transparent;
+}
