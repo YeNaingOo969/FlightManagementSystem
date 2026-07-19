@@ -83,6 +83,30 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        // ==========================================
+        // 🌟 LOGIN PAGE ENTRANCE ANIMATION
+        // ==========================================
+        if (leftPanel != null && rightPanel != null) {
+            // စတင်ချိန်တွင် ဘယ်ညာသို့ ကြိုတင် ဖျောက်ထားမည်
+            leftPanel.setTranslateX(-800);
+            rightPanel.setTranslateX(800);
+
+            TranslateTransition leftIn = new TranslateTransition(Duration.millis(800), leftPanel);
+            leftIn.setToX(0);
+            leftIn.setInterpolator(Interpolator.EASE_OUT);
+
+            TranslateTransition rightIn = new TranslateTransition(Duration.millis(800), rightPanel);
+            rightIn.setToX(0);
+            rightIn.setInterpolator(Interpolator.EASE_OUT);
+
+            ParallelTransition ptIn = new ParallelTransition(leftIn, rightIn);
+            ptIn.play();
+        }
+
+        // ==========================================
+        // INITIALIZATIONS
+        // ==========================================
         if (txtPasswordHidden != null && txtPasswordVisible != null) txtPasswordVisible.textProperty().bindBidirectional(txtPasswordHidden.textProperty());
         if (txtNewPasswordHidden != null && txtNewPasswordVisible != null) txtNewPasswordVisible.textProperty().bindBidirectional(txtNewPasswordHidden.textProperty());
         if (txtConfirmPasswordHidden != null && txtConfirmPasswordVisible != null) txtConfirmPasswordVisible.textProperty().bindBidirectional(txtConfirmPasswordHidden.textProperty());
@@ -430,7 +454,6 @@ public class LoginController implements Initializable {
         scaleBox.setToX(1.0);
         scaleBox.setToY(1.0);
 
-        // 🌟 Error မတက်စေရန် ကိုယ်ပိုင် Custom Bouncy Interpolator ကို ဖန်တီးအသုံးပြုခြင်း
         Interpolator bouncyInterpolator = new Interpolator() {
             @Override
             protected double curve(double t) {
@@ -439,7 +462,7 @@ public class LoginController implements Initializable {
                 return t * t * ((tension + 1) * t + tension) + 1.0;
             }
         };
-        scaleBox.setInterpolator(bouncyInterpolator); // Bouncy Effect ဖြစ်စေသည်
+        scaleBox.setInterpolator(bouncyInterpolator);
 
         FadeTransition fadeBox = new FadeTransition(Duration.millis(300), successBox);
         fadeBox.setFromValue(0.0);
