@@ -1,6 +1,7 @@
 package com.pos.flightmanagementsystem.controller;
 
 import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -9,11 +10,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -49,24 +53,20 @@ public class SuperAdminController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 DYNAMIC ACTIVE BUTTON LOGIC (အသစ်ထည့်ထားသောအပိုင်း)
+    // 🌟 DYNAMIC ACTIVE BUTTON LOGIC
     // ==========================================
     private void setActiveButton(Button clickedButton) {
-        // ခလုတ်အားလုံးကို Array ထဲ စုထည့်ပါမည်
         Button[] allButtons = {btnDashboard, btnProfile, btnACManage, btnSystemLogs, btnSystemTools};
 
         for (Button btn : allButtons) {
             if (btn != null) {
-                // ခလုတ်အားလုံးဆီမှ active style ကို ဖြုတ်ပစ်မည်
                 btn.getStyleClass().remove("super-nav-button-active");
-                // ရိုးရိုး style မရှိသေးရင် ပြန်ထည့်ပေးမည် (ပုံမှန်အရောင် ပြန်ဖြစ်သွားရန်)
                 if (!btn.getStyleClass().contains("super-nav-button")) {
                     btn.getStyleClass().add("super-nav-button");
                 }
             }
         }
 
-        // နှိပ်လိုက်သော (ရွေးချယ်လိုက်သော) ခလုတ်ကိုသာ active style ထည့်မည်
         if (clickedButton != null) {
             clickedButton.getStyleClass().remove("super-nav-button");
             clickedButton.getStyleClass().add("super-nav-button-active");
@@ -119,28 +119,68 @@ public class SuperAdminController implements Initializable {
     // ==========================================
     @FXML void clickDashboard(ActionEvent event) {
         loadPage("/com/pos/flightmanagementsystem/view/SuperDashboard.fxml");
-        setActiveButton(btnDashboard); // Dashboard ခလုတ်ကို Active ပြောင်းမည်
+        setActiveButton(btnDashboard);
     }
 
     @FXML void clickProfile(ActionEvent event) {
         loadPage("/com/pos/flightmanagementsystem/view/Profile.fxml");
-        setActiveButton(btnProfile); // Profile ခလုတ်ကို Active ပြောင်းမည်
+        setActiveButton(btnProfile);
     }
 
     @FXML void clickACManagement(ActionEvent event) {
         loadPage("/com/pos/flightmanagementsystem/view/ACManagement.fxml");
-        setActiveButton(btnACManage); // AC Manage ခလုတ်ကို Active ပြောင်းမည်
+        setActiveButton(btnACManage);
     }
 
     @FXML void clickSystemLogs(ActionEvent event) {
         loadPage("/com/pos/flightmanagementsystem/view/SystemLogs.fxml");
-        setActiveButton(btnSystemLogs); // System Logs ခလုတ်ကို Active ပြောင်းမည်
+        setActiveButton(btnSystemLogs);
     }
 
     @FXML void clickSystemTools(ActionEvent event) {
         loadPage("/com/pos/flightmanagementsystem/view/SystemTools.fxml");
-        setActiveButton(btnSystemTools); // System Tools ခလုတ်ကို Active ပြောင်းမည်
+        setActiveButton(btnSystemTools);
     }
 
-    @FXML void clickLogout(ActionEvent event) { System.out.println("Logging out..."); }
+    // ==========================================
+    // 🌟 LOGOUT ANIMATION & LOGIC
+    // ==========================================
+    @FXML void clickLogout(ActionEvent event) {
+        System.out.println("Logging out with animation...");
+
+        // ဘယ်ဘက် Sidebar ကို ဘယ်ဘက်သို့ -800 ရွှေ့ကာ ထွက်သွားစေခြင်း
+        TranslateTransition leftAnim = new TranslateTransition(Duration.millis(700), sidebar);
+        leftAnim.setByX(-800);
+        leftAnim.setInterpolator(Interpolator.EASE_IN);
+
+        // ညာဘက် Content (Center Node) ကို ညာဘက်သို့ +800 ရွှေ့ကာ ထွက်သွားစေခြင်း
+        Node rightContent = rootPane.getCenter();
+        TranslateTransition rightAnim = new TranslateTransition(Duration.millis(700), rightContent);
+        if (rightContent != null) {
+            rightAnim.setByX(800);
+            rightAnim.setInterpolator(Interpolator.EASE_IN);
+        }
+
+        // ParallelTransition ဖြင့် ပြိုင်တူ Animation ပြုလုပ်ပြီး ပြီးမှ Login Page ခေါ်မည်
+        ParallelTransition pt = new ParallelTransition(leftAnim, rightAnim);
+        pt.setOnFinished(e -> loadLoginPage(event));
+        pt.play();
+    }
+
+    private void loadLoginPage(ActionEvent event) {
+        try {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
+            Parent root = loader.load();
+            stage.setScene(new Scene(root));
+
+            // 🌟 ဒီနှစ်ကြောင်းကို ထပ်ထည့်ပေးပါ 🌟
+            if (stage.isMaximized()) stage.setMaximized(false); // Layout တွေ နေရာတကျပြန်ဖြစ်အောင် Reset အရင်ချသည်
+            stage.setMaximized(true); // Full Screen (Maximized) အပြည့် ပြန်လုပ်သည်
+
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
