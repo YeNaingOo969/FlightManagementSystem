@@ -1,0 +1,463 @@
+/* ==========================================================
+   ROOT
+========================================================== */
+
+.super-content {
+	    -fx-background-color:
+	        radial-gradient(center 90% 5%, radius 70%, rgba(35,211,182,0.16), transparent 55%),
+	        linear-gradient(to bottom right, #f7faff, #edf3f8);
+    -fx-font-family:"Inter","Segoe UI";
+}
+/* ==========================================================
+   PAGE TITLE
+========================================================== */
+
+.page-title{
+
+    -fx-font-size: 22px;
+
+    -fx-font-weight:bold;
+
+    -fx-text-fill:#1F1E19;
+
+}
+/* =========================================================================
+   📜 SCROLL PANE CLEAN UP (ဘောင်နှင့် နောက်ခံ အားလုံးဖျောက်ခြင်း)
+   ========================================================================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/* Scroll Pane ရဲ့ အတွင်းဘက် Viewport ကိုပါ Transparent လုပ်ခြင်း */
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* မလိုအပ်သော Border လိုင်းများကို လုံးဝဖျောက်ခြင်း */
+.scroll-pane:focused {
+    -fx-background-color: transparent;
+}
+
+.page-subtitle{
+
+    -fx-text-fill:#1687d9;
+
+    -fx-font-size: 13px;
+
+}
+.super-section-title {
+    -fx-text-fill: #10243f;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+
+/* ==========================================================
+   SEARCH FIELD
+========================================================== */
+
+.search-field{
+
+    -fx-pref-height:42;
+
+    -fx-background-color:white;
+
+    -fx-background-radius:12;
+
+    -fx-border-radius:12;
+
+    -fx-border-color:#D9E4EC;
+
+    -fx-padding:0 15;
+
+}
+
+.search-field:focused{
+
+    -fx-border-color:#68CFEB;
+
+}
+
+
+/* 📦 COMBO BOX MODERN STYLE */
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1.5px;
+    -fx-padding: 4px 8px 4px 8px;
+    -fx-font-size: 13px;
+}
+
+.combo-box:focused {
+    -fx-border-color: #08775e; /* Active ဖြစ်ချိန် အစိမ်းရောင်ပြောင်းခြင်း */
+}
+
+/* 🔻 ComboBox ရဲ့ ညာဘက်က မြှားအောက်စိုက် (Arrow) ပုံစံကို ပြင်ဆင်ခြင်း */
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: #64748B; /* မြှားအရောင်ကို Slate Gray ပြောင်းခြင်း */
+}
+
+/* 📋 Dropdown List (နှိပ်လိုက်ရင် အောက်ကိုကျလာမယ့် Menu အကွက်) ကို ပြင်ဆင်ခြင်း */
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E2E8F0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);
+}
+
+/* Dropdown ထဲက စာသားများကို Hover (မောက်စ်တင်လိုက်ချိန်) ရွေးချယ်မှု စတိုင် */
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #F1F5F9; /* Off-White Gray */
+    -fx-text-fill: #08775e; /* Hover တင်ချိန် စာလုံးအစိမ်းရောင် ပြောင်းလဲခြင်း */
+}
+
+
+/* ==========================================================
+   PRIMARY BUTTON
+========================================================== */
+
+.primary-button{
+	-fx-background-color: linear-gradient(to right, rgba(155,220,223,0.96), rgba(88,175,185,0.70));
+	    -fx-border-color: rgba(255,255,255,0.72);
+	    -fx-text-fill: #10243f;
+	    -fx-effect: dropshadow(gaussian, rgba(49,136,149,0.20), 14, 0.16, 0, 5);
+}
+
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to right, #8fd8dd, #58afb9);
+}
+
+
+/* ==========================================================
+   SUMMARY CARD
+========================================================== */
+
+.summary-card{
+
+    -fx-background-color:white;
+
+    -fx-background-radius:18;
+
+    -fx-border-radius:18;
+
+    -fx-border-color:#E7EEF5;
+
+    -fx-padding:22;
+
+    -fx-spacing:10;
+
+    -fx-pref-width:250;
+
+    -fx-effect:dropshadow(
+        gaussian,
+        rgba(0,0,0,.06),
+        18,
+        0,
+        0,
+        5
+    );
+
+}
+
+
+
+
+/* ==========================================================
+   PROFILE CARD
+========================================================== */
+
+.user-profile-card:hover{
+
+    -fx-border-color:#68CFEB;
+
+}
+/* Profile Cards များ စုစည်းထားသည့် HBox Container */
+.profile-cards-container {
+    /* 🎯 ကတ်တစ်ခုနှင့်တစ်ခုကြား ၁၅ ပစ်ဇယ် လှလှပပ ခွာပေးခြင်း */
+    -fx-spacing: 16px; 
+    
+    /* ကတ်များ၏ အပေါ်အောက်၊ ဘယ်ညာတွင် မကပ်စေရန် Padding ပေးခြင်း */
+    -fx-padding: 10px 5px 10px 5px;
+    
+    -fx-background-color: transparent;
+}
+
+/* 👤 Profile Card တစ်ခုချင်းစီ၏ စတိုင်ကို Size မြှင့်တင်ခြင်း */
+.user-profile-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: rgba(0, 0, 0, 0.05);
+    -fx-border-width: 1px;
+    
+    /* 🎯 ကတ်ပြားများကို အချိုးကျ Size ကြီးလာစေရန် သတ်မှတ်ခြင်း */
+    -fx-pref-width: 150px;
+    -fx-min-width: 140px;
+    -fx-pref-height: 220px; /* အောက်ခြေအထိ Size အပြည့် ဆွဲဆန့်လိုက်ခြင်း */
+    
+    -fx-padding: 15px;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 10, 0, 0, 4);
+}
+
+
+/* ==========================================================
+   AVATAR
+========================================================== */
+
+.avatar{
+
+    -fx-fill:#DCEFFD;
+
+}
+
+
+/* ==========================================================
+   STATUS BADGE
+========================================================== */
+
+.status-active{
+
+    -fx-background-color:#EAFBF2;
+
+    -fx-background-radius:30;
+
+    -fx-text-fill:#22C55E;
+
+    -fx-padding:4 12;
+
+}
+
+.status-inactive{
+
+    -fx-background-color:#FDECEC;
+
+    -fx-background-radius:30;
+
+    -fx-text-fill:#EF4444;
+
+    -fx-padding:4 12;
+
+}
+
+
+/* ==========================================================
+   TABLE CARD
+========================================================== */
+
+.table-card{
+
+    -fx-background-color:white;
+
+    -fx-background-radius:20;
+
+    -fx-padding:20;
+
+}
+
+
+/* ==========================================================
+   TABLEVIEW
+========================================================== */
+
+.table-view{
+
+    -fx-background-radius:16;
+
+    -fx-border-radius:16;
+
+    -fx-border-color:#E5EDF3;
+
+}
+
+.table-view .column-header{
+	-fx-background-color:#F5F8FB;
+
+}
+
+.table-view .column-header .label{
+
+    -fx-text-fill:#1F4B5D;
+
+    -fx-font-weight:bold;
+
+}
+
+.table-row-cell{
+
+    -fx-background-color:white;
+
+}
+
+.table-row-cell:hover{
+
+    -fx-background-color:#F4FBFD;
+
+}
+
+.table-row-cell:selected{
+
+    -fx-background-color:#DDF7FF;
+
+}
+
+
+/* ==========================================================
+   ICON BUTTON
+========================================================== */
+
+.icon-button{
+
+    -fx-background-color:transparent;
+
+    -fx-background-radius:50;
+
+    -fx-cursor:hand;
+
+}
+
+.icon-button:hover{
+
+    -fx-background-color:#EAFBFF;
+
+}
+
+
+/* ==========================================================
+   EXPORT BUTTON
+========================================================== */
+
+.secondary-button{
+	-fx-background-color: rgba(255,255,255,0.70);
+	    -fx-border-color: #c9e2e7;
+	    -fx-text-fill: #173038;
+
+}
+
+.secondary-button:hover{
+	-fx-background-color: #e4f5f7;
+	    -fx-border-color: #78c4ce;
+
+}
+
+
+/* ==========================================================
+   OPERATION STATUS CARD
+========================================================== */
+
+.status-card{
+
+    -fx-background-color:white;
+
+    -fx-background-radius:18;
+
+    -fx-padding:20;
+
+}
+.primary-button,
+.secondary-button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 11 22 11 22;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-content-display: LEFT;
+    -fx-graphic-text-gap: 12;
+}
+/* Table Card */
+.super-table {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #dce6f2;
+    -fx-border-width: 1;
+}
+/* 📈 Stat Cards များ စုစည်းထားသည့် HBox */
+.stat-cards-container {
+    /* 🎯 ကတ်တစ်ခုနှင့်တစ်ခုကြား အကွာအဝေးကို ၂၀ ပစ်ဇယ် ခွာပေးခြင်း */
+    -fx-spacing: 20px; 
+    
+    /* ဘယ်ညာအစွန်းများ Dashboard ဘောင်နှင့် ကပ်မနေစေရန် Padding ထည့်ခြင်း */
+    -fx-padding: 5px 0px 5px 0px; 
+    
+    -fx-alignment: CENTER;
+}
+.super-metric-card-blue,
+.super-metric-card-carbon,
+.super-metric-card-pink,
+.super-metric-card-violet {
+    -fx-min-height: 132;
+    -fx-max-width: 100000;
+    -fx-padding: 20 22 20 22;
+	-fx-background-radius: 16px;
+		   -fx-border-radius: 16px;
+		   -fx-border-color: rgba(255, 255, 255, 0.25); /* မှန်ကြည်ရောင် အနားသတ်ဘောင် */
+		   -fx-border-width: 1.5px;
+		   -fx-effect: dropshadow(three-pass-box, rgba(49, 46, 129, 0.2), 15, 0, 0, 6);
+}
+
+.super-metric-card-carbon {
+    -fx-background-color: linear-gradient(to left bottom, rgba(165, 180, 252, 0.75), rgba(49, 46, 129, 0.85));
+}
+
+.super-metric-card-pink {
+    -fx-background-color: linear-gradient(to left bottom, rgba(247, 131, 185, 0.75), rgba(136, 19, 55, 0.9));
+}
+
+.super-metric-card-violet {
+    -fx-background-color: linear-gradient(to left bottom, rgba(156, 163, 175, 0.7), rgba(17, 24, 39, 0.9));
+}
+
+.super-metric-card-blue {
+    -fx-background-color: linear-gradient(to left bottom, rgba(216, 180, 254, 0.75), rgba(76, 29, 149, 0.9));
+}
+
+.super-metric-label,
+.super-metric-note {
+    -fx-text-fill: rgba(255,255,255,0.88);
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.super-metric-value {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+.super-topbar {
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+	-fx-background-color: rgba(255,255,255,0.92);
+	    -fx-border-color: rgba(17,40,72,0.08);
+	    -fx-effect: dropshadow(gaussian, rgba(17,40,72,0.08), 22, 0.12, 0, 10);
+		-fx-padding: 24 26 24 26;
+}
+.super-metric-icon {
+    -fx-min-width: 46;
+    -fx-min-height: 46;
+    -fx-max-width: 46;
+    -fx-max-height: 46;
+    -fx-background-color: rgba(255,255,255,0.22);
+    -fx-background-radius: 999;
+    -fx-border-color: rgba(255,255,255,0.32);
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+}
+
+.super-metric-icon-glyph {
+    -fx-fill: #ffffff;
+    -fx-scale-x: 0.92;
+    -fx-scale-y: 0.92;
+}
