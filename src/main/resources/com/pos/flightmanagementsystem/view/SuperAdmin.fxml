@@ -34,9 +34,11 @@
 
                 <VBox spacing="10.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#clickDashboard" styleClass="super-nav-button-active" text="Dashboard" />
+                        <!-- Dashboard Button မှ super-nav-button-active ကို ဖြုတ်ပြီး ရိုးရိုး super-nav-button သာ ထားလိုက်ပါပြီ -->
+                        <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#clickDashboard" styleClass="super-nav-button" text="Dashboard" />
                         <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#clickProfile" styleClass="super-nav-button" text="Profile" />
-                        <Button fx:id="btnACManagement" mnemonicParsing="false" onAction="#clickACManagement" styleClass="super-nav-button" text="Account Management" />
+                        <!-- Controller နှင့် အတိအကျကိုက်ညီစေရန် fx:id="btnACManage" ဟု ပြင်ဆင်ပေးထားပါသည် -->
+                        <Button fx:id="btnACManage" mnemonicParsing="false" onAction="#clickACManagement" styleClass="super-nav-button" text="Account Management" />
                         <Button fx:id="btnSystemLogs" mnemonicParsing="false" onAction="#clickSystemLogs" styleClass="super-nav-button" text="System Logs" />
                         <Button fx:id="btnSystemTools" mnemonicParsing="false" onAction="#clickSystemTools" styleClass="super-nav-button" text="System Tools" />
                     </children>
@@ -55,9 +57,7 @@
         </VBox>
     </left>
 
-
-
     <stylesheets>
-        <URL value="@/com/pos/flightmanagementsystem/Style/Dashboard.css" />
+        <URL value="@/com/pos/flightmanagementsystem/Style/SideBar.css" />
     </stylesheets>
 </BorderPane>

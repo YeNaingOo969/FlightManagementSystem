@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -21,10 +22,17 @@ public class SuperAdminController implements Initializable {
     @FXML private BorderPane rootPane;
     @FXML private VBox sidebar;
 
+    // +++ Sidebar Button များကို FXML နှင့် ချိတ်ဆက်ရန် +++
+    @FXML private Button btnDashboard;
+    @FXML private Button btnProfile;
+    @FXML private Button btnACManage;
+    @FXML private Button btnSystemLogs;
+    @FXML private Button btnSystemTools;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        // ၁။ Sidebar Entry Animation (ဘယ်ဘက်မှ ညာဘက်သို့ ဝင်လာခြင်း - 700ms)
+        // ၁။ Sidebar Entry Animation
         if (sidebar != null) {
             sidebar.setTranslateX(-300);
             TranslateTransition sidebarAnim = new TranslateTransition(Duration.millis(700), sidebar);
@@ -33,10 +41,36 @@ public class SuperAdminController implements Initializable {
             sidebarAnim.play();
         }
 
-        // ၂။ Login ဝင်ဝင်ချင်း ညာဘက်ခြမ်း ဖြတ်ခနဲမပေါ်လာစေရန် Platform.runLater ကို သုံးပါမည်
+        // ၂။ Login ဝင်ဝင်ချင်း Dashboard ကို ပြမည်
         Platform.runLater(() -> {
             loadPage("/com/pos/flightmanagementsystem/view/SuperDashboard.fxml");
+            setActiveButton(btnDashboard); // အစပိုင်းတွင် Dashboard Button ကို Active ဖြစ်နေစေရန်
         });
+    }
+
+    // ==========================================
+    // 🌟 DYNAMIC ACTIVE BUTTON LOGIC (အသစ်ထည့်ထားသောအပိုင်း)
+    // ==========================================
+    private void setActiveButton(Button clickedButton) {
+        // ခလုတ်အားလုံးကို Array ထဲ စုထည့်ပါမည်
+        Button[] allButtons = {btnDashboard, btnProfile, btnACManage, btnSystemLogs, btnSystemTools};
+
+        for (Button btn : allButtons) {
+            if (btn != null) {
+                // ခလုတ်အားလုံးဆီမှ active style ကို ဖြုတ်ပစ်မည်
+                btn.getStyleClass().remove("super-nav-button-active");
+                // ရိုးရိုး style မရှိသေးရင် ပြန်ထည့်ပေးမည် (ပုံမှန်အရောင် ပြန်ဖြစ်သွားရန်)
+                if (!btn.getStyleClass().contains("super-nav-button")) {
+                    btn.getStyleClass().add("super-nav-button");
+                }
+            }
+        }
+
+        // နှိပ်လိုက်သော (ရွေးချယ်လိုက်သော) ခလုတ်ကိုသာ active style ထည့်မည်
+        if (clickedButton != null) {
+            clickedButton.getStyleClass().remove("super-nav-button");
+            clickedButton.getStyleClass().add("super-nav-button-active");
+        }
     }
 
     // ==========================================
@@ -46,21 +80,16 @@ public class SuperAdminController implements Initializable {
         Node currentPage = rootPane.getCenter();
 
         if (currentPage != null) {
-            // လက်ရှိ Page ရှိနေလျှင် (Page ကူးပြောင်းချိန်) ညာဘက်သို့ ဆွဲထုတ်မည်
             TranslateTransition slideOut = new TranslateTransition(Duration.millis(350), currentPage);
             slideOut.setToX(1200);
             slideOut.setInterpolator(Interpolator.EASE_IN);
-
-            // ထွက်သွားပြီးမှ Page အသစ်ကို ဝင်လာစေမည် (Speed ကို 400ms ဖြင့် သတ်မှတ်သည်)
             slideOut.setOnFinished(e -> showNewPage(fxmlPath, 400));
             slideOut.play();
         } else {
-            // Login ဝင်ဝင်ချင်း ပထမဆုံးအကြိမ်ဖြစ်လျှင် Sidebar နှင့် Speed ကိုက်ညီစေရန် (700ms ဖြင့် သတ်မှတ်သည်)
             showNewPage(fxmlPath, 700);
         }
     }
 
-    // showNewPage ကို Speed (durationMillis) အလိုအလျောက်ပြောင်းလဲနိုင်အောင် ပြင်ဆင်ထားပါသည်
     private void showNewPage(String fxmlPath, double durationMillis) {
         try {
             java.net.URL fileUrl = getClass().getResource(fxmlPath);
@@ -71,11 +100,9 @@ public class SuperAdminController implements Initializable {
 
             FXMLLoader loader = new FXMLLoader(fileUrl);
             Parent newPage = loader.load();
-
             newPage.setTranslateX(1200);
             rootPane.setCenter(newPage);
 
-            // Speed နေရာတွင် သတ်မှတ်ပေးလိုက်သော အချိန်ကို ယူသုံးပါမည်
             TranslateTransition slideIn = new TranslateTransition(Duration.millis(durationMillis), newPage);
             slideIn.setToX(0);
             slideIn.setInterpolator(Interpolator.EASE_OUT);
@@ -90,15 +117,30 @@ public class SuperAdminController implements Initializable {
     // ==========================================
     // SIDEBAR MENU CLICKS
     // ==========================================
-    @FXML void clickDashboard(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperDashboard.fxml"); }
+    @FXML void clickDashboard(ActionEvent event) {
+        loadPage("/com/pos/flightmanagementsystem/view/SuperDashboard.fxml");
+        setActiveButton(btnDashboard); // Dashboard ခလုတ်ကို Active ပြောင်းမည်
+    }
 
-    @FXML void clickProfile(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/Profile.fxml"); }
+    @FXML void clickProfile(ActionEvent event) {
+        loadPage("/com/pos/flightmanagementsystem/view/Profile.fxml");
+        setActiveButton(btnProfile); // Profile ခလုတ်ကို Active ပြောင်းမည်
+    }
 
-    @FXML void clickACManagement(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/ACManagement.fxml"); }
+    @FXML void clickACManagement(ActionEvent event) {
+        loadPage("/com/pos/flightmanagementsystem/view/ACManagement.fxml");
+        setActiveButton(btnACManage); // AC Manage ခလုတ်ကို Active ပြောင်းမည်
+    }
 
-    @FXML void clickSystemLogs(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SystemLogs.fxml"); }
+    @FXML void clickSystemLogs(ActionEvent event) {
+        loadPage("/com/pos/flightmanagementsystem/view/SystemLogs.fxml");
+        setActiveButton(btnSystemLogs); // System Logs ခလုတ်ကို Active ပြောင်းမည်
+    }
 
-    @FXML void clickSystemTools(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SystemTools.fxml"); }
+    @FXML void clickSystemTools(ActionEvent event) {
+        loadPage("/com/pos/flightmanagementsystem/view/SystemTools.fxml");
+        setActiveButton(btnSystemTools); // System Tools ခလုတ်ကို Active ပြောင်းမည်
+    }
 
     @FXML void clickLogout(ActionEvent event) { System.out.println("Logging out..."); }
 }

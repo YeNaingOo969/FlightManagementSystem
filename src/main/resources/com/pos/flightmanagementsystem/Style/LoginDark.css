@@ -156,3 +156,15 @@
 .login-button:hover {
     -fx-background-color: linear-gradient(to right, #22d3ee, #06b6d4);
 }
+
+/* --- Custom Success Dialog --- */
+.success-dialog {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 24;
+    -fx-border-color: #06b6d4;
+    -fx-border-radius: 24;
+    -fx-border-width: 2;
+    -fx-padding: 40 30 40 30;
+    /* Cyan အရောင် အလင်းပျံ့ထွက်နေမည့် Shadow */
+    -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.4), 35, 0.2, 0, 0);
+}

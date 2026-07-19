@@ -16,9 +16,9 @@
 <?import javafx.scene.shape.SVGPath?>
 
 
-<AnchorPane styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/acManage.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/acManage.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.ACManagementController" fx:id="acRootPane">
    <children>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="13.0" layoutY="7.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="25.0">
          <content>
             <VBox spacing="10.0">
                <children>
@@ -33,7 +33,7 @@
                         <Region prefHeight="100.0" prefWidth="316.0" />
                         <TextField promptText="search here......" styleClass="search-field" />
                         <ComboBox prefWidth="150.0" styleClass="combo-box" />
-                        <Button mnemonicParsing="false" styleClass="primary-button" text="+ Create User" />
+                        <Button fx:id="btnCreateUser" onAction="#openCreateUser" mnemonicParsing="false" styleClass="primary-button" text="+ Create User" />
                      </children>
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0" styleClass="stat-cards-container" VBox.vgrow="ALWAYS">
@@ -336,11 +336,9 @@
                            <children>
                               <Label styleClass="super-section-title" text="Users" />
                               <Region prefHeight="50.0" prefWidth="706.0" />
-                              <Button mnemonicParsing="false" styleClass="secondary-button" text="Export" />
-                              <Button mnemonicParsing="false" styleClass="primary-button" text="Refresh" />
                            </children>
                         </HBox>
-                        <TableView prefHeight="200.0" prefWidth="200.0" styleClass="super-table" VBox.vgrow="ALWAYS">
+                        <TableView minHeight="400.0" prefHeight="450.0" prefWidth="200.0" styleClass="super-table" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn prefWidth="75.0" text="Username" />
                               <TableColumn prefWidth="75.0" text="Full Name" />
