@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane fx:id="rootPane" fx:controller="com.pos.flightmanagementsystem.controller.DashboardController"
+<BorderPane fx:id="rootPane" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminController"
             styleClass="super-dashboard-root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
     <!-- ဘယ်ဘက် Sidebar အပိုင်း -->

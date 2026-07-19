@@ -16,7 +16,7 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class DashboardController implements Initializable {
+public class SuperAdminController implements Initializable {
 
     @FXML private BorderPane rootPane;
     @FXML private VBox sidebar;
@@ -94,7 +94,7 @@ public class DashboardController implements Initializable {
 
     @FXML void clickProfile(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/Profile.fxml"); }
 
-    @FXML void clickACManagement(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/AccountManagement.fxml"); }
+    @FXML void clickACManagement(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/ACManagement.fxml"); }
 
     @FXML void clickSystemLogs(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SystemLogs.fxml"); }
 
