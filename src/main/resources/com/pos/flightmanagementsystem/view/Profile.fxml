@@ -19,76 +19,88 @@
             <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
          </padding>
          <children>
-            <VBox maxHeight="-Infinity" maxWidth="980.0" minHeight="560.0" prefHeight="560.0" spacing="0.0" styleClass="profile-card" StackPane.alignment="CENTER">
+            <!-- 🌟 ကတ်ကို မျက်နှာပြင်အပြည့် နီးပါးကျယ်သွားစေရန် maxWidth ကို Double.MAX_VALUE သို့ ပြင်ဆင်လိုက်သည် -->
+            <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="560.0" prefHeight="580.0" spacing="0.0" styleClass="profile-card" StackPane.alignment="CENTER">
                <children>
-                  <HBox alignment="CENTER_LEFT" spacing="22.0" styleClass="profile-card-header">
+
+                  <!-- 🌟 HEADER: Big Avatar နှင့် Title -->
+                  <HBox alignment="CENTER_LEFT" spacing="25.0" styleClass="profile-card-header" style="-fx-padding: 10 0 30 0; -fx-border-color: transparent transparent #e2e8f0 transparent; -fx-border-width: 0 0 1 0;">
                      <children>
-                        <StackPane styleClass="profile-section-icon">
+                        <!-- Big Profile Avatar -->
+                        <StackPane style="-fx-background-color: linear-gradient(to bottom right, #0ea5e9, #14b8a6); -fx-background-radius: 50%; -fx-min-width: 80; -fx-min-height: 80; -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.4), 15, 0, 0, 5);">
                            <children>
-                              <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" styleClass="profile-section-icon-glyph" />
+                              <SVGPath content="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="white" scaleX="1.8" scaleY="1.8" />
                            </children>
                         </StackPane>
-                        <VBox spacing="6.0">
+                        <VBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
-                              <Label styleClass="profile-card-title" text="Personal Details" />
-                              <Label styleClass="profile-card-subtitle" text="View and manage your personal information" />
+                              <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Personal Details" />
+                              <Label style="-fx-font-size: 14px; -fx-text-fill: #64748b;" text="View and manage your personal information" />
                            </children>
                         </VBox>
                      </children>
                   </HBox>
-                  <Region prefHeight="1.0" styleClass="profile-divider" />
-                  <VBox spacing="0.0" styleClass="profile-details-list">
+
+                  <!-- 🌟 DETAILS LIST (စာဖတ်ရလွယ်ကူစေရန် minWidth: 250 ထား၍ နေရာချထားသည်) -->
+                  <VBox spacing="0.0" style="-fx-padding: 15 0 0 0;">
                      <children>
-                        <HBox alignment="CENTER_LEFT" spacing="24.0" styleClass="profile-detail-row">
+
+                        <!-- Row 1: Full Name -->
+                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="profile-detail-row">
                            <children>
                               <StackPane styleClass="profile-row-icon">
                                  <children>
                                     <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" styleClass="profile-row-icon-glyph" />
                                  </children>
                               </StackPane>
-                              <Label minWidth="230.0" styleClass="profile-label" text="Full Name" />
+                              <Label minWidth="250.0" styleClass="profile-label" text="Full Name" />
                               <Label fx:id="lblFullName" styleClass="profile-value" text="Loading..." />
                            </children>
                         </HBox>
-                        <Region prefHeight="1.0" styleClass="profile-divider" />
-                        <HBox alignment="CENTER_LEFT" spacing="24.0" styleClass="profile-detail-row">
+
+                        <!-- Row 2: Email -->
+                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="profile-detail-row">
                            <children>
                               <StackPane styleClass="profile-row-icon">
                                  <children>
                                     <SVGPath content="M3 5h18v14H3V5Zm2 3.2V17h14V8.2l-7 5.1-7-5.1Zm1.25-1.2L12 11.18 17.75 7H6.25Z" styleClass="profile-row-icon-glyph" />
                                  </children>
                               </StackPane>
-                              <Label minWidth="230.0" styleClass="profile-label" text="Email" />
+                              <Label minWidth="250.0" styleClass="profile-label" text="Email Address" />
                               <Label fx:id="lblEmail" styleClass="profile-value" text="Loading..." />
                            </children>
                         </HBox>
-                        <Region prefHeight="1.0" styleClass="profile-divider" />
-                        <HBox alignment="CENTER_LEFT" spacing="24.0" styleClass="profile-detail-row">
+
+                        <!-- Row 3: Role -->
+                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="profile-detail-row">
                            <children>
                               <StackPane styleClass="profile-row-icon">
                                  <children>
                                     <SVGPath content="M12 2 4 5.5V11c0 5.05 3.41 9.76 8 11 4.59-1.24 8-5.95 8-11V5.5L12 2Zm3.55 7.45-4.24 4.24-2.12-2.12-1.41 1.41 3.53 3.53 5.66-5.66-1.42-1.4Z" styleClass="profile-row-icon-glyph" />
                                  </children>
                               </StackPane>
-                              <Label minWidth="230.0" styleClass="profile-label" text="Role" />
+                              <Label minWidth="250.0" styleClass="profile-label" text="System Role" />
                               <Label fx:id="lblRole" styleClass="profile-role-pill" text="Loading..." />
                            </children>
                         </HBox>
-                        <Region prefHeight="1.0" styleClass="profile-divider" />
-                        <HBox alignment="CENTER_LEFT" spacing="24.0" styleClass="profile-detail-row">
+
+                        <!-- Row 4: Employee ID -->
+                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="profile-detail-row" style="-fx-border-width: 0;">
                            <children>
                               <StackPane styleClass="profile-row-icon">
                                  <children>
                                     <SVGPath content="M3 5h18v14H3V5Zm2 2v10h14V7H5Zm2 2h5v2H7V9Zm0 4h7v2H7v-2Zm9-3a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm-1 5c.22-1.35 1.28-2.25 2.5-2.25s2.28.9 2.5 2.25h-5Z" styleClass="profile-row-icon-glyph" />
                                  </children>
                               </StackPane>
-                              <Label minWidth="230.0" styleClass="profile-label" text="Employee ID" />
-                              <Label fx:id="lblEmployeeId" styleClass="profile-value" text="Loading..." />
+                              <Label minWidth="250.0" styleClass="profile-label" text="Employee ID" />
+                              <Label fx:id="lblEmployeeId" styleClass="profile-value" style="-fx-text-fill: #6366f1;" text="Loading..." />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-                  <HBox alignment="CENTER_LEFT" styleClass="profile-action-row" VBox.vgrow="ALWAYS">
+
+                  <!-- 🌟 ACTION ROW -->
+                  <HBox alignment="CENTER_RIGHT" styleClass="profile-action-row" VBox.vgrow="ALWAYS">
                      <children>
                         <Button fx:id="btnChangePassword" mnemonicParsing="false" onAction="#showPasswordView" styleClass="danger-action-button" text="Change Password">
                            <graphic>
@@ -110,14 +122,18 @@
       </StackPane>
 
       <!-- ========================================== -->
-      <!-- Success Notification Toast (ညာဘက်အောက်) -->
+      <!-- 🌟 MODAL OVERLAY -->
+      <!-- ========================================== -->
+      <StackPane fx:id="modalOverlay" style="-fx-background-color: rgba(0, 0, 0, 0.4);" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
+      <!-- ========================================== -->
+      <!-- Success Notification Toast -->
       <!-- ========================================== -->
       <HBox fx:id="notificationToast" alignment="TOP_LEFT" prefWidth="320.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e5e7eb; -fx-border-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 5);" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
          <padding>
             <Insets bottom="16.0" left="20.0" right="12.0" top="16.0" />
          </padding>
          <children>
-            <!-- အစိမ်းရောင် အမှန်ခြစ် Icon -->
             <StackPane style="-fx-background-color: #10b981; -fx-background-radius: 50%;">
                <padding>
                   <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
@@ -129,16 +145,12 @@
                   <Insets top="2.0" />
                </HBox.margin>
             </StackPane>
-
-            <!-- စာသားများ -->
             <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Success!" />
                   <Label style="-fx-font-size: 13px; -fx-text-fill: #4b5563;" text="Password changed successfully." wrapText="true" />
                </children>
             </VBox>
-
-            <!-- ကြက်ခြေခတ် (X) ခလုတ် -->
             <Button mnemonicParsing="false" onAction="#closeNotification" style="-fx-background-color: transparent; -fx-cursor: hand;">
                <graphic>
                   <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#9ca3af" />

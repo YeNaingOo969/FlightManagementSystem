@@ -262,3 +262,46 @@
     -fx-font-weight: bold;
     -fx-effect: dropshadow(gaussian, rgba(42,89,100,0.14), 12, 0, 0, 4);
 }
+
+/* =======================================================
+   🌟 PROFILE ROW ENHANCEMENTS (Hover & Alignments)
+   ======================================================= */
+
+.profile-detail-row {
+    -fx-min-height: 70;
+    -fx-pref-height: 70;
+    -fx-padding: 0 20 0 20;
+    -fx-background-radius: 12;
+    -fx-border-color: transparent transparent #f1f5f9 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-transition: all 0.3s ease;
+}
+
+/* Mouse တင်လိုက်ရင် နောက်ခံအရောင်နုနုလေး ပြောင်းသွားမည် */
+.profile-detail-row:hover {
+    -fx-background-color: #f8fafc;
+    -fx-cursor: hand;
+}
+
+.profile-label {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.profile-value {
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Role Pill ပြင်ဆင်ချက် */
+.profile-role-pill {
+    -fx-background-color: #e0f2fe;
+    -fx-text-fill: #0284c7;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 18 6 18;
+    -fx-background-radius: 20;
+    -fx-border-color: transparent;
+}
