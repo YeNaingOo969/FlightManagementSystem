@@ -1,8 +1,6 @@
 package com.pos.flightmanagementsystem.controller;
 
-import javafx.animation.Interpolator;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -26,12 +25,20 @@ public class SuperAdminController implements Initializable {
     @FXML private BorderPane rootPane;
     @FXML private VBox sidebar;
 
-    // +++ Sidebar Button များကို FXML နှင့် ချိတ်ဆက်ရန် +++
     @FXML private Button btnDashboard;
     @FXML private Button btnProfile;
     @FXML private Button btnACManage;
     @FXML private Button btnSystemLogs;
     @FXML private Button btnSystemTools;
+    @FXML private Button btnLogout;
+
+    // +++ Icon Animation များအတွက် FXML ချိတ်ဆက်ခြင်း +++
+    @FXML private SVGPath iconDashboard;
+    @FXML private SVGPath iconProfile;
+    @FXML private SVGPath iconACManage;
+    @FXML private SVGPath iconSystemLogs;
+    @FXML private SVGPath iconSystemTools;
+    @FXML private SVGPath iconLogout;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -48,12 +55,71 @@ public class SuperAdminController implements Initializable {
         // ၂။ Login ဝင်ဝင်ချင်း Dashboard ကို ပြမည်
         Platform.runLater(() -> {
             loadPage("/com/pos/flightmanagementsystem/view/SuperDashboard.fxml");
-            setActiveButton(btnDashboard); // အစပိုင်းတွင် Dashboard Button ကို Active ဖြစ်နေစေရန်
+            setActiveButton(btnDashboard);
         });
+
+        // ၃။ Icon Animation များကို စတင်မည်
+        startIconAnimations();
     }
 
     // ==========================================
-    // 🌟 DYNAMIC ACTIVE BUTTON LOGIC
+    // 🌟 CONTINUOUS ICON ANIMATIONS
+    // ==========================================
+    // ==========================================
+    // 🌟 CONTINUOUS ICON ANIMATIONS (ပိုမိုသိသာထင်ရှားသော အလန်းစား Effect များ)
+    // ==========================================
+    private void startIconAnimations() {
+        // ၁. Dashboard - Pulse (နှလုံးခုန်သလို သိသိသာသာ ကြီးလိုက်သေးလိုက်)
+        ScaleTransition dashAnim = new ScaleTransition(Duration.seconds(1.0), iconDashboard); // အချိန်ပိုမြန်သွားသည်
+        dashAnim.setByX(0.25); // ပိုကြီးသွားမည် (အရင် 0.15)
+        dashAnim.setByY(0.25);
+        dashAnim.setAutoReverse(true);
+        dashAnim.setCycleCount(Timeline.INDEFINITE);
+        dashAnim.setInterpolator(Interpolator.EASE_BOTH);
+        dashAnim.play();
+
+        // ၂. Profile - Floating (လေပေါ် ပိုမိုမြင့်မားစွာ လွင့်နေခြင်း)
+        TranslateTransition profileAnim = new TranslateTransition(Duration.seconds(1.5), iconProfile);
+        profileAnim.setByY(-6); // အပေါ်ကို ပိုတက်မည် (အရင် -3)
+        profileAnim.setAutoReverse(true);
+        profileAnim.setCycleCount(Timeline.INDEFINITE);
+        profileAnim.setInterpolator(Interpolator.EASE_BOTH);
+        profileAnim.play();
+
+        // ၃. Account Manage - Swinging (ဘယ်ညာ ပိုကျယ်ကျယ် လွှဲနေခြင်း)
+        RotateTransition acManageAnim = new RotateTransition(Duration.seconds(1.5), iconACManage); // ပိုမြန်မည်
+        acManageAnim.setByAngle(25); // ပိုကျယ်ကျယ်လွှဲမည် (အရင် 15)
+        acManageAnim.setAutoReverse(true);
+        acManageAnim.setCycleCount(Timeline.INDEFINITE);
+        acManageAnim.setInterpolator(Interpolator.EASE_BOTH);
+        acManageAnim.play();
+
+        // ၄. System Logs - Bouncing (အပေါ်အောက် ခပ်မြန်မြန်နှင့် သိသိသာသာ ခုန်ခြင်း)
+        TranslateTransition logsAnim = new TranslateTransition(Duration.seconds(0.8), iconSystemLogs); // ပိုမြန်မည်
+        logsAnim.setByY(-4); // အပေါ်ကို ခုန်တက်မည် (အရင် +2)
+        logsAnim.setAutoReverse(true);
+        logsAnim.setCycleCount(Timeline.INDEFINITE);
+        logsAnim.setInterpolator(Interpolator.EASE_BOTH);
+        logsAnim.play();
+
+        // ၅. System Tools - Rotating Gear (ဂီယာလေး ၃၆၀ ဒီဂရီ အပြည့်လည်ခြင်း)
+        RotateTransition toolsAnim = new RotateTransition(Duration.seconds(3.0), iconSystemTools); // ပိုမြန်မည်
+        toolsAnim.setByAngle(360); // တစ်ပတ်အပြည့်လည်မည် (အရင် 180)
+        toolsAnim.setCycleCount(Timeline.INDEFINITE);
+        toolsAnim.setInterpolator(Interpolator.LINEAR);
+        toolsAnim.play();
+
+        // ၆. Logout - Sliding Arrow (အပြင်ထွက်ရန် သိသိသာသာ ညွှန်ပြနေခြင်း)
+        TranslateTransition logoutAnim = new TranslateTransition(Duration.seconds(0.7), iconLogout); // ပိုမြန်မည်
+        logoutAnim.setByX(8); // ပိုပြီး ထိုးထွက်မည် (အရင် 4)
+        logoutAnim.setAutoReverse(true);
+        logoutAnim.setCycleCount(Timeline.INDEFINITE);
+        logoutAnim.setInterpolator(Interpolator.EASE_BOTH);
+        logoutAnim.play();
+    }
+
+    // ==========================================
+    // DYNAMIC ACTIVE BUTTON LOGIC
     // ==========================================
     private void setActiveButton(Button clickedButton) {
         Button[] allButtons = {btnDashboard, btnProfile, btnACManage, btnSystemLogs, btnSystemTools};
@@ -143,17 +209,13 @@ public class SuperAdminController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 LOGOUT ANIMATION & LOGIC
+    // LOGOUT ANIMATION & LOGIC
     // ==========================================
     @FXML void clickLogout(ActionEvent event) {
-        System.out.println("Logging out with animation...");
-
-        // ဘယ်ဘက် Sidebar ကို ဘယ်ဘက်သို့ -800 ရွှေ့ကာ ထွက်သွားစေခြင်း
         TranslateTransition leftAnim = new TranslateTransition(Duration.millis(700), sidebar);
         leftAnim.setByX(-800);
         leftAnim.setInterpolator(Interpolator.EASE_IN);
 
-        // ညာဘက် Content (Center Node) ကို ညာဘက်သို့ +800 ရွှေ့ကာ ထွက်သွားစေခြင်း
         Node rightContent = rootPane.getCenter();
         TranslateTransition rightAnim = new TranslateTransition(Duration.millis(700), rightContent);
         if (rightContent != null) {
@@ -161,7 +223,6 @@ public class SuperAdminController implements Initializable {
             rightAnim.setInterpolator(Interpolator.EASE_IN);
         }
 
-        // ParallelTransition ဖြင့် ပြိုင်တူ Animation ပြုလုပ်ပြီး ပြီးမှ Login Page ခေါ်မည်
         ParallelTransition pt = new ParallelTransition(leftAnim, rightAnim);
         pt.setOnFinished(e -> loadLoginPage(event));
         pt.play();
@@ -174,9 +235,8 @@ public class SuperAdminController implements Initializable {
             Parent root = loader.load();
             stage.setScene(new Scene(root));
 
-            // 🌟 ဒီနှစ်ကြောင်းကို ထပ်ထည့်ပေးပါ 🌟
-            if (stage.isMaximized()) stage.setMaximized(false); // Layout တွေ နေရာတကျပြန်ဖြစ်အောင် Reset အရင်ချသည်
-            stage.setMaximized(true); // Full Screen (Maximized) အပြည့် ပြန်လုပ်သည်
+            if (stage.isMaximized()) stage.setMaximized(false);
+            stage.setMaximized(true);
 
             stage.show();
         } catch (IOException e) {

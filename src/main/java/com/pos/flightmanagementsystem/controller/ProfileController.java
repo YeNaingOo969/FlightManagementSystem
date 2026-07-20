@@ -1,6 +1,9 @@
 package com.pos.flightmanagementsystem.controller;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -25,6 +28,7 @@ public class ProfileController implements Initializable {
 
     @FXML private AnchorPane profileRoot;
     @FXML private StackPane profileView;
+    @FXML private StackPane modalOverlay; // 🌟 ဤနေရာတွင် Overlay အသစ်ကို ချိတ်ဆက်ထားသည်
     @FXML private HBox notificationToast;
 
     @FXML private Label lblFullName;
@@ -81,6 +85,9 @@ public class ProfileController implements Initializable {
         }
     }
 
+    // ==========================================
+    // 🌟 PASSWORD CHANGE တွင် FLOATING (POP-UP) EFFECT
+    // ==========================================
     @FXML
     void showPasswordView(ActionEvent event) {
         try {
@@ -94,27 +101,42 @@ public class ProfileController implements Initializable {
                     pwdController.setCurrentUser(loggedInUser);
                 }
 
-                profileRoot.getChildren().add(pwdChangeView);
-                AnchorPane.setTopAnchor(pwdChangeView, 0.0);
-                AnchorPane.setBottomAnchor(pwdChangeView, 0.0);
-                AnchorPane.setLeftAnchor(pwdChangeView, 0.0);
-                AnchorPane.setRightAnchor(pwdChangeView, 0.0);
+                // Profile ထဲ တိုက်ရိုက်မထည့်ဘဲ မှောင်နေမည့် Overlay ထဲသို့ ထည့်မည်
+                modalOverlay.getChildren().add(pwdChangeView);
             }
 
-            double width = profileRoot.getWidth();
-            if (width == 0) width = 1000;
+            modalOverlay.setVisible(true);
 
-            pwdChangeView.setTranslateX(width);
-            pwdChangeView.setVisible(true);
-            pwdChangeView.toFront();
+            // ၁။ နောက်ခံအမည်းရောင် Overlay ကို မှောင်လာစေခြင်း (Fade In)
+            FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), modalOverlay);
+            fadeOverlay.setFromValue(0.0);
+            fadeOverlay.setToValue(1.0);
 
-            TranslateTransition profileOut = new TranslateTransition(Duration.millis(400), profileView);
-            profileOut.setToX(width);
-            profileOut.play();
+            // ၂။ ကတ်အသစ်လေးကို သေးရာမှ ကြီးလာစေခြင်း (Scale In)
+            pwdChangeView.setScaleX(0.5);
+            pwdChangeView.setScaleY(0.5);
+            pwdChangeView.setOpacity(0.0);
 
-            TranslateTransition pwdIn = new TranslateTransition(Duration.millis(400), pwdChangeView);
-            pwdIn.setToX(0);
-            pwdIn.play();
+            FadeTransition fadeModal = new FadeTransition(Duration.millis(300), pwdChangeView);
+            fadeModal.setToValue(1.0);
+
+            ScaleTransition scaleModal = new ScaleTransition(Duration.millis(400), pwdChangeView);
+            scaleModal.setToX(1.0);
+            scaleModal.setToY(1.0);
+
+            // 💡 ကိုယ်ပိုင် Overshoot (ခုန်ထွက်လာသည့်) Effect လေး
+            Interpolator bouncyInterpolator = new Interpolator() {
+                @Override
+                protected double curve(double t) {
+                    double tension = 2.0;
+                    t -= 1.0;
+                    return t * t * ((tension + 1) * t + tension) + 1.0;
+                }
+            };
+            scaleModal.setInterpolator(bouncyInterpolator);
+
+            ParallelTransition pt = new ParallelTransition(fadeOverlay, fadeModal, scaleModal);
+            pt.play();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,46 +144,46 @@ public class ProfileController implements Initializable {
     }
 
     public void hidePasswordView() {
-        double width = profileRoot.getWidth();
+        // ပိတ်လိုက်သည့်အခါ ပြန်လည်ပျောက်သွားစေခြင်း (Fade Out & Scale Down)
+        FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), modalOverlay);
+        fadeOverlay.setToValue(0.0);
 
-        TranslateTransition pwdOut = new TranslateTransition(Duration.millis(400), pwdChangeView);
-        pwdOut.setToX(width);
-        pwdOut.setOnFinished(e -> pwdChangeView.setVisible(false));
-        pwdOut.play();
+        ScaleTransition scaleModal = new ScaleTransition(Duration.millis(300), pwdChangeView);
+        scaleModal.setToX(0.8);
+        scaleModal.setToY(0.8);
+        scaleModal.setInterpolator(Interpolator.EASE_IN);
 
-        TranslateTransition profileIn = new TranslateTransition(Duration.millis(400), profileView);
-        profileIn.setToX(0);
-        profileIn.play();
+        FadeTransition fadeModal = new FadeTransition(Duration.millis(300), pwdChangeView);
+        fadeModal.setToValue(0.0);
+
+        ParallelTransition pt = new ParallelTransition(fadeOverlay, scaleModal, fadeModal);
+        pt.setOnFinished(e -> modalOverlay.setVisible(false)); // Animation ပြီးမှ ဖျောက်မည်
+        pt.play();
     }
 
-    // ==========================================
-    // Notification Animation Methods များ
-    // ==========================================
+
     // ==========================================
     // Notification Animation Methods များ
     // ==========================================
     public void showSuccessNotification() {
         notificationToast.setVisible(true);
-        // မြင်ကွင်းအပြင် (အောက်ဘက်) ကနေ စတင်မည်
         notificationToast.setTranslateY(150);
 
         TranslateTransition popUp = new TranslateTransition(Duration.millis(600), notificationToast);
         popUp.setToY(0);
 
-        // 💡 ကိုယ်ပိုင် Overshoot (ခုန်ထွက်လာသည့်) Effect လေး ဖန်တီးခြင်း
-        javafx.animation.Interpolator overshootInterpolator = new javafx.animation.Interpolator() {
+        Interpolator overshootInterpolator = new Interpolator() {
             @Override
             protected double curve(double t) {
-                double tension = 2.0; // ဒီဂဏန်းကို အတိုးအလျှော့လုပ်ပြီး ခုန်တဲ့အားကို ပြင်နိုင်ပါတယ်
+                double tension = 2.0;
                 t -= 1.0;
                 return t * t * ((tension + 1) * t + tension) + 1.0;
             }
         };
 
-        popUp.setInterpolator(overshootInterpolator); // ဖန်တီးထားသော Effect ကို ထည့်သွင်းခြင်း
+        popUp.setInterpolator(overshootInterpolator);
         popUp.play();
 
-        // ၅ စက္ကန့်ကြာလျှင် အလိုအလျောက်ပျောက်သွားရန်
         javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(Duration.seconds(5));
         delay.setOnFinished(e -> closeNotificationAnimation());
         delay.play();
