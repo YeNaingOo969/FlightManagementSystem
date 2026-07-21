@@ -1,0 +1,148 @@
+/* StaffCreateNewBooking.css - Modern Clean Light Card Theme with Icons */
+
+.main-content-vbox {
+    -fx-background-color: transparent;
+    -fx-padding: 25 35 25 35;
+}
+
+/* --- Top Header Card Styles --- */
+.header-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 12, 0, 0, 4);
+}
+
+.header-icon-container {
+    -fx-background-color: #e0f2fe;
+    -fx-background-radius: 10;
+    -fx-min-width: 45px;
+    -fx-min-height: 45px;
+    -fx-max-width: 45px;
+    -fx-max-height: 45px;
+    -fx-alignment: center;
+}
+
+.header-icon-glyph {
+    -fx-fill: #0ea5e9;
+    -fx-scale-X: 1.2;
+    -fx-scale-Y: 1.2;
+}
+
+.header-title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.header-subtitle-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* --- Main Layout Card --- */
+.layout-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.06), 15, 0, 0, 4);
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* --- Input Labels & Icon Container Box --- */
+.input-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #334155;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Form ထဲက Field တွေကို Icon နဲ့ အတူ သေသပ်စေမည့် Box ပုံစံ */
+.input-box-with-icon {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-pref-height: 45px;
+    -fx-spacing: 10;
+}
+
+.input-box-with-icon:focused-within {
+    -fx-border-color: #0ea5e9;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.2), 8, 0, 0, 2);
+}
+
+.field-icon {
+    -fx-fill: #64748b;
+    -fx-scale-X: 0.9;
+    -fx-scale-Y: 0.9;
+}
+
+/* ထည့်သွင်းထားသော Controls များကို Transparent ဖြစ်စေရန် */
+.custom-combo-box, .custom-date-picker, .custom-spinner {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-pref-height: 40px;
+}
+
+.custom-combo-box .arrow-button, .custom-date-picker .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* --- TableView Modern Design --- */
+.flights-table {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-padding: 2;
+}
+
+.flights-table .column-header-background {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.flights-table .column-header {
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+    -fx-font-size: 13px;
+    -fx-padding: 12 8;
+}
+
+.flights-table .table-cell {
+    -fx-text-fill: #334155;
+    -fx-font-size: 13px;
+    -fx-padding: 12 8;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.flights-table .row-cell:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* --- Buttons --- */
+.gradient-button {
+    -fx-background-radius: 10;
+    -fx-background-color: linear-gradient(to right, #0ea5e9, #0284c7);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 46px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.3), 10, 0, 0, 3);
+}
+
+.gradient-button:hover {
+    -fx-background-color: linear-gradient(to right, #38bdf8, #0ea5e9);
+}

@@ -80,7 +80,6 @@
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* --- Form Box ကို ပိုကွေးအောင် Radius ကို 20 အထိ တိုးထားသည် --- */
 .input-box {
     -fx-border-color: #334155;
     -fx-border-radius: 20;
@@ -91,10 +90,8 @@
     -fx-spacing: 12;
 }
 
-/* --- နှိပ်လိုက်သောအခါ Form ပတ်လည်တွင် Theme နှင့်လိုက်ဖက်စွာ လင်းထွက်လာမည့် Effect --- */
 .input-box.focused-box {
-    -fx-border-color: #06b6d4; /* Theme နှင့်လိုက်ဖက်သော Cyan အရောင်ပြောင်းမည် */
-    /* အပြင်ဘက်သို့ အလင်းရောင်ပျံ့ထွက်စေမည့် DropShadow Effect */
+    -fx-border-color: #06b6d4;
     -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.5), 15, 0.3, 0, 0);
 }
 
@@ -110,7 +107,7 @@
     -fx-background-color: transparent;
 }
 
-/* --- Individual OTP Boxes (အသစ်) --- */
+/* --- Individual OTP Boxes --- */
 .otp-box {
     -fx-background-color: #0f172a;
     -fx-border-color: #334155;
@@ -165,6 +162,67 @@
     -fx-border-radius: 24;
     -fx-border-width: 2;
     -fx-padding: 40 30 40 30;
-    /* Cyan အရောင် အလင်းပျံ့ထွက်နေမည့် Shadow */
     -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.4), 35, 0.2, 0, 0);
+}
+
+
+/* =========================================================
+   🌟 CUSTOM ALERT DIALOG STYLES (Dynamic Colors via Code)
+   ========================================================= */
+
+.custom-alert-dialog {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 24;
+    -fx-border-radius: 24;
+    -fx-border-width: 2;
+    -fx-padding: 30 30 30 30;
+}
+
+.custom-alert-button {
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 40px;
+    -fx-cursor: hand;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-padding: 0 40 0 40;
+}
+
+/* --- ERROR THEME --- */
+.alert-error {
+    -fx-border-color: #ef4444;
+    -fx-effect: dropshadow(three-pass-box, rgba(239, 68, 68, 0.4), 35, 0.2, 0, 0);
+}
+.alert-error .custom-alert-button {
+    -fx-background-color: linear-gradient(to right, #ef4444, #dc2626);
+    -fx-text-fill: white;
+}
+.alert-error .custom-alert-button:hover {
+    -fx-background-color: linear-gradient(to right, #f87171, #ef4444);
+}
+
+/* --- WARNING THEME --- */
+.alert-warning {
+    -fx-border-color: #f59e0b;
+    -fx-effect: dropshadow(three-pass-box, rgba(245, 158, 11, 0.4), 35, 0.2, 0, 0);
+}
+.alert-warning .custom-alert-button {
+    -fx-background-color: linear-gradient(to right, #f59e0b, #d97706);
+    -fx-text-fill: white;
+}
+.alert-warning .custom-alert-button:hover {
+    -fx-background-color: linear-gradient(to right, #fbbf24, #f59e0b);
+}
+
+/* --- INFO THEME --- */
+.alert-info {
+    -fx-border-color: #06b6d4;
+    -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.4), 35, 0.2, 0, 0);
+}
+.alert-info .custom-alert-button {
+    -fx-background-color: linear-gradient(to right, #06b6d4, #0891b2);
+    -fx-text-fill: white;
+}
+.alert-info .custom-alert-button:hover {
+    -fx-background-color: linear-gradient(to right, #22d3ee, #06b6d4);
 }

@@ -54,7 +54,7 @@ public class SuperAdminController implements Initializable {
 
         // ၂။ Login ဝင်ဝင်ချင်း Dashboard ကို ပြမည်
         Platform.runLater(() -> {
-            loadPage("/com/pos/flightmanagementsystem/view/SuperDashboard.fxml");
+            loadPage("/com/pos/flightmanagementsystem/view/SuperAdminDashboard.fxml");
             setActiveButton(btnDashboard);
         });
 
@@ -184,27 +184,27 @@ public class SuperAdminController implements Initializable {
     // SIDEBAR MENU CLICKS
     // ==========================================
     @FXML void clickDashboard(ActionEvent event) {
-        loadPage("/com/pos/flightmanagementsystem/view/SuperDashboard.fxml");
+        loadPage("/com/pos/flightmanagementsystem/view/SuperAdminDashboard.fxml");
         setActiveButton(btnDashboard);
     }
 
     @FXML void clickProfile(ActionEvent event) {
-        loadPage("/com/pos/flightmanagementsystem/view/Profile.fxml");
+        loadPage("/com/pos/flightmanagementsystem/view/SuperAdminProfile.fxml");
         setActiveButton(btnProfile);
     }
 
     @FXML void clickACManagement(ActionEvent event) {
-        loadPage("/com/pos/flightmanagementsystem/view/ACManagement.fxml");
+        loadPage("/com/pos/flightmanagementsystem/view/SuperAdminAccManagement.fxml");
         setActiveButton(btnACManage);
     }
 
     @FXML void clickSystemLogs(ActionEvent event) {
-        loadPage("/com/pos/flightmanagementsystem/view/SystemLogs.fxml");
+        loadPage("/com/pos/flightmanagementsystem/view/SuperAdminSystemLogs.fxml");
         setActiveButton(btnSystemLogs);
     }
 
     @FXML void clickSystemTools(ActionEvent event) {
-        loadPage("/com/pos/flightmanagementsystem/view/SystemTools.fxml");
+        loadPage("/com/pos/flightmanagementsystem/view/SuperAdminSystemTools.fxml");
         setActiveButton(btnSystemTools);
     }
 

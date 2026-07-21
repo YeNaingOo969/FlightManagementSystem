@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class SystemToolController implements Initializable {
+public class SuperAdminSystemToolController implements Initializable {
 
     @FXML private Button btnBackupNow;
     @FXML private Button btnExportSql;

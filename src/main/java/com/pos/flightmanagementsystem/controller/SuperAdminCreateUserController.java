@@ -4,7 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class CreateUserController {
+public class SuperAdminCreateUserController {
 
     @FXML
     private Button btnCancel;

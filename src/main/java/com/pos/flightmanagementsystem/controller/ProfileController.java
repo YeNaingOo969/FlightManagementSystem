@@ -92,10 +92,10 @@ public class ProfileController implements Initializable {
     void showPasswordView(ActionEvent event) {
         try {
             if (pwdChangeView == null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/PwdChange.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminPwChange.fxml"));
                 pwdChangeView = loader.load();
 
-                PwdChangeController pwdController = loader.getController();
+                SuperAdminPwChangeController pwdController = loader.getController();
                 if (pwdController != null) {
                     pwdController.setParentController(this);
                     pwdController.setCurrentUser(loggedInUser);
@@ -183,6 +183,8 @@ public class ProfileController implements Initializable {
 
         popUp.setInterpolator(overshootInterpolator);
         popUp.play();
+
+
 
         javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(Duration.seconds(5));
         delay.setOnFinished(e -> closeNotificationAnimation());

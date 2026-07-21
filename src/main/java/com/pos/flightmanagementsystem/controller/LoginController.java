@@ -8,6 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -52,6 +54,13 @@ public class LoginController implements Initializable {
     @FXML private StackPane successOverlay;
     @FXML private VBox successBox;
 
+    // --- 🌟 New Custom Alert Dialog ---
+    @FXML private StackPane customAlertOverlay;
+    @FXML private VBox customAlertBox;
+    @FXML private SVGPath customAlertIcon;
+    @FXML private Label customAlertTitle;
+    @FXML private Label customAlertMessage;
+
     // --- Fields ---
     @FXML private TextField txtUsername;
     @FXML private PasswordField txtPasswordHidden;
@@ -85,10 +94,9 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         // ==========================================
-        // 🌟 LOGIN PAGE ENTRANCE ANIMATION
+        // LOGIN PAGE ENTRANCE ANIMATION
         // ==========================================
         if (leftPanel != null && rightPanel != null) {
-            // စတင်ချိန်တွင် ဘယ်ညာသို့ ကြိုတင် ဖျောက်ထားမည်
             leftPanel.setTranslateX(-800);
             rightPanel.setTranslateX(800);
 
@@ -116,6 +124,13 @@ public class LoginController implements Initializable {
             setupOTPInputs();
         }
         setupInputFocusEffects();
+
+        // ==========================================
+        // ENTER KEY LOGIN TRIGGER
+        // ==========================================
+        if (txtUsername != null) txtUsername.setOnKeyPressed(this::handleEnterKey);
+        if (txtPasswordHidden != null) txtPasswordHidden.setOnKeyPressed(this::handleEnterKey);
+        if (txtPasswordVisible != null) txtPasswordVisible.setOnKeyPressed(this::handleEnterKey);
 
         if (orbitPath != null && smallPlane != null) {
             PathTransition planeTransition = new PathTransition();
@@ -212,7 +227,7 @@ public class LoginController implements Initializable {
                 }
             });
             currentField.setOnKeyPressed(event -> {
-                if (event.getCode() == javafx.scene.input.KeyCode.BACK_SPACE && currentField.getText().isEmpty()) {
+                if (event.getCode() == KeyCode.BACK_SPACE && currentField.getText().isEmpty()) {
                     if (index > 0) {
                         otpFields[index - 1].requestFocus();
                     }
@@ -263,8 +278,21 @@ public class LoginController implements Initializable {
         }
     }
 
+    // ==========================================
+    // ENTER KEY LOGIN LOGIC
+    // ==========================================
+    private void handleEnterKey(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            attemptLogin();
+        }
+    }
+
     @FXML
     void clickLogin(ActionEvent event) {
+        attemptLogin();
+    }
+
+    private void attemptLogin() {
         String username = txtUsername.getText().trim();
         String password = txtPasswordHidden.getText().trim();
 
@@ -276,17 +304,21 @@ public class LoginController implements Initializable {
         String query = "SELECT role FROM users WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
+
             pstmt.setString(1, username);
             pstmt.setString(2, password);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 String role = rs.getString("role");
+                Stage stage = (Stage) txtUsername.getScene().getWindow();
+
                 if (role.equalsIgnoreCase("Super Admin") || role.equalsIgnoreCase("superadmin")) {
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml");
-                } else if (role.equalsIgnoreCase("Admin") || role.equalsIgnoreCase("Staff")) {
-                    showAlert(Alert.AlertType.INFORMATION, "Coming Soon", role + " Dashboard is not ready yet.");
+                } else if (role.equalsIgnoreCase("Admin")) {
+                    playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/Admin.fxml");
+                } else if (role.equalsIgnoreCase("Staff")) {
+                    playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/Staff.fxml");
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
                 }
@@ -437,10 +469,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 🌟 CUSTOM SUCCESS DIALOG ANIMATIONS
-    // ==========================================
-
     private void playSuccessAnimation() {
         successOverlay.setVisible(true);
         successOverlay.setOpacity(0.0);
@@ -453,16 +481,14 @@ public class LoginController implements Initializable {
         ScaleTransition scaleBox = new ScaleTransition(Duration.millis(500), successBox);
         scaleBox.setToX(1.0);
         scaleBox.setToY(1.0);
-
-        Interpolator bouncyInterpolator = new Interpolator() {
+        scaleBox.setInterpolator(new Interpolator() {
             @Override
             protected double curve(double t) {
                 double tension = 2.0;
                 t -= 1.0;
                 return t * t * ((tension + 1) * t + tension) + 1.0;
             }
-        };
-        scaleBox.setInterpolator(bouncyInterpolator);
+        });
 
         FadeTransition fadeBox = new FadeTransition(Duration.millis(300), successBox);
         fadeBox.setFromValue(0.0);
@@ -491,8 +517,80 @@ public class LoginController implements Initializable {
     }
 
     // ==========================================
-    // UTILS
+    // 🌟 CUSTOM ANIMATED ALERT DIALOG
     // ==========================================
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        // UI ကို Main Thread မှ အမြဲ အပ်ဒိတ်လုပ်နိုင်ရန် သေချာစေခြင်း
+        Platform.runLater(() -> {
+            customAlertTitle.setText(title);
+            customAlertMessage.setText(message);
+
+            // ယခင် Style Class များကို ရှင်းလင်းခြင်း
+            customAlertBox.getStyleClass().removeAll("alert-error", "alert-warning", "alert-info");
+
+            // Alert အမျိုးအစားအလိုက် Theme နှင့် Icon ပြောင်းလဲခြင်း
+            if (alertType == Alert.AlertType.ERROR) {
+                // ကြက်ခြေခတ် Icon
+                customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z");
+                customAlertIcon.setFill(Color.web("#ef4444")); // Red
+                customAlertBox.getStyleClass().add("alert-error");
+            } else if (alertType == Alert.AlertType.WARNING) {
+                // သတိပေးတြိဂံ Icon
+                customAlertIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
+                customAlertIcon.setFill(Color.web("#f59e0b")); // Amber/Yellow
+                customAlertBox.getStyleClass().add("alert-warning");
+            } else {
+                // Info (i) Icon
+                customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
+                customAlertIcon.setFill(Color.web("#06b6d4")); // Cyan
+                customAlertBox.getStyleClass().add("alert-info");
+            }
+
+            customAlertOverlay.setVisible(true);
+            customAlertOverlay.setOpacity(0.0);
+            customAlertBox.setScaleX(0.5);
+            customAlertBox.setScaleY(0.5);
+
+            FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), customAlertOverlay);
+            fadeOverlay.setToValue(1.0);
+
+            // Bouncy Pop-up Effect
+            ScaleTransition scaleBox = new ScaleTransition(Duration.millis(400), customAlertBox);
+            scaleBox.setToX(1.0);
+            scaleBox.setToY(1.0);
+            scaleBox.setInterpolator(new Interpolator() {
+                @Override
+                protected double curve(double t) {
+                    double tension = 2.0;
+                    t -= 1.0;
+                    return t * t * ((tension + 1) * t + tension) + 1.0;
+                }
+            });
+
+            FadeTransition fadeBox = new FadeTransition(Duration.millis(300), customAlertBox);
+            fadeBox.setFromValue(0.0);
+            fadeBox.setToValue(1.0);
+
+            ParallelTransition pt = new ParallelTransition(fadeOverlay, scaleBox, fadeBox);
+            pt.play();
+        });
+    }
+
+    @FXML
+    void closeCustomAlert(ActionEvent event) {
+        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(300), customAlertBox);
+        scaleDown.setToX(0.8);
+        scaleDown.setToY(0.8);
+        scaleDown.setInterpolator(Interpolator.EASE_IN);
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), customAlertOverlay);
+        fadeOut.setToValue(0.0);
+
+        ParallelTransition pt = new ParallelTransition(scaleDown, fadeOut);
+        pt.setOnFinished(e -> customAlertOverlay.setVisible(false));
+        pt.play();
+    }
 
     private boolean sendEmail(String recipientEmail, String otpCode) {
         Properties properties = new Properties();
@@ -521,13 +619,5 @@ public class LoginController implements Initializable {
             e.printStackTrace();
             return false;
         }
-    }
-
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

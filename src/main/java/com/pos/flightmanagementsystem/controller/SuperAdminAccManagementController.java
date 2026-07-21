@@ -15,7 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
-public class ACManagementController {
+public class SuperAdminAccManagementController {
 
     @FXML
     private AnchorPane acRootPane; // FXML ရဲ့ အပေါ်ဆုံး Root Pane
@@ -26,11 +26,11 @@ public class ACManagementController {
     @FXML
     void openCreateUser(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/CreateUser.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminCreateUser.fxml"));
             Parent createUserRoot = loader.load();
 
             // (၁) CreateUser ရဲ့ Controller ကို လှမ်းယူမည်
-            CreateUserController createUserController = loader.getController();
+            SuperAdminCreateUserController superAdminCreateUserController = loader.getController();
 
             // နောက်ခံမှောင်သွားစေရန် Overlay ဖန်တီးခြင်း
             StackPane overlay = new StackPane();
@@ -64,7 +64,7 @@ public class ACManagementController {
             double startTransY = btnCenterY - rootCenterY;
 
             // (၂) Cancel နှိပ်လျှင် ပြန်ပိတ်သွားမည့် Animation (closePopup) ကို ချိတ်ပေးခြင်း
-            createUserController.setCancelAnimationAction(() -> {
+            superAdminCreateUserController.setCancelAnimationAction(() -> {
                 closePopup(overlay, createUserRoot, startTransX, startTransY);
             });
 
@@ -112,7 +112,7 @@ public class ACManagementController {
             });
 
         } catch (Exception e) {
-            System.out.println("❌ Error loading CreateUser.fxml");
+            System.out.println("❌ Error loading SuperAdminCreateUser.fxml");
             e.printStackTrace();
         }
     }

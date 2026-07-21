@@ -193,7 +193,6 @@
                 </HBox>
             </VBox>
 
-            <!-- Status Label -->
             <Label fx:id="statusLabel" style="-fx-font-size: 13px; -fx-font-weight: bold;" wrapText="true" />
         </VBox>
 
@@ -216,6 +215,30 @@
                     </Label>
 
                     <Button text="Continue to Login" onAction="#closeSuccessDialog" styleClass="login-button" prefWidth="250.0" prefHeight="45.0" />
+                </children>
+            </VBox>
+        </StackPane>
+
+        <!-- ===================== 🌟 CUSTOM ALERT OVERLAY ===================== -->
+        <StackPane fx:id="customAlertOverlay" visible="false" style="-fx-background-color: rgba(15, 23, 42, 0.75);">
+            <VBox fx:id="customAlertBox" alignment="CENTER" spacing="15.0" maxHeight="240.0" maxWidth="350.0" styleClass="custom-alert-dialog">
+                <children>
+                    <!-- Default SVG Path နေရာလွတ် ချန်ထားခြင်း -->
+                    <SVGPath fx:id="customAlertIcon" fill="#ef4444" scaleX="2.5" scaleY="2.5">
+                        <VBox.margin>
+                            <Insets bottom="15.0" top="10.0" />
+                        </VBox.margin>
+                    </SVGPath>
+
+                    <Label fx:id="customAlertTitle" text="Alert!" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+
+                    <Label fx:id="customAlertMessage" text="Message Content" style="-fx-font-size: 14px; -fx-text-fill: #94a3b8; -fx-font-family: 'Segoe UI', Arial, sans-serif;" textAlignment="CENTER" wrapText="true">
+                        <VBox.margin>
+                            <Insets bottom="15.0" />
+                        </VBox.margin>
+                    </Label>
+
+                    <Button text="OK" onAction="#closeCustomAlert" styleClass="custom-alert-button" prefWidth="150.0" />
                 </children>
             </VBox>
         </StackPane>

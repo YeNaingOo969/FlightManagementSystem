@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.SVGPath?>
 
 <!-- Root VBox တွင် Spacing နှင့် Padding ထည့်သွင်းပြီး အပြည့်ကျယ်စေရန် ပြင်ဆင်ထားသည် -->
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0" style="-fx-background-color: transparent; -fx-padding: 30;" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/systemLogs.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0" style="-fx-background-color: transparent; -fx-padding: 30;" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminSystemLogs.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
 
       <!-- ========================================== -->
