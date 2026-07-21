@@ -20,7 +20,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-public class SuperAdminPwChangeController implements Initializable {
+public class PwChangeController implements Initializable {
 
     @FXML private VBox sectionCurrentPwd, sectionEmail, sectionOTP, sectionNewPwd;
     @FXML private Label lblPwdStatus;

@@ -15,7 +15,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-
 <AnchorPane styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminAccManagement.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminAccManagementController" fx:id="acRootPane">
    <children>
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="25.0">
@@ -31,11 +30,13 @@
                            </children>
                         </VBox>
                         <Region prefHeight="100.0" prefWidth="316.0" />
-                        <TextField promptText="search here......" styleClass="search-field" />
-                        <ComboBox prefWidth="150.0" styleClass="combo-box" />
+                        <TextField fx:id="txtSearch" promptText="search here......" styleClass="search-field" />
+                        <ComboBox fx:id="comboFilterRole" prefWidth="150.0" promptText="Select Role" styleClass="combo-box" />
                         <Button fx:id="btnCreateUser" onAction="#openCreateUser" mnemonicParsing="false" styleClass="primary-button" text="+ Create User" />
                      </children>
                   </HBox>
+
+                  <!-- 🎯 Stat Cards နေရာ (fx:id များ ထည့်သွင်းထားသည်) -->
                   <HBox prefHeight="100.0" prefWidth="200.0" styleClass="stat-cards-container" VBox.vgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS">
@@ -43,7 +44,8 @@
                               <VBox prefHeight="98.0" prefWidth="243.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Total Users" />
-                                    <Label styleClass="super-metric-value" text="Label" />
+                                    <!-- 🎯 lblTotalUsers -->
+                                    <Label fx:id="lblTotalUsers" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="All registered users" />
                                  </children>
                               </VBox>
@@ -59,7 +61,8 @@
                               <VBox prefHeight="98.0" prefWidth="184.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Active Users" />
-                                    <Label styleClass="super-metric-value" text="Label" />
+                                    <!-- 🎯 lblActiveUsers -->
+                                    <Label fx:id="lblActiveUsers" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="Currently active" />
                                  </children>
                               </VBox>
@@ -75,7 +78,8 @@
                               <VBox prefHeight="98.0" prefWidth="184.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Staff Members" />
-                                    <Label styleClass="super-metric-value" text="Label" />
+                                    <!-- 🎯 lblStaffMembers -->
+                                    <Label fx:id="lblStaffMembers" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="Staff accounts" />
                                  </children>
                               </VBox>
@@ -91,7 +95,8 @@
                               <VBox prefHeight="98.0" prefWidth="184.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Administrators" />
-                                    <Label styleClass="super-metric-value" text="Label" />
+                                    <!-- 🎯 lblAdministrators -->
+                                    <Label fx:id="lblAdministrators" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="Admin accounts" />
                                  </children>
                               </VBox>
@@ -104,232 +109,13 @@
                         </HBox>
                      </children>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" styleClass="profile-cards-container">
-                     <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="user-profile-card" HBox.hgrow="ALWAYS">
-                           <children>
-                              <StackPane minHeight="41.0" prefHeight="41.0" prefWidth="54.0">
-                                 <children>
-                                    <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z">
-                                       <StackPane.margin>
-                                          <Insets />
-                                       </StackPane.margin>
-                                    </SVGPath>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" />
-                                 </VBox.margin>
-                              </StackPane>
-                              <Label styleClass="profile-label" text="Name">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Role">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="status-active" text="ACTIVE">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Email">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Ph no." />
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="user-profile-card" HBox.hgrow="ALWAYS">
-                           <children>
-                              <StackPane minHeight="41.0" prefHeight="41.0" prefWidth="54.0" styleClass="profile-section-icon">
-                                 <children>
-                                    <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z">
-                                       <StackPane.margin>
-                                          <Insets />
-                                       </StackPane.margin>
-                                    </SVGPath>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" />
-                                 </VBox.margin>
-                              </StackPane>
-                              <Label styleClass="profile-label" text="Name">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Role">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="status-inactive" text="INACTIVE">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Email">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Ph no." />
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="user-profile-card" HBox.hgrow="ALWAYS">
-                           <children>
-                              <StackPane minHeight="41.0" prefHeight="41.0" prefWidth="54.0" styleClass="profile-section-icon">
-                                 <children>
-                                    <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z">
-                                       <StackPane.margin>
-                                          <Insets />
-                                       </StackPane.margin>
-                                    </SVGPath>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" />
-                                 </VBox.margin>
-                              </StackPane>
-                              <Label styleClass="profile-label" text="Name">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Role">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="status-inactive" text="INACTIVE">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Email">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Ph no." />
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="user-profile-card" HBox.hgrow="ALWAYS">
-                           <children>
-                              <StackPane minHeight="41.0" prefHeight="41.0" prefWidth="54.0" styleClass="profile-section-icon">
-                                 <children>
-                                    <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z">
-                                       <StackPane.margin>
-                                          <Insets />
-                                       </StackPane.margin>
-                                    </SVGPath>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" />
-                                 </VBox.margin>
-                              </StackPane>
-                              <Label styleClass="profile-label" text="Name">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Role">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="status-active" text="ACTIVE">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Email">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Ph no." />
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="user-profile-card" HBox.hgrow="ALWAYS">
-                           <children>
-                              <StackPane minHeight="41.0" prefHeight="41.0" prefWidth="54.0" styleClass="profile-section-icon">
-                                 <children>
-                                    <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z">
-                                       <StackPane.margin>
-                                          <Insets />
-                                       </StackPane.margin>
-                                    </SVGPath>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" />
-                                 </VBox.margin>
-                              </StackPane>
-                              <Label styleClass="profile-label" text="Name">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Role">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="status-active" text="ACTIVE">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Email">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Ph no." />
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="user-profile-card" HBox.hgrow="ALWAYS">
-                           <children>
-                              <StackPane minHeight="41.0" prefHeight="41.0" prefWidth="54.0" styleClass="profile-section-icon">
-                                 <children>
-                                    <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z">
-                                       <StackPane.margin>
-                                          <Insets />
-                                       </StackPane.margin>
-                                    </SVGPath>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets bottom="20.0" />
-                                 </VBox.margin>
-                              </StackPane>
-                              <Label styleClass="profile-label" text="Name">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Role">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="status-active" text="ACTIVE">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Email">
-                                 <padding>
-                                    <Insets bottom="10.0" />
-                                 </padding>
-                              </Label>
-                              <Label styleClass="profile-label" text="Ph no." />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
+
+                  <ScrollPane vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" fitToHeight="true" style="-fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0;">
+                     <content>
+                        <HBox fx:id="profileCardsContainer" styleClass="profile-cards-container" />
+                     </content>
+                  </ScrollPane>
+
                   <VBox maxWidth="1.7976931348623157E308" prefHeight="200.0" styleClass="table-card" VBox.vgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="12.0" VBox.vgrow="ALWAYS">
@@ -338,14 +124,13 @@
                               <Region prefHeight="50.0" prefWidth="706.0" />
                            </children>
                         </HBox>
-                        <TableView minHeight="400.0" prefHeight="450.0" prefWidth="200.0" styleClass="super-table" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="usersTable" minHeight="400.0" prefHeight="450.0" prefWidth="200.0" styleClass="super-table" VBox.vgrow="ALWAYS">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="Username" />
-                              <TableColumn prefWidth="75.0" text="Full Name" />
-                              <TableColumn prefWidth="75.0" text="Role" />
-                              <TableColumn prefWidth="75.0" text="Email" />
-                              <TableColumn prefWidth="75.0" text="Last Login" />
-                              <TableColumn prefWidth="75.0" text="Actions" />
+                              <TableColumn fx:id="colUsername" prefWidth="75.0" text="Username" />
+                              <TableColumn fx:id="colPassword" prefWidth="75.0" text="Password" />
+                              <TableColumn fx:id="colRole" prefWidth="75.0" text="Role" />
+                              <TableColumn fx:id="colEmail" prefWidth="75.0" text="Email" />
+                              <TableColumn fx:id="colImagePath" prefWidth="75.0" text="Image Path" />
                            </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

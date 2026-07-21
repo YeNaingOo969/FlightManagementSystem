@@ -95,7 +95,7 @@ public class ProfileController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminPwChange.fxml"));
                 pwdChangeView = loader.load();
 
-                SuperAdminPwChangeController pwdController = loader.getController();
+                PwChangeController pwdController = loader.getController();
                 if (pwdController != null) {
                     pwdController.setParentController(this);
                     pwdController.setCurrentUser(loggedInUser);
