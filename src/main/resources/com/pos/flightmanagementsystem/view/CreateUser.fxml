@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -14,8 +15,7 @@
 
 <StackPane fx:controller="com.pos.flightmanagementsystem.controller.CreateUserController" maxHeight="-Infinity" maxWidth="-Infinity" styleClass="dialog-card" stylesheets="@/com/pos/flightmanagementsystem/Style/createUser.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <!-- Height ကို 580 ကနေ 480 သို့ လျှော့ချထားပါတယ် -->
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="450.0" spacing="20.0" styleClass="form-section">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="450.0" spacing="20.0" styleClass="form-section">
          <children>
             <!-- Title Section -->
             <HBox alignment="CENTER" prefHeight="40.0" prefWidth="450.0" spacing="15.0">
@@ -29,41 +29,71 @@
                </children>
             </HBox>
 
+            <!-- 📸 Profile Image Section -->
+            <VBox alignment="CENTER" spacing="10.0" prefWidth="450.0">
+               <children>
+                  <StackPane maxHeight="100.0" maxWidth="100.0" prefHeight="100.0" prefWidth="100.0" styleClass="profile-image-container">
+                     <children>
+                        <!-- Default Icon -->
+                        <SVGPath content="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" styleClass="placeholder-icon" />
+                        <ImageView fx:id="profileImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="false" />
+                     </children>
+                  </StackPane>
+                  <Button fx:id="btnChooseImage" mnemonicParsing="false" onAction="#chooseImage" styleClass="button-choose-image" text="Choose Image" />
+               </children>
+            </VBox>
+
             <!-- Form Fields Section -->
-            <VBox prefHeight="262.0" prefWidth="450.0" spacing="5.0" styleClass="form-section">
+            <VBox prefHeight="300.0" prefWidth="450.0" spacing="5.0" styleClass="form-section">
                <children>
                   <VBox prefHeight="70.0" prefWidth="450.0">
                      <children>
                         <Label styleClass="field-label" text="Username" />
-                        <TextField promptText="Enter username" styleClass="text-field" />
+                        <TextField fx:id="txtUsername" promptText="Enter username" styleClass="text-field" />
                      </children>
                   </VBox>
                   <VBox prefHeight="70.0" prefWidth="450.0">
                      <children>
                         <Label styleClass="field-label" text="Email" />
-                        <TextField promptText="example@gmail.com" styleClass="text-field" />
+                        <TextField fx:id="txtEmail" promptText="example@gmail.com" styleClass="text-field" />
                      </children>
                   </VBox>
+
+                  <!-- 👁️ Show/Hide Password ပြင်ဆင်ထားသော Section -->
                   <VBox prefHeight="70.0" prefWidth="450.0">
                      <children>
                         <Label styleClass="field-label" text="Password" />
-                        <PasswordField styleClass="password-field" />
+                        <StackPane alignment="CENTER_RIGHT">
+                           <children>
+                              <PasswordField fx:id="txtPassword" styleClass="password-field" />
+                              <TextField fx:id="txtPasswordVisible" managed="false" styleClass="text-field" visible="false" />
+                              <!-- 🎯 Error ပြင်ဆင်ထားသော နေရာ: cursor="HAND" အစား style="-fx-cursor: hand;" သုံးထားသည် -->
+                              <StackPane style="-fx-cursor: hand;" maxWidth="30.0" onMouseClicked="#togglePasswordVisibility" prefWidth="30.0">
+                                 <children>
+                                    <SVGPath fx:id="eyeIcon" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#64748B" />
+                                 </children>
+                                 <StackPane.margin>
+                                    <Insets right="10.0" />
+                                 </StackPane.margin>
+                              </StackPane>
+                           </children>
+                        </StackPane>
                      </children>
                   </VBox>
+
                   <VBox prefHeight="70.0" prefWidth="450.0">
                      <children>
                         <Label styleClass="field-label" text="Position" />
-                        <ComboBox prefWidth="450.0" promptText="Select Role" styleClass="combo-box" />
+                        <ComboBox fx:id="comboRole" prefWidth="450.0" promptText="Select Role" styleClass="combo-box" />
                      </children>
                   </VBox>
 
                   <!-- Buttons Section -->
                   <HBox alignment="CENTER" prefHeight="60.0" prefWidth="450.0">
                      <children>
-                        <!-- Cancel Button အတွက် fx:id နှင့် onAction ထည့်သွင်းထားပါသည် -->
-                        <Button fx:id="btnCancel" onAction="#clickCancel" minHeight="39.0" minWidth="120.0" mnemonicParsing="false" styleClass="button-cancel" text="Cancel" />
+                        <Button fx:id="btnCancel" minHeight="39.0" minWidth="120.0" mnemonicParsing="false" onAction="#clickCancel" styleClass="button-cancel" text="Cancel" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button minHeight="39.0" minWidth="120.0" mnemonicParsing="false" styleClass="button-save" text="Save" />
+                        <Button minHeight="39.0" minWidth="120.0" mnemonicParsing="false" onAction="#saveUser" styleClass="button-save" text="Save" />
                      </children>
                      <VBox.margin>
                         <Insets top="15.0" />

@@ -119,6 +119,7 @@
             <VBox fx:id="otpSection" managed="false" spacing="15.0" visible="false">
                 <VBox spacing="8.0">
                     <Label styleClass="welcome-label" text="Verify OTP" />
+                    <Label styleClass="welcome-label" text="Verify OTP" />
                     <Label styleClass="subtitle-label" text="Enter the 6-digit code sent to your email" />
                     <VBox.margin><Insets bottom="10.0" /></VBox.margin>
                 </VBox>

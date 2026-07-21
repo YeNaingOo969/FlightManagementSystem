@@ -141,3 +141,40 @@
 	-fx-margin: 20px;
 
 }
+/* ==========================================================
+   📸 ၆။ Profile Image Upload Section
+========================================================== */
+
+/* ဓာတ်ပုံထည့်မည့် နေရာကို စက်ဝိုင်းပုံစံ ဖန်တီးခြင်း */
+.profile-image-container {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 100px; /* စက်ဝိုင်းပုံစံဖြစ်စေရန် */
+    -fx-border-color: #94A3B8;
+    -fx-border-width: 2px;
+    -fx-border-style: dashed; /* မျဉ်းပြတ်ပုံစံ */
+    -fx-border-radius: 100px;
+}
+
+/* ပုံမရွေးခင် ပေါ်နေမည့် Default User Icon လေးအတွက် */
+.placeholder-icon {
+    -fx-fill: #CBD5E1;
+    -fx-scale-x: 2.5;
+    -fx-scale-y: 2.5;
+}
+
+/* Choose Image ခလုတ် Design */
+.button-choose-image {
+    -fx-background-color: #E0F2FE; /* Sky Blue အရောင်ဖျော့ဖျော့ */
+    -fx-text-fill: #0369A1;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-background-radius: 20px; /* ဘေးလုံးသော ခလုတ်ပုံစံ */
+    -fx-padding: 6px 16px;
+    -fx-cursor: hand;
+}
+
+.button-choose-image:hover {
+    -fx-background-color: #BAE6FD;
+    -fx-text-fill: #0C4A6E;
+    -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.2), 5, 0, 0, 2);
+}
