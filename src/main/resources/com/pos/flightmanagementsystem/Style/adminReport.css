@@ -1,0 +1,338 @@
+.root {
+    -fx-font-family: "Inter","Segoe UI", Times, serif;
+    -fx-font-size: 13px;
+    
+    -fx-background-color: #ffffff; 
+}
+/* Filter Label (From Date, To Date) */
+.filter-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+
+.super-topbar {
+	-fx-background-radius: 18;
+	-fx-border-radius: 18;
+	-fx-border-width: 1;
+	-fx-background-color: rgba(255,255,255,0.92);
+	    -fx-border-color: rgba(17,40,72,0.08);
+	    -fx-effect: dropshadow(gaussian, rgba(17,40,72,0.08), 22, 0.12, 0, 10);
+    -fx-padding: 24 26 24 26;
+}
+/* ==========================================================
+   TABLE CARD
+========================================================== */
+
+
+.super-table {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #dce6f2;
+    -fx-border-width: 1;
+}
+
+/* ==========================================================
+   TABLEVIEW
+========================================================== */
+
+.table-view{
+
+    -fx-background-radius:16;
+
+    -fx-border-radius:16;
+
+    -fx-border-color:#E5EDF3;
+
+}
+
+.table-view .column-header{
+	-fx-background-color:#F5F8FB;
+
+}
+
+.table-view .column-header .label{
+
+    -fx-text-fill:#1F4B5D;
+
+    -fx-font-weight:bold;
+
+}
+
+.table-row-cell{
+
+    -fx-background-color:white;
+
+}
+
+.table-row-cell:hover{
+
+    -fx-background-color:#F4FBFD;
+
+}
+
+.table-row-cell:selected{
+
+    -fx-background-color:#DDF7FF;
+
+}
+/* --- Run Backup DB Button --- */
+.btn-export-report {
+    -fx-background-color:  #0EA5E9; 
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 26px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(16, 185, 129, 0.2), 8, 0, 0, 3);
+}
+/* Hover လုပ်လျှင် အရောင်မပြောင်းဘဲ Size မသိမသာ ကြီးလာစေရန် */
+.btn-export-report:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+/* နှိပ်လိုက်လျှင် ခလုတ်ချိုင့်ဝင်သွားသည့် ပုံစံပြရန် */
+.btn-export-report:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(three-pass-box, rgba(16, 185, 129, 0.1), 4, 0, 0, 1);
+}
+/* DatePicker */
+
+.date-picker{
+
+    -fx-background-color:white;
+
+    -fx-background-radius:10;
+
+    -fx-border-radius:10;
+
+    -fx-border-color: #E2E8F0;
+
+    -fx-border-width:1.5;
+}
+
+/* 🗓️ DatePicker ရဲ့ ညာဘက်ခြမ်း ပြက္ခဒိန် Button အား ဘောင်နှင့် ကပ်ရပ်ညီညာစေခြင်း */
+.date-picker > .arrow-button {
+    -fx-background-color: rgba(31, 75, 93, 0.05); /* Soft Blue Tint ဖြည့်ထားသည် */
+    -fx-background-radius: 0 7 7 0; /* ညာဘက်အပေါ်အောက် ထောင့်ကွေးများကိုသာ ယူသည် */
+    -fx-border-radius: 0 7 7 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0 8 0 8;
+}
+
+/* ပြက္ခဒိန် Icon လေးကို ချိန်ညှိခြင်း */
+.date-picker > .arrow-button > .graphic {
+    -fx-background-color: #1F4B5D;
+}
+
+.date-picker:focused {
+	-fx-border-color: #00C6FF; /* Accent Cyan Line */
+		    -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.15), 8, 0, 0, 0);
+}
+.super-section-title {
+    -fx-text-fill: #10243f;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+.super-section-subtitle {
+    -fx-text-fill: #60728a;
+    -fx-font-size: 13px;
+}
+.super-page-title {
+    -fx-text-fill: #10243f;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+}
+/* ==========================================================================
+   COMBOBOX STYLING
+   ========================================================================== */
+
+/* Main ComboBox Box */
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #CBD5E1; /* Soft Gray Border */
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 4px 8px;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+/* Hover State (Mouse တင်ထားချိန်) */
+.combo-box:hover {
+    -fx-border-color: #0284C7; /* Accent Blue */
+}
+
+/* Focused State (Click နှိပ်ထားချိန်) */
+.combo-box:focused {
+    -fx-border-color: #0284C7;
+    -fx-effect: dropshadow(three-pass-box, rgba(2, 132, 199, 0.2), 6, 0, 0, 0);
+}
+
+/* ComboBox ထဲက ရွေးချယ်ထားသော စာသား (Selected Text) */
+.combo-box .list-cell {
+    -fx-text-fill: #1E293B;
+    -fx-background-color: transparent;
+    -fx-padding: 0 4px;
+}
+
+/* ညာဘက်မှ မျှားခေါင်း (Arrow Button Area) */
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 6px;
+}
+
+/* မျှားခေါင်း ပုံသဏ္ဌာန် (Arrow Icon) */
+.combo-box .arrow {
+    -fx-background-color: #64748B; /* Muted Arrow Color */
+    -fx-shape: "M7 10l5 5 5-5z";   /* Clean Dropdown Arrow */
+}
+
+.combo-box:hover .arrow {
+    -fx-background-color: #0284C7;
+}
+
+/* ==========================================================================
+   DROPDOWN POPUP MENU (နှိပ်လိုက်လျှင် ကျလာသော List Menu)
+   ========================================================================== */
+
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #E2E8F0;
+    -fx-effect: dropshadow(three-pass-box, rgba(15, 23, 42, 0.1), 12, 0, 0, 4);
+    -fx-padding: 4px;
+}
+
+/* Popup ထဲမှ Row တစ်ခုချင်းစီ (List Cell) */
+.combo-box-popup .list-cell {
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #334155;
+    -fx-font-size: 13px;
+}
+
+/* List Cell Hover (Mouse တင်လိုက်သည့် Item) */
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #0F172A;
+}
+
+/* Selected Item (ရွေးချယ်ထားသော Item) */
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #E0F2FE;
+    -fx-text-fill: #0369A1;
+    -fx-font-weight: bold;
+}
+/* StackPane Outer Card Wrapper */
+.kpi-card-pane {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(three-pass-box, rgba(15, 23, 42, 0.05), 10, 0, 0, 4);
+}
+
+/* Label 1: Title (e.g., Total Revenue) */
+.card-label-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #64748B;
+}
+
+/* Label 2: Main Big Value (e.g., $128,450) */
+.card-label-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+/* Label 3: Trend/Status Text (e.g., ↑ +12.5% vs last month) */
+.card-label-status {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #10B981; /* Green Accent */
+}
+/* ==========================================================================
+   4. CHART SECTION (LineChart & BarChart Titles)
+   ========================================================================== */
+
+.chart-title-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E293B;
+}
+
+.chart {
+    -fx-padding: 10px;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1px;
+}
+/* Base Card Properties */
+.kpi-card-gradient {
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-padding: 18px;
+    -fx-spacing: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(15, 23, 42, 0.08), 12, 0, 0, 4);
+}
+
+/* 1. Deep Midnight / Dark Slate Gradient (Executive Look) */
+.card-midnight {
+    -fx-background-color: linear-gradient(to bottom right, #0F172A, #334155);
+}
+
+/* 2. Warm Rose / Coral Sunset Gradient (Soft & Modern) */
+.card-rose {
+    -fx-background-color: linear-gradient(to bottom right, #E11D48, #FB7185);
+}
+
+/* 3. Obsidian Purple / Violet Gradient (Sleek Dark Accent) */
+.card-violet {
+    -fx-background-color: linear-gradient(to bottom right, #581C87, #8B5CF6);
+}
+
+/* 4. Slate Gold / Amber Gradient (Warm Luxury) */
+.card-gold {
+    -fx-background-color: linear-gradient(to bottom right, #B45309, #F59E0B);
+}
+
+/* ==========================================================================
+   TEXT COLORS FOR GRADIENT CARDS
+   ========================================================================== */
+
+.card-midnight .card-label-title,
+.card-rose .card-label-title,
+.card-violet .card-label-title,
+.card-gold .card-label-title {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+}
+
+.card-midnight .card-label-value,
+.card-rose .card-label-value,
+.card-violet .card-label-value,
+.card-gold .card-label-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+.card-midnight .card-label-status,
+.card-rose .card-label-status,
+.card-violet .card-label-status,
+.card-gold .card-label-status {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F1F5F9;
+}
