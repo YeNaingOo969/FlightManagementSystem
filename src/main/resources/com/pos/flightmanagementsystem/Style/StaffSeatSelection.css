@@ -1,0 +1,163 @@
+.main-content-vbox {
+    -fx-background-color: transparent;
+    -fx-padding: 20 30 20 30;
+}
+
+/* Cards */
+.header-card, .layout-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 10, 0, 0, 3);
+}
+
+.header-icon-container {
+    -fx-background-color: #e0f2fe;
+    -fx-background-radius: 10;
+    -fx-min-width: 45px;
+    -fx-min-height: 45px;
+    -fx-max-width: 45px;
+    -fx-max-height: 45px;
+    -fx-alignment: center;
+}
+
+.header-icon-glyph {
+    -fx-fill: #0ea5e9;
+    -fx-scale-X: 1.2;
+    -fx-scale-Y: 1.2;
+}
+
+.header-title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.header-subtitle-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.flight-info-text {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+/* 50/50 Left Container */
+.viewport-container {
+    -fx-background-color: transparent;
+}
+
+/* 🌟 Plane Wings 🌟 */
+.plane-wing {
+    -fx-fill: #f8fafc;
+    -fx-stroke: #cbd5e1;
+    -fx-stroke-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 10, 0, 0, 3);
+}
+
+/* Plane Fuselage (အတွင်းပိုင်းပုံစံ) */
+.fuselage {
+    -fx-background-color: white;
+    -fx-background-radius: 180 180 0 0;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 180 180 0 0;
+    -fx-border-width: 3 3 0 3;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 10, 0, 0, 3);
+}
+
+.cockpit {
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 150 150 20 20;
+}
+
+.class-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+    -fx-padding: 10 0 10 0;
+}
+
+/* Row Numbers & Seat Headers */
+.row-number-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+}
+
+.seat-header-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #64748b;
+}
+
+/* Seats */
+.seat-btn {
+    -fx-pref-width: 45px;
+    -fx-pref-height: 45px;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.seat-available {
+    -fx-background-color: #e0f2fe;
+    -fx-text-fill: #0284c7;
+    -fx-border-color: #bae6fd;
+    -fx-border-radius: 8;
+}
+
+.seat-available:hover {
+    -fx-background-color: #bae6fd;
+}
+
+.seat-selected {
+    -fx-background-color: #22c55e;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(34, 197, 94, 0.4), 8, 0, 0, 2);
+}
+
+.seat-booked {
+    -fx-background-color: #cbd5e1;
+    -fx-text-fill: #64748b;
+    -fx-cursor: default;
+}
+
+/* Legends */
+.legend-available { -fx-background-color: #e0f2fe; -fx-background-radius: 4; -fx-border-color: #bae6fd; -fx-border-radius: 4;}
+.legend-selected { -fx-background-color: #22c55e; -fx-background-radius: 4;}
+.legend-booked { -fx-background-color: #cbd5e1; -fx-background-radius: 4;}
+
+/* Summary Card */
+.summary-card {
+    -fx-padding: 30;
+}
+
+.selected-seat-box {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 12;
+    -fx-padding: 25;
+}
+
+.selected-seat-large {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0ea5e9;
+}
+
+.summary-label { -fx-font-size: 15px; -fx-text-fill: #64748b; }
+.summary-value { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0f172a; }
+.summary-total-label { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0f172a; }
+.summary-total-value { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #0ea5e9; }
+
+/* Buttons */
+.secondary-button {
+    -fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-background-radius: 8; -fx-font-size: 15px; -fx-font-weight: bold; -fx-pref-height: 48px; -fx-cursor: hand;
+}
+.secondary-button:hover { -fx-background-color: #e2e8f0; }
+
+.gradient-button {
+    -fx-background-radius: 8; -fx-background-color: linear-gradient(to right, #0ea5e9, #0284c7); -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-pref-height: 48px; -fx-cursor: hand;
+}

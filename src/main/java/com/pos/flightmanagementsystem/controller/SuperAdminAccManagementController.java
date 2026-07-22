@@ -302,7 +302,7 @@ public class SuperAdminAccManagementController implements Initializable {
     @FXML
     void openCreateUser(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/CreateUser.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminCreateUser.fxml"));
             Parent createUserRoot = loader.load();
 
             SuperAdminCreateUserController createUserController = loader.getController();
