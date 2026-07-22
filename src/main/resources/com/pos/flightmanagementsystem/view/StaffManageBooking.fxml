@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+<VBox spacing="15.0" styleClass="root-layout" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffManageBooking.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" >
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" styleClass="header-card">
+        <children>
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <children>
+                    <!-- Offline Vector Icon Badge (Manage Booking Icon) -->
+                    <StackPane styleClass="icon-badge">
+                        <children>
+                            <SVGPath content="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="#FFFFFF" scaleX="0.9" scaleY="0.9" />
+                        </children>
+                    </StackPane>
+                    <Label styleClass="main-title" text="Manage Booking" />
+                </children>
+            </HBox>
+        </children>
+    </HBox>
+
+    <!-- Content Section -->
+    <VBox spacing="15.0" styleClass="content-card" VBox.vgrow="ALWAYS">
+        <children>
+            <!-- Tab Options -->
+            <HBox spacing="30.0" styleClass="tab-container">
+                <children>
+                    <Label styleClass="tab-label, active-tab" text="All Bookings" />
+                    <Label styleClass="tab-label" text="Completed" />
+                    <Label styleClass="tab-label" text="Cancelled" />
+                </children>
+            </HBox>
+
+            <!-- Table -->
+            <TableView fx:id="bookingTable" VBox.vgrow="ALWAYS" styleClass="booking-table">
+                <columns>
+                    <TableColumn fx:id="colBookingId" prefWidth="120.0" text="Booking ID" />
+                    <TableColumn fx:id="colPassenger" prefWidth="180.0" text="Passenger" />
+                    <TableColumn fx:id="colRoute" prefWidth="120.0" text="Route" />
+                    <TableColumn fx:id="colDate" prefWidth="120.0" text="Date" />
+                    <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+        </children>
+    </VBox>
+</VBox>
