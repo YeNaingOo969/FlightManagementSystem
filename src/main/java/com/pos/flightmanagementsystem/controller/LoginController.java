@@ -89,8 +89,8 @@ public class LoginController implements Initializable {
     @FXML private Label statusLabel;
 
     private String generatedOTP = "";
-    private final String senderEmail = "luuarr344@gmail.com";
-    private final String senderPassword = "ifwo vnqq vmok ayan";
+    private final String senderEmail = "soethihapaing123@gmail.com";
+    private final String senderPassword = "dlkv vtlo zrhm hnmj";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
