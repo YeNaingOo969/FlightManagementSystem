@@ -6,154 +6,179 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
+<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/adminReport.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="816.0" prefWidth="1145.0" stylesheets="@../CssFile/adminReport.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox layoutX="14.0" layoutY="8.0" prefHeight="683.0" prefWidth="1118.0">
-         <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" VBox.vgrow="ALWAYS">
+   <BorderPane prefHeight="816.0" prefWidth="1200.0">
+      <center>
+         <VBox spacing="20.0" BorderPane.alignment="CENTER">
+            <padding>
+               <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+            </padding>
+
+            <!-- 🌟 ၁။ Header & Filters Card -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="super-topbar">
                <children>
-                  <VBox prefHeight="95.0" prefWidth="422.0">
+                  <StackPane styleClass="super-brand-logo">
+                     <children>
+                        <SVGPath content="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" styleClass="super-brand-logo-glyph"/>
+                     </children>
+                  </StackPane>
+
+                  <VBox alignment="CENTER_LEFT">
                      <children>
                         <Label styleClass="super-page-title" text="Report &amp; Executive Analytics" />
-                        <Label prefHeight="19.0" prefWidth="378.0" styleClass="super-section-subtitle" text="Real-time operational performance and revenue metrics." />
+                        <Label styleClass="super-section-subtitle" text="Detailed operational performance and staff revenue metrics." />
                      </children>
                   </VBox>
-                  <Region prefHeight="110.0" prefWidth="62.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="230.0" spacing="20.0">
+
+                  <Region HBox.hgrow="ALWAYS" />
+
+                  <!-- Date Filters -->
+                  <HBox alignment="CENTER" spacing="15.0">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                        <VBox spacing="5.0">
                            <children>
                               <Label styleClass="filter-label" text="From Date" />
-                              <DatePicker styleClass="date-picker" />
+                              <DatePicker fx:id="dpFromDate" promptText="Start Date" styleClass="date-picker" />
                            </children>
                         </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                        <VBox spacing="5.0">
                            <children>
                               <Label styleClass="filter-label" text="To Date" />
-                              <DatePicker styleClass="date-picker" />
+                              <DatePicker fx:id="dpToDate" promptText="End Date" styleClass="date-picker" />
                            </children>
                         </VBox>
                      </children>
-                     <HBox.margin>
-                        <Insets top="10.0" />
-                     </HBox.margin>
                   </HBox>
-                  <ComboBox prefWidth="150.0" styleClass="combo-box" />
-                  <Button mnemonicParsing="false" styleClass="btn-export-report" text="Export Report" HBox.hgrow="ALWAYS" />
+
+                  <!-- Export Button -->
+                  <Button fx:id="btnExport" mnemonicParsing="false" styleClass="btn-primary" text="Export Report">
+                     <graphic>
+                        <SVGPath content="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="white" />
+                     </graphic>
+                  </Button>
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" styleClass="kpi-card-gradient" VBox.vgrow="ALWAYS">
+
+            <!-- 🌟 ၂။ KPI Summary Cards (4 ခု) -->
+            <HBox spacing="20.0" VBox.vgrow="NEVER">
                <children>
-                  <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="kpi-card-pane" HBox.hgrow="ALWAYS">
+                  <!-- Total Revenue -->
+                  <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label styleClass="card-label-title" text="Label" />
-                              <Label styleClass="card-label-value" text="Label" />
-                              <Label styleClass="card-label-status" text="Label" />
-                           </children>
-                        </VBox>
+                        <Label styleClass="kpi-title" text="Total Revenue" />
+                        <!-- 🌟 ဤနေရာတွင် \$ ဖြင့် ပြင်ဆင်ထားပါသည် -->
+                        <Label styleClass="kpi-value" text="\$124,500.00" />
+                        <Label styleClass="kpi-status-up" text="+12% from last month" />
                      </children>
-                  </StackPane>
-                  <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="kpi-card-pane" HBox.hgrow="ALWAYS">
+                  </VBox>
+                  <!-- Total Tickets Sold -->
+                  <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label styleClass="card-label-title" text="Label" />
-                              <Label styleClass="card-label-value" text="Label" />
-                              <Label styleClass="card-label-status" text="Label" />
-                           </children>
-                        </VBox>
+                        <Label styleClass="kpi-title" text="Total Tickets Sold" />
+                        <Label styleClass="kpi-value" text="1,245" />
+                        <Label styleClass="kpi-status-up" text="+5% from last month" />
                      </children>
-                  </StackPane>
-                  <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="kpi-card-pane" HBox.hgrow="ALWAYS">
+                  </VBox>
+                  <!-- Top Flight -->
+                  <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label styleClass="card-label-title" text="Label" />
-                              <Label styleClass="card-label-value" text="Label" />
-                              <Label styleClass="card-label-status" text="Label" />
-                           </children>
-                        </VBox>
+                        <Label styleClass="kpi-title" text="Top Selling Flight" />
+                        <Label styleClass="kpi-value" text="YGN - MDL (FL-101)" />
+                        <Label styleClass="kpi-status-neutral" text="Consistent Performer" />
                      </children>
-                  </StackPane>
-                  <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="kpi-card-pane" HBox.hgrow="ALWAYS">
+                  </VBox>
+                  <!-- Top Staff -->
+                  <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label styleClass="card-label-title" text="Label" />
-                              <Label styleClass="card-label-value" text="Label" />
-                              <Label styleClass="card-label-status" text="Label" />
-                           </children>
-                        </VBox>
+                        <Label styleClass="kpi-title" text="Top Performing Staff" />
+                        <Label styleClass="kpi-value" text="Alice Johnson" />
+                        <!-- 🌟 ဤနေရာတွင် \$ ဖြင့် ပြင်ဆင်ထားပါသည် -->
+                        <Label styleClass="kpi-status-up" text="\$45,200 generated" />
                      </children>
-                  </StackPane>
+                  </VBox>
                </children>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" VBox.vgrow="ALWAYS">
+
+            <!-- 🌟 ၃။ Charts Section -->
+            <HBox spacing="20.0" VBox.vgrow="ALWAYS">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox spacing="10.0" styleClass="super-topbar" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label styleClass="chart-title-label" text="Revenue &amp; Sales Trend over Time">
-                           <padding>
-                              <Insets top="20.0" />
-                           </padding>
-                        </Label>
-                        <LineChart>
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
+                        <Label styleClass="super-section-title" text="Revenue &amp; Sales Trend" />
+                        <LineChart fx:id="revenueChart" VBox.vgrow="ALWAYS">
+                           <xAxis>
+                              <CategoryAxis side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis side="LEFT" />
+                           </yAxis>
                         </LineChart>
                      </children>
                   </VBox>
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+
+                  <VBox spacing="10.0" styleClass="super-topbar" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label styleClass="chart-title-label" text="Flight Status Distribution">
-                           <padding>
-                              <Insets top="20.0" />
-                           </padding>
-                        </Label>
-                        <PieChart />
+                        <Label styleClass="super-section-title" text="Sales by Staff (Distribution)" />
+                        <PieChart fx:id="staffPieChart" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" VBox.vgrow="ALWAYS">
+
+            <!-- 🌟 ၄။ Detailed Breakdown Tables (Flight & Staff Side-by-Side) -->
+            <HBox spacing="20.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label styleClass="super-section-title" text="Detailed Transcation &amp; Flight Log">
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </Label>
-                  <TableView prefHeight="200.0" prefWidth="200.0" styleClass="super-table">
-                    <columns>
-                      <TableColumn prefWidth="75.0" text="Flight No." />
-                      <TableColumn prefWidth="75.0" text="Route" />
-                        <TableColumn prefWidth="75.0" text="Booked" />
-                        <TableColumn prefWidth="75.0" text="Total Revenue" />
-                    </columns>
-                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                     </columnResizePolicy>
-                  </TableView>
+                  <!-- Flight Sales Table -->
+                  <VBox spacing="10.0" styleClass="super-topbar" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="super-section-title" text="Flight Sales Breakdown" />
+                        <TableView fx:id="flightSalesTable" styleClass="super-table" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn prefWidth="90.0" text="Flight No." />
+                              <TableColumn prefWidth="120.0" text="Route" />
+                              <TableColumn prefWidth="100.0" text="Tickets Sold" />
+                              <TableColumn prefWidth="120.0" text="Total Revenue" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </VBox>
+
+                  <!-- Staff Sales Table -->
+                  <VBox spacing="10.0" styleClass="super-topbar" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="super-section-title" text="Staff Sales Breakdown" />
+                        <TableView fx:id="staffSalesTable" styleClass="super-table" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn prefWidth="120.0" text="Staff Name" />
+                              <TableColumn prefWidth="90.0" text="Role" />
+                              <TableColumn prefWidth="100.0" text="Tickets Sold" />
+                              <TableColumn prefWidth="120.0" text="Revenue Gen." />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
-         </children>
-      </VBox>
-   </children>
-</AnchorPane>
+            </HBox>
+
+         </VBox>
+      </center>
+   </BorderPane>
+</StackPane>

@@ -141,3 +141,61 @@
     -fx-font-size: 28px;
     -fx-font-weight: bold;
 }
+
+/* Search Bar အတွက် */
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8px;
+    -fx-padding: 8px 12px;
+}
+
+/* ==========================================================
+   PRIMARY BUTTON (+ Add Flight / + Add New City)
+========================================================== */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
+    -fx-background-radius: 8px;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(49,136,149,0.20), 14, 0.16, 0, 5);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #22D3EE, #0EA5E9);
+    -fx-effect: dropshadow(three-pass-box, rgba(34, 211, 238, 0.4), 10, 0, 0, 3);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: linear-gradient(to bottom right, #0369A1, #075985);
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
+}
+
+/* ==========================================================
+   SECONDARY BUTTON (Cancel / Other Actions)
+========================================================== */
+.btn-secondary {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #1E293B;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #CBD5E1;
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+}

@@ -13,265 +13,268 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<!-- 🌟 အကျယ်ကို 1280 သို့ တိုးထားပါသည် 🌟 -->
-<VBox prefHeight="760.0" prefWidth="1280.0" spacing="20.0" styleClass="main-content-vbox" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffSeatSelection.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffSeatSelectionController">
+<!-- 🌟 အပြင်ဆုံးကို StackPane ဖြင့် အုပ်ထားပါသည် (Modal တက်လာရန်အတွက်) 🌟 -->
+<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffSeatSelection.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffSeatSelectionController">
     <children>
 
-        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="header-card">
-            <padding><Insets bottom="15.0" left="25.0" right="25.0" top="15.0" /></padding>
-            <children>
-                <StackPane styleClass="header-icon-container">
-                    <SVGPath content="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" styleClass="header-icon-glyph" />
-                </StackPane>
-                <VBox alignment="CENTER_LEFT">
-                    <Label styleClass="header-title-label" text="Seat Selection" />
-                    <Label styleClass="header-subtitle-label" text="Choose your preferred seat and flight class" />
-                </VBox>
-            </children>
-        </HBox>
-
-        <HBox alignment="CENTER_LEFT" spacing="25.0" styleClass="layout-card">
-            <padding><Insets bottom="15.0" left="25.0" right="25.0" top="15.0" /></padding>
-            <children>
-                <Label styleClass="flight-info-text" text="Flight: MM101" />
-                <Label styleClass="flight-info-text" text="Yangon ➜ Bangkok" />
-                <Label styleClass="flight-info-text" text="Date: 25 Aug 2026" />
-                <Label styleClass="flight-info-text" text="Time: 08:00 AM" />
-                <Region HBox.hgrow="ALWAYS" />
-                <ComboBox fx:id="classComboBox" prefWidth="180.0" promptText="Select Class" styleClass="custom-combo-box" />
-            </children>
-        </HBox>
-
-        <HBox alignment="CENTER" spacing="30.0">
-            <children>
-                <HBox alignment="CENTER" spacing="8.0">
-                    <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-available" />
-                    <Label text="Available" />
-                </HBox>
-                <HBox alignment="CENTER" spacing="8.0">
-                    <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-selected" />
-                    <Label text="Selected" />
-                </HBox>
-                <HBox alignment="CENTER" spacing="8.0">
-                    <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-booked" />
-                    <Label text="Booked" />
-                </HBox>
-            </children>
-        </HBox>
-
-        <!-- 🌟 Main Workspace 🌟 -->
-        <HBox spacing="30.0" VBox.vgrow="ALWAYS">
+        <!-- 🌟 လက်ရှိ Page ၏ အဓိက Container 🌟 -->
+        <VBox fx:id="mainContainer" prefHeight="760.0" prefWidth="1280.0" spacing="20.0" styleClass="main-content-vbox">
             <children>
 
-                <!-- 🌟 LEFT SIDE: ANIMATION VIEWPORT (အတောင်ပံကြီးရန် အကျယ်ချဲ့ထားပါသည်) 🌟 -->
-                <VBox alignment="CENTER" prefWidth="780.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="viewport-container">
-                    <Pane fx:id="viewportPane" prefHeight="600.0" prefWidth="780.0" maxWidth="780.0" VBox.vgrow="ALWAYS">
-
-                        <VBox fx:id="sideViewPlane" alignment="CENTER" prefHeight="600.0" prefWidth="780.0" layoutY="0.0">
-                            <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#94a3b8" scaleX="8.0" scaleY="8.0" />
-                            <Label style="-fx-padding: 80 0 0 0; -fx-text-fill: #94a3b8; -fx-font-weight: bold;" text="Select a class to view interior" />
+                <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="header-card">
+                    <padding><Insets bottom="15.0" left="25.0" right="25.0" top="15.0" /></padding>
+                    <children>
+                        <StackPane styleClass="header-icon-container">
+                            <SVGPath content="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" styleClass="header-icon-glyph" />
+                        </StackPane>
+                        <VBox alignment="CENTER_LEFT">
+                            <Label styleClass="header-title-label" text="Seat Selection" />
+                            <Label styleClass="header-subtitle-label" text="Choose your preferred seat and flight class" />
                         </VBox>
+                    </children>
+                </HBox>
 
-                        <StackPane fx:id="topViewPlane" alignment="TOP_CENTER" opacity="0.0" prefWidth="780.0">
+                <HBox alignment="CENTER_LEFT" spacing="25.0" styleClass="layout-card">
+                    <padding><Insets bottom="15.0" left="25.0" right="25.0" top="15.0" /></padding>
+                    <children>
+                        <Label styleClass="flight-info-text" text="Flight: MM101" />
+                        <Label styleClass="flight-info-text" text="Yangon ➜ Bangkok" />
+                        <Label styleClass="flight-info-text" text="Date: 25 Aug 2026" />
+                        <Label styleClass="flight-info-text" text="Time: 08:00 AM" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="classComboBox" prefWidth="220.0" promptText="Select Class" styleClass="custom-combo-box" />
+                    </children>
+                </HBox>
 
-                            <!-- 🌟 ဘယ်ဘက် အတောင်ပံအကြီး (Left Wing) 🌟 -->
-                            <SVGPath content="M 200 0 L 0 250 L 0 290 L 200 120 Z" styleClass="plane-wing" StackPane.alignment="TOP_LEFT" translateY="520" />
+                <HBox alignment="CENTER" spacing="30.0">
+                    <children>
+                        <HBox alignment="CENTER" spacing="8.0">
+                            <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-available" />
+                            <Label text="Available" />
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="8.0">
+                            <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-selected" />
+                            <Label text="Selected" />
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="8.0">
+                            <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-booked" />
+                            <Label text="Booked" />
+                        </HBox>
+                    </children>
+                </HBox>
 
-                            <!-- 🌟 ညာဘက် အတောင်ပံအကြီး (Right Wing) 🌟 -->
-                            <SVGPath content="M 0 0 L 200 250 L 200 290 L 0 120 Z" styleClass="plane-wing" StackPane.alignment="TOP_RIGHT" translateY="520" />
+                <!-- 🌟 Main Workspace 🌟 -->
+                <HBox spacing="30.0" VBox.vgrow="ALWAYS">
+                    <children>
 
-                            <VBox alignment="TOP_CENTER" prefWidth="380.0" maxWidth="380.0" spacing="15.0" styleClass="fuselage">
-                                <padding><Insets bottom="60.0" top="20.0" /></padding>
+                        <!-- 🌟 LEFT SIDE: ANIMATION VIEWPORT 🌟 -->
+                        <VBox alignment="CENTER" prefWidth="780.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="viewport-container">
+                            <Pane fx:id="viewportPane" prefHeight="600.0" prefWidth="780.0" maxWidth="780.0" VBox.vgrow="ALWAYS">
 
-                                <VBox alignment="CENTER" prefHeight="60.0" prefWidth="160.0" maxWidth="160.0" styleClass="cockpit">
-                                    <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="PILOT COCKPIT" />
+                                <VBox fx:id="sideViewPlane" alignment="CENTER" prefHeight="600.0" prefWidth="780.0" layoutY="0.0">
+                                    <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#94a3b8" scaleX="8.0" scaleY="8.0" />
+                                    <Label style="-fx-padding: 80 0 0 0; -fx-text-fill: #94a3b8; -fx-font-weight: bold;" text="Select a class to view interior" />
                                 </VBox>
 
-                                <!-- Column Headers (A, B, C, D) -->
-                                <HBox alignment="CENTER" spacing="15.0">
-                                    <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="A" />
-                                    <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="B" />
-                                    <Region prefWidth="40.0" /> <!-- AISLE SPACE -->
-                                    <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="C" />
-                                    <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="D" />
+                                <StackPane fx:id="topViewPlane" alignment="TOP_CENTER" opacity="0.0" prefWidth="780.0">
+
+                                    <SVGPath content="M 200 0 L 0 250 L 0 290 L 200 120 Z" styleClass="plane-wing" StackPane.alignment="TOP_LEFT" translateY="520" />
+                                    <SVGPath content="M 0 0 L 200 250 L 200 290 L 0 120 Z" styleClass="plane-wing" StackPane.alignment="TOP_RIGHT" translateY="520" />
+
+                                    <VBox alignment="TOP_CENTER" prefWidth="380.0" maxWidth="380.0" spacing="15.0" styleClass="fuselage">
+                                        <padding><Insets bottom="60.0" top="20.0" /></padding>
+
+                                        <VBox alignment="CENTER" prefHeight="60.0" prefWidth="160.0" maxWidth="160.0" styleClass="cockpit">
+                                            <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="PILOT COCKPIT" />
+                                        </VBox>
+
+                                        <HBox alignment="CENTER" spacing="15.0">
+                                            <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="A" />
+                                            <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="B" />
+                                            <Region prefWidth="40.0" /> <!-- AISLE SPACE -->
+                                            <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="C" />
+                                            <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="D" />
+                                        </HBox>
+
+                                        <!-- Business Class -->
+                                        <VBox fx:id="businessSection" alignment="CENTER" spacing="15.0">
+                                            <Label styleClass="class-title" text="Business Class" />
+                                            <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1B" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="1" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1C" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="1D" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2A" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2B" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2C" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2D" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3A" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3B" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="3" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3C" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3D" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4A" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4B" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="4" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4C" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4D" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5A" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5B" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="5" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="5C" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5D" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6A" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="6B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6C" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6D" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                                            </GridPane>
+                                        </VBox>
+
+                                        <!-- Premium Economic -->
+                                        <VBox fx:id="premiumSection" alignment="CENTER" spacing="15.0">
+                                            <Separator style="-fx-padding: 10 30;" />
+                                            <Label styleClass="class-title" text="Premium Economic" />
+                                            <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1B" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="1" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1C" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1D" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2A" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2B" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2C" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2D" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3A" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3B" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="3" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3C" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3D" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4A" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4B" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="4" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4C" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4D" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5A" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5B" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="5" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="5C" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5D" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6A" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6C" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6D" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                                            </GridPane>
+                                        </VBox>
+
+                                        <!-- Economic -->
+                                        <VBox fx:id="economySection" alignment="CENTER" spacing="15.0">
+                                            <Separator style="-fx-padding: 10 30;" />
+                                            <Label styleClass="class-title" text="Economic" />
+                                            <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1B" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="1" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1C" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1D" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2A" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2B" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2C" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2D" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3A" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3B" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="3" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3C" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3D" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4A" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4B" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="4" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4C" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4D" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5A" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5B" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="5" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="5C" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5D" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6A" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="6B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6C" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                                <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6D" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                                            </GridPane>
+                                        </VBox>
+
+                                    </VBox>
+                                </StackPane>
+                            </Pane>
+                        </VBox>
+
+                        <!-- RIGHT SIDE: Summary Card -->
+                        <VBox prefWidth="500.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" spacing="20.0">
+                            <VBox spacing="20.0" styleClass="layout-card, summary-card" VBox.vgrow="ALWAYS">
+                                <Label styleClass="section-title" text="Selected Seat" />
+
+                                <VBox alignment="CENTER" styleClass="selected-seat-box">
+                                    <Label fx:id="lblSelectedSeat" styleClass="selected-seat-large" text="--" />
+                                </VBox>
+
+                                <Separator style="-fx-padding: 10 0;" />
+
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="summary-label" text="Passenger" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="summary-value" text="John Doe" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="summary-label" text="Ticket Price" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label styleClass="summary-value" text="\$120.00" />
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="summary-label" text="Seat Charge" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblSeatCharge" styleClass="summary-value" text="\$0.00" />
                                 </HBox>
 
-                                <!-- Business Class -->
-                                <VBox fx:id="businessSection" alignment="CENTER" spacing="15.0">
-                                    <Label styleClass="class-title" text="Business Class" />
-                                    <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1B" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="1" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1C" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="1D" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                <Separator style="-fx-padding: 10 0;" />
 
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2A" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2B" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2C" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2D" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3A" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3B" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="3" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3C" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3D" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4A" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4B" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="4" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4C" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4D" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5A" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5B" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="5" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="5C" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5D" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6A" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="6B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6C" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6D" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-                                    </GridPane>
-                                </VBox>
-
-                                <!-- Premium Economic -->
-                                <VBox fx:id="premiumSection" alignment="CENTER" spacing="15.0">
-                                    <Separator style="-fx-padding: 10 30;" />
-                                    <Label styleClass="class-title" text="Premium Economic" />
-                                    <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1B" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="1" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1C" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1D" GridPane.columnIndex="4" GridPane.rowIndex="0" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2A" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2B" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2C" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2D" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3A" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3B" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="3" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3C" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3D" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4A" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4B" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="4" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4C" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4D" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5A" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5B" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="5" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="5C" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5D" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6A" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6C" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6D" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-                                    </GridPane>
-                                </VBox>
-
-                                <!-- Economic -->
-                                <VBox fx:id="economySection" alignment="CENTER" spacing="15.0">
-                                    <Separator style="-fx-padding: 10 30;" />
-                                    <Label styleClass="class-title" text="Economic" />
-                                    <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1B" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="1" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1C" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1D" GridPane.columnIndex="4" GridPane.rowIndex="0" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="2A" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2B" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="2" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2C" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="2D" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3A" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3B" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="3" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3C" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="3D" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4A" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="4B" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="4" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4C" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="4D" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5A" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5B" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="5" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="5C" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="5D" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6A" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-booked" text="6B" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                        <Label prefWidth="40.0" alignment="CENTER" styleClass="row-number-label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6C" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                                        <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="6D" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-                                    </GridPane>
-                                </VBox>
-
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="summary-total-label" text="Total Price" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="lblTotal" styleClass="summary-total-value" text="\$120.00" />
+                                </HBox>
                             </VBox>
-                        </StackPane>
-                    </Pane>
-                </VBox>
 
-                <!-- RIGHT SIDE: Summary Card -->
-                <VBox prefWidth="500.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" spacing="20.0">
-                    <VBox spacing="20.0" styleClass="layout-card, summary-card" VBox.vgrow="ALWAYS">
-                        <Label styleClass="section-title" text="Selected Seat" />
-
-                        <VBox alignment="CENTER" styleClass="selected-seat-box">
-                            <Label fx:id="lblSelectedSeat" styleClass="selected-seat-large" text="--" />
+                            <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                                <Button prefWidth="120.0" styleClass="secondary-button" text="Back" />
+                                <!-- 🌟 ဤ Continue ခလုတ်တွင် onAction လှမ်းခေါ်ထားပါသည် 🌟 -->
+                                <Button onAction="#clickContinue" prefWidth="150.0" styleClass="gradient-button" text="Continue" />
+                            </HBox>
                         </VBox>
 
-                        <Separator style="-fx-padding: 10 0;" />
-
-                        <HBox alignment="CENTER_LEFT">
-                            <Label styleClass="summary-label" text="Passenger" />
-                            <Region HBox.hgrow="ALWAYS" />
-                            <Label styleClass="summary-value" text="John Doe" />
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT">
-                            <Label styleClass="summary-label" text="Ticket Price" />
-                            <Region HBox.hgrow="ALWAYS" />
-                            <Label styleClass="summary-value" text="\$120.00" />
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT">
-                            <Label styleClass="summary-label" text="Seat Charge" />
-                            <Region HBox.hgrow="ALWAYS" />
-                            <Label fx:id="lblSeatCharge" styleClass="summary-value" text="\$0.00" />
-                        </HBox>
-
-                        <Separator style="-fx-padding: 10 0;" />
-
-                        <HBox alignment="CENTER_LEFT">
-                            <Label styleClass="summary-total-label" text="Total Price" />
-                            <Region HBox.hgrow="ALWAYS" />
-                            <Label fx:id="lblTotal" styleClass="summary-total-value" text="\$120.00" />
-                        </HBox>
-                    </VBox>
-
-                    <HBox alignment="CENTER_RIGHT" spacing="15.0">
-                        <Button prefWidth="120.0" styleClass="secondary-button" text="Back" />
-                        <Button prefWidth="150.0" styleClass="gradient-button" text="Continue" />
-                    </HBox>
-                </VBox>
-
+                    </children>
+                </HBox>
             </children>
-        </HBox>
+        </VBox>
     </children>
-</VBox>
+</StackPane>

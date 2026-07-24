@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane prefHeight="775.0" prefWidth="1589.0" styleClass="super-dashboard-root" stylesheets="@../CssFile/adminDashboard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AdminDashboardController">
+<BorderPane prefHeight="775.0" prefWidth="1589.0" styleClass="super-dashboard-root" stylesheets="@/com/pos/flightmanagementsystem/Style/staffDashboard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" >
    <left>
       <VBox prefWidth="262.0" spacing="22.0" styleClass="super-sidebar" BorderPane.alignment="CENTER">
          <children>
@@ -33,7 +33,7 @@
             </HBox>
             <VBox spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#clickDashboard" styleClass="super-nav-button-active" text="Dashboard">
+                  <Button fx:id="btnDashboard" mnemonicParsing="false"  styleClass="super-nav-button-active" text="Dashboard">
                      <graphic>
                         <StackPane styleClass="super-nav-icon">
                            <children>
@@ -42,7 +42,7 @@
                         </StackPane>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnFlightSchedule" mnemonicParsing="false" onAction="#clickFlightSchedule" styleClass="super-nav-button" text="Flight Schedule">
+                  <Button fx:id="btnFlightSchedule" mnemonicParsing="false"  styleClass="super-nav-button" text="Flight Schedule">
                      <graphic>
                         <StackPane styleClass="super-nav-icon">
                            <children>
@@ -51,7 +51,7 @@
                         </StackPane>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnBookingManagement" mnemonicParsing="false" onAction="#clickBookingManagement" styleClass="super-nav-button" text="Booking Management">
+                  <Button fx:id="btnBookingManagement" mnemonicParsing="false"  styleClass="super-nav-button" text="Booking Management">
                      <graphic>
                         <StackPane styleClass="super-nav-icon">
                            <children>
@@ -60,7 +60,7 @@
                         </StackPane>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnPendingList" mnemonicParsing="false" onAction="#clickPendingList" styleClass="super-nav-button" text="Pending List">
+                  <Button fx:id="btnPendingList" mnemonicParsing="false"  styleClass="super-nav-button" text="Pending List">
                      <graphic>
                         <StackPane styleClass="super-nav-icon">
                            <children>
@@ -69,7 +69,7 @@
                         </StackPane>
                      </graphic>
                   </Button>
-                  <Button fx:id="btnReport" mnemonicParsing="false" onAction="#clickReport" styleClass="super-nav-button" text="Reports &amp; Analytics">
+                  <Button fx:id="btnReport" mnemonicParsing="false" styleClass="super-nav-button" text="Reports &amp; Analytics">
                      <graphic>
                         <StackPane styleClass="super-nav-icon">
                            <children>
@@ -80,7 +80,7 @@
                   </Button>
                </children>
             </VBox>
-            <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#clickLogout" styleClass="super-logout-button" text="Log Out">
+            <Button fx:id="btnLogout" mnemonicParsing="false" styleClass="super-logout-button" text="Log Out">
                <graphic>
                   <StackPane styleClass="super-nav-icon">
                      <children>

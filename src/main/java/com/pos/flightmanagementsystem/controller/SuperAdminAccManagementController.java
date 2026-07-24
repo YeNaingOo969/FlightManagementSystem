@@ -93,6 +93,7 @@ public class SuperAdminAccManagementController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             if (colUsername != null) {
+                // Ensure the PropertyValueFactory names match the properties in the new User model
                 colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
                 colPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
                 colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
@@ -180,7 +181,8 @@ public class SuperAdminAccManagementController implements Initializable {
     public void loadUserData(String keyword, String roleFilter) {
         userList.clear();
 
-        StringBuilder query = new StringBuilder("SELECT user_id, username, password, email, role, image_path, created_at FROM users WHERE 1=1");
+        // The query is updated to select 'status' as required by the new constructor
+        StringBuilder query = new StringBuilder("SELECT user_id, username, email, password, role, status, image_path, created_at FROM users WHERE 1=1");
 
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         boolean hasRole = roleFilter != null && !roleFilter.equals("All") && !roleFilter.trim().isEmpty();
@@ -207,15 +209,17 @@ public class SuperAdminAccManagementController implements Initializable {
                 while (rs.next()) {
                     int userId = rs.getInt("user_id");
                     String username = rs.getString("username");
-                    String password = rs.getString("password");
                     String email = rs.getString("email");
+                    String password = rs.getString("password");
                     String role = rs.getString("role");
+                    String status = rs.getString("status");
                     String imagePath = rs.getString("image_path");
 
                     java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
                     LocalDateTime createdAt = (timestamp != null) ? timestamp.toLocalDateTime() : null;
 
-                    userList.add(new User(userId, username, password, email, role, imagePath, createdAt));
+                    // The User instantiation now matches the new User model constructor
+                    userList.add(new User(userId, username, email, password, role, status, imagePath, createdAt));
                 }
             }
 

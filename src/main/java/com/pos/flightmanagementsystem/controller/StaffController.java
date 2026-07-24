@@ -43,8 +43,14 @@ public class StaffController implements Initializable {
     @FXML private SVGPath iconViewSchedule;
     @FXML private SVGPath iconLogout;
 
+    // 🌟 Button များကို Array ထဲထည့်ထားမည် (Active State ပြောင်းရန်)
+    private Button[] navButtons;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 🌟 Button အားလုံးကို Array ထဲ စုထည့်ပါမည် (Logout မပါပါ)
+        navButtons = new Button[]{btnDashboard, btnProfile, btnCreateBooking, btnManageBooking, btnViewSchedule};
+
         // 🌟 1. Sidebar ဘယ်ဘက်မှ ဝင်လာမည့် Entrance Animation
         if (sidebar != null) {
             sidebar.setTranslateX(-300);
@@ -54,8 +60,9 @@ public class StaffController implements Initializable {
             slideIn.play();
         }
 
-        // 🌟 2. Default အနေဖြင့် StaffProfile.fxml ကို Center တွင် ပြသခြင်း
-        loadCenterView("/com/pos/flightmanagementsystem/view/StaffProfile.fxml");
+        // 🌟 2. စစချင်း Dashboard ကို Default Active အရောင်တင်ထားပါမည်
+        setActiveButton(btnDashboard);
+        loadCenterView("/com/pos/flightmanagementsystem/view/StaffDashboard.fxml");
 
         // 🌟 3. Icon Hover Animations များ ချိတ်ဆက်ခြင်း
         setupIconHoverAnimation(btnDashboard, iconDashboard);
@@ -67,22 +74,63 @@ public class StaffController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 DYNAMIC VIEW LOADER (ညာဘက်မှ ဝင်လာမည့် Animation ဖြင့်)
+    // 🌟 ACTIVE BUTTON ပြောင်းပေးမည့် HELPER METHOD
+    // ==========================================
+    private void setActiveButton(Button clickedButton) {
+        // ၁။ Button အားလုံးဆီမှ active class ကို ဖြုတ်ပါမည်
+        for (Button btn : navButtons) {
+            if (btn != null) {
+                btn.getStyleClass().remove("super-nav-button-active");
+            }
+        }
+        // ၂။ နှိပ်လိုက်သော Button ကိုသာ active class ပြန်ထည့်ပါမည်
+        if (clickedButton != null && !clickedButton.getStyleClass().contains("super-nav-button-active")) {
+            clickedButton.getStyleClass().add("super-nav-button-active");
+        }
+    }
+
+    // ==========================================
+    // 🌟 DYNAMIC VIEW LOADER (လက်ရှိ Page ထွက်သွားပြီးမှ အသစ်ဝင်လာမည့် Animation)
     // ==========================================
     private void loadCenterView(String fxmlPath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent view = loader.load();
+            Parent newView = loader.load();
 
-            // ညာဘက်မှ Center သို့ ဝင်လာမည့် Animation
-            view.setTranslateX(800);
-            TranslateTransition rightIn = new TranslateTransition(Duration.millis(800), view);
-            rightIn.setToX(0);
-            rightIn.setInterpolator(Interpolator.EASE_OUT);
-            rightIn.play();
+            // အသစ်ဝင်လာမည့် page ကို ညာဘက်အစွန် (X = 800) တွင် ကြိုထားပါမည်
+            newView.setTranslateX(800);
 
-            // BorderPane ၏ Center တွင် နေရာချခြင်း
-            rootPane.setCenter(view);
+            // လက်ရှိ Center တွင် ပြနေသော View ကို ယူပါမည်
+            Node currentView = rootPane.getCenter();
+
+            if (currentView != null) {
+                // 🌟 ၁။ လက်ရှိ Page ကို ထွက်သွားစေမည့် Animation (Slide Out)
+                TranslateTransition slideOut = new TranslateTransition(Duration.millis(400), currentView);
+
+                slideOut.setToX(800);
+                slideOut.setInterpolator(Interpolator.EASE_IN);
+
+                // 🌟 ၂။ လက်ရှိ Page ထွက်သွားတာ ပြီးဆုံးမှ Page အသစ်ကို Center သို့ထည့်ပြီး ဝင်လာစေမည် (Slide In)
+                slideOut.setOnFinished(e -> {
+                    rootPane.setCenter(newView);
+
+                    TranslateTransition slideIn = new TranslateTransition(Duration.millis(400), newView);
+                    slideIn.setToX(0);
+                    slideIn.setInterpolator(Interpolator.EASE_OUT);
+                    slideIn.play();
+                });
+
+                slideOut.play();
+
+            } else {
+                // ပထမဆုံးအကြိမ် Load လုပ်ချိန် (Current View မရှိသေးချိန်) တွင် တန်းပြီး ဝင်လာစေမည်
+                rootPane.setCenter(newView);
+
+                TranslateTransition slideIn = new TranslateTransition(Duration.millis(800), newView);
+                slideIn.setToX(0);
+                slideIn.setInterpolator(Interpolator.EASE_OUT);
+                slideIn.play();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,28 +165,32 @@ public class StaffController implements Initializable {
 
     @FXML
     void clickDashboard(ActionEvent event) {
-        loadCenterView("/com/pos/flightmanagementsystem/view/StaffProfile.fxml");
+        setActiveButton(btnDashboard);
+        loadCenterView("/com/pos/flightmanagementsystem/view/StaffDashboard.fxml");
     }
 
     @FXML
     void clickProfile(ActionEvent event) {
+        setActiveButton(btnProfile);
         loadCenterView("/com/pos/flightmanagementsystem/view/StaffProfile.fxml");
     }
 
     @FXML
     void clickCreateBooking(ActionEvent event) {
-        // 🌟 Create New Booking ကို နှိပ်လျှင် StaffCreateNewBooking.fxml သို့ Center တွင် ပြောင်းလဲပေးမည်
+        setActiveButton(btnCreateBooking);
         loadCenterView("/com/pos/flightmanagementsystem/view/StaffCreateNewBooking.fxml");
     }
 
     @FXML
     void clickManageBooking(ActionEvent event) {
-        System.out.println("Manage Booking Clicked - View Coming Soon");
+        setActiveButton(btnManageBooking);
+        loadCenterView("/com/pos/flightmanagementsystem/view/StaffManageBooking.fxml");
     }
 
     @FXML
     void clickViewSchedule(ActionEvent event) {
-        System.out.println("View Schedule Clicked - View Coming Soon");
+        setActiveButton(btnViewSchedule);
+        loadCenterView("/com/pos/flightmanagementsystem/view/StaffFlightSchedules.fxml");
     }
 
     @FXML
@@ -157,11 +209,20 @@ public class StaffController implements Initializable {
         ParallelTransition ptOut = new ParallelTransition(slideOutLeft, slideOutRight);
         ptOut.setOnFinished(e -> {
             try {
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                // ၁။ လက်ရှိ ဖွင့်ထားတဲ့ Window (Stage) နှင့် Scene ကို ယူပါမည်
+                Scene currentScene = ((Node) event.getSource()).getScene();
+                Stage stage = (Stage) currentScene.getWindow();
+
+                // ၂။ Login Page ကို Load လုပ်ပါမည်
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
                 Parent root = loader.load();
-                stage.setScene(new Scene(root));
-                stage.show();
+
+                // 🌟 ၃။ အဓိက ပြင်ဆင်ချက် - Scene အသစ်မဆောက်တော့ဘဲ လက်ရှိ Scene ရဲ့ Root နေရာမှာပဲ Login ကို အစားထိုးလိုက်ပါမည်
+                currentScene.setRoot(root);
+
+                // Window ကို Full Screen အနေအထား ဆက်ဖြစ်နေစေရန် သေချာစေခြင်း
+                stage.setMaximized(true);
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

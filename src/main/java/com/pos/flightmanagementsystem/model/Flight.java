@@ -5,106 +5,57 @@ import java.time.LocalDateTime;
 public class Flight {
     private int flightId;
     private String flightNumber;
-    private String departureLocation;
-    private String arrivalLocation;
+    private String airline;
+    private int departureCityId;
+    private int arrivalCityId;
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private int totalSeats;
+    private double basePrice;
     private String status;
 
-    // No-argument Constructor
-    public Flight() {
-    }
+    public Flight() {}
 
-    // All-argument Constructor
-    public Flight(int flightId, String flightNumber, String departureLocation, String arrivalLocation, LocalDateTime departureTime, LocalDateTime arrivalTime, int totalSeats, String status) {
+    public Flight(int flightId, String flightNumber, String airline, int departureCityId, int arrivalCityId, LocalDateTime departureTime, LocalDateTime arrivalTime, int totalSeats, double basePrice, String status) {
         this.flightId = flightId;
         this.flightNumber = flightNumber;
-        this.departureLocation = departureLocation;
-        this.arrivalLocation = arrivalLocation;
+        this.airline = airline;
+        this.departureCityId = departureCityId;
+        this.arrivalCityId = arrivalCityId;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.totalSeats = totalSeats;
+        this.basePrice = basePrice;
         this.status = status;
     }
 
-    // Getters and Setters
-    public int getFlightId() {
-        return flightId;
-    }
+    public int getFlightId() { return flightId; }
+    public void setFlightId(int flightId) { this.flightId = flightId; }
 
-    public void setFlightId(int flightId) {
-        this.flightId = flightId;
-    }
+    public String getFlightNumber() { return flightNumber; }
+    public void setFlightNumber(String flightNumber) { this.flightNumber = flightNumber; }
 
-    public String getFlightNumber() {
-        return flightNumber;
-    }
+    public String getAirline() { return airline; }
+    public void setAirline(String airline) { this.airline = airline; }
 
-    public void setFlightNumber(String flightNumber) {
-        this.flightNumber = flightNumber;
-    }
+    public int getDepartureCityId() { return departureCityId; }
+    public void setDepartureCityId(int departureCityId) { this.departureCityId = departureCityId; }
 
-    public String getDepartureLocation() {
-        return departureLocation;
-    }
+    public int getArrivalCityId() { return arrivalCityId; }
+    public void setArrivalCityId(int arrivalCityId) { this.arrivalCityId = arrivalCityId; }
 
-    public void setDepartureLocation(String departureLocation) {
-        this.departureLocation = departureLocation;
-    }
+    public LocalDateTime getDepartureTime() { return departureTime; }
+    public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }
 
-    public String getArrivalLocation() {
-        return arrivalLocation;
-    }
+    public LocalDateTime getArrivalTime() { return arrivalTime; }
+    public void setArrivalTime(LocalDateTime arrivalTime) { this.arrivalTime = arrivalTime; }
 
-    public void setArrivalLocation(String arrivalLocation) {
-        this.arrivalLocation = arrivalLocation;
-    }
+    public int getTotalSeats() { return totalSeats; }
+    public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }
 
-    public LocalDateTime getDepartureTime() {
-        return departureTime;
-    }
+    public double getBasePrice() { return basePrice; }
+    public void setBasePrice(double basePrice) { this.basePrice = basePrice; }
 
-    public void setDepartureTime(LocalDateTime departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    public LocalDateTime getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(LocalDateTime arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
-
-    public int getTotalSeats() {
-        return totalSeats;
-    }
-
-    public void setTotalSeats(int totalSeats) {
-        this.totalSeats = totalSeats;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    // toString Method
-    @Override
-    public String toString() {
-        return "Flight{" +
-                "flightId=" + flightId +
-                ", flightNumber='" + flightNumber + '\'' +
-                ", departureLocation='" + departureLocation + '\'' +
-                ", arrivalLocation='" + arrivalLocation + '\'' +
-                ", departureTime=" + departureTime +
-                ", arrivalTime=" + arrivalTime +
-                ", totalSeats=" + totalSeats +
-                ", status='" + status + '\'' +
-                '}';
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

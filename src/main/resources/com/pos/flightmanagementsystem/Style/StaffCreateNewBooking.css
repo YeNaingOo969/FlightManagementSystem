@@ -146,3 +146,22 @@
 .gradient-button:hover {
     -fx-background-color: linear-gradient(to right, #38bdf8, #0ea5e9);
 }
+
+/* 🌟 Table ထဲက Choose Button အတွက် */
+.btn-choose {
+    -fx-background-color: #10B981; /* အစိမ်းရောင် */
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 6 15;
+    -fx-cursor: hand;
+}
+
+.btn-choose:hover {
+    -fx-background-color: #34D399;
+}
+
+.btn-choose:pressed {
+    -fx-background-color: #059669;
+}

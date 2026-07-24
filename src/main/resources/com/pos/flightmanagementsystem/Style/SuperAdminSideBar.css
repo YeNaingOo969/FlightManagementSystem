@@ -961,3 +961,24 @@
     -fx-text-fill: #8a9ab0;
     -fx-font-size: 13px;
 }
+
+/* ==========================================================
+   🌟 ACTIVE NAV BUTTON (Hover နှင့် Focused ဖြစ်နေချိန်ပါ အရောင်မပြောင်းစေရန်)
+========================================================== */
+.super-nav-button-active,
+.super-nav-button-active:hover,
+.super-nav-button-active:focused {
+    -fx-background-color: linear-gradient(to right, #00C6FF, #20E3B2);
+    -fx-background-radius: 12px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(32, 227, 178, 0.4), 10, 0, 0, 4);
+    -fx-opacity: 1.0;
+}
+
+/* Active ဖြစ်နေချိန် Icon အရောင်ကို အဖြူဆက်ဖြစ်နေစေရန် */
+.super-nav-button-active .super-nav-icon-glyph,
+.super-nav-button-active:hover .super-nav-icon-glyph,
+.super-nav-button-active:focused .super-nav-icon-glyph {
+    -fx-fill: white;
+}

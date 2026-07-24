@@ -4,7 +4,6 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.StackedBarChart?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,88 +12,8 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.SVGPath?>
 
-<BorderPane prefHeight="775.0" prefWidth="1589.0" styleClass="super-dashboard-root" stylesheets="@../CssFile/staffDashboard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SuperDashboardController">
-   <left>
-      <VBox prefWidth="262.0" spacing="22.0" styleClass="super-sidebar" BorderPane.alignment="CENTER">
-         <children>
-            <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="super-brand">
-               <children>
-                  <StackPane styleClass="super-brand-logo">
-                     <children>
-                        <SVGPath content="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z" styleClass="super-brand-logo-glyph" />
-                     </children>
-                  </StackPane>
-                  <VBox spacing="4.0">
-                     <children>
-                        <Label styleClass="super-brand-title" text="FlyPlan" />
-                        <Label styleClass="super-brand-kicker" text="Airline Management" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <VBox spacing="10.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#clickDashboard" styleClass="super-nav-button-active" text="Dashboard">
-                     <graphic>
-                        <StackPane styleClass="super-nav-icon">
-                           <children>
-                              <SVGPath content="M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z" styleClass="super-nav-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#clickProfile" styleClass="super-nav-button" text="Profile">
-                     <graphic>
-                        <StackPane styleClass="super-nav-icon">
-                           <children>
-                              <SVGPath content="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" styleClass="super-nav-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="btnACManagement" mnemonicParsing="false" onAction="#clickACManagement" styleClass="super-nav-button" text="Create New Booking">
-                     <graphic>
-                        <StackPane styleClass="super-nav-icon">
-                           <children>
-                              <SVGPath content="M2.5 19h19v2h-19v-2zm16.84-3.15c.8.21 1.62-.26 1.84-1.06.21-.8-.26-1.62-1.06-1.84l-5.31-1.42-2.76-9.02L10.12 2l1.9 6.5-4.83-1.29-1.89-2.07-1.41-.38 1.05 3.68-1.44 3.97 14.84 3.97zM11 11h2v2h-2v-2z" styleClass="super-nav-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="btnSystemLogs" mnemonicParsing="false" onAction="#clickSystemLogs" styleClass="super-nav-button" text="Manage Booking">
-                     <graphic>
-                        <StackPane styleClass="super-nav-icon">
-                           <children>
-                              <SVGPath content="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm-5-7h-2v-2h-2v2H8v2h2v2h2v-2h2v-2z" styleClass="super-nav-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="btnSystemTools" mnemonicParsing="false" onAction="#clickSystemTools" styleClass="super-nav-button" text="View Flight Schedule">
-                     <graphic>
-                        <StackPane styleClass="super-nav-icon">
-                           <children>
-                              <SVGPath content="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" styleClass="super-nav-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </graphic>
-                  </Button>
-               </children>
-            </VBox>
-            <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#clickLogout" styleClass="super-logout-button" text="Log Out">
-               <graphic>
-                  <StackPane styleClass="super-nav-icon">
-                     <children>
-                        <SVGPath content="M10 3H4v18h6v-2H6V5h4V3Zm6.59 5.59L18 10h-8v2h8l-1.41 1.41L18 14.83 21.83 11 18 7.17l-1.41 1.42Z" styleClass="super-nav-icon-glyph" />
-                     </children>
-                  </StackPane>
-               </graphic>
-            </Button>
-         </children>
-      </VBox>
-   </left>
+<BorderPane prefHeight="775.0" prefWidth="1280.0" styleClass="super-dashboard-root" stylesheets="@/com/pos/flightmanagementsystem/Style/staffDashboard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox fx:id="contentArea" spacing="24.0" styleClass="super-content" BorderPane.alignment="CENTER">
          <children>
@@ -192,12 +111,12 @@
                         <Label styleClass="chart-panel-title" text="Booking Overview" />
                         <Region VBox.vgrow="ALWAYS" />
                         <StackedBarChart>
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
+                           <xAxis>
+                              <CategoryAxis side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis side="LEFT" />
+                           </yAxis>
                         </StackedBarChart>
                      </children>
                   </VBox>

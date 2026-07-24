@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+<BorderPane fx:id="rootPane" prefHeight="800" prefWidth="1200" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminAddFlight.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminAddCityController">
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="20">
+            <padding><Insets bottom="20" left="100" right="100" top="100" /></padding>
+
+            <!-- 🌟 Inline CSS အစား styleClass ပြောင်းထားပါသည် -->
+            <VBox maxWidth="500" spacing="15" styleClass="modal-card">
+                <HBox alignment="CENTER" prefHeight="70.0" prefWidth="539.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <StackPane prefHeight="70.0" prefWidth="182.0" styleClass="super-brand-logo">
+                            <children>
+                                <SVGPath content="M15 11V5l-3-3-3 3v2H3v14h18V11h-6zm-8 8H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm6 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm6 12h-2v-2h2v2zm0-4h-2v-2h2v2z" styleClass="super-brand-logo-glyph" />
+                            </children>
+                        </StackPane>
+                        <Label styleClass="page-title" text="Add New City" />
+                    </children>
+                </HBox>
+
+                <GridPane hgap="10" styleClass="form-card" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+
+                    <Label styleClass="form-label" text="City Code" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtCityCode" promptText="e.g., YGN" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                    <Label styleClass="form-label" text="City Name" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtCityName" promptText="e.g., Yangon" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label styleClass="form-label" text="Country" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtCountry" promptText="e.g., Myanmar" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+
+                <HBox alignment="CENTER_RIGHT" spacing="15">
+                    <Button fx:id="btnCancel" onAction="#clickCancel" styleClass="btn-secondary" text="Cancel" />
+                    <Button fx:id="btnSave" onAction="#clickSave" styleClass="btn-primary" text="Save City" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

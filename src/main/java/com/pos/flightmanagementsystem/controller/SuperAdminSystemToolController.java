@@ -1,6 +1,6 @@
 package com.pos.flightmanagementsystem.controller;
 
-import com.pos.flightmanagementsystem.model.BackupHistory;
+import com.pos.flightmanagementsystem.model.Backup;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -39,13 +39,13 @@ public class SuperAdminSystemToolController implements Initializable {
     @FXML private Button btnBackupNow;
     @FXML private Button btnExportSql;
 
-    // --- TableView Variables ---
-    @FXML private TableView<BackupHistory> tvBackupHistory;
-    @FXML private TableColumn<BackupHistory, String> colDate;
-    @FXML private TableColumn<BackupHistory, String> colFileName;
-    @FXML private TableColumn<BackupHistory, String> colSize;
-    @FXML private TableColumn<BackupHistory, String> colAction;
-    private ObservableList<BackupHistory> backupList = FXCollections.observableArrayList();
+    // --- TableView Variables (Updated to new Backup Model) ---
+    @FXML private TableView<Backup> tvBackupHistory;
+    @FXML private TableColumn<Backup, LocalDateTime> colDate;
+    @FXML private TableColumn<Backup, String> colFileName;
+    @FXML private TableColumn<Backup, String> colSize;
+    @FXML private TableColumn<Backup, String> colAction;
+    private ObservableList<Backup> backupList = FXCollections.observableArrayList();
 
     // --- Toast Notification FXML Variables ---
     @FXML private HBox notificationToast;
@@ -59,11 +59,11 @@ public class SuperAdminSystemToolController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 1. Setup Table Columns
-        colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        // 1. Setup Table Columns (Model ထဲက Variable နာမည်အသစ်များအတိုင်း ပြင်ဆင်ထားသည်)
+        colDate.setCellValueFactory(new PropertyValueFactory<>("backupDate"));
         colFileName.setCellValueFactory(new PropertyValueFactory<>("fileName"));
-        colSize.setCellValueFactory(new PropertyValueFactory<>("size"));
-        colAction.setCellValueFactory(new PropertyValueFactory<>("action"));
+        colSize.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
+        colAction.setCellValueFactory(new PropertyValueFactory<>("actionType"));
 
         tvBackupHistory.setItems(backupList);
 
@@ -106,22 +106,26 @@ public class SuperAdminSystemToolController implements Initializable {
     }
 
     // ==========================================
-    // DATABASE HISTORY LOGIC
+    // DATABASE HISTORY LOGIC (Updated for 'backups' table)
     // ==========================================
     private void loadBackupHistory() {
         backupList.clear();
-        String query = "SELECT * FROM backup_history ORDER BY backup_date DESC";
+        // ER Diagram အသစ်အရ backups table ကို ပြောင်းသုံးထားသည်
+        String query = "SELECT * FROM backups ORDER BY backup_date DESC";
+
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                String date = rs.getTimestamp("backup_date").toString();
+                int id = rs.getInt("id");
                 String fileName = rs.getString("file_name");
-                String size = rs.getString("file_size");
-                String action = rs.getString("action_type");
+                String fileSize = rs.getString("file_size");
+                String actionType = rs.getString("action_type");
+                LocalDateTime backupDate = rs.getTimestamp("backup_date").toLocalDateTime();
 
-                backupList.add(new BackupHistory(date, fileName, size, action));
+                // Constructor အသစ်ဖြင့် ထည့်သွင်းခြင်း
+                backupList.add(new Backup(id, fileName, fileSize, actionType, backupDate));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,14 +133,16 @@ public class SuperAdminSystemToolController implements Initializable {
     }
 
     private void saveBackupHistory(String fileName, String fileSize, String actionType) {
-        String query = "INSERT INTO backup_history (backup_date, file_name, file_size, action_type) VALUES (?, ?, ?, ?)";
+        // ER Diagram အသစ်အရ backups table ကို ပြောင်းသုံးထားသည်
+        String query = "INSERT INTO backups (file_name, file_size, action_type, backup_date) VALUES (?, ?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            pstmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
-            pstmt.setString(2, fileName);
-            pstmt.setString(3, fileSize);
-            pstmt.setString(4, actionType);
+            pstmt.setString(1, fileName);
+            pstmt.setString(2, fileSize);
+            pstmt.setString(3, actionType);
+            pstmt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
             pstmt.executeUpdate();
 
         } catch (Exception e) {
