@@ -23,7 +23,6 @@
         <VBox alignment="TOP_CENTER" spacing="20">
             <padding><Insets bottom="20" left="100" right="100" top="40" /></padding>
 
-            <!-- 🌟 အရင်က Inline CSS အစား modal-card ကို ပြောင်းသုံးထားပါသည် -->
             <VBox maxWidth="650" spacing="15" styleClass="modal-card">
                 <HBox alignment="CENTER" prefHeight="70.0" prefWidth="539.0" spacing="10.0" VBox.vgrow="ALWAYS">
                     <children>
@@ -46,17 +45,21 @@
                     <Label styleClass="form-label" text="Flight Number" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                     <TextField fx:id="txtFlightNumber" promptText="e.g., FL-101" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
+                    <!-- Airline 🌟 -->
+                    <Label styleClass="form-label" text="Airline" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtAirline" promptText="e.g., Myanmar Airways" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
                     <!-- Departure City (ComboBox) -->
-                    <Label styleClass="form-label" text="From" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <ComboBox fx:id="cmbDepartureCity" maxWidth="Infinity" promptText="Select Departure City" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label styleClass="form-label" text="From" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <ComboBox fx:id="cmbDepartureCity" maxWidth="Infinity" promptText="Select Departure City" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                     <!-- Arrival City (ComboBox) -->
-                    <Label styleClass="form-label" text="To" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                    <ComboBox fx:id="cmbArrivalCity" maxWidth="Infinity" promptText="Select Arrival City" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label styleClass="form-label" text="To" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <ComboBox fx:id="cmbArrivalCity" maxWidth="Infinity" promptText="Select Arrival City" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                     <!-- Departure Date & Time -->
-                    <Label styleClass="form-label" text="Departure Time" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <Label styleClass="form-label" text="Departure Time" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
                         <children>
                             <DatePicker fx:id="dpDepartureDate" maxWidth="Infinity" promptText="Date" styleClass="date-picker" HBox.hgrow="ALWAYS" />
                             <ComboBox fx:id="cmbDepartureHour" prefWidth="80" promptText="HH" styleClass="combo-box" />
@@ -65,8 +68,8 @@
                     </HBox>
 
                     <!-- Arrival Date & Time -->
-                    <Label styleClass="form-label" text="Arrival Time" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                    <Label styleClass="form-label" text="Arrival Time" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
                         <children>
                             <DatePicker fx:id="dpArrivalDate" maxWidth="Infinity" promptText="Date" styleClass="date-picker" HBox.hgrow="ALWAYS" />
                             <ComboBox fx:id="cmbArrivalHour" prefWidth="80" promptText="HH" styleClass="combo-box" />
@@ -75,16 +78,16 @@
                     </HBox>
 
                     <!-- Total Seats -->
-                    <Label styleClass="form-label" text="Total Seats" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                    <TextField fx:id="txtTotalSeats" promptText="e.g., 150" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <Label styleClass="form-label" text="Total Seats" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                    <TextField fx:id="txtTotalSeats" promptText="e.g., 150" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                     <!-- Base Price -->
-                    <Label styleClass="form-label" text="Base Price" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-                    <TextField fx:id="txtBasePrice" promptText="e.g., 250.00" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                    <Label styleClass="form-label" text="Base Price" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+                    <TextField fx:id="txtBasePrice" promptText="e.g., 250.00" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
                     <!-- Status -->
-                    <Label styleClass="form-label" text="Status" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-                    <ComboBox fx:id="cmbStatus" maxWidth="Infinity" promptText="Select Status" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                    <Label styleClass="form-label" text="Status" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+                    <ComboBox fx:id="cmbStatus" maxWidth="Infinity" promptText="Select Status" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="8">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
                                 <String fx:value="Scheduled" />
@@ -102,6 +105,8 @@
                         <RowConstraints />
                         <RowConstraints />
                         <RowConstraints />
+                        <RowConstraints />
+                        <!-- Row အသစ်တစ်ခုတိုးလာသောကြောင့် RowConstraints တစ်ခု ထပ်ထည့်ထားပါသည် -->
                         <RowConstraints />
                     </rowConstraints>
                 </GridPane>
