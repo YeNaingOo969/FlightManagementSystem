@@ -1,5 +1,6 @@
 package com.pos.flightmanagementsystem.controller;
 
+import com.pos.flightmanagementsystem.model.Flight;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -10,8 +11,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -19,25 +22,29 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class AdminAddFlightController implements Initializable {
 
     @FXML private BorderPane rootPane;
 
-    // --- Form Fields ---
     @FXML private TextField txtFlightNumber;
+    @FXML private TextField txtAirline;
 
-    // City ComboBoxes
     @FXML private ComboBox<String> cmbDepartureCity;
     @FXML private ComboBox<String> cmbArrivalCity;
 
-    // Departure Date & Time
     @FXML private DatePicker dpDepartureDate;
     @FXML private ComboBox<String> cmbDepartureHour;
     @FXML private ComboBox<String> cmbDepartureMinute;
 
-    // Arrival Date & Time
     @FXML private DatePicker dpArrivalDate;
     @FXML private ComboBox<String> cmbArrivalHour;
     @FXML private ComboBox<String> cmbArrivalMinute;
@@ -49,48 +56,238 @@ public class AdminAddFlightController implements Initializable {
     @FXML private Button btnCancel;
     @FXML private Button btnSave;
 
+    // Edit လုပ်ခြင်းဟုတ်မဟုတ် သိနိုင်ရန်
+    private Integer currentFlightId = null;
+
+    // 🌟 Database မှ City ID နှင့် City Name တွဲသိမ်းရန် Map များ 🌟
+    private Map<String, Integer> cityNameToIdMap = new HashMap<>();
+    private Map<Integer, String> cityIdToNameMap = new HashMap<>();
+
+    // Table ကို ချက်ချင်း Refresh လုပ်ရန် Callback
+    private Runnable saveCallback;
+
+    public void setSaveCallback(Runnable saveCallback) {
+        this.saveCallback = saveCallback;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 🌟 ၁။ နာရီ (00 မှ 23) Data ထည့်သွင်းခြင်း
+        setupTimeComboBoxes();
+        setupCityComboBoxes(); // Database မှ City များခေါ်ယူမည်
+        setupStatusComboBox();
+        setupDateValidations();
+    }
+
+    public void setFlightData(Flight flight) {
+        this.currentFlightId = flight.getFlightId(); // ID မှတ်ထားမည်
+
+        txtFlightNumber.setText(flight.getFlightNumber());
+        txtAirline.setText(flight.getAirline());
+
+        // Map ထဲမှ ID ဖြင့် City Name ပြန်ရှာပြီး ComboBox တွင် ရွေးချယ်ပေးမည်
+        cmbDepartureCity.setValue(getCityName(flight.getDepartureCityId()));
+        cmbArrivalCity.setValue(getCityName(flight.getArrivalCityId()));
+
+        dpDepartureDate.setValue(flight.getDepartureTime().toLocalDate());
+        cmbDepartureHour.setValue(String.format("%02d", flight.getDepartureTime().getHour()));
+        cmbDepartureMinute.setValue(String.format("%02d", flight.getDepartureTime().getMinute()));
+
+        dpArrivalDate.setValue(flight.getArrivalTime().toLocalDate());
+        cmbArrivalHour.setValue(String.format("%02d", flight.getArrivalTime().getHour()));
+        cmbArrivalMinute.setValue(String.format("%02d", flight.getArrivalTime().getMinute()));
+
+        txtTotalSeats.setText(String.valueOf(flight.getTotalSeats()));
+        txtBasePrice.setText(String.valueOf(flight.getBasePrice()));
+        cmbStatus.setValue(flight.getStatus());
+
+        btnSave.setText("Update Flight"); // ခလုတ်စာသားပြောင်းမည်
+    }
+
+    private void setupTimeComboBoxes() {
         ObservableList<String> hours = FXCollections.observableArrayList();
-        for (int i = 0; i <= 23; i++) {
-            hours.add(String.format("%02d", i)); // 01, 02 ပုံစံဖြစ်အောင် %02d သုံးထားသည်
-        }
+        for (int i = 0; i <= 23; i++) hours.add(String.format("%02d", i));
         cmbDepartureHour.setItems(hours);
         cmbArrivalHour.setItems(hours);
 
-        // 🌟 ၂။ မိနစ် (00 မှ 59 - ၅ မိနစ်ခြား) Data ထည့်သွင်းခြင်း
         ObservableList<String> minutes = FXCollections.observableArrayList();
-        for (int i = 0; i < 60; i += 5) {
-            minutes.add(String.format("%02d", i));
-        }
+        for (int i = 0; i < 60; i += 5) minutes.add(String.format("%02d", i));
+
         cmbDepartureMinute.setItems(minutes);
         cmbArrivalMinute.setItems(minutes);
+    }
 
-        // 🌟 ၃။ City Database မှ Data ဆွဲထုတ်ရန် (ယခု ဥပမာအဖြစ် Dummy Data ထည့်ထားပါသည်)
-        // တကယ့်အပြင်မှာ Database Query ရေးပြီး ဒီ List ထဲကို ထည့်ပေးရပါမည်
-        ObservableList<String> cityList = FXCollections.observableArrayList(
-                "Yangon (YGN)", "Mandalay (MDL)", "Bagan (NYU)", "Naypyidaw (NYT)", "Heho (HEH)"
-        );
+    // ==========================================
+    // 🌟 Database မှ Cities များကို ComboBox ထဲသို့ ထည့်သွင်းခြင်း 🌟
+    // ==========================================
+    private void setupCityComboBoxes() {
+        ObservableList<String> cityList = FXCollections.observableArrayList();
+        String query = "SELECT city_id, city_name, city_code FROM cities";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("city_id");
+                String name = rs.getString("city_name");
+                String code = rs.getString("city_code");
+
+                // ပုံစံ - Yangon (YGN)
+                String displayString = name + " (" + code + ")";
+
+                // ID နှင့် Name ကို Map ထဲတွင် မှတ်ထားမည်
+                cityNameToIdMap.put(displayString, id);
+                cityIdToNameMap.put(id, displayString);
+
+                // ComboBox တွင်ပြသရန် List ထဲထည့်မည်
+                cityList.add(displayString);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Cities Database မှ Data ဆွဲထုတ်ရာတွင် အမှားအယွင်းဖြစ်နေပါသည်။");
+        }
+
         cmbDepartureCity.setItems(cityList);
         cmbArrivalCity.setItems(cityList);
     }
 
+    private void setupStatusComboBox() {
+        ObservableList<String> statusList = FXCollections.observableArrayList(
+                "Scheduled", "Delayed", "Cancelled", "Boarding"
+        );
+        cmbStatus.setItems(statusList);
+    }
+
+    private void setupDateValidations() {
+        dpDepartureDate.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.compareTo(LocalDate.now()) < 0);
+            }
+        });
+
+        dpArrivalDate.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                LocalDate minDate = dpDepartureDate.getValue() != null ? dpDepartureDate.getValue() : LocalDate.now();
+                setDisable(empty || date.compareTo(minDate) < 0);
+            }
+        });
+
+        dpDepartureDate.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && dpArrivalDate.getValue() != null) {
+                if (dpArrivalDate.getValue().isBefore(newValue)) {
+                    dpArrivalDate.setValue(null);
+                }
+            }
+        });
+    }
+
+    // 🌟 ComboBox မှ ရွေးချယ်လိုက်သော စာသားကို အသုံးပြု၍ ID ပြန်ရှာခြင်း 🌟
+    private int getCityId(String cityName) {
+        if (cityName == null || !cityNameToIdMap.containsKey(cityName)) return 0;
+        return cityNameToIdMap.get(cityName);
+    }
+
+    // 🌟 ID ကို အသုံးပြု၍ ComboBox တွင်ပြမည့် စာသား ပြန်ရှာခြင်း 🌟
+    private String getCityName(int cityId) {
+        return cityIdToNameMap.getOrDefault(cityId, null);
+    }
+
     // ==========================================
-    // 🌟 CANCEL BUTTON ACTION (Animation ဖြင့် ပြန်ပိတ်ရန်)
+    // 🌟 SAVE (သို့) UPDATE ပြုလုပ်ခြင်း
     // ==========================================
+    @FXML
+    void clickSave(ActionEvent event) {
+        if (txtFlightNumber.getText().isEmpty() || txtAirline.getText().isEmpty() ||
+                cmbDepartureCity.getValue() == null || cmbArrivalCity.getValue() == null ||
+                dpDepartureDate.getValue() == null || cmbDepartureHour.getValue() == null || cmbDepartureMinute.getValue() == null ||
+                dpArrivalDate.getValue() == null || cmbArrivalHour.getValue() == null || cmbArrivalMinute.getValue() == null ||
+                txtTotalSeats.getText().isEmpty() || txtBasePrice.getText().isEmpty() || cmbStatus.getValue() == null) {
+
+            showAlert(Alert.AlertType.WARNING, "Missing Information", "Please fill in all fields.");
+            return;
+        }
+
+        try {
+            String flightNumber = txtFlightNumber.getText();
+            String airline = txtAirline.getText();
+            int departureCityId = getCityId(cmbDepartureCity.getValue());
+            int arrivalCityId = getCityId(cmbArrivalCity.getValue());
+
+            String departureDateTime = dpDepartureDate.getValue() + " " + cmbDepartureHour.getValue() + ":" + cmbDepartureMinute.getValue() + ":00";
+            String arrivalDateTime = dpArrivalDate.getValue() + " " + cmbArrivalHour.getValue() + ":" + cmbArrivalMinute.getValue() + ":00";
+
+            int totalSeats = Integer.parseInt(txtTotalSeats.getText());
+            double basePrice = Double.parseDouble(txtBasePrice.getText());
+            String status = cmbStatus.getValue();
+
+            // Add လား Edit လား စစ်ဆေးပြီး Query ပြောင်းလဲခြင်း
+            String sql;
+            if (currentFlightId == null) {
+                sql = "INSERT INTO flights (flight_number, airline, departure_city_id, arrival_city_id, departure_time, arrival_time, total_seats, base_price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            } else {
+                sql = "UPDATE flights SET flight_number=?, airline=?, departure_city_id=?, arrival_city_id=?, departure_time=?, arrival_time=?, total_seats=?, base_price=?, status=? WHERE flight_id=?";
+            }
+
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                if (conn == null) {
+                    showAlert(Alert.AlertType.ERROR, "Connection Error", "Failed to connect to the database.");
+                    return;
+                }
+
+                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    pstmt.setString(1, flightNumber);
+                    pstmt.setString(2, airline);
+                    pstmt.setInt(3, departureCityId);
+                    pstmt.setInt(4, arrivalCityId);
+                    pstmt.setString(5, departureDateTime);
+                    pstmt.setString(6, arrivalDateTime);
+                    pstmt.setInt(7, totalSeats);
+                    pstmt.setDouble(8, basePrice);
+                    pstmt.setString(9, status);
+
+                    // Edit ဆိုလျှင် ID ထည့်ပေးရန်
+                    if (currentFlightId != null) {
+                        pstmt.setInt(10, currentFlightId);
+                    }
+
+                    int rowsAffected = pstmt.executeUpdate();
+                    if (rowsAffected > 0) {
+                        String msg = (currentFlightId == null) ? "Flight added successfully!" : "Flight updated successfully!";
+                        showAlert(Alert.AlertType.INFORMATION, "Success", msg);
+
+                        // Data အောင်မြင်စွာ သိမ်းပြီးပါက အပြင် Table ကို Refresh လုပ်ခိုင်းပါမည်
+                        if (saveCallback != null) {
+                            saveCallback.run();
+                        }
+
+                        clickCancel(event);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "Action failed: " + e.getMessage());
+            }
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Input", "Total Seats and Base Price must be numbers.");
+        }
+    }
+
     @FXML
     void clickCancel(ActionEvent event) {
         StackPane overlay = (StackPane) rootPane.getParent();
-
         if (overlay != null) {
             ScaleTransition scaleDown = new ScaleTransition(Duration.millis(350), rootPane);
             scaleDown.setToX(0.0);
             scaleDown.setToY(0.0);
 
             TranslateTransition moveBack = new TranslateTransition(Duration.millis(350), rootPane);
-            moveBack.setToX(400); // ညာဘက်သို့
-            moveBack.setToY(-300); // အပေါ်ဘက်သို့
+            moveBack.setToX(400);
+            moveBack.setToY(-300);
 
             FadeTransition fadeOut = new FadeTransition(Duration.millis(350), overlay);
             fadeOut.setFromValue(1.0);
@@ -110,21 +307,11 @@ public class AdminAddFlightController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 🌟 SAVE BUTTON ACTION (Database သို့ သိမ်းရန်)
-    // ==========================================
-    @FXML
-    void clickSave(ActionEvent event) {
-        System.out.println("Saving Flight Data to Database...");
-        System.out.println("Flight Number: " + txtFlightNumber.getText());
-        System.out.println("From: " + cmbDepartureCity.getValue());
-        System.out.println("To: " + cmbArrivalCity.getValue());
-
-        // Date နဲ့ Time ကို String အဖြစ် ပြန်ပေါင်းယူနည်း
-        String departureDateTime = dpDepartureDate.getValue() + " " + cmbDepartureHour.getValue() + ":" + cmbDepartureMinute.getValue() + ":00";
-        System.out.println("Departure: " + departureDateTime);
-
-        // Save ပြီးပါက Modal ကို ပြန်ပိတ်ပါမည်
-        clickCancel(event);
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

@@ -26,7 +26,10 @@
                                     </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <DatePicker styleClass="date-picker" />
+
+                                <!-- 🌟 ဒီနေရာမှာ fx:id="dpFilterDate" ထည့်ပေးထားပါတယ် 🌟 -->
+                                <DatePicker fx:id="dpFilterDate" promptText="Filter by Date" styleClass="date-picker" />
+
                                 <!-- Add Flight Button Only -->
                                 <Button fx:id="btnAddFlight" mnemonicParsing="false" onAction="#clickAddFlight" styleClass="btn-primary" text="+ Add Flight" />
                             </children>
@@ -43,15 +46,16 @@
                                         </VBox>
                                     </children>
                                 </HBox>
-                                <TableView VBox.vgrow="ALWAYS">
+                                <!-- TableView နှင့် Column များ -->
+                                <TableView fx:id="tblFlights" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn prefWidth="75.0" text="Flight No." />
-                                        <TableColumn prefWidth="75.0" text="Airline" />
-                                        <TableColumn prefWidth="75.0" text="From" />
-                                        <TableColumn prefWidth="75.0" text="To" />
-                                        <TableColumn prefWidth="75.0" text="Departure" />
-                                        <TableColumn prefWidth="75.0" text="Arrival" />
-                                        <TableColumn prefWidth="75.0" text="Actions" />
+                                        <TableColumn fx:id="colFlightNo" prefWidth="75.0" text="Flight No." />
+                                        <TableColumn fx:id="colAirline" prefWidth="75.0" text="Airline" />
+                                        <TableColumn fx:id="colFrom" prefWidth="75.0" text="From" />
+                                        <TableColumn fx:id="colTo" prefWidth="75.0" text="To" />
+                                        <TableColumn fx:id="colDeparture" prefWidth="75.0" text="Departure" />
+                                        <TableColumn fx:id="colArrival" prefWidth="75.0" text="Arrival" />
+                                        <TableColumn fx:id="colActions" prefWidth="75.0" text="Actions" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
