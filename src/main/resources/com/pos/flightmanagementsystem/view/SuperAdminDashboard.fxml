@@ -112,6 +112,6 @@
    </children>
 
    <stylesheets>
-      <URL value="@/com/pos/flightmanagementsystem/Style/SuperAdminSideBar.css" />
+      <URL value="@/com/pos/flightmanagementsystem/Style/SuperAdminSideBarDark.css" />
    </stylesheets>
 </VBox>

@@ -1,0 +1,320 @@
+/* ==========================================================
+   ROOT & CONTENT (CYBERPUNK THEME)
+========================================================== */
+.super-content {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
+    -fx-font-family: "Inter", "Segoe UI";
+}
+
+/* ==========================================================
+   PAGE TITLE
+========================================================== */
+.page-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF; /* High Contrast White */
+}
+.page-subtitle {
+    -fx-text-fill: #00D4FF; /* Neon Cyan */
+    -fx-font-size: 13px;
+}
+.super-section-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* =========================================================================
+   📅 DATE PICKER (CYBERPUNK)
+========================================================================= */
+.date-picker {
+    -fx-background-color: #130F25;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1.5px;
+    -fx-pref-width: 166px;
+    -fx-pref-height: 32px;
+}
+
+.date-picker-card {
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 16;
+    -fx-border-color: #00D4FF; /* Neon Cyan */
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 16;
+    -fx-padding: 10 16 10 16;
+    -fx-pref-width: 230;
+    -fx-pref-height: 72;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 16, 0.0, 0, 0);
+    -fx-transition: all 0.3s ease;
+}
+
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-radius: 7 0 0 7;
+    -fx-border-radius: 7 0 0 7;
+    -fx-padding: 0 0 0 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: 500;
+    -fx-font-size: 12px;
+}
+
+.date-picker > .arrow-button {
+    -fx-background-color: #2A234C;
+    -fx-background-radius: 0 7 7 0;
+    -fx-border-radius: 0 7 7 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0 8 0 8;
+}
+
+.date-picker > .arrow-button > .graphic {
+    -fx-background-color: #00D4FF; /* Neon Cyan Arrow */
+}
+
+.date-picker:focused {
+    -fx-border-color: #FF2A6D; /* Focus ချိန် Neon Pink */
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 8, 0, 0, 0);
+}
+
+/* ==========================================================
+   🔎 SEARCH CONTAINER & FIELD
+========================================================== */
+.search-container {
+    -fx-background-color: transparent;
+    -fx-padding: 6px 12px;
+    -fx-alignment: center-left;
+    -fx-spacing: 8px;
+}
+
+.search-icon {
+    -fx-fill: #A093D6; /* Soft Violet */
+}
+
+.search-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #A093D6;
+    -fx-font-size: 14px;
+}
+
+.search-container:focused-within {
+    -fx-border-color: #00D4FF; /* Neon Cyan Glow */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 8, 0, 0, 0);
+    -fx-background-color: transparent;
+}
+
+/* Standalone Search Field (မူလ Code ထဲမှ) */
+.search-field {
+    -fx-pref-height: 42;
+    -fx-background-color: #130F25;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #2A234C;
+    -fx-padding: 0 15;
+}
+
+.search-field:focused {
+    -fx-border-color: #00D4FF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 8, 0, 0, 0);
+}
+
+/* =========================================================================
+   📜 SCROLL PANE CLEAN UP
+========================================================================= */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane:focused {
+    -fx-background-color: transparent;
+}
+
+/* ==========================================================
+   📦 COMBO BOX (NEON GREEN HIGHLIGHTS)
+========================================================== */
+.combo-box {
+    -fx-background-color: #130F25;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1.5px;
+    -fx-padding: 4px 8px 4px 8px;
+    -fx-font-size: 13px;
+}
+
+.combo-box:focused {
+    -fx-border-color: #00FF9D; /* Neon Green Focus */
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 157, 0.3), 8, 0, 0, 0);
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: #A093D6;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #2A234C;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 4);
+}
+
+.combo-box-popup .list-cell:filled {
+    -fx-text-fill: #E0E0E0;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: rgba(0, 255, 157, 0.15); /* Soft Green Hover */
+    -fx-text-fill: #00FF9D; /* Neon Green Text */
+}
+
+
+/* ==========================================================
+   📊 TABLE VIEW & SUPER TABLE (ထောင့်ငေါထွက်ခြင်း ပြဿနာ ဖြေရှင်းပြီး)
+========================================================== */
+.super-table, .table-view {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+    -fx-padding: 0; /* Padding အပိုများဖယ်ရှားခြင်း */
+}
+
+.super-table {
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+}
+
+.table-view {
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+}
+
+/* 🎯 Header Background ကို Table အပြင်ဘောင်ထောင့်နှင့် ထပ်တူညီစေရန် Radius သတ်မှတ်ခြင်း */
+.table-view .column-header-background,
+.super-table .column-header-background {
+    -fx-background-color: #2A234C;
+    /* အပေါ်ဘယ်နှင့် အပေါ်ညာ ထောင့်များကို ခပ်ဝိုင်းဝိုင်းလေး ဖြစ်စေရန် (13px သို့မဟုတ် 14px ချိန်နိုင်သည်) */
+    -fx-background-radius: 13 13 0 0;
+    -fx-border-radius: 13 13 0 0;
+    -fx-background-insets: 0;
+}
+
+.table-view .column-header,
+.super-table .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label,
+.super-table .column-header .label {
+    -fx-text-fill: #00D4FF; /* Neon Cyan Header Text */
+    -fx-font-weight: bold;
+}
+
+.table-row-cell,
+.super-table .table-row-cell {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: transparent transparent #2A234C transparent;
+}
+
+.table-row-cell:hover,
+.super-table .table-row-cell:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+}
+
+.table-row-cell:selected,
+.super-table .table-row-cell:selected {
+    -fx-background-color: rgba(255, 42, 109, 0.2);
+}
+
+
+/* ==========================================================
+   🏆 SUPER METRIC ICON
+========================================================== */
+.super-metric-icon {
+    -fx-min-width: 46;
+    -fx-min-height: 46;
+    -fx-max-width: 46;
+    -fx-max-height: 46;
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+    -fx-background-radius: 999;
+    -fx-border-color: #00D4FF;
+    -fx-border-radius: 999;
+    -fx-border-width: 1.5px;
+}
+
+.super-metric-icon-glyph {
+    -fx-fill: #00D4FF;
+    -fx-scale-x: 0.92;
+    -fx-scale-y: 0.92;
+}
+
+/* ==========================================================
+   🔘 PRIMARY BUTTON (DANGER/NEON PINK)
+========================================================== */
+.primary-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5px;
+    -fx-padding: 11 22 11 22;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-content-display: LEFT;
+    -fx-graphic-text-gap: 12;
+    -fx-border-color: #FF2A6D;
+    -fx-text-fill: #FF2A6D;
+}
+
+.primary-button:hover {
+    -fx-background-color: rgba(255, 42, 109, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #FF2A6D;
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 10, 0, 0, 0);
+}
+
+.primary-button:pressed {
+    -fx-background-color: rgba(255, 42, 109, 0.3);
+    -fx-border-color: #FF2A6D;
+}
+
+/* ==========================================================
+   🟢 EXPORT BUTTON (NEON GREEN)
+========================================================== */
+.button-export {
+    -fx-background-color: transparent;
+    -fx-text-fill: #00FF9D;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-color: #00FF9D;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-pref-height: 34px;
+    -fx-padding: 0 20px;
+    -fx-cursor: hand;
+}
+
+.button-export:hover {
+    -fx-background-color: rgba(0, 255, 157, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #00FF9D;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 157, 0.4), 10, 0, 0, 0);
+}
+
+.button-export:pressed {
+    -fx-background-color: rgba(0, 255, 157, 0.3);
+    -fx-border-color: #00FF9D;
+}

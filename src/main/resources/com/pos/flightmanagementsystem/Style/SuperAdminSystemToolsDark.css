@@ -1,0 +1,168 @@
+/* ==========================================
+   SYSTEM TOOLS - PREMIUM LAYOUT MODIFICATION (CYBERPUNK THEME)
+   ========================================== */
+
+/* 1. Main Background */
+.main-container {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25); /* Deep Cyberpunk Background */
+    -fx-padding: 32px;
+}
+
+/* 2. Central Card Container */
+.tool-card {
+    -fx-background-color: #1F1A36; /* Dark Purple Glass */
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-padding: 32px; /* အတွင်း space ပိုကျယ်ပေးခြင်း */
+    -fx-spacing: 24px; /* Element တစ်ခုနှင့်တစ်ခု အကွာအဝေး ပိုမျှစေရန် */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 24, 0.1, 0, 8);
+}
+
+/* 3. Top Info Row (Database Backup & Export တန်း) */
+.sub-header-box {
+    -fx-background-color: #130F25; /* Darker Inner Box */
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 18px 24px;
+}
+
+/* 4. Labels */
+.header-title {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 24px;
+    -fx-text-fill: #FFFFFF; /* High Contrast White */
+}
+
+.section-title {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 16px;
+    -fx-text-fill: #00D4FF; /* Neon Cyan for Subtitles */
+}
+
+/* 5. Buttons Hover/Pressed Effect (CYBERPUNK GLOW EFFECTS) */
+
+/* --- Run Backup DB Button (Neon Cyan) --- */
+.button-backup-now {
+    -fx-background-color: transparent;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #00D4FF;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 26px;
+    -fx-cursor: hand;
+}
+/* Hover လုပ်လျှင် အရောင်မပြောင်းဘဲ Size မသိမသာ ကြီးလာစေရန် (Neon Glow ထည့်ထားသည်) */
+.button-backup-now:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 10, 0, 0, 0);
+}
+/* နှိပ်လိုက်လျှင် ခလုတ်ချိုင့်ဝင်သွားသည့် ပုံစံပြရန် */
+.button-backup-now:pressed {
+    -fx-background-color: rgba(0, 212, 255, 0.3);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.2), 4, 0, 0, 0);
+}
+
+/* --- Export SQL Button (Neon Green) --- */
+.button-export-sql {
+    -fx-background-color: transparent;
+    -fx-border-color: #00FF9D;
+    -fx-border-width: 1.5px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-text-fill: #00FF9D;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 10px 26px;
+    -fx-cursor: hand;
+}
+
+/* Hover လုပ်လျှင် အရောင်မပြောင်းဘဲ Size မသိမသာ ကြွလာစေရန် */
+.button-export-sql:hover {
+    -fx-background-color: rgba(0, 255, 157, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 157, 0.4), 10, 0, 0, 0);
+}
+
+/* နှိပ်လိုက်လျှင် ခလုတ်ချိုင့်ဝင်သွားသည့် ပုံစံပြရန် */
+.button-export-sql:pressed {
+    -fx-background-color: rgba(0, 255, 157, 0.3);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 157, 0.2), 4, 0, 0, 0);
+}
+
+/* 6. Table View (CYBERPUNK DARK THEME) */
+.table-view {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+}
+.table-view .column-header-background {
+    -fx-background-color: #2A234C;
+    -fx-background-radius: 12px 12px 0 0;
+    -fx-border-color: transparent;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #3D2C8D transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 44px;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #00D4FF; /* Header text Neon Cyan */
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+}
+.table-view .table-row-cell {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: transparent transparent #2A234C transparent;
+    -fx-text-fill: #E0E0E0; /* Light text for dark background */
+    -fx-size: 40px;
+}
+.table-view .table-row-cell:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.1); /* Highlight Row */
+}
+.table-view .placeholder .label {
+    -fx-text-fill: #A093D6; /* Soft Purple */
+    -fx-font-style: italic;
+}
+
+/* ==========================================================
+   SUPER BRAND LOGO
+   ========================================================== */
+.super-brand-logo {
+    -fx-min-width: 44;
+    -fx-min-height: 44;
+    -fx-max-width: 44;
+    -fx-max-height: 44;
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 14;
+    -fx-border-color: #00D4FF; /* Neon Cyan Border */
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.5), 15, 0, 0, 0);
+}
+
+.super-brand-logo-glyph {
+    -fx-fill: #00D4FF; /* Neon Cyan Icon */
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
