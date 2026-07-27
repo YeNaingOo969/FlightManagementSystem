@@ -30,9 +30,11 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class StaffSeatSelectionController implements Initializable {
 
@@ -74,6 +76,15 @@ public class StaffSeatSelectionController implements Initializable {
 
     private int currentFlightId = -1;
     private double ticketPriceValue = 0.0;
+    private double currentTotalPrice = 0.0;
+
+    // =========================================================
+    // ⚠️ ID ပြင်ဆင်ချက် ⚠️
+    // users table တွင် Staff ၏ user_id မှာ 4 ဖြစ်သောကြောင့် 4 သို့ ပြောင်းထားပါသည်။
+    // (မှတ်ချက်: passengers table တွင် passenger_id 1 ရှိနေရန် လိုအပ်ပါသည်)
+    // =========================================================
+    private int currentPassengerId = 1;
+    private int currentStaffId = 4;
 
     // ==========================================
     // 🌟 Data လက်ခံခြင်း (MMK ဖြင့် Default Price သတ်မှတ်ခြင်း)
@@ -83,7 +94,7 @@ public class StaffSeatSelectionController implements Initializable {
         this.currentFrom = from;
         this.currentTo = to;
         this.currentDate = date;
-        this.currentPrice = price; // ရှေ့ကပို့လိုက်တဲ့ String (အသုံးမပြုတော့ပါ)
+        this.currentPrice = price;
         this.currentPassengers = passengers;
         this.currentPassengerName = passengerName;
 
@@ -93,18 +104,24 @@ public class StaffSeatSelectionController implements Initializable {
         lblPassengerName.setText(passengerName);
 
         try {
-            // 🌟 ဈေးနှုန်းကို Economic Base Price အဖြစ် 980,000 MMK ဖြင့် အသေသတ်မှတ်မည်
             double basePrice = 980000.0;
             ticketPriceValue = basePrice * passengers;
+            currentTotalPrice = ticketPriceValue;
 
             lblTicketPrice.setText(String.format("%,.0f MMK", ticketPriceValue));
             lblSeatCharge.setText("0 MMK");
             lblTotal.setText(String.format("%,.0f MMK", ticketPriceValue));
         } catch (Exception e) {
             ticketPriceValue = 980000.0;
+            currentTotalPrice = ticketPriceValue;
         }
 
         fetchFlightDetailsAndBookedSeats();
+    }
+
+    public void setBookingIds(int passengerId, int staffId) {
+        this.currentPassengerId = passengerId;
+        this.currentStaffId = staffId;
     }
 
     @Override
@@ -190,9 +207,6 @@ public class StaffSeatSelectionController implements Initializable {
         parallelTransition.play();
     }
 
-    // ==========================================
-    // 🌟 Seat ရွေးချယ်မှုအလိုက် MMK ဖြင့် Charge တွက်ချက်ခြင်း
-    // ==========================================
     @FXML
     void selectSeat(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
@@ -211,19 +225,18 @@ public class StaffSeatSelectionController implements Initializable {
         String selectedClass = classComboBox.getValue() != null ? classComboBox.getValue() : "Economic";
         lblSelectedSeat.setText(selectedClass + " - " + clickedButton.getText());
 
-        // 🌟 ဈေးနှုန်း Logic အသစ် (MMK ဖြင့်)
         double seatCharge = 0.0;
         if (selectedClass.equals("Business")) {
-            seatCharge = 676000.0 * currentPassengers; // 980K + 676K = 1656K
+            seatCharge = 676000.0 * currentPassengers;
         } else if (selectedClass.equals("Premium Economic")) {
-            seatCharge = 418000.0 * currentPassengers; // 980K + 418K = 1398K
+            seatCharge = 418000.0 * currentPassengers;
         } else {
-            seatCharge = 0.0; // Economy ဆိုလျှင် Charge မရှိပါ (980K)
+            seatCharge = 0.0;
         }
 
         lblSeatCharge.setText(String.format("%,.0f MMK", seatCharge));
-        double total = ticketPriceValue + seatCharge;
-        lblTotal.setText(String.format("%,.0f MMK", total));
+        currentTotalPrice = ticketPriceValue + seatCharge;
+        lblTotal.setText(String.format("%,.0f MMK", currentTotalPrice));
     }
 
     @FXML
@@ -261,6 +274,9 @@ public class StaffSeatSelectionController implements Initializable {
         }
     }
 
+    // ==========================================
+    // 🌟 Seat & Booking သိမ်းဆည်းခြင်း (Database သို့)
+    // ==========================================
     @FXML
     void clickContinue(ActionEvent event) {
         if (currentlySelectedSeat == null) {
@@ -278,62 +294,110 @@ public class StaffSeatSelectionController implements Initializable {
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) throw new Exception("Database Connection မရရှိပါ။");
 
-            boolean exists = false;
-            boolean isAvailable = true;
-            String checkQuery = "SELECT is_available FROM seats WHERE flight_id = ? AND seat_number = ?";
-            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
-                checkStmt.setInt(1, currentFlightId);
-                checkStmt.setString(2, seatNumber);
-                try (ResultSet rs = checkStmt.executeQuery()) {
-                    if (rs.next()) {
-                        exists = true;
-                        isAvailable = rs.getBoolean("is_available");
+            // Transaction စတင်ရန်
+            conn.setAutoCommit(false);
+
+            try {
+                boolean exists = false;
+                boolean isAvailable = true;
+                int currentSeatId = -1;
+
+                String checkQuery = "SELECT seat_id, is_available FROM seats WHERE flight_id = ? AND seat_number = ?";
+                try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+                    checkStmt.setInt(1, currentFlightId);
+                    checkStmt.setString(2, seatNumber);
+                    try (ResultSet rs = checkStmt.executeQuery()) {
+                        if (rs.next()) {
+                            exists = true;
+                            currentSeatId = rs.getInt("seat_id");
+                            isAvailable = rs.getBoolean("is_available");
+                        }
                     }
                 }
-            }
 
-            if (exists && !isAvailable) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Seat Unavailable");
-                alert.setContentText("တောင်းပန်ပါသည်။ ဤခုံမှာ ယခုလေးတင် အခြားသူ ဝယ်ယူသွားပါပြီ။ အခြားခုံ ပြောင်းလဲရွေးချယ်ပေးပါ။");
-                alert.showAndWait();
+                if (exists && !isAvailable) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Seat Unavailable");
+                    alert.setContentText("တောင်းပန်ပါသည်။ ဤခုံမှာ ယခုလေးတင် အခြားသူ ဝယ်ယူသွားပါပြီ။ အခြားခုံ ပြောင်းလဲရွေးချယ်ပေးပါ။");
+                    alert.showAndWait();
 
-                currentlySelectedSeat.getStyleClass().remove("seat-selected");
-                currentlySelectedSeat.getStyleClass().add("seat-booked");
-                currentlySelectedSeat.setDisable(true);
-                currentlySelectedSeat = null;
-                lblSelectedSeat.setText("--");
-                return;
-            }
-
-            if (exists) {
-                String updateQuery = "UPDATE seats SET is_available = false, seat_class = ? WHERE flight_id = ? AND seat_number = ?";
-                try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
-                    updateStmt.setString(1, seatClass);
-                    updateStmt.setInt(2, currentFlightId);
-                    updateStmt.setString(3, seatNumber);
-                    updateStmt.executeUpdate();
+                    currentlySelectedSeat.getStyleClass().remove("seat-selected");
+                    currentlySelectedSeat.getStyleClass().add("seat-booked");
+                    currentlySelectedSeat.setDisable(true);
+                    currentlySelectedSeat = null;
+                    lblSelectedSeat.setText("--");
+                    return;
                 }
-            } else {
-                String insertQuery = "INSERT INTO seats (flight_id, seat_number, seat_class, is_available) VALUES (?, ?, ?, false)";
-                try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
-                    insertStmt.setInt(1, currentFlightId);
-                    insertStmt.setString(2, seatNumber);
-                    insertStmt.setString(3, seatClass);
-                    insertStmt.executeUpdate();
-                }
-            }
 
-            String timeString = lblTopTime.getText().replace("Time: ", "").trim();
-            loadBoardingPassPage(seatClass, timeString, seatNumber);
+                // 1. Save / Update in `seats` table
+                if (exists) {
+                    String updateQuery = "UPDATE seats SET is_available = false, seat_class = ? WHERE flight_id = ? AND seat_number = ?";
+                    try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                        updateStmt.setString(1, seatClass);
+                        updateStmt.setInt(2, currentFlightId);
+                        updateStmt.setString(3, seatNumber);
+                        updateStmt.executeUpdate();
+                    }
+                } else {
+                    String insertQuery = "INSERT INTO seats (flight_id, seat_number, seat_class, is_available) VALUES (?, ?, ?, false)";
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                        insertStmt.setInt(1, currentFlightId);
+                        insertStmt.setString(2, seatNumber);
+                        insertStmt.setString(3, seatClass);
+                        insertStmt.executeUpdate();
+
+                        try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+                            if (generatedKeys.next()) {
+                                currentSeatId = generatedKeys.getInt(1);
+                            }
+                        }
+                    }
+                }
+
+                // 2. Insert into `bookings` table
+                String pnrCode = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+
+                String bookingQuery = "INSERT INTO bookings (pnr_code, flight_id, passenger_id, seat_id, staff_id, total_price, payment_method, status, booking_date) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+                try (PreparedStatement bookingStmt = conn.prepareStatement(bookingQuery)) {
+                    bookingStmt.setString(1, pnrCode);
+                    bookingStmt.setInt(2, currentFlightId);
+
+                    bookingStmt.setInt(3, this.currentPassengerId);
+                    bookingStmt.setInt(4, currentSeatId);
+                    bookingStmt.setInt(5, this.currentStaffId);
+
+                    bookingStmt.setDouble(6, currentTotalPrice);
+                    bookingStmt.setString(7, "Cash");
+                    bookingStmt.setString(8, "Confirmed");
+
+                    bookingStmt.executeUpdate();
+                }
+
+                // Transaction အောင်မြင်ပါက သိမ်းဆည်းမည်
+                conn.commit();
+
+                // Boarding Pass Page သို့ ဆက်သွားမည်
+                String timeString = lblTopTime.getText().replace("Time: ", "").trim();
+                loadBoardingPassPage(seatClass, timeString, seatNumber);
+
+            } catch (Exception ex) {
+                // ပြဿနာတက်ပါက နောက်ပြန်ဆုတ်မည် (Rollback)
+                conn.rollback();
+                throw ex;
+            } finally {
+                // Auto-commit မူလအတိုင်းပြန်ထားရန်
+                conn.setAutoCommit(true);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Database Error");
-                alert.setHeaderText("ထိုင်ခုံသိမ်းဆည်းရာတွင် အမှားအယွင်းရှိနေပါသည်။");
-                alert.setContentText(e.getMessage());
+                alert.setHeaderText("Booking သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိနေပါသည်။");
+                alert.setContentText("ကျေးဇူးပြု၍ Staff ID သို့မဟုတ် Passenger ID သည် Database တွင် အမှန်တကယ် ရှိမရှိ စစ်ဆေးပါ။\n\n" + e.getMessage());
                 alert.showAndWait();
             });
         }
