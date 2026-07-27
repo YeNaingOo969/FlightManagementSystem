@@ -56,12 +56,17 @@ public class AdminAddFlightController implements Initializable {
     @FXML private Button btnCancel;
     @FXML private Button btnSave;
 
-    // Edit လုပ်ခြင်းဟုတ်မဟုတ် သိနိုင်ရန်
     private Integer currentFlightId = null;
 
-    // 🌟 Database မှ City ID နှင့် City Name တွဲသိမ်းရန် Map များ 🌟
+    // Database မှ City ID နှင့် City Name တွဲသိမ်းရန် Map များ
     private Map<String, Integer> cityNameToIdMap = new HashMap<>();
     private Map<Integer, String> cityIdToNameMap = new HashMap<>();
+
+    // 🌟 City အားလုံးကို သိမ်းထားမည့် Master List
+    private ObservableList<String> allCitiesList = FXCollections.observableArrayList();
+
+    // Infinite Loop မဖြစ်စေရန် ထိန်းချုပ်မည့် boolean flag
+    private boolean isUpdatingCities = false;
 
     // Table ကို ချက်ချင်း Refresh လုပ်ရန် Callback
     private Runnable saveCallback;
@@ -73,18 +78,17 @@ public class AdminAddFlightController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTimeComboBoxes();
-        setupCityComboBoxes(); // Database မှ City များခေါ်ယူမည်
+        setupCityComboBoxes();
         setupStatusComboBox();
         setupDateValidations();
     }
 
     public void setFlightData(Flight flight) {
-        this.currentFlightId = flight.getFlightId(); // ID မှတ်ထားမည်
+        this.currentFlightId = flight.getFlightId();
 
         txtFlightNumber.setText(flight.getFlightNumber());
         txtAirline.setText(flight.getAirline());
 
-        // Map ထဲမှ ID ဖြင့် City Name ပြန်ရှာပြီး ComboBox တွင် ရွေးချယ်ပေးမည်
         cmbDepartureCity.setValue(getCityName(flight.getDepartureCityId()));
         cmbArrivalCity.setValue(getCityName(flight.getArrivalCityId()));
 
@@ -100,7 +104,7 @@ public class AdminAddFlightController implements Initializable {
         txtBasePrice.setText(String.valueOf(flight.getBasePrice()));
         cmbStatus.setValue(flight.getStatus());
 
-        btnSave.setText("Update Flight"); // ခလုတ်စာသားပြောင်းမည်
+        btnSave.setText("Update Flight");
     }
 
     private void setupTimeComboBoxes() {
@@ -117,10 +121,10 @@ public class AdminAddFlightController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 Database မှ Cities များကို ComboBox ထဲသို့ ထည့်သွင်းခြင်း 🌟
+    // 🌟 Database မှ Cities များကို ဆွဲထုတ်ခြင်းနှင့် ComboBox သတ်မှတ်ခြင်း 🌟
     // ==========================================
     private void setupCityComboBoxes() {
-        ObservableList<String> cityList = FXCollections.observableArrayList();
+        allCitiesList.clear();
         String query = "SELECT city_id, city_name, city_code FROM cities";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -132,23 +136,52 @@ public class AdminAddFlightController implements Initializable {
                 String name = rs.getString("city_name");
                 String code = rs.getString("city_code");
 
-                // ပုံစံ - Yangon (YGN)
                 String displayString = name + " (" + code + ")";
 
-                // ID နှင့် Name ကို Map ထဲတွင် မှတ်ထားမည်
                 cityNameToIdMap.put(displayString, id);
                 cityIdToNameMap.put(id, displayString);
 
-                // ComboBox တွင်ပြသရန် List ထဲထည့်မည်
-                cityList.add(displayString);
+                allCitiesList.add(displayString);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("Cities Database မှ Data ဆွဲထုတ်ရာတွင် အမှားအယွင်းဖြစ်နေပါသည်။");
         }
 
-        cmbDepartureCity.setItems(cityList);
-        cmbArrivalCity.setItems(cityList);
+        // ကနဦးတွင် ComboBox နှစ်ခုလုံးသို့ City အားလုံး ထည့်သွင်းမည်
+        cmbDepartureCity.setItems(FXCollections.observableArrayList(allCitiesList));
+        cmbArrivalCity.setItems(FXCollections.observableArrayList(allCitiesList));
+
+        // 🌟 From (သို့) To မှ မြို့ရွေးလိုက်တိုင်း နောက်တစ်ဘက်တွင် ထပ်ရွေး၍မရအောင် Listener တပ်ဆင်ခြင်း 🌟
+        cmbDepartureCity.valueProperty().addListener((observable, oldValue, newValue) -> updateCityComboBoxes());
+        cmbArrivalCity.valueProperty().addListener((observable, oldValue, newValue) -> updateCityComboBoxes());
+    }
+
+    // 🌟 ComboBox စာရင်းများကို အပြန်အလှန် စစ်ထုတ် (Filter) ပေးမည့် Method 🌟
+    private void updateCityComboBoxes() {
+        if (isUpdatingCities) return;
+        isUpdatingCities = true;
+
+        String currentDep = cmbDepartureCity.getValue();
+        String currentArr = cmbArrivalCity.getValue();
+
+        ObservableList<String> depList = FXCollections.observableArrayList(allCitiesList);
+        ObservableList<String> arrList = FXCollections.observableArrayList(allCitiesList);
+
+        // To (Arrival) မှာ ရွေးထားတာရှိရင် From (Departure) List ထဲကနေ ဖယ်ထုတ်မည်
+        if (currentArr != null) depList.remove(currentArr);
+
+        // From (Departure) မှာ ရွေးထားတာရှိရင် To (Arrival) List ထဲကနေ ဖယ်ထုတ်မည်
+        if (currentDep != null) arrList.remove(currentDep);
+
+        cmbDepartureCity.setItems(depList);
+        cmbArrivalCity.setItems(arrList);
+
+        // ယခင်ရွေးထားသော တန်ဖိုးများကို ပြန်လည်သတ်မှတ်ပေးမည်
+        cmbDepartureCity.setValue(currentDep);
+        cmbArrivalCity.setValue(currentArr);
+
+        isUpdatingCities = false;
     }
 
     private void setupStatusComboBox() {
@@ -185,20 +218,15 @@ public class AdminAddFlightController implements Initializable {
         });
     }
 
-    // 🌟 ComboBox မှ ရွေးချယ်လိုက်သော စာသားကို အသုံးပြု၍ ID ပြန်ရှာခြင်း 🌟
     private int getCityId(String cityName) {
         if (cityName == null || !cityNameToIdMap.containsKey(cityName)) return 0;
         return cityNameToIdMap.get(cityName);
     }
 
-    // 🌟 ID ကို အသုံးပြု၍ ComboBox တွင်ပြမည့် စာသား ပြန်ရှာခြင်း 🌟
     private String getCityName(int cityId) {
         return cityIdToNameMap.getOrDefault(cityId, null);
     }
 
-    // ==========================================
-    // 🌟 SAVE (သို့) UPDATE ပြုလုပ်ခြင်း
-    // ==========================================
     @FXML
     void clickSave(ActionEvent event) {
         if (txtFlightNumber.getText().isEmpty() || txtAirline.getText().isEmpty() ||
@@ -224,7 +252,6 @@ public class AdminAddFlightController implements Initializable {
             double basePrice = Double.parseDouble(txtBasePrice.getText());
             String status = cmbStatus.getValue();
 
-            // Add လား Edit လား စစ်ဆေးပြီး Query ပြောင်းလဲခြင်း
             String sql;
             if (currentFlightId == null) {
                 sql = "INSERT INTO flights (flight_number, airline, departure_city_id, arrival_city_id, departure_time, arrival_time, total_seats, base_price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -249,7 +276,6 @@ public class AdminAddFlightController implements Initializable {
                     pstmt.setDouble(8, basePrice);
                     pstmt.setString(9, status);
 
-                    // Edit ဆိုလျှင် ID ထည့်ပေးရန်
                     if (currentFlightId != null) {
                         pstmt.setInt(10, currentFlightId);
                     }
@@ -259,7 +285,6 @@ public class AdminAddFlightController implements Initializable {
                         String msg = (currentFlightId == null) ? "Flight added successfully!" : "Flight updated successfully!";
                         showAlert(Alert.AlertType.INFORMATION, "Success", msg);
 
-                        // Data အောင်မြင်စွာ သိမ်းပြီးပါက အပြင် Table ကို Refresh လုပ်ခိုင်းပါမည်
                         if (saveCallback != null) {
                             saveCallback.run();
                         }
