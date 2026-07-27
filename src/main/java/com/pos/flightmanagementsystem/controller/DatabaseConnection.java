@@ -8,8 +8,8 @@ public class DatabaseConnection {
 
     // Database ချိတ်ဆက်ရန် လိုအပ်သော အချက်အလက်များ
     private static final String URL = "jdbc:mysql://localhost:3306/flightmanagementsystem";
-    private static final String USER = "root2005"; // မိမိ MySQL ရဲ့ Username ကိုပြောင်းထည့်ပါ
-    private static final String PASSWORD = "6111900"; // မိမိ MySQL ရဲ့ Password ကိုပြောင်းထည့်ပါ
+    private static final String USER = "root"; // မိမိ MySQL ရဲ့ Username ကိုပြောင်းထည့်ပါ
+    private static final String PASSWORD = "root2005"; // မိမိ MySQL ရဲ့ Password ကိုပြောင်းထည့်ပါ
 
     // Connection ရယူရန် Method
     public static Connection getConnection() {

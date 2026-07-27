@@ -11,7 +11,7 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // FXML ဖိုင်လမ်းကြောင်းကို သေချာစစ်ပါ
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/pos/flightmanagementsystem/view/Staff.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
 
         // Window အရွယ်အစား သတ်မှတ်ချက် (320, 240) ကို ဖျက်လိုက်ပါ
         Scene scene = new Scene(fxmlLoader.load());

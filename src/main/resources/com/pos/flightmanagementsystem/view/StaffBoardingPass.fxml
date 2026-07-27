@@ -23,7 +23,8 @@
                             <children>
                                 <Label styleClass="banner-title" text="FLYPLAN AIRLINES" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label styleClass="banner-class" text="ECONOMY" />
+                                <!-- 🌟 Class အမှန်ပေါ်ရန် fx:id ထည့်ထားသည် -->
+                                <Label fx:id="lblClass" styleClass="banner-class" text="ECONOMY" />
                             </children>
                         </HBox>
 
@@ -34,36 +35,38 @@
                                     <children>
                                         <VBox spacing="2.0">
                                             <Label styleClass="detail-label" text="PASSENGER NAME" />
-                                            <Label styleClass="passenger-name" text="JOHN DOE" />
+                                            <!-- 🌟 ခရီးသည်နာမည် အမှန်ပေါ်ရန် fx:id ထည့်ထားသည် -->
+                                            <Label fx:id="lblPassengerName" styleClass="passenger-name" text="JOHN DOE" />
                                         </VBox>
 
                                         <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                            <Label styleClass="route-text" text="RGN" />
+                                            <!-- 🌟 From/To အမှန်ပေါ်ရန် fx:id ထည့်ထားသည် -->
+                                            <Label fx:id="lblFrom" styleClass="route-text" text="RGN" />
                                             <SVGPath content="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" styleClass="route-arrow" />
-                                            <Label styleClass="route-text" text="BKK" />
+                                            <Label fx:id="lblTo" styleClass="route-text" text="BKK" />
                                         </HBox>
 
                                         <GridPane hgap="30.0" vgap="15.0">
                                             <VBox spacing="2.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
                                                 <Label styleClass="detail-label" text="Date" />
-                                                <Label styleClass="detail-value" text="25 Aug 2026" />
+                                                <Label fx:id="lblDate" styleClass="detail-value" text="25 Aug 2026" />
                                             </VBox>
                                             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                                                 <Label styleClass="detail-label" text="Time" />
-                                                <Label styleClass="detail-value" text="08:00 AM" />
+                                                <Label fx:id="lblTime" styleClass="detail-value" text="08:00 AM" />
                                             </VBox>
                                             <VBox spacing="2.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
                                                 <Label styleClass="detail-label" text="Flight" />
-                                                <Label styleClass="detail-value" text="MM101" />
+                                                <Label fx:id="lblFlight" styleClass="detail-value" text="MM101" />
                                             </VBox>
 
                                             <VBox spacing="2.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
                                                 <Label styleClass="detail-label" text="Seat" />
-                                                <Label styleClass="detail-value" text="1A" />
+                                                <Label fx:id="lblSeat" styleClass="detail-value" text="1A" />
                                             </VBox>
                                             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                 <Label styleClass="detail-label" text="Gate" />
-                                                <Label styleClass="detail-value" text="G12" />
+                                                <Label fx:id="lblGate" styleClass="detail-value" text="G12" />
                                             </VBox>
                                         </GridPane>
                                     </children>
