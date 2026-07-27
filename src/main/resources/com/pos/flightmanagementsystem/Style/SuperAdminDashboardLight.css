@@ -1,0 +1,126 @@
+/* =========================================================================
+   ✈️ DASHBOARD PAGE (MODERN LIGHT THEME)
+   ========================================================================= */
+
+/* 🌌 Background & Root */
+.dashboard-root, .super-dashboard-content {
+    -fx-background-color: transparent;
+    -fx-padding: 10px 35px 35px 35px;
+}
+
+/* ==========================================================
+   PAGE TITLE & TOPBAR
+========================================================== */
+.super-topbar {
+    -fx-background-color: rgba(255,255,255,0.92);
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-border-color: rgba(17,40,72,0.08); -fx-border-width: 1px;
+    -fx-padding: 20px 26px;
+    -fx-effect: dropshadow(gaussian, rgba(17,40,72,0.08), 22, 0.12, 0, 10);
+}
+
+/* ==========================================================
+   📝 TYPOGRAPHY (စာသားများ)
+========================================================== */
+.super-page-kicker { -fx-text-fill: #1687d9; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-transform: uppercase; }
+.super-page-title { -fx-text-fill: #10243f; -fx-font-size: 26px; -fx-font-weight: bold; }
+.super-page-subtitle { -fx-text-fill: #60728a; -fx-font-size: 13px; }
+
+.super-section-title { -fx-text-fill: #10243f; -fx-font-size: 18px; -fx-font-weight: bold; }
+.super-section-subtitle { -fx-text-fill: #60728a; -fx-font-size: 12px; }
+.super-time-label { -fx-text-fill: #6b7e95; -fx-font-size: 12px; -fx-font-weight: bold; }
+
+/* ==========================================================
+   📦 PANELS (Recent Activity, Flight Health)
+========================================================== */
+.super-panel, .super-side-panel {
+    -fx-background-color: rgba(255,255,255,0.92);
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-border-color: rgba(17,40,72,0.08); -fx-border-width: 1px;
+    -fx-padding: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(17,40,72,0.08), 22, 0.12, 0, 10);
+}
+
+.super-side-panel-accent {
+    -fx-background-color: linear-gradient(to bottom right, #10294a, #1687d9);
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-padding: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(22,135,217,0.22), 24, 0.22, 0, 10);
+}
+
+.super-section-title-light { -fx-text-fill: #ffffff; -fx-font-size: 18px; -fx-font-weight: bold; }
+.super-side-copy { -fx-text-fill: #60728a; -fx-font-size: 12px; -fx-wrap-text: true; }
+.super-side-copy-light { -fx-text-fill: rgba(255,255,255,0.86); -fx-font-size: 12px; -fx-wrap-text: true; }
+
+/* ==========================================================
+   📊 METRIC CARDS
+========================================================== */
+.super-metrics-row { -fx-spacing: 20px; }
+
+.super-metric-card-blue, .super-metric-card-red, .super-metric-card-green, .super-metric-card-gold {
+    -fx-min-height: 120px; -fx-max-width: 100000; -fx-padding: 20px 22px;
+    -fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(17,40,72,0.10), 20, 0.14, 0, 10);
+}
+.super-metric-card-blue { -fx-background-color: linear-gradient(to bottom right, #1677ff, #18c8ff); }
+.super-metric-card-red { -fx-background-color: linear-gradient(to bottom right, #eb5757, #ff8a65); }
+.super-metric-card-green { -fx-background-color: linear-gradient(to bottom right, #0e9f6e, #2dd4bf); }
+.super-metric-card-gold { -fx-background-color: linear-gradient(to bottom right, #b7791f, #f6c85f); }
+
+.super-metric-label, .super-metric-note { -fx-text-fill: rgba(255,255,255,0.88); -fx-font-size: 12px; -fx-font-weight: bold; }
+.super-metric-value { -fx-text-fill: #ffffff; -fx-font-size: 28px; -fx-font-weight: bold; }
+
+/* ==========================================================
+   🔘 BUTTONS / PILLS
+========================================================== */
+.outline-btn, .button-export, .system-logs-btn, .live-monitor-btn, .super-status-pill, .super-table-chip {
+    -fx-background-color: #e9f8f3;
+    -fx-border-color: #bcefe0;
+    -fx-text-fill: #08775e;
+    -fx-font-weight: bold; -fx-font-size: 12px;
+    -fx-border-radius: 20px; -fx-background-radius: 20px;
+    -fx-padding: 6px 16px; -fx-cursor: hand;
+}
+.outline-btn:hover, .system-logs-btn:hover, .live-monitor-btn:hover {
+    -fx-background-color: #d1f4e8;
+}
+
+/* ==========================================================
+   🟢 STATUS DOTS
+========================================================== */
+.super-dot-green { -fx-background-color: #2dd4bf; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-gold { -fx-background-color: #f6c85f; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-blue { -fx-background-color: #1687d9; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+
+/* ==========================================================
+   📋 TABLE VIEW (Light Theme)
+========================================================== */
+.table-view, .super-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dce6f2;
+    -fx-padding: 0;
+    -fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 1px;
+}
+.table-view .column-header-background, .super-table .column-header-background {
+    -fx-background-color: #eff5fb;
+    -fx-background-radius: 11px 11px 0 0;
+    -fx-border-color: transparent transparent #dce6f2 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+.table-view .column-header, .super-table .column-header { -fx-background-color: transparent; }
+.table-view .column-header .label, .super-table .column-header .label {
+    -fx-text-fill: #41546b; -fx-font-weight: bold; -fx-font-size: 12px; -fx-alignment: center;
+}
+.table-row-cell, .super-table .table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #edf1f6 transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-cell-size: 50px;
+}
+.table-row-cell:filled:hover, .super-table .table-row-cell:filled:hover { -fx-background-color: #f3f9ff; }
+.table-row-cell:selected, .super-table .table-row-cell:selected { -fx-background-color: #e6f0ff; }
+.table-view .table-cell, .super-table .table-cell { -fx-text-fill: #2b3d52; -fx-font-size: 13px; -fx-alignment: center; }
+.table-view .placeholder .label, .super-table .placeholder .label { -fx-text-fill: #8a9ab0; -fx-font-style: italic; -fx-font-size: 13px; }
+
+.table-view .scroll-bar:horizontal, .table-view .scroll-bar:vertical { -fx-background-color: transparent; }
+.table-view .corner { -fx-background-color: transparent; }

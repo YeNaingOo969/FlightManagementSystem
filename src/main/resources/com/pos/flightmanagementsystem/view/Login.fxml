@@ -9,6 +9,7 @@
 
 <HBox styleClass="root-layout" stylesheets="@/com/pos/flightmanagementsystem/Style/LoginDark.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.LoginController">
 
+    <!-- LEFT PANEL: Animation & Branding -->
     <StackPane fx:id="leftPanel" HBox.hgrow="ALWAYS" prefWidth="600.0">
         <Region styleClass="bg-image-layer" />
         <Region styleClass="bg-gradient-overlay" />
@@ -18,10 +19,12 @@
                 <Insets bottom="40.0" top="60.0" />
             </padding>
 
-            <StackPane fx:id="animationContainer" style="-fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.8), 35, 0.3, 0, 0);">
-                <Circle fx:id="orbitPath" fill="TRANSPARENT" radius="89.0" stroke="WHITE" strokeWidth="2.5" />
+            <StackPane fx:id="animationContainer" styleClass="animation-container">
+                <!-- မူလ stroke အရောင်ကို ဖြုတ်ပြီး styleClass အသစ် တပ်ထားပါသည် -->
+                <Circle fx:id="orbitPath" fill="TRANSPARENT" radius="89.0" strokeWidth="2.5" styleClass="orbit-path" />
                 <Group fx:id="smallPlane">
-                    <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#06b6d4" layoutX="-12" layoutY="-12" rotate="90" scaleX="1.25" scaleY="1.25" />
+                    <!-- Plane SVG (Neon Cyan) -->
+                    <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#00D4FF" layoutX="-12" layoutY="-12" rotate="90" scaleX="1.25" scaleY="1.25" />
                 </Group>
                 <ImageView fitHeight="242.0" fitWidth="220.0" preserveRatio="true">
                     <image>
@@ -42,9 +45,9 @@
         </VBox>
     </StackPane>
 
+    <!-- RIGHT PANEL: Forms -->
     <StackPane fx:id="rightPanel" prefWidth="600.0" styleClass="right-panel" HBox.hgrow="ALWAYS">
 
-        <!-- ===================== MAIN FORM CARD ===================== -->
         <VBox fx:id="formCard" alignment="CENTER_LEFT" maxHeight="520.0" maxWidth="450.0" spacing="18.0" styleClass="form-card">
 
             <!-- 1. LOGIN SECTION -->
@@ -58,7 +61,7 @@
                 <VBox spacing="8.0">
                     <Label styleClass="input-label" text="Username" />
                     <HBox alignment="CENTER_LEFT" styleClass="input-box">
-                        <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="#9ca3af" />
+                        <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" styleClass="input-icon" />
                         <TextField fx:id="txtUsername" promptText="Enter username" styleClass="clean-input" HBox.hgrow="ALWAYS" />
                     </HBox>
                 </VBox>
@@ -66,16 +69,14 @@
                 <VBox spacing="8.0">
                     <Label styleClass="input-label" text="Password" />
                     <HBox alignment="CENTER_LEFT" styleClass="input-box">
-                        <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="#9ca3af" />
-
+                        <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" styleClass="input-icon" />
                         <StackPane HBox.hgrow="ALWAYS">
                             <PasswordField fx:id="txtPasswordHidden" promptText="Enter password" styleClass="clean-input" />
                             <TextField fx:id="txtPasswordVisible" promptText="Enter password" styleClass="clean-input" visible="false" />
                         </StackPane>
-
-                        <Button onAction="#togglePassword" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;">
+                        <Button onAction="#togglePassword" styleClass="icon-button">
                             <graphic>
-                                <SVGPath fx:id="eyeIcon" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#9ca3af" />
+                                <SVGPath fx:id="eyeIcon" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" styleClass="input-icon" />
                             </graphic>
                         </Button>
                     </HBox>
@@ -101,7 +102,7 @@
                 <VBox spacing="8.0">
                     <Label styleClass="input-label" text="Email Address" />
                     <HBox alignment="CENTER_LEFT" styleClass="input-box">
-                        <SVGPath content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#9ca3af" />
+                        <SVGPath content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" styleClass="input-icon" />
                         <TextField fx:id="emailField" promptText="e.g. you@example.com" styleClass="clean-input" HBox.hgrow="ALWAYS" />
                     </HBox>
                 </VBox>
@@ -111,14 +112,13 @@
                 </Button>
 
                 <HBox alignment="CENTER">
-                    <Button onAction="#showLoginSection" style="-fx-background-color: transparent; -fx-text-fill: #6b7280; -fx-cursor: hand;" text="Back to Login" />
+                    <Button onAction="#showLoginSection" styleClass="text-button" text="Back to Login" />
                 </HBox>
             </VBox>
 
             <!-- 3. VERIFY OTP SECTION -->
             <VBox fx:id="otpSection" managed="false" spacing="15.0" visible="false">
                 <VBox spacing="8.0">
-                    <Label styleClass="welcome-label" text="Verify OTP" />
                     <Label styleClass="welcome-label" text="Verify OTP" />
                     <Label styleClass="subtitle-label" text="Enter the 6-digit code sent to your email" />
                     <VBox.margin><Insets bottom="10.0" /></VBox.margin>
@@ -141,7 +141,7 @@
                 </Button>
 
                 <HBox alignment="CENTER">
-                    <Button onAction="#showEmailRequestSection" style="-fx-background-color: transparent; -fx-text-fill: #6b7280; -fx-cursor: hand;" text="Change Email" />
+                    <Button onAction="#showEmailRequestSection" styleClass="text-button" text="Change Email" />
                 </HBox>
             </VBox>
 
@@ -156,14 +156,14 @@
                 <VBox spacing="8.0">
                     <Label styleClass="input-label" text="New Password" />
                     <HBox alignment="CENTER_LEFT" styleClass="input-box">
-                        <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="#9ca3af" />
+                        <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" styleClass="input-icon" />
                         <StackPane HBox.hgrow="ALWAYS">
                             <PasswordField fx:id="txtNewPasswordHidden" promptText="Enter new password" styleClass="clean-input" />
                             <TextField fx:id="txtNewPasswordVisible" promptText="Enter new password" styleClass="clean-input" visible="false" />
                         </StackPane>
-                        <Button onAction="#toggleNewPassword" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;">
+                        <Button onAction="#toggleNewPassword" styleClass="icon-button">
                             <graphic>
-                                <SVGPath fx:id="newEyeIcon" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#9ca3af" />
+                                <SVGPath fx:id="newEyeIcon" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" styleClass="input-icon" />
                             </graphic>
                         </Button>
                     </HBox>
@@ -172,14 +172,14 @@
                 <VBox spacing="8.0">
                     <Label styleClass="input-label" text="Confirm Password" />
                     <HBox alignment="CENTER_LEFT" styleClass="input-box">
-                        <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="#9ca3af" />
+                        <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" styleClass="input-icon" />
                         <StackPane HBox.hgrow="ALWAYS">
                             <PasswordField fx:id="txtConfirmPasswordHidden" promptText="Confirm new password" styleClass="clean-input" />
                             <TextField fx:id="txtConfirmPasswordVisible" promptText="Confirm new password" styleClass="clean-input" visible="false" />
                         </StackPane>
-                        <Button onAction="#toggleConfirmPassword" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;">
+                        <Button onAction="#toggleConfirmPassword" styleClass="icon-button">
                             <graphic>
-                                <SVGPath fx:id="confirmEyeIcon" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" fill="#9ca3af" />
+                                <SVGPath fx:id="confirmEyeIcon" content="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" styleClass="input-icon" />
                             </graphic>
                         </Button>
                     </HBox>
@@ -190,56 +190,42 @@
                 </Button>
 
                 <HBox alignment="CENTER">
-                    <Button onAction="#showLoginSection" style="-fx-background-color: transparent; -fx-text-fill: #6b7280; -fx-cursor: hand;" text="Back to Login" />
+                    <Button onAction="#showLoginSection" styleClass="text-button" text="Back to Login" />
                 </HBox>
             </VBox>
 
-            <Label fx:id="statusLabel" style="-fx-font-size: 13px; -fx-font-weight: bold;" wrapText="true" />
+            <!-- Status Label -->
+            <Label fx:id="statusLabel" styleClass="status-label" wrapText="true" />
         </VBox>
 
         <!-- ===================== SUCCESS DIALOG OVERLAY ===================== -->
-        <StackPane fx:id="successOverlay" visible="false" style="-fx-background-color: rgba(15, 23, 42, 0.85);">
+        <StackPane fx:id="successOverlay" styleClass="overlay-bg" visible="false">
             <VBox fx:id="successBox" alignment="CENTER" spacing="15.0" maxHeight="280.0" maxWidth="350.0" styleClass="success-dialog">
                 <children>
-                    <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#06b6d4" scaleX="3.5" scaleY="3.5">
-                        <VBox.margin>
-                            <Insets bottom="20.0" />
-                        </VBox.margin>
+                    <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#00FF9D" scaleX="3.5" scaleY="3.5">
+                        <VBox.margin><Insets bottom="20.0" /></VBox.margin>
                     </SVGPath>
-
-                    <Label text="Success!" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
-
-                    <Label text="Your password has been reset successfully. You can now login with your new password." style="-fx-font-size: 14px; -fx-text-fill: #94a3b8; -fx-font-family: 'Segoe UI', Arial, sans-serif;" textAlignment="CENTER" wrapText="true">
-                        <VBox.margin>
-                            <Insets bottom="10.0" />
-                        </VBox.margin>
+                    <Label styleClass="alert-title" text="Success!" />
+                    <Label styleClass="alert-message" text="Your password has been reset successfully. You can now login with your new password." textAlignment="CENTER" wrapText="true">
+                        <VBox.margin><Insets bottom="10.0" /></VBox.margin>
                     </Label>
-
-                    <Button text="Continue to Login" onAction="#closeSuccessDialog" styleClass="login-button" prefWidth="250.0" prefHeight="45.0" />
+                    <Button onAction="#closeSuccessDialog" styleClass="login-button" text="Continue to Login" prefWidth="250.0" prefHeight="45.0" />
                 </children>
             </VBox>
         </StackPane>
 
-        <!-- ===================== 🌟 CUSTOM ALERT OVERLAY ===================== -->
-        <StackPane fx:id="customAlertOverlay" visible="false" style="-fx-background-color: rgba(15, 23, 42, 0.75);">
+        <!-- ===================== CUSTOM ALERT OVERLAY ===================== -->
+        <StackPane fx:id="customAlertOverlay" styleClass="overlay-bg" visible="false">
             <VBox fx:id="customAlertBox" alignment="CENTER" spacing="15.0" maxHeight="240.0" maxWidth="350.0" styleClass="custom-alert-dialog">
                 <children>
-                    <!-- Default SVG Path နေရာလွတ် ချန်ထားခြင်း -->
-                    <SVGPath fx:id="customAlertIcon" fill="#ef4444" scaleX="2.5" scaleY="2.5">
-                        <VBox.margin>
-                            <Insets bottom="15.0" top="10.0" />
-                        </VBox.margin>
+                    <SVGPath fx:id="customAlertIcon" fill="#FF2A6D" scaleX="2.5" scaleY="2.5">
+                        <VBox.margin><Insets bottom="15.0" top="10.0" /></VBox.margin>
                     </SVGPath>
-
-                    <Label fx:id="customAlertTitle" text="Alert!" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
-
-                    <Label fx:id="customAlertMessage" text="Message Content" style="-fx-font-size: 14px; -fx-text-fill: #94a3b8; -fx-font-family: 'Segoe UI', Arial, sans-serif;" textAlignment="CENTER" wrapText="true">
-                        <VBox.margin>
-                            <Insets bottom="15.0" />
-                        </VBox.margin>
+                    <Label fx:id="customAlertTitle" styleClass="alert-title" text="Alert!" />
+                    <Label fx:id="customAlertMessage" styleClass="alert-message" text="Message Content" textAlignment="CENTER" wrapText="true">
+                        <VBox.margin><Insets bottom="15.0" /></VBox.margin>
                     </Label>
-
-                    <Button text="OK" onAction="#closeCustomAlert" styleClass="custom-alert-button" prefWidth="150.0" />
+                    <Button onAction="#closeCustomAlert" styleClass="custom-alert-button" text="OK" prefWidth="150.0" />
                 </children>
             </VBox>
         </StackPane>

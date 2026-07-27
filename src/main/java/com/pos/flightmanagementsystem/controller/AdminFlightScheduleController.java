@@ -171,11 +171,16 @@ public class AdminFlightScheduleController implements Initializable {
         colActions.setCellFactory(param -> new TableCell<>() {
             private final Button editBtn = new Button("Edit");
             private final Button deleteBtn = new Button("Delete");
-            private final HBox pane = new HBox(10, editBtn, deleteBtn);
+            // ခလုတ် ၂ ခုကြား Spacing ၁၅ ထားပြီး HBox ဖန်တီးခြင်း
+            private final HBox pane = new HBox(15, editBtn, deleteBtn);
 
             {
-                editBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-cursor: hand;");
-                deleteBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-cursor: hand;");
+                // 🌟 (၁) Inline style များကို ဖယ်ရှားပြီး CSS Class များကိုသာ ချိတ်ဆက်ခြင်း 🌟
+                editBtn.getStyleClass().add("btn-edit-table");
+                deleteBtn.getStyleClass().add("btn-delete-table");
+
+                // 🌟 (၂) HBox အတွင်းရှိ ခလုတ်များကို အလယ်တည့်တည့် (Center) ကျအောင် ချိန်ညှိခြင်း 🌟
+                pane.setAlignment(javafx.geometry.Pos.CENTER);
 
                 deleteBtn.setOnAction(event -> {
                     Flight flight = getTableView().getItems().get(getIndex());

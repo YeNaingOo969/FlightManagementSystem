@@ -1,0 +1,289 @@
+/* =========================================================================
+   ✈️ ADMIN REPORT & EXECUTIVE ANALYTICS - CYBERPUNK / DEEP AMETHYST THEME
+   ========================================================================= */
+
+/* 🌌 1. MAIN BACKGROUND */
+.super-content {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
+}
+
+/* ==========================================================
+   2. CARDS & PANELS (Top Bar & KPI Cards)
+========================================================== */
+.super-topbar,
+.kpi-card {
+    -fx-background-color: #1F1A36; /* Dark Amethyst Glass */
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #2A234C;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0.1, 0, 8);
+}
+
+.super-topbar {
+    -fx-padding: 20 25 20 25;
+}
+
+.kpi-card {
+    -fx-padding: 20;
+}
+
+/* ==========================================================
+   3. TYPOGRAPHY
+========================================================== */
+.super-page-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.super-section-title {
+    -fx-text-fill: #00D4FF; /* Neon Cyan */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.super-section-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #A093D6; /* Soft Purple */
+}
+
+.filter-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #A093D6;
+}
+
+/* KPI Typography */
+.kpi-title {
+    -fx-font-size: 14px;
+    -fx-text-fill: #A093D6;
+    -fx-font-weight: bold;
+}
+
+.kpi-value {
+    -fx-font-size: 26px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-padding: 5 0 5 0;
+}
+
+.kpi-status-up {
+    -fx-font-size: 12px;
+    -fx-text-fill: #00FF9D; /* Neon Green */
+    -fx-font-weight: bold;
+}
+
+.kpi-status-neutral {
+    -fx-font-size: 12px;
+    -fx-text-fill: #FFE600; /* Neon Gold */
+    -fx-font-weight: bold;
+}
+
+/* ==========================================================
+   4. BUTTONS (Export Report - Neon Cyan)
+========================================================== */
+.btn-primary {
+    -fx-background-color: transparent;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+}
+
+.export-icon {
+    -fx-fill: #00D4FF;
+}
+
+.btn-primary:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 12, 0, 0, 0);
+}
+
+.btn-primary:hover .export-icon {
+    -fx-fill: #FFFFFF;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: rgba(0, 212, 255, 0.3);
+}
+
+/* ==========================================================
+   5. DATE PICKER
+========================================================== */
+.super-date-picker {
+    -fx-background-color: #130F25;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1.5px;
+}
+
+.super-date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 8px 12px;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #5A4E8C;
+}
+
+.super-date-picker > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 8 8 0;
+    -fx-padding: 0 10 0 10;
+}
+
+.super-date-picker > .arrow-button > .graphic {
+    -fx-background-color: #00D4FF;
+}
+
+.super-date-picker:focused {
+    -fx-border-color: #00D4FF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 8, 0, 0, 0);
+}
+
+/* ==========================================================
+   6. BRAND LOGO
+========================================================== */
+.super-brand-logo {
+    -fx-min-width: 44;
+    -fx-min-height: 44;
+    -fx-max-width: 44;
+    -fx-max-height: 44;
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+    -fx-background-radius: 12;
+    -fx-border-color: #00D4FF;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 15, 0, 0, 0);
+}
+
+.super-brand-logo-glyph {
+    -fx-fill: #00D4FF;
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
+
+/* ==========================================================
+   7. TABLEVIEW
+========================================================== */
+.super-table, .table-view {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+    -fx-padding: 0;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+}
+
+.super-table .column-header-background {
+    -fx-background-color: #2A234C;
+    -fx-background-radius: 7 7 0 0;
+    -fx-border-radius: 7 7 0 0;
+    -fx-background-insets: 0;
+}
+
+.super-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #3D2C8D transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 38px;
+}
+
+.super-table .column-header .label {
+    -fx-text-fill: #00D4FF;
+    -fx-font-weight: bold;
+}
+
+.super-table .table-row-cell {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: transparent transparent #2A234C transparent;
+    -fx-text-fill: #E0E0E0;
+    -fx-size: 36px;
+}
+
+.super-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+}
+
+.super-table .table-row-cell:selected {
+    -fx-background-color: rgba(255, 42, 109, 0.2);
+}
+
+.super-table .table-cell {
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 13px;
+    -fx-padding: 8 12 8 12;
+}
+
+/* ==========================================================
+   8. CHARTS (DARK MODE & THEME FIX)
+========================================================== */
+.super-chart {
+    -fx-background-color: transparent;
+}
+
+.chart-content {
+    -fx-background-color: transparent;
+}
+
+/* 🌟 Chart ရဲ့ အတွင်းပိုင်း Plot Area (အဖြူရောင်ဖြစ်နေသောနေရာ) ကို Dark Theme ပြောင်းခြင်း */
+.chart-plot-background {
+    -fx-background-color: #130F25;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1px;
+}
+
+/* LineChart ရဲ့ အနောက်ခံ အကွက်လိုင်းများ (Grid Lines) အရောင် */
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(160, 147, 214, 0.15);
+}
+
+.chart-alt-column-region,
+.chart-alt-row-region {
+    -fx-background-color: transparent;
+}
+
+.chart-title {
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #A093D6;
+}
+
+/* Axis Styling */
+.axis {
+    -fx-tick-label-fill: #A093D6;
+}
+
+.axis-ticket {
+    -fx-stroke: #2A234C;
+}
+
+/* Line Chart Series (Neon Cyan Line) */
+.chart-series-line {
+    -fx-stroke: #00D4FF;
+    -fx-stroke-width: 3px;
+}
+
+.chart-line-symbol {
+    -fx-background-color: #00D4FF, #1F1A36;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 5px;
+    -fx-padding: 4px;
+}

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/flightSchedule.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminCityController">
+<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminCityDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminCityController">
     <children>
         <AnchorPane prefHeight="731.0" prefWidth="1031.0">
             <children>

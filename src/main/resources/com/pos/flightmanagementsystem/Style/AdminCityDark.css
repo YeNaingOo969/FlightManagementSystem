@@ -1,0 +1,135 @@
+/* =========================================================================
+   🌆 CITY MANAGEMENT - CYBERPUNK / DEEP AMETHYST THEME
+   ========================================================================= */
+
+/* 🌌 1. MAIN BACKGROUND */
+.root {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
+}
+
+/* 📦 2. PANELS & CARDS (Top Bar & Table Container) */
+.super-topbar {
+    -fx-background-color: #1F1A36; /* Dark Amethyst Glass */
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #2A234C;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 22, 0.12, 0, 10);
+    -fx-padding: 24;
+}
+
+/* 📝 3. TYPOGRAPHY */
+.super-page-title {
+    -fx-text-fill: #FFFFFF; /* Bright White */
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.super-section-subtitle {
+    -fx-text-fill: #A093D6; /* Soft Purple */
+    -fx-font-size: 13px;
+}
+
+/* 🔍 4. SEARCH FIELD (Cyberpunk Style) */
+.search-field {
+    -fx-background-color: #130F25;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 10px 15px;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #5A4E8C; /* Deep Purple Prompt */
+    -fx-font-size: 13px;
+}
+
+.search-field:focused {
+    -fx-border-color: #00D4FF; /* Neon Cyan Glow */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 10, 0, 0, 0);
+}
+
+/* 🔘 5. PRIMARY BUTTON (+ Add New City - Neon Cyan) */
+.btn-primary {
+    -fx-background-color: transparent;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #00D4FF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 12, 0, 0, 0);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: rgba(0, 212, 255, 0.3);
+}
+
+/* 📊 6. TABLE VIEW (DARK MODE FIXED CORNERS) */
+.table-view {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+    -fx-padding: 0;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2A234C;
+    -fx-background-radius: 13 13 0 0;
+    -fx-border-radius: 13 13 0 0;
+    -fx-background-insets: 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #3D2C8D transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 42px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #00D4FF; /* Header text as Neon Cyan */
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: transparent transparent #2A234C transparent;
+    -fx-text-fill: #E0E0E0; /* Light text for Dark Table */
+    -fx-size: 40px;
+}
+
+.table-view .table-row-cell:filled:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.1); /* Soft Cyan Hover */
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: rgba(255, 42, 109, 0.2); /* Neon Pink Highlight */
+}
+
+/* ရွေးချယ်ထားသော Row မှ စာသားများကို ပန်းရောင်ပြောင်းရန် */
+.table-view .table-row-cell:selected .text {
+    -fx-fill: #FF2A6D;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 13px;
+    -fx-padding: 10 14 10 14;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: #A093D6;
+    -fx-font-style: italic;
+}

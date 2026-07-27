@@ -12,25 +12,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<AnchorPane fx:id="rootPane" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminSystemToolsDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminSystemToolController">
+<AnchorPane fx:id="rootPane" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminSystemToolsDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminSystemToolController">
    <children>
 
-      <!-- Main Content -->
-      <!-- 🌟 main-container Class ကို သုံးထားသည် -->
-      <VBox fx:id="contentArea" spacing="25.0" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <!-- 🌟 Main Content (အပေါ်ဘက် နေရာလွတ်ကို လျှော့ချရန် topAnchor ကို 15 ထားပြီး VBox padding ကို ပြင်ဆင်ထားသည်) 🌟 -->
+      <VBox fx:id="contentArea" spacing="25.0" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
          <children>
 
             <!-- 1. TITLE CARD -->
-            <!-- 🌟 super-topbar Class ဖြင့် ခေါင်းစဉ်ကတ်ကို အမှောင်ရောင်ဖြစ်စေသည် -->
-            <VBox maxWidth="1.7976931348623157E308" styleClass="super-topbar">
+            <VBox maxWidth="1.7976931348623157E308" styleClass="title-card">
                <children>
-                  <Label styleClass="page-title" text="System Tools" />
-                  <Label styleClass="page-subtitle" text="Manage system database backups and configurations" />
+                  <Label styleClass="header-title" text="System Tools" />
+                  <Label styleClass="header-subtitle" text="Manage system database backups and configurations" />
                </children>
             </VBox>
 
             <!-- 2. MAIN CONTENT CARD -->
-            <!-- 🌟 tool-card Class မှလွဲ၍ ကျန် Hard Code များဖျက်ပစ်လိုက်သည် -->
             <VBox maxWidth="1.7976931348623157E308" spacing="25.0" styleClass="tool-card" VBox.vgrow="ALWAYS">
                <children>
 
@@ -40,20 +37,18 @@
                         <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label styleClass="section-title" text="Backup Database" />
-                              <Label styleClass="super-side-copy" text="Last Backup: " />
+                              <Label styleClass="normal-text" text="Last Backup: " />
                            </children>
                         </VBox>
-                        <!-- 🌟 Button အတွက် button-backup-now class သာသုံးသည် -->
                         <Button fx:id="btnBackupNow" mnemonicParsing="false" onAction="#handleBackupNow" prefHeight="40.0" prefWidth="140.0" styleClass="button-backup-now" text="Backup Now" />
                      </children>
                   </HBox>
 
                   <!-- Export SQL Section -->
-                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" styleClass="export-box">
                      <children>
-                        <Label styleClass="super-side-copy" text="Backup your system database and export it as a SQL file to secure your data." HBox.hgrow="ALWAYS" />
+                        <Label styleClass="normal-text" text="Backup your system database and export it as a SQL file to secure your data." HBox.hgrow="ALWAYS" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <!-- 🌟 Button အတွက် button-export-sql class သာသုံးသည် -->
                         <Button fx:id="btnExportSql" mnemonicParsing="false" onAction="#handleExportSql" prefHeight="40.0" prefWidth="140.0" styleClass="button-export-sql" text="Export SQL" />
                      </children>
                   </HBox>
@@ -62,8 +57,8 @@
                   <VBox spacing="15.0" VBox.vgrow="ALWAYS">
                      <children>
                         <Label styleClass="section-title" text="Backup History" />
-                        <!-- 🌟 TableView ကို super-table Class ဖြင့် ပြင်ဆင်သည် -->
-                        <TableView fx:id="tvBackupHistory" styleClass="super-table" VBox.vgrow="ALWAYS">
+                        <!-- 🌟 Table ကို အရပ်ပိုရှည်အောင် prefHeight တိုးပေးထားသည် 🌟 -->
+                        <TableView fx:id="tvBackupHistory" prefHeight="450.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="colDate" prefWidth="75.0" text="Date" />
                               <TableColumn fx:id="colFileName" prefWidth="75.0" text="File Name" />
@@ -82,15 +77,12 @@
          </children>
       </VBox>
 
-      <!-- 🌟 Toast Notification (အောင်မြင်ကြောင်း ပြသမည့် အကွက်လေးကိုပါ Cyberpunk အစိမ်းရောင်ပြောင်းပေးထားသည်) -->
-      <HBox fx:id="notificationToast" alignment="TOP_LEFT" prefWidth="420.0" spacing="15.0" style="-fx-background-color: #1F1A36; -fx-background-radius: 12; -fx-border-color: #00FF9D; -fx-border-radius: 12; -fx-border-width: 1.5px; -fx-effect: dropshadow(gaussian, rgba(0, 255, 157, 0.3), 15, 0, 0, 4);" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
-         <padding>
-            <Insets bottom="16.0" left="20.0" right="12.0" top="16.0" />
-         </padding>
+      <!-- 🌟 Toast Notification (Cyberpunk Styled) -->
+      <HBox fx:id="notificationToast" alignment="TOP_LEFT" prefWidth="420.0" spacing="15.0" styleClass="toast-notification" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
          <children>
-            <StackPane fx:id="toastIconBg" maxHeight="36.0" maxWidth="36.0" minHeight="36.0" minWidth="36.0" prefHeight="36.0" prefWidth="36.0" style="-fx-background-color: rgba(0, 255, 157, 0.15); -fx-background-radius: 50%;">
+            <StackPane fx:id="toastIconBg" styleClass="toast-icon-bg">
                <children>
-                  <SVGPath fx:id="toastIconPath" content="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#00FF9D" />
+                  <SVGPath fx:id="toastIconPath" content="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" styleClass="toast-icon-glyph" />
                </children>
                <HBox.margin>
                   <Insets top="2.0" />
@@ -98,16 +90,16 @@
             </StackPane>
             <VBox spacing="4.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="lblToastTitle" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;" text="Success!" />
-                  <Label fx:id="lblToastMessage" style="-fx-font-size: 13px; -fx-text-fill: #A093D6; -fx-line-spacing: 2px;" text="Action completed." wrapText="true" />
+                  <Label fx:id="lblToastTitle" styleClass="toast-title" text="Success!" />
+                  <Label fx:id="lblToastMessage" styleClass="toast-message" text="Action completed." wrapText="true" />
                </children>
                <HBox.margin>
                   <Insets top="1.0" />
                </HBox.margin>
             </VBox>
-            <Button mnemonicParsing="false" onAction="#closeNotification" style="-fx-background-color: transparent; -fx-cursor: hand;">
+            <Button mnemonicParsing="false" onAction="#closeNotification" styleClass="toast-close-btn">
                <graphic>
-                  <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#A093D6" />
+                  <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" styleClass="toast-close-icon" />
                </graphic>
                <HBox.margin>
                   <Insets top="-4.0" />

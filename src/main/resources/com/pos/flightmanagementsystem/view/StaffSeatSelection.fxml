@@ -13,14 +13,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<!-- 🌟 အပြင်ဆုံးကို StackPane ဖြင့် အုပ်ထားပါသည် (Modal တက်လာရန်အတွက်) 🌟 -->
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffSeatSelection.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffSeatSelectionController">
+<!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
+<StackPane fx:id="rootStackPane" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffSeatSelectionDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffSeatSelectionController">
     <children>
 
-        <!-- 🌟 လက်ရှိ Page ၏ အဓိက Container 🌟 -->
         <VBox fx:id="mainContainer" prefHeight="760.0" prefWidth="1280.0" spacing="20.0" styleClass="main-content-vbox">
             <children>
 
+                <!-- Header Card -->
                 <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="header-card">
                     <padding><Insets bottom="15.0" left="25.0" right="25.0" top="15.0" /></padding>
                     <children>
@@ -34,6 +34,7 @@
                     </children>
                 </HBox>
 
+                <!-- Flight Info Card -->
                 <HBox alignment="CENTER_LEFT" spacing="25.0" styleClass="layout-card">
                     <padding><Insets bottom="15.0" left="25.0" right="25.0" top="15.0" /></padding>
                     <children>
@@ -46,19 +47,20 @@
                     </children>
                 </HBox>
 
+                <!-- Seat Legends -->
                 <HBox alignment="CENTER" spacing="30.0">
                     <children>
                         <HBox alignment="CENTER" spacing="8.0">
                             <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-available" />
-                            <Label text="Available" />
+                            <Label styleClass="legend-label" text="Available" />
                         </HBox>
                         <HBox alignment="CENTER" spacing="8.0">
                             <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-selected" />
-                            <Label text="Selected" />
+                            <Label styleClass="legend-label" text="Selected" />
                         </HBox>
                         <HBox alignment="CENTER" spacing="8.0">
                             <Pane prefHeight="15.0" prefWidth="15.0" styleClass="legend-booked" />
-                            <Label text="Booked" />
+                            <Label styleClass="legend-label" text="Booked" />
                         </HBox>
                     </children>
                 </HBox>
@@ -71,11 +73,14 @@
                         <VBox alignment="CENTER" prefWidth="780.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="viewport-container">
                             <Pane fx:id="viewportPane" prefHeight="600.0" prefWidth="780.0" maxWidth="780.0" VBox.vgrow="ALWAYS">
 
+                                <!-- Placeholder View -->
                                 <VBox fx:id="sideViewPlane" alignment="CENTER" prefHeight="600.0" prefWidth="780.0" layoutY="0.0">
-                                    <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#94a3b8" scaleX="8.0" scaleY="8.0" />
-                                    <Label style="-fx-padding: 80 0 0 0; -fx-text-fill: #94a3b8; -fx-font-weight: bold;" text="Select a class to view interior" />
+                                    <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" scaleX="8.0" scaleY="8.0" styleClass="placeholder-icon" />
+                                    <!-- 🌟 Inline style ဖြုတ်ပြီး Class ဖြင့် အစားထိုးထားသည် -->
+                                    <Label styleClass="placeholder-text" text="Select a class to view interior" />
                                 </VBox>
 
+                                <!-- Plane Interior View -->
                                 <StackPane fx:id="topViewPlane" alignment="TOP_CENTER" opacity="0.0" prefWidth="780.0">
 
                                     <SVGPath content="M 200 0 L 0 250 L 0 290 L 200 120 Z" styleClass="plane-wing" StackPane.alignment="TOP_LEFT" translateY="520" />
@@ -85,7 +90,8 @@
                                         <padding><Insets bottom="60.0" top="20.0" /></padding>
 
                                         <VBox alignment="CENTER" prefHeight="60.0" prefWidth="160.0" maxWidth="160.0" styleClass="cockpit">
-                                            <Label style="-fx-text-fill: white; -fx-font-weight: bold;" text="PILOT COCKPIT" />
+                                            <!-- 🌟 Inline style ဖြုတ်ပြီး Class ဖြင့် အစားထိုးထားသည် -->
+                                            <Label styleClass="cockpit-label" text="PILOT COCKPIT" />
                                         </VBox>
 
                                         <HBox alignment="CENTER" spacing="15.0">
@@ -140,7 +146,8 @@
 
                                         <!-- Premium Economic -->
                                         <VBox fx:id="premiumSection" alignment="CENTER" spacing="15.0">
-                                            <Separator style="-fx-padding: 10 30;" />
+                                            <!-- 🌟 Inline style ဖြုတ်ပြီး Class ဖြင့် အစားထိုးထားသည် -->
+                                            <Separator styleClass="class-separator" />
                                             <Label styleClass="class-title" text="Premium Economic" />
                                             <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
                                                 <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -183,7 +190,8 @@
 
                                         <!-- Economic -->
                                         <VBox fx:id="economySection" alignment="CENTER" spacing="15.0">
-                                            <Separator style="-fx-padding: 10 30;" />
+                                            <!-- 🌟 Inline style ဖြုတ်ပြီး Class ဖြင့် အစားထိုးထားသည် -->
+                                            <Separator styleClass="class-separator" />
                                             <Label styleClass="class-title" text="Economic" />
                                             <GridPane alignment="CENTER" hgap="15.0" vgap="12.0">
                                                 <Button onAction="#selectSeat" styleClass="seat-btn, seat-available" text="1A" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -238,7 +246,8 @@
                                     <Label fx:id="lblSelectedSeat" styleClass="selected-seat-large" text="--" />
                                 </VBox>
 
-                                <Separator style="-fx-padding: 10 0;" />
+                                <!-- 🌟 Inline style ဖြုတ်ပြီး Class ဖြင့် အစားထိုးထားသည် -->
+                                <Separator styleClass="summary-separator" />
 
                                 <HBox alignment="CENTER_LEFT">
                                     <Label styleClass="summary-label" text="Passenger" />
@@ -256,7 +265,8 @@
                                     <Label fx:id="lblSeatCharge" styleClass="summary-value" text="\$0.00" />
                                 </HBox>
 
-                                <Separator style="-fx-padding: 10 0;" />
+                                <!-- 🌟 Inline style ဖြုတ်ပြီး Class ဖြင့် အစားထိုးထားသည် -->
+                                <Separator styleClass="summary-separator" />
 
                                 <HBox alignment="CENTER_LEFT">
                                     <Label styleClass="summary-total-label" text="Total Price" />
@@ -267,7 +277,6 @@
 
                             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                                 <Button prefWidth="120.0" styleClass="secondary-button" text="Back" />
-                                <!-- 🌟 ဤ Continue ခလုတ်တွင် onAction လှမ်းခေါ်ထားပါသည် 🌟 -->
                                 <Button onAction="#clickContinue" prefWidth="150.0" styleClass="gradient-button" text="Continue" />
                             </HBox>
                         </VBox>

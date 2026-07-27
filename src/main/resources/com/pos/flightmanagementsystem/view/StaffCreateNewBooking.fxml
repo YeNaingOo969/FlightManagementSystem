@@ -14,8 +14,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<!-- 🌟 Animation အတွက် အပြင်ဆုံးတွင် StackPane ခံထားပါသည် -->
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffCreateNewBooking.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffCreateNewBookingController">
+<!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
+<StackPane fx:id="rootStackPane" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffCreateNewBookingDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffCreateNewBookingController">
     <children>
         <VBox fx:id="mainContainer" prefHeight="680.0" prefWidth="980.0" spacing="25.0" styleClass="main-content-vbox">
             <children>
@@ -116,7 +116,7 @@
                                 </VBox>
 
                                 <Region VBox.vgrow="ALWAYS" />
-                                <Button fx:id="btnSearchFlights" maxWidth="Infinity" styleClass="gradient-button, search-flights-button" text="Search Flights" />
+                                <Button fx:id="btnSearchFlights" maxWidth="Infinity" styleClass="search-flights-button" text="Search Flights" />
                             </children>
                         </VBox>
 
@@ -132,7 +132,7 @@
                                         <TableColumn fx:id="colDate" prefWidth="120.0" text="Date" />
                                         <TableColumn fx:id="colTime" prefWidth="100.0" text="Time" />
                                         <TableColumn fx:id="colPrice" prefWidth="90.0" text="Price" />
-                                        <TableColumn fx:id="colAction" prefWidth="110.0" />
+                                        <TableColumn fx:id="colAction" prefWidth="110.0" styleClass="action-column" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

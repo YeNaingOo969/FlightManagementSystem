@@ -9,23 +9,25 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="rootPane" prefHeight="800" prefWidth="1200" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminBooking.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminCancelBookingReasonController">
+<!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
+<BorderPane fx:id="rootPane" prefHeight="800" prefWidth="1200" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminBookingDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminCancelBookingReasonController">
     <center>
         <VBox alignment="CENTER" BorderPane.alignment="CENTER">
-            <!-- Modal Card (အရွယ်အစား သေးငယ်ကျစ်လစ်စေရန် maxWidth 400 သတ်မှတ်ထားသည်) -->
+            <!-- Modal Card -->
             <VBox maxWidth="450" spacing="20" styleClass="modal-card">
                 <padding>
                     <Insets bottom="30" left="30" right="30" top="30" />
                 </padding>
 
                 <VBox alignment="CENTER" spacing="5">
-                    <Label styleClass="super-page-title" text="Cancel Booking" textFill="#dc2626" />
+                    <!-- 🌟 Inline CSS (textFill) ကို ဖြုတ်ပြီး danger-text Class ကို အသုံးပြုထားပါသည် -->
+                    <Label styleClass="super-page-title, danger-text" text="Cancel Booking" />
                     <Label styleClass="super-section-subtitle" text="Are you sure you want to cancel this booking?" />
                 </VBox>
 
                 <VBox spacing="10">
                     <Label styleClass="form-label" text="Please Input Reason *" />
-                    <!-- Reason ထည့်ရန် TextArea (စာကြောင်းရေ များများရေးနိုင်ရန်) -->
+                    <!-- Reason ထည့်ရန် TextArea -->
                     <TextArea fx:id="txtReason" prefHeight="100.0" promptText="Enter the cancellation reason here..." styleClass="text-area-reason" wrapText="true" />
                 </VBox>
 

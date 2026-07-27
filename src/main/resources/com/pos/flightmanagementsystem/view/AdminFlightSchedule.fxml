@@ -11,15 +11,17 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/flightSchedule.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminFlightScheduleController">
+<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminFlightScheduleDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminFlightScheduleController">
     <children>
-        <AnchorPane prefHeight="731.0" prefWidth="1031.0">
+        <AnchorPane prefHeight="731.0" prefWidth="1031.0" styleClass="super-content">
             <children>
-                <VBox spacing="20.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
+                <VBox spacing="25.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="super-topbar">
+
+                        <!-- 1. TOP BAR -->
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="super-topbar">
                             <children>
-                                <VBox alignment="CENTER_LEFT">
+                                <VBox alignment="CENTER_LEFT" spacing="4.0">
                                     <children>
                                         <Label styleClass="super-page-title" text="Flight Operations &amp; Schedules" />
                                         <Label styleClass="super-section-subtitle" text="Live monitoring of departures, arrivals, and operational schedule updates." />
@@ -27,35 +29,39 @@
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS" />
 
-                                <!-- 🌟 ဒီနေရာမှာ fx:id="dpFilterDate" ထည့်ပေးထားပါတယ် 🌟 -->
-                                <DatePicker fx:id="dpFilterDate" promptText="Filter by Date" styleClass="date-picker" />
+                                <!-- DatePicker -->
+                                <DatePicker fx:id="dpFilterDate" promptText="Filter by Date" styleClass="super-date-picker" />
 
-                                <!-- Add Flight Button Only -->
+                                <!-- Add Flight Button -->
                                 <Button fx:id="btnAddFlight" mnemonicParsing="false" onAction="#clickAddFlight" styleClass="btn-primary" text="+ Add Flight" />
                             </children>
                         </HBox>
-                        <VBox spacing="20.0" styleClass="super-topbar" VBox.vgrow="ALWAYS">
+
+                        <!-- 2. MAIN CONTENT PANEL -->
+                        <VBox spacing="20.0" styleClass="super-panel" VBox.vgrow="ALWAYS">
                             <children>
                                 <HBox>
                                     <children>
-                                        <VBox spacing="5.0">
+                                        <VBox spacing="4.0">
                                             <children>
                                                 <Label styleClass="super-section-title" text="Flight Schedule Details" />
-                                                <Label styleClass="super-section-subtitle" text="View, add, edit, and check all active flight routes and timings." />
+                                                <Label styleClass="super-side-copy" text="View, add, edit, and check all active flight routes and timings." />
                                             </children>
                                         </VBox>
                                     </children>
                                 </HBox>
-                                <!-- TableView နှင့် Column များ -->
-                                <TableView fx:id="tblFlights" VBox.vgrow="ALWAYS">
+
+                                <!-- TableView -->
+                                <TableView fx:id="tblFlights" styleClass="super-table" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="colFlightNo" prefWidth="75.0" text="Flight No." />
-                                        <TableColumn fx:id="colAirline" prefWidth="75.0" text="Airline" />
-                                        <TableColumn fx:id="colFrom" prefWidth="75.0" text="From" />
-                                        <TableColumn fx:id="colTo" prefWidth="75.0" text="To" />
-                                        <TableColumn fx:id="colDeparture" prefWidth="75.0" text="Departure" />
-                                        <TableColumn fx:id="colArrival" prefWidth="75.0" text="Arrival" />
-                                        <TableColumn fx:id="colActions" prefWidth="75.0" text="Actions" />
+                                        <TableColumn fx:id="colAirline" prefWidth="110.0" text="Airline" />
+                                        <TableColumn fx:id="colFrom" prefWidth="120.0" text="From" />
+                                        <TableColumn fx:id="colTo" prefWidth="120.0" text="To" />
+                                        <TableColumn fx:id="colDeparture" prefWidth="120.0" text="Departure" />
+                                        <TableColumn fx:id="colArrival" prefWidth="120.0" text="Arrival" />
+                                        <!-- 🌟 CSS မှ အလယ်ကျစေရန် action-column Class အသစ်ထည့်ထားပါသည် 🌟 -->
+                                        <TableColumn fx:id="colActions" prefWidth="150.0" styleClass="action-column" text="Actions" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -63,6 +69,7 @@
                                 </TableView>
                             </children>
                         </VBox>
+
                     </children>
                 </VBox>
             </children>

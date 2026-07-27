@@ -4,6 +4,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +13,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
@@ -42,6 +45,16 @@ public class StaffController implements Initializable {
     @FXML private SVGPath iconManageBooking;
     @FXML private SVGPath iconViewSchedule;
     @FXML private SVGPath iconLogout;
+
+    // 🌟 Theme Toggle Nodes & Variables
+    @FXML private StackPane themeToggleBg;
+    @FXML private StackPane themeThumb;
+    @FXML private SVGPath themeIcon;
+
+    private boolean isDarkMode = true; // Default Dark Mode
+
+    private final String MOON_SVG = "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z";
+    private final String SUN_SVG = "M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2 c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1 C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41 l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41 c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36 c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z";
 
     // 🌟 Button များကို Array ထဲထည့်ထားမည် (Active State ပြောင်းရန်)
     private Button[] navButtons;
@@ -74,16 +87,62 @@ public class StaffController implements Initializable {
     }
 
     // ==========================================
+    // 🌗 THEME TOGGLE LOGIC
+    // ==========================================
+    @FXML
+    public void toggleTheme(MouseEvent event) {
+        isDarkMode = !isDarkMode;
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb);
+        tt.setToX(isDarkMode ? 0 : 24);
+        tt.setInterpolator(Interpolator.EASE_BOTH);
+        tt.play();
+
+        String thumbBaseStyle = "-fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;";
+
+        if (isDarkMode) {
+            themeIcon.setContent(MOON_SVG);
+            themeThumb.setStyle("-fx-background-color: #00D4FF; " + thumbBaseStyle);
+        } else {
+            themeIcon.setContent(SUN_SVG);
+            themeThumb.setStyle("-fx-background-color: #F59E0B; " + thumbBaseStyle);
+        }
+
+        updateTheme();
+    }
+
+    private void updateTheme() {
+        updateStylesheets(rootPane.getStylesheets());
+        Node rightPage = rootPane.getCenter();
+        if (rightPage != null && rightPage instanceof Parent) {
+            updateStylesheets(((Parent) rightPage).getStylesheets());
+        }
+        Scene scene = rootPane.getScene();
+        if (scene != null) {
+            updateStylesheets(scene.getStylesheets());
+        }
+    }
+
+    private void updateStylesheets(ObservableList<String> stylesheets) {
+        for (int i = 0; i < stylesheets.size(); i++) {
+            String cssPath = stylesheets.get(i);
+            if (isDarkMode && cssPath.contains("Light")) {
+                stylesheets.set(i, cssPath.replace("Light", "Dark"));
+            } else if (!isDarkMode && cssPath.contains("Dark")) {
+                stylesheets.set(i, cssPath.replace("Dark", "Light"));
+            }
+        }
+    }
+
+    // ==========================================
     // 🌟 ACTIVE BUTTON ပြောင်းပေးမည့် HELPER METHOD
     // ==========================================
     private void setActiveButton(Button clickedButton) {
-        // ၁။ Button အားလုံးဆီမှ active class ကို ဖြုတ်ပါမည်
         for (Button btn : navButtons) {
             if (btn != null) {
                 btn.getStyleClass().remove("super-nav-button-active");
             }
         }
-        // ၂။ နှိပ်လိုက်သော Button ကိုသာ active class ပြန်ထည့်ပါမည်
         if (clickedButton != null && !clickedButton.getStyleClass().contains("super-nav-button-active")) {
             clickedButton.getStyleClass().add("super-nav-button-active");
         }
@@ -97,35 +156,28 @@ public class StaffController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent newView = loader.load();
 
-            // အသစ်ဝင်လာမည့် page ကို ညာဘက်အစွန် (X = 800) တွင် ကြိုထားပါမည်
-            newView.setTranslateX(800);
+            // လက်ရှိ Theme အတိုင်း CSS ကို မှန်ကန်စွာ ဝင်စေရန်
+            updateStylesheets(newView.getStylesheets());
 
-            // လက်ရှိ Center တွင် ပြနေသော View ကို ယူပါမည်
+            newView.setTranslateX(800);
             Node currentView = rootPane.getCenter();
 
             if (currentView != null) {
-                // 🌟 ၁။ လက်ရှိ Page ကို ထွက်သွားစေမည့် Animation (Slide Out)
                 TranslateTransition slideOut = new TranslateTransition(Duration.millis(400), currentView);
-
                 slideOut.setToX(800);
                 slideOut.setInterpolator(Interpolator.EASE_IN);
 
-                // 🌟 ၂။ လက်ရှိ Page ထွက်သွားတာ ပြီးဆုံးမှ Page အသစ်ကို Center သို့ထည့်ပြီး ဝင်လာစေမည် (Slide In)
                 slideOut.setOnFinished(e -> {
                     rootPane.setCenter(newView);
-
                     TranslateTransition slideIn = new TranslateTransition(Duration.millis(400), newView);
                     slideIn.setToX(0);
                     slideIn.setInterpolator(Interpolator.EASE_OUT);
                     slideIn.play();
                 });
-
                 slideOut.play();
 
             } else {
-                // ပထမဆုံးအကြိမ် Load လုပ်ချိန် (Current View မရှိသေးချိန်) တွင် တန်းပြီး ဝင်လာစေမည်
                 rootPane.setCenter(newView);
-
                 TranslateTransition slideIn = new TranslateTransition(Duration.millis(800), newView);
                 slideIn.setToX(0);
                 slideIn.setInterpolator(Interpolator.EASE_OUT);
@@ -209,18 +261,13 @@ public class StaffController implements Initializable {
         ParallelTransition ptOut = new ParallelTransition(slideOutLeft, slideOutRight);
         ptOut.setOnFinished(e -> {
             try {
-                // ၁။ လက်ရှိ ဖွင့်ထားတဲ့ Window (Stage) နှင့် Scene ကို ယူပါမည်
                 Scene currentScene = ((Node) event.getSource()).getScene();
                 Stage stage = (Stage) currentScene.getWindow();
 
-                // ၂။ Login Page ကို Load လုပ်ပါမည်
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
                 Parent root = loader.load();
 
-                // 🌟 ၃။ အဓိက ပြင်ဆင်ချက် - Scene အသစ်မဆောက်တော့ဘဲ လက်ရှိ Scene ရဲ့ Root နေရာမှာပဲ Login ကို အစားထိုးလိုက်ပါမည်
                 currentScene.setRoot(root);
-
-                // Window ကို Full Screen အနေအထား ဆက်ဖြစ်နေစေရန် သေချာစေခြင်း
                 stage.setMaximized(true);
 
             } catch (IOException ex) {

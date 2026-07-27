@@ -1,212 +1,87 @@
 /* ==========================================================
-   🎯 ၁။ FORM ROOT & FLOATING CARD (CYBERPUNK GLOW)
+   🎯 ၁။ FORM ROOT & FLOATING CARD (SUBTLE GRADIENT)
    ========================================================== */
-.root {
-    -fx-background-color: transparent; /* Dialog ဖြစ်၍ အနောက်ကို မြင်ရအောင် Transparent ထားသည် */
-    -fx-padding: 30px;
-}
+.root { -fx-background-color: transparent; -fx-padding: 30px; }
 
 .dialog-card {
-    -fx-background-color: #1F1A36; /* Dark Purple Glass */
-    -fx-background-radius: 16px;
-    -fx-border-radius: 16px;
-    -fx-border-color: #2A234C; /* Darker border */
-    -fx-border-width: 1.5px;
-    /* 3D ကြွနေစေမည့် Deep Drop Shadow */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 25, 0.1, 0, 10);
+    -fx-background-color: linear-gradient(to bottom right, #1A1F2B, #0E121A);
+    -fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-color: #1F2633; -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 25, 0.1, 0, 8);
 }
 
-.form-section {
-    -fx-spacing: 12;
-    -fx-padding: 20px;
-    -fx-margin: 20px;
-}
+.form-section { -fx-spacing: 12; -fx-padding: 20px; -fx-margin: 20px; }
 
 /* ==========================================================
    📋 ၂။ HEADERS & LABELS
    ========================================================== */
-.label {
-    -fx-text-fill: #E0E0E0;
-    -fx-font-family: "Segoe UI", "Inter", sans-serif;
-}
-
-.form-title {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF; /* High Contrast White */
-}
-
-/* Field Name သေးသေးလေးများ */
-.field-label {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #00D4FF; /* Neon Cyan */
-    -fx-padding: 0 0 4 0;
-}
+.label { -fx-text-fill: #E0E0E0; -fx-font-family: "Segoe UI", "Inter", sans-serif; }
+.form-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.field-label { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #8B95A5; -fx-padding: 0 0 4 0; }
 
 /* ==========================================================
-   ⌨️ ၃။ INPUT FIELDS (TEXT & PASSWORD)
+   ⌨️ ၃။ INPUT FIELDS
    ========================================================== */
 .text-field, .password-field {
-    -fx-background-color: #130F25; /* Cyberpunk Deep Background */
-    -fx-background-radius: 8px;
-    -fx-border-color: #2A234C;
-    -fx-border-radius: 8px;
-    -fx-border-width: 1.5px;
-    -fx-padding: 10px 12px;
-    -fx-font-size: 14px;
-    -fx-text-fill: #FFFFFF;
-    -fx-prompt-text-fill: #A093D6; /* Soft Violet Placeholder */
+    -fx-background-color: #0B0E14;
+    -fx-background-radius: 8px; -fx-border-color: #1F2633; -fx-border-radius: 8px; -fx-border-width: 1px;
+    -fx-padding: 10px 12px; -fx-font-size: 14px; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #6C7685;
 }
-
-/* 🖱 Focused State (Neon Cyan Glow) */
-.text-field:focused, .password-field:focused {
-    -fx-border-color: #00D4FF;
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 8, 0, 0, 0);
-}
+.text-field:focused, .password-field:focused { -fx-border-color: #31C4B4; }
 
 /* ==========================================================
-   🔽 ၄။ COMBO BOX (MODERN DARK STYLE)
+   🔽 ၄။ COMBO BOX
    ========================================================== */
 .combo-box {
-    -fx-background-color: #130F25;
-    -fx-background-radius: 8px;
-    -fx-border-color: #2A234C;
-    -fx-border-radius: 8px;
-    -fx-border-width: 1.5px;
-    -fx-padding: 6px 12px;
-    -fx-font-size: 14px;
+    -fx-background-color: #0B0E14;
+    -fx-background-radius: 8px; -fx-border-color: #1F2633; -fx-border-radius: 8px; -fx-border-width: 1px;
+    -fx-padding: 6px 12px; -fx-font-size: 14px;
 }
-
-.combo-box:focused {
-    -fx-border-color: #00D4FF;
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 8, 0, 0, 0);
-}
-
-.combo-box .arrow-button {
-    -fx-background-color: transparent;
-}
-.combo-box .arrow {
-    -fx-background-color: #00D4FF; /* Neon Cyan Arrow */
-}
-
-/* Combo Box Dropdown Menu */
+.combo-box:focused { -fx-border-color: #31C4B4; }
+.combo-box .arrow-button { -fx-background-color: transparent; }
+.combo-box .arrow { -fx-background-color: #8B95A5; }
 .combo-box-popup .list-view {
-    -fx-background-color: #1F1A36;
-    -fx-background-radius: 8px;
-    -fx-border-color: #2A234C;
-    -fx-border-radius: 8px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 5);
+    -fx-background-color: #1A1F2B;
+    -fx-background-radius: 8px; -fx-border-color: #1F2633; -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 15, 0, 0, 5);
 }
-
-.combo-box-popup .list-cell:filled {
-    -fx-text-fill: #E0E0E0;
-    -fx-background-color: transparent;
-}
-
-.combo-box-popup .list-cell:filled:hover {
-    -fx-background-color: rgba(0, 212, 255, 0.15);
-    -fx-text-fill: #00D4FF; /* Highlight item in Neon Cyan */
-}
+.combo-box-popup .list-cell:filled { -fx-text-fill: #E0E0E0; -fx-background-color: transparent; }
+.combo-box-popup .list-cell:filled:hover { -fx-background-color: rgba(49, 196, 180, 0.15); -fx-text-fill: #31C4B4; }
 
 /* ==========================================================
-   🖼 PROFILE ICON (Top Center Badge)
+   🖼 PROFILE ICON
    ========================================================== */
 .profile-section-icon {
-    -fx-min-width: 54;
-    -fx-min-height: 54;
-    -fx-max-width: 54;
-    -fx-max-height: 54;
-    -fx-background-color: rgba(0, 212, 255, 0.1); /* Soft Cyan Tint */
-    -fx-background-radius: 999;
-    -fx-border-color: #00D4FF; /* Neon Cyan Border */
-    -fx-border-radius: 999;
-    -fx-border-width: 1.5px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 15, 0, 0, 0);
+    -fx-min-width: 54; -fx-min-height: 54; -fx-max-width: 54; -fx-max-height: 54;
+    -fx-background-color: rgba(49, 196, 180, 0.1);
+    -fx-background-radius: 999; -fx-border-color: #31C4B4; -fx-border-radius: 999; -fx-border-width: 1px;
 }
-
-.profile-section-icon-glyph {
-    -fx-fill: #00D4FF;
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
-}
+.profile-section-icon-glyph { -fx-fill: #31C4B4; -fx-scale-x: 1.02; -fx-scale-y: 1.02; }
 
 /* ==========================================================
-   🔘 ၅။ ACTION BUTTONS (CYBERPUNK NEON)
+   🔘 ၅။ ACTION BUTTONS
    ========================================================== */
-/* Save Button (Neon Cyan) */
 .button-save {
-    -fx-background-color: transparent;
-    -fx-border-color: #00D4FF;
-    -fx-text-fill: #00D4FF;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-border-radius: 8px;
-    -fx-border-width: 1.5px;
-    -fx-padding: 10px 24px;
-    -fx-cursor: hand;
+    -fx-background-color: linear-gradient(to right, #4FD1C5, #3BBAB1);
+    -fx-border-color: transparent; -fx-text-fill: #06080D; -fx-font-weight: bold; -fx-font-size: 14px;
+    -fx-border-radius: 8px; -fx-padding: 10px 24px; -fx-cursor: hand;
 }
-
-.button-save:hover {
-    -fx-background-color: rgba(0, 212, 255, 0.15);
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.5), 15, 0, 0, 0);
-}
-
-/* Cancel Button (Neon Pink) */
+.button-save:hover { -fx-background-color: linear-gradient(to right, #3BBAB1, #2EA39B); }
 .button-cancel {
-    -fx-background-color: transparent;
-    -fx-border-color: #FF2A6D;
-    -fx-text-fill: #FF2A6D;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-border-radius: 8px;
-    -fx-border-width: 1.5px;
-    -fx-padding: 10px 24px;
-    -fx-cursor: hand;
+    -fx-background-color: transparent; -fx-border-color: #8B95A5; -fx-text-fill: #8B95A5;
+    -fx-font-weight: bold; -fx-font-size: 14px; -fx-border-radius: 8px; -fx-border-width: 1px; -fx-padding: 10px 24px; -fx-cursor: hand;
 }
-
-.button-cancel:hover {
-    -fx-background-color: rgba(255, 42, 109, 0.15);
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.5), 15, 0, 0, 0);
-}
+.button-cancel:hover { -fx-background-color: rgba(255, 255, 255, 0.05); -fx-text-fill: #FFFFFF; }
 
 /* ==========================================================
    📸 ၆။ PROFILE IMAGE UPLOAD SECTION
    ========================================================== */
-/* Image Placeholder */
 .profile-image-container {
-    -fx-background-color: #130F25;
-    -fx-background-radius: 100px;
-    -fx-border-color: #2A234C;
-    -fx-border-width: 2px;
-    -fx-border-style: dashed;
-    -fx-border-radius: 100px;
+    -fx-background-color: #0B0E14;
+    -fx-background-radius: 100px; -fx-border-color: #1F2633; -fx-border-width: 1px; -fx-border-style: dashed; -fx-border-radius: 100px;
 }
-
-.placeholder-icon {
-    -fx-fill: #A093D6; /* Soft Violet */
-    -fx-scale-x: 2.5;
-    -fx-scale-y: 2.5;
-}
-
-/* Choose Image Button (Neon Outline) */
-/* Choose Image Button (Neon Outline) */
+.placeholder-icon { -fx-fill: #6C7685; -fx-scale-x: 2.5; -fx-scale-y: 2.5; }
 .button-choose-image {
-    -fx-background-color: rgba(0, 212, 255, 0.1);
-    -fx-background-radius: 20px; /* 🎯 ဒီစာကြောင်းလေး ထပ်ဖြည့်လိုက်တာပါ */
-    -fx-border-color: #00D4FF;
-    -fx-border-radius: 20px;
-    -fx-text-fill: #00D4FF;
-    -fx-font-weight: bold;
-    -fx-font-size: 12px;
-    -fx-padding: 6px 16px;
-    -fx-cursor: hand;
+    -fx-background-color: transparent; -fx-background-radius: 20px; -fx-border-color: #31C4B4;
+    -fx-border-radius: 20px; -fx-text-fill: #31C4B4; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 6px 16px; -fx-cursor: hand;
 }
-
-.button-choose-image:hover {
-    -fx-background-color: rgba(0, 212, 255, 0.25);
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 8, 0, 0, 0);
-}
+.button-choose-image:hover { -fx-background-color: rgba(49, 196, 180, 0.1); }

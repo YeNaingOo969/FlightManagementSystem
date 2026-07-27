@@ -17,9 +17,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/adminReport.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminViewSalesDetailDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
-   <BorderPane prefHeight="816.0" prefWidth="1200.0">
+   <!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
+   <BorderPane prefHeight="816.0" prefWidth="1200.0" styleClass="super-content">
       <center>
          <VBox spacing="20.0" BorderPane.alignment="CENTER">
             <padding>
@@ -50,13 +51,13 @@
                         <VBox spacing="5.0">
                            <children>
                               <Label styleClass="filter-label" text="From Date" />
-                              <DatePicker fx:id="dpFromDate" promptText="Start Date" styleClass="date-picker" />
+                              <DatePicker fx:id="dpFromDate" promptText="Start Date" styleClass="super-date-picker" />
                            </children>
                         </VBox>
                         <VBox spacing="5.0">
                            <children>
                               <Label styleClass="filter-label" text="To Date" />
-                              <DatePicker fx:id="dpToDate" promptText="End Date" styleClass="date-picker" />
+                              <DatePicker fx:id="dpToDate" promptText="End Date" styleClass="super-date-picker" />
                            </children>
                         </VBox>
                      </children>
@@ -65,7 +66,7 @@
                   <!-- Export Button -->
                   <Button fx:id="btnExport" mnemonicParsing="false" styleClass="btn-primary" text="Export Report">
                      <graphic>
-                        <SVGPath content="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="white" />
+                        <SVGPath content="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" styleClass="export-icon" />
                      </graphic>
                   </Button>
                </children>
@@ -78,7 +79,6 @@
                   <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
                      <children>
                         <Label styleClass="kpi-title" text="Total Revenue" />
-                        <!-- 🌟 ဤနေရာတွင် \$ ဖြင့် ပြင်ဆင်ထားပါသည် -->
                         <Label styleClass="kpi-value" text="\$124,500.00" />
                         <Label styleClass="kpi-status-up" text="+12% from last month" />
                      </children>
@@ -104,7 +104,6 @@
                      <children>
                         <Label styleClass="kpi-title" text="Top Performing Staff" />
                         <Label styleClass="kpi-value" text="Alice Johnson" />
-                        <!-- 🌟 ဤနေရာတွင် \$ ဖြင့် ပြင်ဆင်ထားပါသည် -->
                         <Label styleClass="kpi-status-up" text="\$45,200 generated" />
                      </children>
                   </VBox>
@@ -117,7 +116,7 @@
                   <VBox spacing="10.0" styleClass="super-topbar" HBox.hgrow="ALWAYS">
                      <children>
                         <Label styleClass="super-section-title" text="Revenue &amp; Sales Trend" />
-                        <LineChart fx:id="revenueChart" VBox.vgrow="ALWAYS">
+                        <LineChart fx:id="revenueChart" styleClass="super-chart" VBox.vgrow="ALWAYS">
                            <xAxis>
                               <CategoryAxis side="BOTTOM" />
                            </xAxis>
@@ -131,7 +130,7 @@
                   <VBox spacing="10.0" styleClass="super-topbar" HBox.hgrow="ALWAYS">
                      <children>
                         <Label styleClass="super-section-title" text="Sales by Staff (Distribution)" />
-                        <PieChart fx:id="staffPieChart" VBox.vgrow="ALWAYS" />
+                        <PieChart fx:id="staffPieChart" styleClass="super-chart" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </children>

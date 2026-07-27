@@ -1,0 +1,121 @@
+/* =========================================================================
+   🏙️ ADMIN ADD CITY - LIGHT THEME (AdminAddCityLight.css)
+   ========================================================================= */
+
+.root {
+    -fx-font-family: "Inter", "Segoe UI", Times, serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #ffffff;
+}
+
+/* 🌟 အနောက်ခံ (Root) အရောင်ကို အဖြူဖြစ်စေရန် သို့မဟုတ် သန့်ရှင်းစေရန် */
+.super-content {
+    -fx-background-color: #F8FAFC;
+}
+
+/* ==========================================================
+   📦 MODAL CARD (Pop-up Box ကို အစ်ကို့ရဲ့ super-topbar စတိုင်အတိုင်း ယူထားသည်)
+========================================================== */
+.modal-card {
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-border-color: rgba(17, 40, 72, 0.08);
+    -fx-effect: dropshadow(gaussian, rgba(17, 40, 72, 0.08), 22, 0.12, 0, 10);
+    -fx-padding: 30;
+}
+
+/* ✨ LOGO & ICONS */
+.super-brand-logo {
+    -fx-background-color: rgba(31, 75, 93, 0.05);
+    -fx-background-radius: 14;
+    -fx-border-color: transparent;
+}
+
+.super-brand-logo-glyph {
+    -fx-fill: #1F4B5D;
+}
+
+/* ==========================================================
+   📝 TYPOGRAPHY (အစ်ကို့ရဲ့ super-page-title နှင့် super-section-subtitle အတိုင်း)
+========================================================== */
+.page-title {
+    -fx-text-fill: #10243f;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.form-label {
+    -fx-text-fill: #60728a;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ==========================================================
+   ✍️ TEXT FIELDS (အစ်ကို့ရဲ့ search-field အတိုင်း)
+========================================================== */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #10243f;
+    -fx-padding: 10px 12px;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused {
+    -fx-border-color: #00C6FF;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.15), 8, 0, 0, 0);
+}
+
+/* ==========================================================
+   🔘 BUTTONS (အစ်ကို့ရဲ့ btn-primary အတိုင်း Gradient ဖြင့်)
+========================================================== */
+
+/* Save Button (Gradient Cyan/Blue) */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
+    -fx-background-radius: 8px;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(49, 136, 149, 0.20), 14, 0.16, 0, 5);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #22D3EE, #0EA5E9);
+    -fx-effect: dropshadow(three-pass-box, rgba(34, 211, 238, 0.4), 10, 0, 0, 3);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: linear-gradient(to bottom right, #0369A1, #075985);
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
+}
+
+/* Cancel Button (Soft Slate) */
+.btn-secondary {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #1E293B;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #CBD5E1;
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+}

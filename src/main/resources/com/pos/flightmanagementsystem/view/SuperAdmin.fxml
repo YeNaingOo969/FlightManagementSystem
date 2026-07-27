@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
@@ -12,39 +13,46 @@
 <BorderPane fx:id="rootPane" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminController"
             styleClass="super-dashboard-root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
-    <!-- ဘယ်ဘက် Sidebar အပိုင်း -->
+    <!-- ==============================================
+         LEFT SIDEBAR
+         ============================================== -->
     <left>
         <VBox fx:id="sidebar" prefWidth="262.0" spacing="22.0" styleClass="super-sidebar" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="super-brand">
+                <HBox styleClass="super-brand">
                     <children>
-                        <StackPane styleClass="super-brand-logo">
+                        <!-- Logo -->
+                        <StackPane styleClass="brand-logo-container">
                             <children>
-                                <SVGPath content="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z" styleClass="super-brand-logo-glyph" />
+                                <SVGPath content="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z" styleClass="brand-logo-glyph" />
                             </children>
                         </StackPane>
-                        <VBox spacing="4.0">
+
+                        <VBox styleClass="brand-text-box" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label styleClass="super-brand-title" text="FlyPlan" />
-                                <Label styleClass="super-brand-kicker" text="Airline Management" />
+                                <Label styleClass="super-brand-kicker" text="Airline Manage..." />
                             </children>
                         </VBox>
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <!-- Theme Toggle Switch -->
+                        <StackPane fx:id="themeToggleBg" onMouseClicked="#toggleTheme" styleClass="theme-toggle-bg">
+                            <StackPane fx:id="themeThumb" styleClass="theme-toggle-thumb" StackPane.alignment="CENTER_LEFT">
+                                <SVGPath fx:id="themeIcon" content="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" styleClass="theme-icon-glyph" />
+                            </StackPane>
+                        </StackPane>
                     </children>
                 </HBox>
 
-                <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                <!-- Navigation Buttons -->
+                <VBox styleClass="nav-menu-box" VBox.vgrow="ALWAYS">
                     <children>
                         <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#clickDashboard" styleClass="super-nav-button" text="Dashboard">
                             <graphic>
                                 <StackPane styleClass="super-nav-icon">
                                     <SVGPath fx:id="iconDashboard" content="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" styleClass="super-nav-icon-glyph"/>
-                                </StackPane>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#clickProfile" styleClass="super-nav-button" text="Profile">
-                            <graphic>
-                                <StackPane styleClass="super-nav-icon">
-                                    <SVGPath fx:id="iconProfile" content="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" styleClass="super-nav-icon-glyph"/>
                                 </StackPane>
                             </graphic>
                         </Button>
@@ -72,11 +80,11 @@
                     </children>
                 </VBox>
 
-                <VBox spacing="8.0" styleClass="super-sidebar-card">
+                <VBox styleClass="sidebar-status-box">
                     <children>
-                        <Label style="-fx-text-fill: #2f6678;" styleClass="super-sidebar-card-title" text="Operations Status" />
-                        <Label styleClass="super-sidebar-card-value" text="All systems normal" />
-                        <Label styleClass="super-sidebar-card-note" text="Admin console ready" />
+                        <Label styleClass="status-title" text="Operations Status" />
+                        <Label styleClass="status-value" text="All systems normal" />
+                        <Label styleClass="status-note" text="Admin console ready" />
                     </children>
                 </VBox>
 
@@ -90,6 +98,55 @@
             </children>
         </VBox>
     </left>
+
+    <!-- ==============================================
+         RIGHT MAIN CONTENT AREA & OVERLAYS
+         ============================================== -->
+    <center>
+        <StackPane fx:id="rightSideStack" style="-fx-background-color: transparent;">
+
+            <!-- ပုံမှန် မြင်နေရမည့် Top Nav နှင့် Pages များ -->
+            <BorderPane styleClass="main-content-wrapper">
+                <top>
+                    <HBox styleClass="global-top-nav" BorderPane.alignment="CENTER">
+                        <children>
+                            <!-- Notification Icon (Removed the Pink Dot) -->
+                            <StackPane styleClass="nav-notification-btn">
+                                <SVGPath content="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" styleClass="nav-bell-icon" />
+                            </StackPane>
+
+                            <!-- PFP ကို နှိပ်လျှင် Popup ပေါ်လာစေရန် onMouseClicked ထည့်ထားသည် -->
+                            <HBox fx:id="navProfileBox" onMouseClicked="#openProfilePopup" styleClass="nav-profile-box">
+                                <children>
+                                    <StackPane styleClass="nav-profile-avatar">
+                                        <SVGPath content="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" styleClass="nav-profile-avatar-icon" />
+                                    </StackPane>
+                                    <VBox styleClass="nav-profile-text-box">
+                                        <children>
+                                            <Label fx:id="topNavUsername" styleClass="nav-profile-name" text="SuperAdmin" />
+                                            <Label fx:id="topNavRole" styleClass="nav-profile-role" text="Loading..." />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+                        </children>
+                    </HBox>
+                </top>
+                <center>
+                    <StackPane fx:id="mainContentArea" styleClass="main-content-area" BorderPane.alignment="CENTER" />
+                </center>
+            </BorderPane>
+
+            <!-- Floating Profile Overlay Layer -->
+            <StackPane fx:id="profileOverlayBg" onMouseClicked="#closeProfilePopup" style="-fx-background-color: rgba(6, 8, 13, 0.6);" visible="false">
+                <children>
+                    <!-- SuperAdminProfile.fxml ကို ဤ Container အတွင်းသို့ Load လုပ်မည် -->
+                    <StackPane fx:id="profilePopupContainer" maxHeight="-Infinity" maxWidth="-Infinity" StackPane.alignment="CENTER" />
+                </children>
+            </StackPane>
+
+        </StackPane>
+    </center>
 
     <stylesheets>
         <URL value="@/com/pos/flightmanagementsystem/Style/SuperAdminSideBarDark.css" />

@@ -13,10 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<!-- 🌟 Animation အတွက် StackPane ဖြင့် အုပ်ထားပြီး Controller ချိတ်ဆက်ထားပါသည် -->
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffPassengerDetails.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffPassengerDetailsController">
+<!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
+<StackPane fx:id="rootStackPane" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffPassengerDetailsDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffPassengerDetailsController">
     <children>
-        <!-- 🌟 လက်ရှိ Page ကို Main Container အဖြစ် သတ်မှတ်ထားသည် -->
         <VBox fx:id="mainContainer" prefHeight="680.0" prefWidth="980.0" spacing="25.0" styleClass="main-content-vbox">
             <children>
 
@@ -166,7 +165,6 @@
                                 <!-- Action Buttons -->
                                 <HBox alignment="CENTER_RIGHT" spacing="15.0">
                                     <children>
-                                        <!-- 🌟 Back နှင့် Continue Button များကို ID နှင့် Action ချိတ်ဆက်ထားသည် -->
                                         <Button fx:id="btnBack" onAction="#clickBack" prefWidth="120.0" styleClass="secondary-button" text="Back" />
                                         <Button fx:id="btnContinue" onAction="#clickContinue" prefWidth="180.0" styleClass="gradient-button" text="Continue" />
                                     </children>

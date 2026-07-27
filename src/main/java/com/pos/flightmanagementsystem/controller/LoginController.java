@@ -25,11 +25,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 
 import java.io.IOException;
 import java.net.URL;
@@ -56,7 +54,7 @@ public class LoginController implements Initializable {
     @FXML private StackPane successOverlay;
     @FXML private VBox successBox;
 
-    // --- 🌟 New Custom Alert Dialog ---
+    // --- New Custom Alert Dialog ---
     @FXML private StackPane customAlertOverlay;
     @FXML private VBox customAlertBox;
     @FXML private SVGPath customAlertIcon;
@@ -154,7 +152,8 @@ public class LoginController implements Initializable {
     }
 
     private void spawnSmokeParticle() {
-        Circle smoke = new Circle(3.5, Color.web("#06b6d4"));
+        // 🌟 Theme Update: Neon Cyan Smoke 🌟
+        Circle smoke = new Circle(3.5, Color.web("#00D4FF"));
         smoke.setEffect(new GaussianBlur(5));
         smoke.setTranslateX(smallPlane.getTranslateX());
         smoke.setTranslateY(smallPlane.getTranslateY());
@@ -178,7 +177,8 @@ public class LoginController implements Initializable {
 
     private void createRadarPulse() {
         Circle radarPulse = new Circle(89.0, Color.TRANSPARENT);
-        radarPulse.setStroke(Color.web("#06b6d4"));
+        // 🌟 Theme Update: Neon Cyan Radar Pulse 🌟
+        radarPulse.setStroke(Color.web("#00D4FF"));
         radarPulse.setStrokeWidth(1.5);
         animationContainer.getChildren().add(0, radarPulse);
         ScaleTransition scalePulse = new ScaleTransition(Duration.seconds(2.5), radarPulse);
@@ -196,7 +196,8 @@ public class LoginController implements Initializable {
         Group starGroup = new Group();
         starGroup.setManaged(false);
         for (int i = 0; i < 80; i++) {
-            Circle star = new Circle(Math.random() * 1.5 + 0.8, Color.WHITE);
+            // 🌟 Theme Update: Slightly Purple/White Stars 🌟
+            Circle star = new Circle(Math.random() * 1.5 + 0.8, Color.web("#E0E0E0"));
             star.setTranslateX((Math.random() - 0.5) * 1200);
             star.setTranslateY(-350 + Math.random() * 530);
             FadeTransition blink = new FadeTransition(Duration.seconds(0.5 + Math.random() * 1.0), star);
@@ -367,11 +368,13 @@ public class LoginController implements Initializable {
         if (isVisible) {
             visibleField.setVisible(true); hiddenField.setVisible(false);
             icon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z");
-            icon.setFill(Color.web("#06b6d4"));
+            // 🌟 Theme Update: Neon Cyan when visible 🌟
+            icon.setFill(Color.web("#00D4FF"));
         } else {
             visibleField.setVisible(false); hiddenField.setVisible(true);
             icon.setContent("M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z");
-            icon.setFill(Color.web("#9ca3af"));
+            // 🌟 Theme Update: Soft Purple when hidden 🌟
+            icon.setFill(Color.web("#A093D6"));
         }
     }
 
@@ -379,11 +382,11 @@ public class LoginController implements Initializable {
     void handleSendEmail(ActionEvent event) {
         String targetEmail = emailField.getText().trim();
         if (targetEmail.isEmpty() || !targetEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            statusLabel.setTextFill(Color.RED);
+            statusLabel.setTextFill(Color.web("#FF2A6D")); // Neon Pink
             statusLabel.setText("Please enter a valid email address.");
             return;
         }
-        statusLabel.setTextFill(Color.web("#06b6d4"));
+        statusLabel.setTextFill(Color.web("#00D4FF")); // Neon Cyan
         statusLabel.setText("Sending OTP... Please wait.");
         sendButton.setDisable(true);
         generatedOTP = String.format("%06d", new Random().nextInt(999999));
@@ -393,11 +396,11 @@ public class LoginController implements Initializable {
             Platform.runLater(() -> {
                 sendButton.setDisable(false);
                 if (isSent) {
-                    statusLabel.setTextFill(Color.GREEN);
+                    statusLabel.setTextFill(Color.web("#00FF9D")); // Neon Green
                     statusLabel.setText("OTP sent successfully to your email.");
                     switchSection(otpSection);
                 } else {
-                    statusLabel.setTextFill(Color.RED);
+                    statusLabel.setTextFill(Color.web("#FF2A6D")); // Neon Pink
                     statusLabel.setText("Failed to send OTP. Check your connection.");
                 }
             });
@@ -410,19 +413,19 @@ public class LoginController implements Initializable {
                 otp4.getText() + otp5.getText() + otp6.getText();
 
         if (enteredOTP.length() < 6) {
-            statusLabel.setTextFill(Color.RED);
+            statusLabel.setTextFill(Color.web("#FF2A6D")); // Neon Pink
             statusLabel.setText("Please enter the complete 6-digit OTP.");
             return;
         }
 
         if (enteredOTP.equals(generatedOTP)) {
-            statusLabel.setTextFill(Color.GREEN);
+            statusLabel.setTextFill(Color.web("#00FF9D")); // Neon Green
             statusLabel.setText("OTP Verified Successfully!");
             verifyButton.setDisable(true);
             switchSection(resetPasswordSection);
             statusLabel.setText("");
         } else {
-            statusLabel.setTextFill(Color.RED);
+            statusLabel.setTextFill(Color.web("#FF2A6D")); // Neon Pink
             statusLabel.setText("Invalid OTP. Please try again.");
         }
     }
@@ -519,33 +522,27 @@ public class LoginController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 CUSTOM ANIMATED ALERT DIALOG
+    // 🌟 CUSTOM ANIMATED ALERT DIALOG (THEME UPDATE)
     // ==========================================
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
-        // UI ကို Main Thread မှ အမြဲ အပ်ဒိတ်လုပ်နိုင်ရန် သေချာစေခြင်း
         Platform.runLater(() -> {
             customAlertTitle.setText(title);
             customAlertMessage.setText(message);
 
-            // ယခင် Style Class များကို ရှင်းလင်းခြင်း
             customAlertBox.getStyleClass().removeAll("alert-error", "alert-warning", "alert-info");
 
-            // Alert အမျိုးအစားအလိုက် Theme နှင့် Icon ပြောင်းလဲခြင်း
             if (alertType == Alert.AlertType.ERROR) {
-                // ကြက်ခြေခတ် Icon
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z");
-                customAlertIcon.setFill(Color.web("#ef4444")); // Red
+                customAlertIcon.setFill(Color.web("#FF2A6D")); // Neon Pink
                 customAlertBox.getStyleClass().add("alert-error");
             } else if (alertType == Alert.AlertType.WARNING) {
-                // သတိပေးတြိဂံ Icon
                 customAlertIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
-                customAlertIcon.setFill(Color.web("#f59e0b")); // Amber/Yellow
+                customAlertIcon.setFill(Color.web("#FFE600")); // Neon Gold
                 customAlertBox.getStyleClass().add("alert-warning");
             } else {
-                // Info (i) Icon
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
-                customAlertIcon.setFill(Color.web("#06b6d4")); // Cyan
+                customAlertIcon.setFill(Color.web("#00D4FF")); // Neon Cyan
                 customAlertBox.getStyleClass().add("alert-info");
             }
 
@@ -557,7 +554,6 @@ public class LoginController implements Initializable {
             FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), customAlertOverlay);
             fadeOverlay.setToValue(1.0);
 
-            // Bouncy Pop-up Effect
             ScaleTransition scaleBox = new ScaleTransition(Duration.millis(400), customAlertBox);
             scaleBox.setToX(1.0);
             scaleBox.setToY(1.0);

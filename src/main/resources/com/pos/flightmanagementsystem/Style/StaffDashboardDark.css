@@ -1,0 +1,197 @@
+/* =========================================================================
+   ✈️ STAFF DASHBOARD - CYBERPUNK / DEEP AMETHYST THEME
+   ========================================================================= */
+
+/* 🌌 1. MAIN BACKGROUND */
+.root, .super-dashboard-root, .super-content {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
+}
+
+/* 📦 2. PANELS & CONTAINERS */
+.super-topbar,
+.super-panel,
+.super-metrics-row,
+.charts-container {
+    -fx-background-color: #1F1A36; /* Dark Amethyst Glass */
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #2A234C;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 22, 0.12, 0, 10);
+}
+
+.super-topbar { -fx-padding: 24 26; }
+.super-panel { -fx-padding: 24 26; }
+.super-metrics-row { -fx-padding: 20; -fx-spacing: 20; }
+.charts-container { -fx-padding: 24 26; }
+
+/* 💎 3. METRIC CARDS (Hover လုပ်လျှင် လင်းလာမည်) */
+.super-metric-card {
+    -fx-background-color: #130F25;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1.5px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 15, 0, 0, 5);
+    -fx-transition: all 0.3s ease;
+}
+
+.super-metric-card:hover {
+    -fx-border-color: #00D4FF; /* Neon Cyan Glow */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 15, 0, 0, 0);
+}
+
+/* 📝 4. TYPOGRAPHY */
+.super-page-kicker {
+    -fx-text-fill: #00D4FF; /* Neon Cyan */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.super-page-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.super-page-subtitle,
+.super-section-subtitle {
+    -fx-text-fill: #A093D6; /* Soft Purple */
+    -fx-font-size: 13px;
+}
+
+.super-section-title,
+.chart-panel-title {
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* Card Typography */
+.card-label-title {
+    -fx-text-fill: #A093D6;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.card-value,
+.card-label-value {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.card-label-status {
+    -fx-text-fill: #00FF9D; /* Neon Green */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* 📊 5. TABLE VIEW (DARK MODE) */
+.super-table, .table-view {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+    -fx-padding: 0;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1.5px;
+}
+
+.super-table .column-header-background {
+    -fx-background-color: #2A234C;
+    -fx-background-radius: 13 13 0 0;
+    -fx-border-radius: 13 13 0 0;
+    -fx-background-insets: 0;
+}
+
+.super-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #3D2C8D transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 42px;
+}
+
+.super-table .column-header .label {
+    -fx-text-fill: #00D4FF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.super-table .table-row-cell {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: transparent transparent #2A234C transparent;
+    -fx-text-fill: #E0E0E0;
+    -fx-size: 40px;
+}
+
+.super-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+}
+
+.super-table .table-row-cell:selected {
+    -fx-background-color: rgba(255, 42, 109, 0.2); /* Neon Pink Highlight */
+}
+
+.super-table .table-cell {
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 13px;
+    -fx-padding: 10 14 10 14;
+}
+
+.super-table .placeholder .label {
+    -fx-text-fill: #A093D6;
+    -fx-font-style: italic;
+}
+
+/* 📈 6. STACKED BAR CHART (Dark Mode & Neon Bars) */
+.chart {
+    -fx-padding: 10px;
+}
+
+.chart-plot-background {
+    -fx-background-color: #130F25;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1px;
+}
+
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(160, 147, 214, 0.15); /* မှိန်ပျပျ လိုင်းများ */
+}
+
+.chart-alt-column-region,
+.chart-alt-row-region {
+    -fx-background-color: transparent;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #A093D6;
+}
+
+.axis {
+    -fx-tick-label-fill: #A093D6;
+}
+
+.axis-tick-mark,
+.axis-minor-tick-mark {
+    -fx-stroke: #2A234C;
+}
+
+/* Stacked Bar Chart အရောင်များ (Neon Cyan, Pink, Green, Gold) */
+.default-color0.chart-bar { -fx-bar-fill: #00D4FF; } /* Cyan */
+.default-color1.chart-bar { -fx-bar-fill: #FF2A6D; } /* Pink */
+.default-color2.chart-bar { -fx-bar-fill: #00FF9D; } /* Green */
+.default-color3.chart-bar { -fx-bar-fill: #FFE600; } /* Gold */
+
+.default-color0.chart-bar:hover,
+.default-color1.chart-bar:hover,
+.default-color2.chart-bar:hover,
+.default-color3.chart-bar:hover {
+    -fx-opacity: 0.8;
+}

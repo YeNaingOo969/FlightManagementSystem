@@ -15,9 +15,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<AnchorPane styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminAccManagementDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminAccManagementController" fx:id="acRootPane">
+<AnchorPane fx:id="acRootPane" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminAccManagementDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminAccManagementController">
    <children>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="25.0">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="25.0">
          <content>
             <VBox spacing="10.0">
                <children>
@@ -32,11 +32,10 @@
                         <Region prefHeight="100.0" prefWidth="316.0" />
                         <TextField fx:id="txtSearch" promptText="search here......" styleClass="search-field" />
                         <ComboBox fx:id="comboFilterRole" prefWidth="150.0" promptText="Select Role" styleClass="combo-box" />
-                        <Button fx:id="btnCreateUser" onAction="#openCreateUser" mnemonicParsing="false" styleClass="primary-button" text="+ Create User" />
+                        <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#openCreateUser" styleClass="primary-button" text="+ Create User" />
                      </children>
                   </HBox>
 
-                  <!-- 🎯 Stat Cards နေရာ (fx:id များ ထည့်သွင်းထားသည်) -->
                   <HBox prefHeight="100.0" prefWidth="200.0" styleClass="stat-cards-container" VBox.vgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS">
@@ -44,7 +43,6 @@
                               <VBox prefHeight="98.0" prefWidth="243.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Total Users" />
-                                    <!-- 🎯 lblTotalUsers -->
                                     <Label fx:id="lblTotalUsers" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="All registered users" />
                                  </children>
@@ -61,7 +59,6 @@
                               <VBox prefHeight="98.0" prefWidth="184.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Active Users" />
-                                    <!-- 🎯 lblActiveUsers -->
                                     <Label fx:id="lblActiveUsers" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="Currently active" />
                                  </children>
@@ -78,7 +75,6 @@
                               <VBox prefHeight="98.0" prefWidth="184.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Staff Members" />
-                                    <!-- 🎯 lblStaffMembers -->
                                     <Label fx:id="lblStaffMembers" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="Staff accounts" />
                                  </children>
@@ -95,7 +91,6 @@
                               <VBox prefHeight="98.0" prefWidth="184.0">
                                  <children>
                                     <Label styleClass="super-metric-label" text="Administrators" />
-                                    <!-- 🎯 lblAdministrators -->
                                     <Label fx:id="lblAdministrators" styleClass="super-metric-value" text="0 persons" />
                                     <Label styleClass="super-metric-note" text="Admin accounts" />
                                  </children>
@@ -110,7 +105,7 @@
                      </children>
                   </HBox>
 
-                  <ScrollPane vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" fitToHeight="true" style="-fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0;">
+                  <ScrollPane fitToHeight="true" hbarPolicy="AS_NEEDED" styleClass="scroll-pane" vbarPolicy="NEVER">
                      <content>
                         <HBox fx:id="profileCardsContainer" styleClass="profile-cards-container" />
                      </content>
@@ -145,5 +140,28 @@
             </VBox>
          </content>
       </ScrollPane>
+
+      <!-- Toast Notification -->
+      <HBox fx:id="notificationToast" prefWidth="340.0" styleClass="toast-notification-dark" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
+         <children>
+            <StackPane styleClass="toast-icon-bg">
+               <children>
+                  <SVGPath content="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" styleClass="toast-icon-glyph" />
+               </children>
+            </StackPane>
+            <VBox styleClass="toast-text-box" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label fx:id="lblToastTitle" styleClass="toast-title" text="Success!" />
+                  <Label fx:id="lblToastMessage" styleClass="toast-message" text="User account created successfully." wrapText="true" />
+               </children>
+            </VBox>
+            <Button mnemonicParsing="false" onAction="#closeToast" styleClass="toast-close-btn">
+               <graphic>
+                  <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" styleClass="toast-close-icon" />
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+
    </children>
 </AnchorPane>

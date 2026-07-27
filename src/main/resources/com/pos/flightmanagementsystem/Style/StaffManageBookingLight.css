@@ -186,3 +186,10 @@
 .close-btn:hover .close-icon {
     -fx-fill: #EF4444;
 }
+
+/* ==========================================================
+   TABLE ACTION COLUMN (ခလုတ်များကို အလယ်ကျစေရန်)
+========================================================== */
+.action-column {
+    -fx-alignment: CENTER !important;
+}

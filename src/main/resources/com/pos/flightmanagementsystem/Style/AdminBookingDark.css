@@ -1,0 +1,302 @@
+/* =========================================================================
+   ✈️ ADMIN BOOKING MANAGEMENT & MODALS - CYBERPUNK / DEEP AMETHYST THEME
+   ========================================================================= */
+
+/* 🌌 1. MAIN BACKGROUND */
+.super-content {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
+}
+
+/* 📦 2. PANELS & CARDS (Top Bar & Table Container) */
+.super-topbar,
+.super-panel {
+    -fx-background-color: #1F1A36; /* Dark Amethyst Glass */
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #2A234C;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 22, 0.12, 0, 10);
+    -fx-padding: 24 26;
+}
+
+/* 💠 3. BRAND LOGO */
+.super-brand-logo {
+    -fx-min-width: 48;
+    -fx-min-height: 48;
+    -fx-max-width: 48;
+    -fx-max-height: 48;
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+    -fx-background-radius: 14;
+    -fx-border-color: #00D4FF; /* Neon Cyan */
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 15, 0, 0, 0);
+}
+
+.super-brand-logo-glyph {
+    -fx-fill: #00D4FF;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* 📝 4. TYPOGRAPHY */
+.super-page-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+/* 🌟 Title အနီရောင် (Cyberpunk Neon Pink) ဖြင့် ပြရန် */
+.danger-text {
+    -fx-text-fill: #FF2A6D !important;
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 10, 0, 0, 0);
+}
+
+.super-section-subtitle {
+    -fx-text-fill: #A093D6; /* Soft Purple */
+    -fx-font-size: 13px;
+}
+
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #A093D6; /* Soft Purple */
+}
+
+/* 🔍 5. SEARCH FIELD */
+.search-field {
+    -fx-background-color: #130F25;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 8px 12px;
+}
+
+.search-field:focus-within {
+    -fx-border-color: #00D4FF; /* Neon Cyan Glow */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 10, 0, 0, 0);
+}
+
+.search-icon {
+    -fx-fill: #A093D6;
+}
+
+.search-input {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #5A4E8C;
+    -fx-font-size: 13px;
+}
+
+.search-input:focused {
+    -fx-background-color: transparent;
+}
+
+/* 📊 6. TABLE VIEW */
+.super-table, .table-view {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+    -fx-padding: 0;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5px;
+}
+
+.super-table .column-header-background {
+    -fx-background-color: #2A234C;
+    -fx-background-radius: 13 13 0 0;
+    -fx-border-radius: 13 13 0 0;
+    -fx-background-insets: 0;
+}
+
+.super-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #3D2C8D transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-size: 42px;
+}
+
+.super-table .column-header .label {
+    -fx-text-fill: #00D4FF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.super-table .table-row-cell {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: transparent transparent #2A234C transparent;
+    -fx-text-fill: #E0E0E0;
+    -fx-size: 40px;
+}
+
+.super-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+}
+
+.super-table .table-row-cell:selected {
+    -fx-background-color: rgba(255, 42, 109, 0.2);
+}
+
+.super-table .table-cell {
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 13px;
+    -fx-padding: 10 14 10 14;
+}
+
+.super-table .placeholder .label {
+    -fx-text-fill: #A093D6;
+    -fx-font-style: italic;
+}
+
+/* ⛔ 7. BUTTONS */
+/* Danger Buttons (Confirm/Cancel - Neon Pink) */
+.btn-danger, .btn-cancel-table {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF2A6D;
+    -fx-text-fill: #FF2A6D;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-weight: bold;
+    -fx-border-width: 1.5px;
+    -fx-cursor: hand;
+}
+
+.btn-danger {
+    -fx-font-size: 14px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 8px 20px;
+}
+
+.btn-cancel-table {
+    -fx-font-size: 12px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-padding: 5px 12px;
+}
+
+.btn-danger:hover, .btn-cancel-table:hover {
+    -fx-background-color: rgba(255, 42, 109, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 10, 0, 0, 0);
+}
+
+.btn-danger:pressed, .btn-cancel-table:pressed {
+    -fx-background-color: rgba(255, 42, 109, 0.3);
+}
+
+/* Secondary Button (Cancel/Close Modal - Soft Purple Border) */
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: #A093D6;
+    -fx-text-fill: #A093D6;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(160, 147, 214, 0.15);
+    -fx-text-fill: #FFFFFF;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: rgba(160, 147, 214, 0.3);
+}
+
+/* 📄 8. PAGINATION */
+.pagination-label {
+    -fx-text-fill: #A093D6;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.super-pagination {
+    -fx-page-information-visible: false;
+}
+
+.super-pagination .pagination-control {
+    -fx-background-color: transparent;
+}
+
+.super-pagination .control-box {
+    -fx-spacing: 5;
+    -fx-alignment: center;
+}
+
+.super-pagination .number-button,
+.super-pagination .left-arrow-button,
+.super-pagination .right-arrow-button {
+    -fx-background-color: #130F25;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 5px 12px;
+    -fx-text-fill: #A093D6;
+    -fx-font-weight: bold;
+}
+
+.super-pagination .number-button:hover,
+.super-pagination .left-arrow-button:hover,
+.super-pagination .right-arrow-button:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #00D4FF;
+    -fx-border-color: #00D4FF;
+}
+
+.super-pagination .number-button:selected {
+    -fx-background-color: rgba(0, 212, 255, 0.2);
+    -fx-text-fill: #00D4FF;
+    -fx-border-color: #00D4FF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 8, 0, 0, 0);
+}
+
+.super-pagination .left-arrow,
+.super-pagination .right-arrow {
+    -fx-background-color: #A093D6;
+}
+
+.super-pagination .left-arrow-button:hover .left-arrow,
+.super-pagination .right-arrow-button:hover .right-arrow {
+    -fx-background-color: #00D4FF;
+}
+
+/* 📝 9. MODALS & TEXT AREAS */
+.modal-card {
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 12px;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0.1, 0, 5);
+}
+
+.text-area-reason {
+    -fx-background-color: #130F25 !important;
+    -fx-border-color: #2A234C !important;
+    -fx-border-radius: 8px !important;
+    -fx-background-radius: 8px !important;
+    -fx-border-width: 1.5px !important;
+    -fx-font-size: 14px !important;
+    -fx-text-fill: #FFFFFF !important;
+    -fx-prompt-text-fill: #8C7DAE !important;
+}
+
+.text-area-reason .viewport,
+.text-area-reason .content {
+    -fx-background-color: #130F25 !important;
+    -fx-text-fill: #FFFFFF !important;
+}
+
+.text-area-reason:focused {
+    -fx-border-color: #00D4FF !important;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 8, 0, 0, 0) !important;
+}

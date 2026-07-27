@@ -1,400 +1,291 @@
 /* ==========================================================
-   ROOT (CYBERPUNK THEME)
+   ROOT (MAIN BACKGROUND)
 ========================================================== */
-
 .super-content {
-    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
-    -fx-font-family:"Inter","Segoe UI";
+    -fx-background-color: transparent;
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
 }
-/* ==========================================================
-   PAGE TITLE
-========================================================== */
 
-.page-title{
-    -fx-font-size: 22px;
-    -fx-font-weight:bold;
-    -fx-text-fill: #FFFFFF; /* High Contrast White */
+/* ==========================================================
+   PAGE TITLE & TOPBAR
+========================================================== */
+.super-topbar {
+    -fx-background-color: linear-gradient(to bottom right, #1A212D 0%, #0B0E14 70%);
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-border-width: 1px; -fx-border-color: #1F2633;
+    -fx-padding: 20px 26px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 4);
 }
+
+.page-title { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.page-subtitle { -fx-text-fill: #8B95A5; -fx-font-size: 13px; }
+.super-section-title { -fx-text-fill: #FFFFFF; -fx-font-size: 18px; -fx-font-weight: bold; }
 
 /* =========================================================================
    📜 SCROLL PANE CLEAN UP
-   ========================================================================= */
-.scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-
-.scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-.scroll-pane:focused {
-    -fx-background-color: transparent;
-}
-
-.page-subtitle{
-    -fx-text-fill: #00D4FF; /* Neon Cyan */
-    -fx-font-size: 13px;
-}
-.super-section-title {
-    -fx-text-fill: #FFFFFF;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-}
-
+========================================================================= */
+.scroll-pane { -fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0; }
+.scroll-pane .viewport { -fx-background-color: transparent; }
+.scroll-pane:focused { -fx-background-color: transparent; }
 
 /* ==========================================================
-   SEARCH FIELD
+   SEARCH FIELD & COMBO BOX
 ========================================================== */
-
-.search-field{
-    -fx-pref-height:42;
-    -fx-background-color: #130F25;
-    -fx-background-radius:12;
-    -fx-border-radius:12;
-    -fx-border-color: #2A234C;
-    -fx-text-fill: #FFFFFF;
-    -fx-padding:0 15;
+.search-field {
+    -fx-pref-height: 42;
+    -fx-background-color: #0B0E14;
+    -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #1F2633;
+    -fx-text-fill: #FFFFFF; -fx-padding: 0 15;
 }
+.search-field:focused { -fx-border-color: #31C4B4; }
 
-.search-field:focused{
-    -fx-border-color: #00D4FF; /* Neon Cyan Focus */
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 10, 0, 0, 0);
-}
-
-
-/* 📦 COMBO BOX MODERN STYLE */
 .combo-box {
-    -fx-background-color: #130F25;
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-    -fx-border-color: #2A234C;
-    -fx-border-width: 1.5px;
-    -fx-padding: 4px 8px 4px 8px;
-    -fx-font-size: 13px;
+    -fx-background-color: #0B0E14;
+    -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-border-color: #1F2633; -fx-border-width: 1px;
+    -fx-padding: 4px 8px; -fx-font-size: 13px;
 }
-
-.combo-box:focused {
-    -fx-border-color: #00D4FF;
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 10, 0, 0, 0);
-}
-
-.combo-box .arrow-button {
-    -fx-background-color: transparent;
-}
-.combo-box .arrow {
-    -fx-background-color: #A093D6; /* Soft Purple */
-}
-
-.combo-box-popup .list-view {
-    -fx-background-color: #1F1A36;
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-    -fx-border-color: #2A234C;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 5);
-}
-
-.combo-box-popup .list-cell:filled {
+.combo-box .list-cell {
     -fx-text-fill: #FFFFFF;
-    -fx-background-color: transparent;
 }
-
-.combo-box-popup .list-cell:filled:hover {
-    -fx-background-color: rgba(0, 212, 255, 0.15);
-    -fx-text-fill: #00D4FF;
+.combo-box:focused { -fx-border-color: #31C4B4; }
+.combo-box .arrow-button { -fx-background-color: transparent; }
+.combo-box .arrow { -fx-background-color: #8B95A5; }
+.combo-box-popup .list-view {
+    -fx-background-color: #161B24;
+    -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-border-color: #1F2633;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 4);
 }
-
+.combo-box-popup .list-cell:filled { -fx-text-fill: #FFFFFF; -fx-background-color: transparent; }
+.combo-box-popup .list-cell:filled:hover { -fx-background-color: rgba(49, 196, 180, 0.15); -fx-text-fill: #31C4B4; }
 
 /* ==========================================================
    PRIMARY BUTTON & SECONDARY BUTTON
 ========================================================== */
-.primary-button,
-.secondary-button {
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-width: 1.5;
-    -fx-padding: 11 22 11 22;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-cursor: hand;
-    -fx-content-display: LEFT;
-    -fx-graphic-text-gap: 12;
-    -fx-background-color: transparent;
+.primary-button, .secondary-button {
+    -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-width: 1px;
+    -fx-padding: 11 22; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;
+    -fx-content-display: LEFT; -fx-graphic-text-gap: 12;
 }
-
 .primary-button {
-    -fx-border-color: #00D4FF;
-    -fx-text-fill: #00D4FF;
+    -fx-background-color: linear-gradient(to right, #4FD1C5, #3BBAB1);
+    -fx-border-color: transparent; -fx-text-fill: #06080D;
 }
-
-.primary-button:hover {
-    -fx-background-color: rgba(0, 212, 255, 0.15);
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 14, 0.16, 0, 0);
-}
-
-.secondary-button {
-    -fx-border-color: #FF2A6D;
-    -fx-text-fill: #FF2A6D;
-}
-
-.secondary-button:hover {
-    -fx-background-color: rgba(255, 42, 109, 0.15);
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 14, 0.16, 0, 0);
-}
-
+.primary-button:hover { -fx-background-color: linear-gradient(to right, #3BBAB1, #2EA39B); }
+.secondary-button { -fx-background-color: transparent; -fx-border-color: #31C4B4; -fx-text-fill: #31C4B4; }
+.secondary-button:hover { -fx-background-color: rgba(49, 196, 180, 0.1); }
 
 /* ==========================================================
-   SUMMARY CARD, TABLE CARD, STATUS CARD
+   CARDS (DIAGONAL FAINT GRADIENT)
 ========================================================== */
-
-.summary-card, .table-card, .status-card {
-    -fx-background-color: #1F1A36;
-    -fx-border-color: #2A234C;
+.summary-card, .table-card, .status-card, .user-profile-card {
+    -fx-background-color: linear-gradient(to bottom right, #1A212D 0%, #0B0E14 70%);
+    -fx-border-color: #1F2633;
     -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 18, 0, 0, 5);
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 12, 0, 0, 4);
 }
 
-.summary-card {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-padding: 22;
-    -fx-spacing: 10;
-    -fx-pref-width: 250;
-}
-
-.table-card {
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
-    -fx-padding: 20;
-}
-
-.status-card {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-padding: 20;
-}
-
-
-/* ==========================================================
-   PROFILE CARD
-========================================================== */
+.summary-card { -fx-padding: 22; -fx-spacing: 10; -fx-pref-width: 250; }
+.table-card { -fx-padding: 20; }
+.status-card { -fx-padding: 20; }
 
 .profile-cards-container {
     -fx-spacing: 16px;
-    -fx-padding: 10px 5px 10px 5px;
+    -fx-padding: 10px 5px 35px 5px;
     -fx-background-color: transparent;
 }
 
 .user-profile-card {
-    -fx-background-color: #1F1A36;
-    -fx-background-radius: 16px;
-    -fx-border-radius: 16px;
-    -fx-border-color: #2A234C;
-    -fx-border-width: 1.5px;
-    -fx-pref-width: 260px;
-    -fx-min-width: 260px;
-    -fx-max-width: 260px;
-    -fx-pref-height: 300px;
-    -fx-padding: 15px;
-    -fx-alignment: CENTER;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 4);
-    -fx-transition: all 0.3s;
+    -fx-pref-width: 260px; -fx-min-width: 260px; -fx-max-width: 260px; -fx-pref-height: 300px;
+    -fx-padding: 15px; -fx-alignment: CENTER; -fx-transition: all 0.3s;
 }
+.user-profile-card:hover { -fx-border-color: #31C4B4; }
+.user-profile-card .label { -fx-text-fill: #FFFFFF; }
 
-.user-profile-card:hover {
-    -fx-border-color: #00D4FF; /* Neon Cyan Border Glow */
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 18, 0.2, 0, 0);
-    -fx-cursor: hand;
+.user-card-avatar-container {
+    -fx-min-width: 86px; -fx-min-height: 86px;
+    -fx-max-width: 86px; -fx-max-height: 86px;
+    -fx-background-color: #06080D;
+    -fx-border-color: #31C4B4;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-border-width: 2px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.25), 10, 0, 0, 0);
 }
-
-/* Card အတွင်းရှိ စာသားများကို အဖြူရောင် ပြောင်းရန် */
-.user-profile-card .label {
-    -fx-text-fill: #FFFFFF;
-}
-
-/* Card အတွင်းရှိ လူပုံစံ Icon ကို Neon Cyan အရောင်ပြောင်းရန် */
-.user-profile-card SVGPath {
-    -fx-fill: #00D4FF;
-}
-
-
-/* ==========================================================
-   AVATAR
-========================================================== */
-
-.avatar{
-    -fx-fill: #00D4FF; /* Neon Cyan Fill */
-}
-
 
 /* ==========================================================
    STATUS BADGE
 ========================================================== */
-
-.status-active{
-    -fx-background-color: rgba(0, 255, 157, 0.15);
-    -fx-background-radius: 30;
-    -fx-border-color: #00FF9D;
-    -fx-border-radius: 30;
-    -fx-border-width: 1px;
-    -fx-text-fill: #00FF9D; /* Neon Green */
-    -fx-padding: 4 12;
+.status-active {
+    -fx-background-color: transparent; -fx-background-radius: 20; -fx-border-color: #1DA853;
+    -fx-border-radius: 20; -fx-border-width: 1px; -fx-text-fill: #1DA853; -fx-padding: 4 12;
 }
-
-.status-inactive{
-    -fx-background-color: rgba(255, 42, 109, 0.15);
-    -fx-background-radius: 30;
-    -fx-border-color: #FF2A6D;
-    -fx-border-radius: 30;
-    -fx-border-width: 1px;
-    -fx-text-fill: #FF2A6D; /* Neon Pink */
-    -fx-padding: 4 12;
+.status-inactive {
+    -fx-background-color: transparent; -fx-background-radius: 20; -fx-border-color: #F8B12C;
+    -fx-border-radius: 20; -fx-border-width: 1px; -fx-text-fill: #F8B12C; -fx-padding: 4 12;
 }
-
 
 /* ==========================================================
-   TABLEVIEW (CYBERPUNK)
+   TABLEVIEW (CENTER RADIAL FAINT GRADIENT & CENTER ALIGNED)
 ========================================================== */
-
 .table-view, .super-table {
-    -fx-background-color: #1F1A36;
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: #2A234C;
-}
-.super-table {
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
+    -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #1A212D 0%, #0B0E14 100%);
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-border-color: #1F2633; -fx-border-width: 1px;
+    -fx-padding: 5px;
 }
 
-.table-view .column-header, .super-table .column-header-background {
-    -fx-background-color: #2A234C;
-}
-
-.table-view .column-header .label {
-    -fx-text-fill: #00D4FF; /* Header text as Neon Cyan */
-    -fx-font-weight: bold;
-}
-
-.table-row-cell {
-    -fx-background-color: #1F1A36;
-    -fx-border-color: transparent transparent #2A234C transparent;
-    -fx-border-width: 0 0 1 0;
-}
-
-.table-row-cell:hover {
-    -fx-background-color: rgba(0, 212, 255, 0.1);
-}
-
-.table-row-cell:selected {
-    -fx-background-color: rgba(255, 42, 109, 0.2);
-}
-
-
-/* ==========================================================
-   ICON BUTTON
-========================================================== */
-
-.icon-button{
+.table-view .column-header-background, .super-table .column-header-background {
     -fx-background-color: transparent;
-    -fx-background-radius: 50;
-    -fx-cursor: hand;
+    -fx-border-color: transparent transparent #1F2633 transparent;
+    -fx-border-width: 0 0 1px 0;
 }
-
-.icon-button:hover{
-    -fx-background-color: rgba(0, 212, 255, 0.15); /* Soft Cyan Glow */
+.table-view .column-header, .super-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-width: 0px;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER;
 }
-
-
-/* ==========================================================
-   STAT CARDS (GLOW BORDERS)
-========================================================== */
-
-.stat-cards-container {
-    -fx-spacing: 20px;
-    -fx-padding: 5px 0px 5px 0px;
+.table-view .column-header .label, .super-table .column-header .label {
+    -fx-text-fill: #8B95A5;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
     -fx-alignment: CENTER;
 }
 
-.super-metric-card-blue,
-.super-metric-card-carbon,
-.super-metric-card-pink,
-.super-metric-card-violet {
-    -fx-min-height: 132;
-    -fx-max-width: 100000;
-    -fx-padding: 20 22 20 22;
-    -fx-background-radius: 16px;
-    -fx-border-radius: 16px;
-    -fx-border-width: 2px;
-    -fx-background-color: #1F1A36; /* Unified Dark Background */
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-cell-size: 48px;
 }
-
-/* Add Neon Borders to cards */
-.super-metric-card-carbon {
-    -fx-border-color: #00FF9D; /* Neon Green */
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 157, 0.3), 15, 0, 0, 0);
-}
-
-.super-metric-card-pink {
-    -fx-border-color: #FF2A6D; /* Neon Pink */
-    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.3), 15, 0, 0, 0);
-}
-
-.super-metric-card-violet {
-    -fx-border-color: #FFE600; /* Neon Yellow */
-    -fx-effect: dropshadow(gaussian, rgba(255, 230, 0, 0.3), 15, 0, 0, 0);
-}
-
-.super-metric-card-blue {
-    -fx-border-color: #00D4FF; /* Neon Cyan */
-    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 15, 0, 0, 0);
-}
-
-.super-metric-label,
-.super-metric-note {
-    -fx-text-fill: #A093D6; /* Cyberpunk Soft Purple */
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
-
-.super-metric-value {
+.table-row-cell:filled { -fx-background-color: transparent; }
+.table-view .table-cell, .super-table .table-cell {
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
     -fx-text-fill: #FFFFFF;
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER;
+    -fx-padding: 0 15px;
 }
 
+.table-row-cell:filled:hover { -fx-background-color: rgba(255, 255, 255, 0.04); -fx-background-radius: 8px; }
+.table-row-cell:selected { -fx-background-color: rgba(49, 196, 180, 0.15); -fx-background-radius: 8px; }
+.table-view .placeholder .label { -fx-text-fill: #8B95A5; -fx-font-style: italic; -fx-alignment: CENTER; }
 
 /* ==========================================================
-   SUPER TOPBAR & ICONS
+   STAT CARDS (BRIGHT GRADIENTS)
 ========================================================== */
+.stat-cards-container { -fx-spacing: 20px; -fx-padding: 5px 0px; -fx-alignment: CENTER; }
+.super-metric-card-blue, .super-metric-card-carbon, .super-metric-card-pink, .super-metric-card-violet {
+    -fx-min-height: 120; -fx-max-width: 100000; -fx-padding: 20 22;
+    -fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 12, 0, 0, 4);
+}
+.super-metric-card-blue { -fx-background-color: linear-gradient(to bottom right, #2BC9BB, #128C84); }
+.super-metric-card-carbon { -fx-background-color: linear-gradient(to bottom right, #7A3DF3, #431CB6); }
+.super-metric-card-violet { -fx-background-color: linear-gradient(to bottom right, #EE7B45, #C14A11); }
+.super-metric-card-pink { -fx-background-color: linear-gradient(to bottom right, #E53A9F, #9A1160); }
 
-.super-topbar {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-width: 1;
-    -fx-background-color: #1F1A36;
-    -fx-border-color: #2A234C;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 22, 0.12, 0, 10);
-    -fx-padding: 24 26 24 26;
+.super-metric-label, .super-metric-note { -fx-text-fill: rgba(255, 255, 255, 0.9); -fx-font-size: 12px; -fx-font-weight: bold; }
+.super-metric-value { -fx-text-fill: #FFFFFF; -fx-font-size: 28px; -fx-font-weight: bold; }
+.super-metric-icon { -fx-min-width: 40; -fx-min-height: 40; -fx-max-width: 40; -fx-max-height: 40; -fx-background-color: rgba(255, 255, 255, 0.2); -fx-background-radius: 999; }
+.super-metric-icon-glyph { -fx-fill: #FFFFFF; -fx-scale-x: 0.9; -fx-scale-y: 0.9; }
+
+/* ==========================================================
+   🌟 TOAST NOTIFICATION
+========================================================== */
+.toast-notification-dark {
+    -fx-background-color: #11151E;
+    -fx-background-radius: 12px;
+    -fx-border-color: #1DA853;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 16px 12px 16px 20px;
+    -fx-spacing: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 5);
+}
+.toast-icon-bg {
+    -fx-background-color: rgba(29, 168, 83, 0.1);
+    -fx-background-radius: 50%;
+    -fx-min-width: 36px; -fx-min-height: 36px;
+    -fx-max-width: 36px; -fx-max-height: 36px;
+    -fx-padding: 6px;
+}
+.toast-icon-glyph { -fx-fill: #1DA853; }
+.toast-text-box {
+    -fx-spacing: 4px;
+}
+.toast-title { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.toast-message { -fx-font-size: 13px; -fx-text-fill: #8B95A5; }
+.toast-close-btn {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 4px;
+    -fx-margin: -4px 0 0 0;
+}
+.toast-close-icon { -fx-fill: #8B95A5; }
+.toast-close-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 50%;
+}
+.toast-close-btn:hover .toast-close-icon { -fx-fill: #FFFFFF; }
+
+
+/* =========================================================================
+   🎚️ MODERN SCROLLBAR (DARK THEME)
+   ========================================================================= */
+
+/* ScrollBar ရဲ့ အောက်ခံလမ်းကြောင်း (Track) ကို ပျောက်အောင် လုပ်ထားခြင်း */
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+.scroll-bar:horizontal .track, .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
 }
 
-.super-metric-icon {
-    -fx-min-width: 46;
-    -fx-min-height: 46;
-    -fx-max-width: 46;
-    -fx-max-height: 46;
-    -fx-background-color: rgba(0, 212, 255, 0.1);
-    -fx-background-radius: 999;
-    -fx-border-color: #00D4FF;
-    -fx-border-radius: 999;
-    -fx-border-width: 1.5px;
+/* ScrollBar ရဲ့ ဆွဲလို့ရတဲ့ အတုံးလေး (Thumb) */
+.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
+    -fx-background-color: #1F2633; /* Dark Grey Default အရောင် */
+    -fx-background-radius: 10px;
 }
 
-.super-metric-icon-glyph {
-    -fx-fill: #00D4FF;
-    -fx-scale-x: 0.92;
-    -fx-scale-y: 0.92;
+/* Mouse ထောက်လိုက်ချိန် Thumb အရောင် (Teal Accent - Theme နှင့် ညီစေရန်) */
+.scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #31C4B4;
 }
+.scroll-bar:vertical .thumb:pressed, .scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: #20E3B2;
+}
+
+/* အပေါ်/အောက်၊ ဘယ်/ညာ မြှားလေးများကို အပြီးတိုင် ဖျောက်ခြင်း (Modern Web-like Look) */
+.scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button,
+.scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-pref-width: 0;
+}
+
+.scroll-bar:vertical .increment-arrow, .scroll-bar:vertical .decrement-arrow,
+.scroll-bar:horizontal .increment-arrow, .scroll-bar:horizontal .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+/* Scrollbar အထူ/အပါး ညှိခြင်း (ပါးပါးလေးဖြစ်သွားစေရန်) */
+.scroll-bar:vertical {
+    -fx-pref-width: 8px;
+}
+.scroll-bar:horizontal {
+    -fx-pref-height: 8px;
+}
+
+/* ထောင့်စွန်း (Corner) အကွက်ကို ဖျောက်ခြင်း */
+.corner {
+    -fx-background-color: transparent;
+}SupeSuS

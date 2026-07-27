@@ -1,9 +1,13 @@
-/* LoginDark.css - Navy & Cyan Dark Mode */
+/* =========================================================================
+   ✈️ LOGIN - CYBERPUNK / DEEP AMETHYST THEME
+   ========================================================================= */
 
 .root-layout {
-    -fx-background-color: #0f172a;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: #130F25;
 }
 
+/* 🌌 1. BACKGROUND TINTING (Navy ကို ဖုံးပြီး Amethyst ပြောင်းခြင်း) */
 .bg-image-layer {
     -fx-background-image: url("/com/pos/flightmanagementsystem/Image/AirplaneDark.jpg");
     -fx-background-size: 130% auto;
@@ -11,95 +15,104 @@
 }
 
 .bg-gradient-overlay {
-    -fx-background-color: linear-gradient(to bottom, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.95));
+    /* အမည်းနဲ့ ခရမ်းရင့်ရောင်ကို အရမ်းထူထူလေး အုပ်ပေးထားပါတယ် */
+    -fx-background-color: linear-gradient(to bottom, rgba(31, 26, 54, 0.7), rgba(19, 15, 37, 1.0));
 }
 
-/* --- Glassmorphism Card --- */
+/* --- Left Side: Glassmorphism Card --- */
 .glass-panel {
-    -fx-background-color: rgba(30, 41, 59, 0.45);
-    -fx-background-radius: 20;
-    -fx-border-color: rgba(255, 255, 255, 0.15);
-    -fx-border-radius: 20;
-    -fx-border-width: 1.5;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 20, 0, 0, 5);
+    -fx-background-color: rgba(31, 26, 54, 0.55);
+    -fx-background-radius: 20px;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 20px;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0, 0, 5);
 }
 
-/* --- Typography with Accent Color --- */
+.animation-container {
+    /* Animation ပတ်လည်မှာ Neon Cyan အလင်းလေးထွက်နေစေရန် */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.5), 35, 0.2, 0, 0);
+}
+
+/* --- Typography (Left Side) --- */
 .brand-title {
     -fx-font-size: 34px;
-    -fx-text-fill: #e2e8f0;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-text-fill: #FFFFFF;
     -fx-font-weight: bold;
 }
 
 .brand-title-accent {
     -fx-font-size: 34px;
-    -fx-text-fill: #06b6d4;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-text-fill: #00D4FF; /* Neon Cyan */
     -fx-font-weight: bold;
 }
 
 .brand-subtitle {
     -fx-font-size: 15px;
-    -fx-text-fill: #67e8f9;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-text-fill: #A093D6; /* Soft Purple */
 }
 
-/* --- Right Side: Panel and Form --- */
+/* ==========================================================
+   📦 2. RIGHT PANEL & FORM CARD
+========================================================== */
 .right-panel {
-    -fx-background-color: #0f172a;
+    -fx-background-color: #130F25;
 }
 
 .form-card {
-    -fx-background-color: #1e293b;
-    -fx-background-radius: 16;
-    -fx-padding: 40 50 40 50;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 20, 0, 0, 8);
-    -fx-border-color: #334155;
-    -fx-border-radius: 16;
-    -fx-border-width: 1;
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 16px;
+    -fx-padding: 40px 50px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 8);
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1.5px;
 }
 
+/* --- Typography (Form) --- */
 .welcome-label {
     -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-text-fill: #FFFFFF;
 }
 
 .subtitle-label {
     -fx-font-size: 14px;
-    -fx-text-fill: #94a3b8;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-text-fill: #A093D6;
 }
 
 .input-label {
     -fx-font-size: 13px;
-    -fx-text-fill: #cbd5e1;
+    -fx-text-fill: #A093D6;
     -fx-font-weight: bold;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
+/* --- Input Boxes (Cyberpunk Style) --- */
 .input-box {
-    -fx-border-color: #334155;
-    -fx-border-radius: 20;
-    -fx-background-color: #0f172a;
-    -fx-background-radius: 20;
-    -fx-padding: 0 15 0 15;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 12px;
+    -fx-background-color: #130F25;
+    -fx-background-radius: 12px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 0 15px;
     -fx-pref-height: 48px;
-    -fx-spacing: 12;
+    -fx-spacing: 12px;
 }
 
 .input-box.focused-box {
-    -fx-border-color: #06b6d4;
-    -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.5), 15, 0.3, 0, 0);
+    -fx-border-color: #00D4FF; /* Neon Cyan Focus */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 15, 0.2, 0, 0);
+}
+
+.input-icon {
+    -fx-fill: #A093D6; /* Soft Purple Icon */
 }
 
 .clean-input {
     -fx-background-color: transparent;
-    -fx-text-fill: white;
+    -fx-text-fill: #FFFFFF;
     -fx-font-size: 14px;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-prompt-text-fill: #5A4E8C;
     -fx-padding: 0;
 }
 
@@ -107,13 +120,20 @@
     -fx-background-color: transparent;
 }
 
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
 /* --- Individual OTP Boxes --- */
 .otp-box {
-    -fx-background-color: #0f172a;
-    -fx-border-color: #334155;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-text-fill: white;
+    -fx-background-color: #130F25;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #FFFFFF;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-alignment: center;
@@ -122,107 +142,151 @@
 }
 
 .otp-box:focused {
-    -fx-border-color: #06b6d4;
+    -fx-border-color: #00D4FF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 10, 0, 0, 0);
 }
 
+/* --- Links & Buttons --- */
 .forgot-password-link {
-    -fx-text-fill: #22d3ee;
+    -fx-text-fill: #FF2A6D; /* Neon Pink Link */
     -fx-font-size: 13px;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
-    -fx-font-weight: normal;
+    -fx-font-weight: bold;
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
 
 .forgot-password-link:hover {
     -fx-underline: true;
-    -fx-text-fill: #67e8f9;
+    -fx-text-fill: #FFFFFF;
 }
 
+.text-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #A093D6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.text-button:hover {
+    -fx-text-fill: #00D4FF;
+}
+
+/* Login Action Button (Neon Cyan Transparent Style) */
 .login-button {
-    -fx-background-radius: 8;
-    -fx-background-color: linear-gradient(to right, #06b6d4, #0891b2);
-    -fx-text-fill: #0f172a;
+    -fx-background-color: transparent;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #00D4FF;
     -fx-font-size: 15px;
     -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
     -fx-pref-height: 48px;
     -fx-cursor: hand;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .login-button:hover {
-    -fx-background-color: linear-gradient(to right, #22d3ee, #06b6d4);
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 15, 0, 0, 0);
 }
 
-/* --- Custom Success Dialog --- */
+.login-button:pressed {
+    -fx-background-color: rgba(0, 212, 255, 0.3);
+}
+
+.status-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* ==========================================================
+   🚨 3. MODALS & ALERT DIALOGS
+========================================================== */
+.overlay-bg {
+    -fx-background-color: rgba(19, 15, 37, 0.85); /* Dark Glass */
+}
+
+.success-dialog, .custom-alert-dialog {
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 24px;
+    -fx-border-radius: 24px;
+    -fx-border-width: 2px;
+    -fx-padding: 30px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 30, 0.1, 0, 10);
+}
+
 .success-dialog {
-    -fx-background-color: #1e293b;
-    -fx-background-radius: 24;
-    -fx-border-color: #06b6d4;
-    -fx-border-radius: 24;
-    -fx-border-width: 2;
-    -fx-padding: 40 30 40 30;
-    -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.4), 35, 0.2, 0, 0);
+    -fx-border-color: #00FF9D; /* Neon Green */
 }
 
+.alert-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+}
 
-/* =========================================================
-   🌟 CUSTOM ALERT DIALOG STYLES (Dynamic Colors via Code)
-   ========================================================= */
-
-.custom-alert-dialog {
-    -fx-background-color: #1e293b;
-    -fx-background-radius: 24;
-    -fx-border-radius: 24;
-    -fx-border-width: 2;
-    -fx-padding: 30 30 30 30;
+.alert-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #A093D6;
 }
 
 .custom-alert-button {
-    -fx-background-radius: 8;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-pref-height: 40px;
     -fx-cursor: hand;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
-    -fx-padding: 0 40 0 40;
+    -fx-padding: 0 40px;
+    -fx-background-color: transparent;
 }
 
-/* --- ERROR THEME --- */
+/* --- ALERT THEMES --- */
 .alert-error {
-    -fx-border-color: #ef4444;
-    -fx-effect: dropshadow(three-pass-box, rgba(239, 68, 68, 0.4), 35, 0.2, 0, 0);
+    -fx-border-color: #FF2A6D; /* Neon Pink */
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.3), 30, 0, 0, 0);
 }
 .alert-error .custom-alert-button {
-    -fx-background-color: linear-gradient(to right, #ef4444, #dc2626);
-    -fx-text-fill: white;
+    -fx-border-color: #FF2A6D;
+    -fx-text-fill: #FF2A6D;
 }
 .alert-error .custom-alert-button:hover {
-    -fx-background-color: linear-gradient(to right, #f87171, #ef4444);
+    -fx-background-color: rgba(255, 42, 109, 0.15);
+    -fx-text-fill: #FFFFFF;
 }
 
-/* --- WARNING THEME --- */
 .alert-warning {
-    -fx-border-color: #f59e0b;
-    -fx-effect: dropshadow(three-pass-box, rgba(245, 158, 11, 0.4), 35, 0.2, 0, 0);
+    -fx-border-color: #FFE600; /* Neon Gold */
+    -fx-effect: dropshadow(gaussian, rgba(255, 230, 0, 0.3), 30, 0, 0, 0);
 }
 .alert-warning .custom-alert-button {
-    -fx-background-color: linear-gradient(to right, #f59e0b, #d97706);
-    -fx-text-fill: white;
+    -fx-border-color: #FFE600;
+    -fx-text-fill: #FFE600;
 }
 .alert-warning .custom-alert-button:hover {
-    -fx-background-color: linear-gradient(to right, #fbbf24, #f59e0b);
+    -fx-background-color: rgba(255, 230, 0, 0.15);
+    -fx-text-fill: #FFFFFF;
 }
 
-/* --- INFO THEME --- */
 .alert-info {
-    -fx-border-color: #06b6d4;
-    -fx-effect: dropshadow(three-pass-box, rgba(6, 182, 212, 0.4), 35, 0.2, 0, 0);
+    -fx-border-color: #00D4FF; /* Neon Cyan */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 30, 0, 0, 0);
 }
 .alert-info .custom-alert-button {
-    -fx-background-color: linear-gradient(to right, #06b6d4, #0891b2);
-    -fx-text-fill: white;
+    -fx-border-color: #00D4FF;
+    -fx-text-fill: #00D4FF;
 }
 .alert-info .custom-alert-button:hover {
-    -fx-background-color: linear-gradient(to right, #22d3ee, #06b6d4);
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+}
+
+/* ==========================================================
+   လေယာဉ်ပတ်နေသော စက်ဝိုင်းလမ်းကြောင်း (Orbit Path)
+========================================================== */
+.orbit-path {
+    -fx-stroke: #00D4FF; /* Login Button ရဲ့ Neon Cyan အရောင် */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 15, 0, 0, 0); /* လင်းထွက်နေသော Neon Glow Effect */
 }

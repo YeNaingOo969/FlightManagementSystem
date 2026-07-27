@@ -1,0 +1,234 @@
+/* ==========================================================
+   ROOT & BACKGROUND (CYBERPUNK THEME)
+========================================================== */
+.root, .super-content {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+}
+
+/* ==========================================================
+   MAIN MODAL CARD
+========================================================== */
+.modal-card {
+    -fx-background-color: #1F1A36; /* Dark Amethyst Glass */
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1.5px;
+    -fx-padding: 35;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 25, 0.1, 0, 8);
+}
+
+.form-card {
+    -fx-background-color: transparent;
+}
+
+/* ==========================================================
+   BRAND LOGO & HEADINGS
+========================================================== */
+.super-brand-logo {
+    -fx-min-width: 48;
+    -fx-min-height: 48;
+    -fx-max-width: 48;
+    -fx-max-height: 48;
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+    -fx-background-radius: 14;
+    -fx-border-color: #00D4FF; /* Neon Cyan */
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 15, 0, 0, 0);
+}
+
+.super-brand-logo-glyph {
+    -fx-fill: #00D4FF;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.page-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #A093D6; /* Soft Purple */
+}
+
+/* ==========================================================
+   INPUT FIELDS (TextField, ComboBox, DatePicker)
+========================================================== */
+.text-field, .combo-box, .date-picker {
+    -fx-background-color: #130F25;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+}
+
+.text-field {
+    -fx-padding: 10px 12px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #5A4E8C; /* Deep Purple Prompt */
+}
+
+.combo-box > .list-cell {
+    -fx-padding: 10px 12px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Hover & Focus Effects */
+.text-field:hover, .combo-box:hover, .date-picker:hover {
+    -fx-border-color: #3D2C8D;
+}
+
+.text-field:focused, .combo-box:focused, .date-picker:focused {
+    -fx-background-color: #130F25;
+    -fx-border-color: #00D4FF; /* Neon Cyan Focus */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 10, 0, 0, 0);
+}
+
+/* ==========================================================
+   COMBOBOX SPECIFIC FIXES (Cyberpunk Dropdown)
+========================================================== */
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12px;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #00D4FF; /* Neon Cyan Arrow */
+    -fx-padding: 2.5px 4px;
+}
+
+/* Dropdown Menu */
+.combo-box-popup .list-view {
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 5);
+}
+
+.combo-box-popup .list-cell {
+    -fx-padding: 10px 12px;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+}
+
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #00D4FF;
+}
+
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: rgba(255, 42, 109, 0.2); /* Neon Pink Selected */
+    -fx-text-fill: #FF2A6D;
+}
+
+/* ==========================================================
+   DATEPICKER SPECIFIC FIXES
+========================================================== */
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 10px 12px;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #5A4E8C;
+}
+
+.date-picker > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 8 8 0;
+    -fx-padding: 0 10 0 10;
+}
+
+.date-picker > .arrow-button > .graphic {
+    -fx-background-color: #00D4FF; /* Neon Cyan Calendar Icon */
+}
+
+/* DatePicker Dropdown */
+.date-picker-popup {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1.5px;
+}
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #2A234C;
+}
+.date-picker-popup .month-year-pane .label {
+    -fx-text-fill: #00D4FF;
+    -fx-font-weight: bold;
+}
+.date-picker-popup .day-name-cell,
+.date-picker-popup .week-number-cell {
+    -fx-text-fill: #A093D6;
+}
+.date-picker-popup .day-cell {
+    -fx-background-color: #130F25;
+    -fx-text-fill: #E0E0E0;
+}
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+}
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #00D4FF;
+    -fx-text-fill: #130F25;
+    -fx-font-weight: bold;
+}
+
+/* ==========================================================
+   CYBERPUNK NEON BUTTONS
+========================================================== */
+
+/* Primary Button (Add Flight - Neon Cyan) */
+.btn-primary {
+    -fx-background-color: transparent;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 12, 0, 0, 0);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: rgba(0, 212, 255, 0.3);
+}
+
+/* Secondary Button (Cancel - Neon Pink) */
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF2A6D;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #FF2A6D;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(255, 42, 109, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 12, 0, 0, 0);
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: rgba(255, 42, 109, 0.3);
+}

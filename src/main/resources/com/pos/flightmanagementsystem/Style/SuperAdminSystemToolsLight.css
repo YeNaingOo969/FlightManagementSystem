@@ -1,0 +1,213 @@
+/* ==========================================
+   SYSTEM TOOLS - PREMIUM LAYOUT (LIGHT MODE)
+   ========================================== */
+
+/* 🌌 1. Main Background & Container */
+.super-content {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: transparent;
+}
+
+.main-container {
+    -fx-padding: 0 35px 35px 35px;
+}
+
+/* ==========================================
+   🌟 2. TITLE CARD (Top Bar ကို ကတ်ပုံစံဖြစ်စေရန်)
+   ========================================== */
+.title-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-border-color: rgba(17, 40, 72, 0.08);
+    -fx-padding: 24px 30px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 15, 0, 0, 4);
+}
+
+.header-title {
+    -fx-font-weight: 700;
+    -fx-font-size: 24px;
+    -fx-text-fill: #1F1E19;
+}
+
+.header-subtitle {
+    -fx-text-fill: #1687d9;
+    -fx-font-size: 13px;
+    -fx-padding: 2px 0 0 0;
+}
+
+/* ==========================================
+   3. CENTRAL CARD CONTAINER
+   ========================================== */
+.tool-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-border-color: rgba(17, 40, 72, 0.08);
+    -fx-padding: 32px;
+    -fx-spacing: 24px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 15, 0, 0, 4);
+}
+
+/* 4. Top Info Row (Database Backup & Export တန်း) */
+.sub-header-box {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 18px 24px;
+}
+
+.section-title {
+    -fx-font-weight: 700;
+    -fx-font-size: 16px;
+    -fx-text-fill: #0F172A;
+}
+
+.normal-text {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13px;
+}
+
+/* ==========================================
+   5. BUTTONS
+   ========================================== */
+
+/* --- Run Backup DB Button --- */
+.button-backup-now {
+    -fx-background-color:  #0EA5E9;
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 26px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.3), 8, 0, 0, 3);
+}
+.button-backup-now:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+.button-backup-now:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.1), 4, 0, 0, 1);
+}
+
+/* --- Export SQL Button --- */
+.button-export-sql {
+    -fx-background-color: #D1FAE5;
+    -fx-border-color: #34D399;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #065F46;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-padding: 10px 26px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 211, 153, 0.15), 6, 0, 0, 2);
+}
+.button-export-sql:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+.button-export-sql:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 211, 153, 0.05), 3, 0, 0, 1);
+}
+
+/* ==========================================
+   6. TABLE VIEW (🌟 Center Aligned, Spacious Rows & No Lines)
+   ========================================== */
+.table-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+}
+.table-view .column-header-background {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 11px 11px 0 0;
+    -fx-border-color: transparent transparent #E2E8F0 transparent;
+}
+
+/* Header (Centered & Height Adjusted) */
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 48px; /* 🌟 ခေါင်းစဉ်ပိုင်းကို ပိုမိုကျယ်ဝန်းစေရန် 🌟 */
+    -fx-alignment: CENTER;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #1F4B5D;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER;
+}
+
+/* Rows & Cells (🌟 Row Height ကို 50px ပေးပြီး ကျယ်ဝန်းစေခြင်း 🌟) */
+.table-view .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-cell-size: 50px; /* 🌟 Dark Mode နည်းတူ တစ်တန်းချင်းစီ၏ အမြင့်ကို 50px ပေးထားပါသည် 🌟 */
+}
+.table-view .table-row-cell:filled {
+    -fx-background-color: #FFFFFF;
+}
+.table-view .table-row-cell:filled:hover {
+    -fx-background-color: #F4FBFD;
+    -fx-background-radius: 8px;
+}
+.table-view .table-row-cell:selected {
+    -fx-background-color: #DDF7FF;
+    -fx-background-radius: 8px;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #475569;
+    -fx-font-size: 13px;
+    -fx-border-width: 0px;
+    -fx-alignment: CENTER;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: #94A3B8;
+    -fx-font-style: italic;
+    -fx-alignment: CENTER;
+}
+
+/* ScrollBar များကို သန့်ရှင်းစေရန် */
+.table-view .scroll-bar:horizontal, .table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+
+/* ==========================================
+   7. TOAST NOTIFICATION (Light Mode)
+   ========================================== */
+.toast-notification {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12px;
+    -fx-border-color: #10B981;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 16px 12px 16px 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 15, 0, 0, 5);
+}
+.toast-icon-bg {
+    -fx-background-color: rgba(16, 185, 129, 0.15);
+    -fx-background-radius: 50%;
+    -fx-min-width: 36px; -fx-min-height: 36px; -fx-max-width: 36px; -fx-max-height: 36px;
+}
+.toast-icon-glyph { -fx-fill: #10B981; }
+.toast-title { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0F172A; }
+.toast-message { -fx-font-size: 13px; -fx-text-fill: #64748b; }
+.toast-close-btn { -fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 4px; -fx-background-radius: 50%; }
+.toast-close-icon { -fx-fill: #94A3B8; }
+.toast-close-btn:hover { -fx-background-color: rgba(15, 23, 42, 0.05); }
+.toast-close-btn:hover .toast-close-icon { -fx-fill: #0F172A; }

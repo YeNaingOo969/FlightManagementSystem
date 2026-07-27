@@ -1,0 +1,166 @@
+/* =========================================================================
+   ✈️ BOARDING PASS MODAL - CYBERPUNK / DEEP AMETHYST THEME
+   ========================================================================= */
+
+/* 🌌 1. MODAL BACKGROUND (Dark Translucent) */
+.overlay-bg {
+    /* Modal ဖြစ်သည့်အတွက် အနောက်က Screen ကို ဝါးဝါးလေးမြင်ရစေမည့် Dark Glass အရောင် */
+    -fx-background-color: rgba(19, 15, 37, 0.85);
+    -fx-padding: 40px;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+}
+
+/* 🎫 2. MAIN TICKET CARD */
+.ticket-card {
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: #00D4FF; /* Neon Cyan Border */
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.25), 30, 0.1, 0, 5);
+}
+
+/* --- Top Banner --- */
+.ticket-top-bar {
+    -fx-background-color: #2A234C;
+    -fx-background-radius: 14px 14px 0 0;
+    -fx-padding: 15px 30px;
+    -fx-border-color: transparent transparent #00D4FF transparent;
+    -fx-border-width: 1.5px;
+}
+
+.banner-title {
+    -fx-text-fill: #00D4FF; /* Neon Cyan */
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 2px;
+}
+
+.banner-class {
+    -fx-text-fill: #FF2A6D; /* Neon Pink */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 10, 0, 0, 0);
+}
+
+/* --- Ticket Body Sections --- */
+.ticket-left-section {
+    -fx-padding: 30px;
+    -fx-background-color: transparent;
+}
+
+.ticket-right-section {
+    -fx-padding: 30px;
+    -fx-background-color: #130F25;
+    -fx-background-radius: 0 0 14px 0;
+}
+
+.dashed-separator {
+    -fx-border-style: dashed;
+    -fx-border-width: 0 2px 0 0;
+    -fx-border-color: #3D2C8D;
+    -fx-background-color: transparent;
+}
+
+.dashed-separator .line {
+    -fx-border-color: transparent;
+}
+
+/* 📝 3. TYPOGRAPHY (TICKET DETAILS) */
+.detail-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #A093D6; /* Soft Purple */
+    -fx-font-weight: bold;
+}
+
+.passenger-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+.detail-value {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+.route-text {
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00FF9D; /* Neon Green */
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 157, 0.4), 10, 0, 0, 0);
+}
+
+.route-arrow {
+    -fx-fill: #A093D6;
+    -fx-scale-x: 2.0;
+    -fx-scale-y: 2.0;
+}
+
+/* 📱 4. QR CODE & BARCODE */
+.qr-box {
+    -fx-background-color: #130F25;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-padding: 35px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.2), 10, 0, 0, 0);
+}
+
+.qr-glyph {
+    -fx-fill: #00D4FF; /* Neon Cyan QR Code */
+}
+
+.barcode-glyph {
+    -fx-fill: #A093D6; /* Soft Purple Barcode */
+}
+
+/* 🔘 5. ACTION BUTTONS */
+/* Primary Buttons (Download / Print - Neon Cyan) */
+.primary-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-pref-height: 46px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 12, 0, 0, 0);
+}
+
+.primary-button:pressed {
+    -fx-background-color: rgba(0, 212, 255, 0.3);
+}
+
+/* Secondary Button (Close - Neon Pink) */
+.secondary-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF2A6D;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #FF2A6D;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-pref-height: 46px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: rgba(255, 42, 109, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 12, 0, 0, 0);
+}
+
+.secondary-button:pressed {
+    -fx-background-color: rgba(255, 42, 109, 0.3);
+}

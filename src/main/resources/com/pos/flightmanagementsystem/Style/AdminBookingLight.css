@@ -1,5 +1,5 @@
 /* ==========================================================
-   SEARCH FIELD (Box ကြီးမဖြစ်နေစေရန်)
+   SEARCH FIELD (Box အထပ်ကြီး မဖြစ်စေရန် ပြင်ဆင်ချက်)
 ========================================================== */
 .search-field {
     -fx-background-color: white;
@@ -11,6 +11,30 @@
 .search-field:focus-within {
     -fx-border-color: #00C6FF;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.15), 8, 0, 0, 0);
+}
+
+/* 🌟 TextField ရဲ့ မူလ Box ပုံစံကို ဖျောက်ပြီး အပြင်ဘောင်နဲ့ တစ်သားတည်းဖြစ်စေရန် 🌟 */
+.search-input {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-prompt-text-fill: #94A3B8; /* မှိုင်းသော မီးခိုးရောင် စာသား */
+    -fx-text-fill: #1E293B;
+}
+.search-input:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* 🌟 Search Icon အရောင် (Light Mode နှင့် လိုက်ဖက်စေရန်) 🌟 */
+.search-icon {
+    -fx-fill: #64748B;
+}
+
+/* ==========================================================
+   TABLE ACTION COLUMN (ခလုတ်များကို အလယ်ကျစေရန်)
+========================================================== */
+.action-column {
+    -fx-alignment: CENTER !important;
 }
 
 /* ==========================================================

@@ -1,4 +1,6 @@
-/* StaffCreateNewBooking.css - Modern Clean Light Card Theme with Icons */
+/* =========================================================================
+   StaffCreateNewBookingLight.css - Modern Clean Light Card Theme
+   ========================================================================= */
 
 .main-content-vbox {
     -fx-background-color: transparent;
@@ -131,8 +133,12 @@
     -fx-background-color: #f1f5f9;
 }
 
-/* --- Buttons --- */
-.gradient-button {
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+/* 🌟 Search Flights Button (FXML Name နှင့် ကိုက်ညီအောင် ပြင်ဆင်ထားသည်) */
+.search-flights-button {
     -fx-background-radius: 10;
     -fx-background-color: linear-gradient(to right, #0ea5e9, #0284c7);
     -fx-text-fill: white;
@@ -143,8 +149,13 @@
     -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.3), 10, 0, 0, 3);
 }
 
-.gradient-button:hover {
+.search-flights-button:hover {
     -fx-background-color: linear-gradient(to right, #38bdf8, #0ea5e9);
+}
+
+.search-flights-button:pressed {
+    -fx-background-color: linear-gradient(to right, #0284c7, #0369a1);
+    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
 }
 
 /* 🌟 Table ထဲက Choose Button အတွက် */
@@ -164,4 +175,11 @@
 
 .btn-choose:pressed {
     -fx-background-color: #059669;
+}
+
+/* ==========================================================
+   TABLE ACTION COLUMN (ခလုတ်များကို အလယ်ကျစေရန်)
+========================================================== */
+.action-column {
+    -fx-alignment: CENTER !important;
 }

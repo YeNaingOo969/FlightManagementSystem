@@ -1,0 +1,247 @@
+/* =========================================================================
+   ✈️ PASSENGER DETAILS - CYBERPUNK / DEEP AMETHYST THEME
+   ========================================================================= */
+
+/* 🌌 1. MAIN BACKGROUND */
+.super-content {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: radial-gradient(center 50% 50%, radius 90%, #1F1A36, #130F25);
+}
+
+.main-content-vbox {
+    -fx-background-color: transparent;
+    -fx-padding: 25 35 25 35;
+}
+
+/* 📦 2. PANELS & CARDS (Top Header & Layout Cards) */
+.header-card,
+.layout-card {
+    -fx-background-color: #1F1A36; /* Dark Amethyst Glass */
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #2A234C;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0.12, 0, 8);
+}
+
+.form-card {
+    -fx-padding: 30;
+}
+
+.summary-card {
+    -fx-padding: 25;
+}
+
+/* 💠 3. HEADER ICON */
+.header-icon-container {
+    -fx-min-width: 48px;
+    -fx-min-height: 48px;
+    -fx-max-width: 48px;
+    -fx-max-height: 48px;
+    -fx-background-color: rgba(0, 212, 255, 0.1);
+    -fx-background-radius: 14px;
+    -fx-border-color: #00D4FF; /* Neon Cyan */
+    -fx-border-radius: 14px;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 15, 0, 0, 0);
+}
+
+.header-icon-glyph {
+    -fx-fill: #00D4FF;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+}
+
+/* 📝 4. TYPOGRAPHY */
+.header-title-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.header-subtitle-label {
+    -fx-text-fill: #A093D6; /* Soft Purple */
+    -fx-font-size: 13px;
+}
+
+.section-title {
+    -fx-text-fill: #00D4FF; /* Neon Cyan */
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.input-label {
+    -fx-text-fill: #A093D6; /* Soft Purple */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* ==========================================================
+   🔍 5. FORM INPUT FIELDS (TextField, ComboBox, DatePicker)
+========================================================== */
+.custom-input {
+    -fx-background-color: #130F25;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-pref-height: 45px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #5A4E8C; /* Purple Prompt */
+}
+
+/* Input box အတွင်းပိုင်း Hover နှင့် Focus ဝင်ချိန် Neon Glow လင်းစေရန် */
+.custom-input:hover {
+    -fx-border-color: #3D2C8D;
+}
+.custom-input:focused, .custom-input:focus-within {
+    -fx-border-color: #00D4FF; /* Neon Cyan Focus */
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.3), 10, 0, 0, 0);
+}
+
+/* ComboBox & DatePicker Dropdown Background Fix */
+.custom-input > .list-cell,
+.custom-input > .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Arrows inside Controls (Neon Cyan) */
+.custom-input .arrow-button {
+    -fx-background-color: transparent;
+}
+.custom-input .arrow,
+.custom-input .arrow-button .graphic {
+    -fx-background-color: #00D4FF;
+}
+
+/* 📂 Popups (Dropdown Menus & Calendars) */
+.combo-box-popup .list-view {
+    -fx-background-color: #1F1A36;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2A234C;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 5);
+}
+.combo-box-popup .list-cell {
+    -fx-padding: 10px 12px;
+    -fx-text-fill: #E0E0E0;
+}
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #00D4FF;
+}
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: rgba(255, 42, 109, 0.2);
+    -fx-text-fill: #FF2A6D;
+}
+
+.date-picker-popup {
+    -fx-background-color: #1F1A36;
+    -fx-border-color: #2A234C;
+}
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #2A234C;
+}
+.date-picker-popup .month-year-pane .label {
+    -fx-text-fill: #00D4FF;
+    -fx-font-weight: bold;
+}
+.date-picker-popup .day-name-cell, .date-picker-popup .week-number-cell {
+    -fx-text-fill: #A093D6;
+}
+.date-picker-popup .day-cell {
+    -fx-background-color: #130F25;
+    -fx-text-fill: #E0E0E0;
+}
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+}
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #00D4FF;
+    -fx-text-fill: #130F25;
+}
+
+/* ==========================================================
+   🧾 6. SUMMARY CARD STYLES
+========================================================== */
+/* Separator Line (Dark Mode) */
+.summary-separator *.line {
+    -fx-border-color: #2A234C;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.summary-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #A093D6;
+}
+
+.summary-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.summary-total-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+.summary-total-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00FF9D; /* Neon Green for Total Price */
+}
+
+/* ==========================================================
+   🔘 7. ACTION BUTTONS
+========================================================== */
+/* Continue Button (Neon Cyan) */
+.gradient-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #00D4FF;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-pref-height: 46px;
+    -fx-cursor: hand;
+}
+
+.gradient-button:hover {
+    -fx-background-color: rgba(0, 212, 255, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0, 212, 255, 0.4), 12, 0, 0, 0);
+}
+
+.gradient-button:pressed {
+    -fx-background-color: rgba(0, 212, 255, 0.3);
+}
+
+/* Back Button (Neon Pink) */
+.secondary-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF2A6D;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #FF2A6D;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-pref-height: 46px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: rgba(255, 42, 109, 0.15);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(255, 42, 109, 0.4), 12, 0, 0, 0);
+}
+
+.secondary-button:pressed {
+    -fx-background-color: rgba(255, 42, 109, 0.3);
+}

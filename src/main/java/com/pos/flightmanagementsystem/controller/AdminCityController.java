@@ -7,6 +7,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -15,12 +16,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
@@ -124,26 +128,82 @@ public class AdminCityController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/AdminAddCity.fxml"));
             Parent modalView = loader.load();
 
-            // 🌟 Add City Controller ကို ယူပြီး Callback လှမ်းချိတ်ပါမည် 🌟
-            AdminAddCityController addCityController = loader.getController();
-            addCityController.setSaveCallback(() -> {
-                loadCityData(); // Data အသစ်ဝင်သွားပါက Table ကို ချက်ချင်း Refresh လုပ်ပေးပါမည်
+            // ==========================================
+            // 🌟 1. THEME SYNC LOGIC (Light/Dark Auto ပြောင်းရန်)
+            // ==========================================
+            ObservableList<String> currentStyles = rootStackPane.getStylesheets();
+            boolean isLightMode = currentStyles.stream().anyMatch(css -> css.contains("Light"));
+
+            ObservableList<String> modalStyles = modalView.getStylesheets();
+            for (int i = 0; i < modalStyles.size(); i++) {
+                String css = modalStyles.get(i);
+                if (isLightMode && css.contains("Dark")) {
+                    modalStyles.set(i, css.replace("Dark", "Light"));
+                } else if (!isLightMode && css.contains("Light")) {
+                    modalStyles.set(i, css.replace("Light", "Dark"));
+                }
+            }
+
+            // ==========================================
+            // 🌟 2. BACKGROUND FIX (Solid Background ဖျောက်ရန်)
+            // ==========================================
+            modalView.setStyle("-fx-background-color: transparent;");
+            if (modalView instanceof BorderPane) {
+                Node centerNode = ((BorderPane) modalView).getCenter();
+                if (centerNode != null) {
+                    centerNode.setStyle("-fx-background-color: transparent;");
+                }
+            }
+
+            // ==========================================
+            // 🌟 3. BLUR & OVERLAY EFFECT (နောက်ခံကို ဝါးရန်)
+            // ==========================================
+            StackPane overlay = new StackPane(modalView);
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);"); // နောက်ခံကို ခပ်မှိုင်းမှိုင်းလေးဖြစ်စေရန်
+
+            Node mainContent = rootStackPane.getChildren().get(0);
+            mainContent.setEffect(new GaussianBlur(12)); // 🌟 Table ကြီးကို Blur ဝါးပေးမည်
+
+            // Modal ပိတ်သွားသည့်အခါ Blur ပြန်ဖြုတ်ပေးရန် Listener
+            rootStackPane.getChildren().addListener((ListChangeListener<Node>) c -> {
+                while (c.next()) {
+                    if (c.wasRemoved() && c.getRemoved().contains(overlay)) {
+                        mainContent.setEffect(null); // Blur ကို ဖြုတ်မည်
+                    }
+                }
             });
 
-            StackPane overlay = new StackPane(modalView);
-            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            // Cancel နှိပ်၍သော်လည်းကောင်း, အထဲက Modal ပြုတ်သွားလျှင် Overlay ပါ အလိုအလျောက်ပိတ်ရန်
+            overlay.getChildren().addListener((ListChangeListener<Node>) c -> {
+                if (overlay.getChildren().isEmpty()) {
+                    rootStackPane.getChildren().remove(overlay);
+                }
+            });
+
+            // Card ရဲ့ အပြင်ဘက်ကို နှိပ်မိလျှင် Modal ပိတ်သွားစေရန်
+            overlay.setOnMouseClicked(e -> {
+                if (e.getTarget() == overlay) {
+                    rootStackPane.getChildren().remove(overlay);
+                }
+            });
+
+            // ==========================================
+            // 🌟 4. CONTROLLER & ANIMATION
+            // ==========================================
+            AdminAddCityController addCityController = loader.getController();
+            addCityController.setSaveCallback(() -> {
+                loadCityData();
+                rootStackPane.getChildren().remove(overlay); // Save နှိပ်လျှင် Modal ပါပိတ်မည်
+            });
 
             Bounds buttonBounds = btnAddCity.localToScene(btnAddCity.getBoundsInLocal());
-
             double rootCenterX = rootStackPane.getWidth() / 2;
             double rootCenterY = rootStackPane.getHeight() / 2;
-
             double buttonCenterX = buttonBounds.getMinX() + (buttonBounds.getWidth() / 2);
             double buttonCenterY = buttonBounds.getMinY() + (buttonBounds.getHeight() / 2);
 
             modalView.setTranslateX(buttonCenterX - rootCenterX);
             modalView.setTranslateY(buttonCenterY - rootCenterY);
-
             modalView.setScaleX(0.0);
             modalView.setScaleY(0.0);
 

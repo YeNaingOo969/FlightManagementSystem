@@ -13,17 +13,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane fx:id="rootPane" prefHeight="800" prefWidth="1200" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminAddFlight.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminAddCityController">
+<BorderPane fx:id="rootPane" prefHeight="800" prefWidth="1200" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminAddCityDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminAddCityController">
 
     <center>
-        <VBox alignment="TOP_CENTER" spacing="20">
+        <!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
+        <VBox alignment="TOP_CENTER" spacing="20" styleClass="super-content">
             <padding><Insets bottom="20" left="100" right="100" top="100" /></padding>
 
-            <!-- 🌟 Inline CSS အစား styleClass ပြောင်းထားပါသည် -->
-            <VBox maxWidth="500" spacing="15" styleClass="modal-card">
-                <HBox alignment="CENTER" prefHeight="70.0" prefWidth="539.0" spacing="10.0" VBox.vgrow="ALWAYS">
+            <VBox maxWidth="500" spacing="20" styleClass="modal-card">
+                <HBox alignment="CENTER" prefHeight="70.0" prefWidth="539.0" spacing="15.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <StackPane prefHeight="70.0" prefWidth="182.0" styleClass="super-brand-logo">
+                        <StackPane prefHeight="50.0" prefWidth="50.0" styleClass="super-brand-logo">
                             <children>
                                 <SVGPath content="M15 11V5l-3-3-3 3v2H3v14h18V11h-6zm-8 8H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm6 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm6 12h-2v-2h2v2zm0-4h-2v-2h2v2z" styleClass="super-brand-logo-glyph" />
                             </children>
@@ -32,7 +32,7 @@
                     </children>
                 </HBox>
 
-                <GridPane hgap="10" styleClass="form-card" vgap="15">
+                <GridPane hgap="15" styleClass="form-card" vgap="20">
                     <columnConstraints>
                         <ColumnConstraints minWidth="120" />
                         <ColumnConstraints hgrow="ALWAYS" />

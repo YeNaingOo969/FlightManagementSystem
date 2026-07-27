@@ -9,20 +9,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox spacing="15.0" styleClass="root-layout" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffFlightSchedules.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
+<VBox spacing="20.0" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffFlightSchedulesDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="25.0" left="30.0" right="30.0" top="25.0" />
     </padding>
 
     <!-- Header Section -->
     <HBox alignment="CENTER_LEFT" styleClass="header-card">
         <children>
-            <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
                 <children>
                     <!-- Offline Vector Icon Badge (လေယာဉ်ပျံ Icon) -->
                     <StackPane styleClass="icon-badge">
                         <children>
-                            <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#FFFFFF" scaleX="0.8" scaleY="0.8" />
+                            <!-- 🌟 Inline fill ကို ဖြုတ်ပြီး CSS ဖြင့် အစားထိုးထားသည် -->
+                            <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" scaleX="0.9" scaleY="0.9" styleClass="header-icon-glyph" />
                         </children>
                     </StackPane>
                     <Label styleClass="main-title" text="Flight Schedules" />
@@ -37,7 +39,7 @@
             <!-- Table ခေါင်းစဉ် (Live Flight Schedules) -->
             <Label styleClass="section-title" text="Live Flight Schedules" />
 
-            <!-- Flight Schedules Table (Data အလွတ်) -->
+            <!-- Flight Schedules Table -->
             <TableView fx:id="flightTable" VBox.vgrow="ALWAYS" styleClass="flight-table">
                 <columns>
                     <TableColumn fx:id="colFlight" prefWidth="120.0" text="Flight" />
