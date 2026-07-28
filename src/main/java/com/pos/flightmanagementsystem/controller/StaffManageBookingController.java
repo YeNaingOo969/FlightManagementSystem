@@ -9,18 +9,23 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.HBox;
@@ -31,6 +36,9 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ResourceBundle;
 
 public class StaffManageBookingController implements Initializable {
@@ -39,12 +47,19 @@ public class StaffManageBookingController implements Initializable {
     @FXML private VBox mainContainer;
     @FXML private StackPane waitingModal;
 
-    // 🌟 လည်နေမည့် Icon အတွက်
+    // 🌟 ညာဘက်အပေါ်ထောင့်က Search Box
+    @FXML private TextField searchField;
+
+    // 🌟 Tabs များ
+    @FXML private Label tabAllBookings;
+    @FXML private Label tabCompleted;
+    @FXML private Label tabCancelled;
+
     @FXML private SVGPath modalSpinnerIcon;
     private RotateTransition spinTransition;
 
-    // 🌟 မည်သည့် Booking ကို Cancel လုပ်နေသည်ကို မှတ်ထားရန်
     private BookingData pendingBookingData = null;
+    private String currentFilter = "ALL";
 
     // --- Table Elements ---
     @FXML private TableView<BookingData> bookingTable;
@@ -55,51 +70,44 @@ public class StaffManageBookingController implements Initializable {
     @FXML private TableColumn<BookingData, String> colStatus;
     @FXML private TableColumn<BookingData, Void> colAction;
 
+    private ObservableList<BookingData> bookingList = FXCollections.observableArrayList();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        // 🌟 1. Modal ထဲက အဝိုင်း Icon လေးကို လည်စေမည့် Animation (Rotate) သတ်မှတ်ခြင်း
         spinTransition = new RotateTransition(Duration.seconds(1.5), modalSpinnerIcon);
-        spinTransition.setByAngle(360); // တစ်ပတ်အပြည့်လည်မည်
-        spinTransition.setCycleCount(Animation.INDEFINITE); // မရပ်မချင်း ဆက်လည်နေမည်
-        spinTransition.setInterpolator(Interpolator.LINEAR); // ညီညာစွာလည်ရန်
+        spinTransition.setByAngle(360);
+        spinTransition.setCycleCount(Animation.INDEFINITE);
+        spinTransition.setInterpolator(Interpolator.LINEAR);
 
-        // ၂။ Column များနှင့် Data Model ချိတ်ဆက်ခြင်း
-        colBookingId.setCellValueFactory(new PropertyValueFactory<>("bookingId"));
+        colBookingId.setCellValueFactory(new PropertyValueFactory<>("pnrCode"));
         colPassenger.setCellValueFactory(new PropertyValueFactory<>("passenger"));
         colRoute.setCellValueFactory(new PropertyValueFactory<>("route"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // ၃။ Action Column တွင် Button နှင့် Loading Spinner ဖန်တီးထည့်သွင်းခြင်း
         Callback<TableColumn<BookingData, Void>, TableCell<BookingData, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<BookingData, Void> call(final TableColumn<BookingData, Void> param) {
                 return new TableCell<>() {
-                    // Normal Cancel Button
                     private final Button btn = new Button("Cancel");
-
-                    // Waiting Spinner UI (Progress Indicator + Text)
                     private final HBox waitingBox = new HBox(8);
                     private final ProgressIndicator spinner = new ProgressIndicator();
                     private final Label lblWaiting = new Label("Waiting");
 
                     {
-                        // Setup Button
-                        btn.getStyleClass().add("btn-cancel-table");
+                        btn.setStyle("-fx-background-color: #ffcccc; -fx-text-fill: red; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
                         btn.setOnAction((ActionEvent event) -> {
-                            // 🌟 နှိပ်လိုက်သော Row ၏ Data ကို မှတ်သားထားမည်
                             pendingBookingData = getTableView().getItems().get(getIndex());
                             openWaitingModal();
+                            processDatabaseCancellation();
                         });
 
-                        // Setup Waiting UI
                         spinner.setPrefSize(16, 16);
-                        spinner.setStyle("-fx-progress-color: #F59E0B;"); // လိမ္မော်ရောင်
+                        spinner.setStyle("-fx-progress-color: #F59E0B;");
                         lblWaiting.getStyleClass().add("waiting-text");
                         waitingBox.setAlignment(Pos.CENTER_LEFT);
                         waitingBox.getChildren().addAll(spinner, lblWaiting);
-
                         setAlignment(Pos.CENTER_LEFT);
                     }
 
@@ -110,11 +118,14 @@ public class StaffManageBookingController implements Initializable {
                             setGraphic(null);
                         } else {
                             BookingData data = getTableView().getItems().get(getIndex());
-                            // 🌟 Data တွင် cancelPending ဖြစ်နေပါက Spinner ပြမည်၊ မဟုတ်လျှင် Button ပြမည်
-                            if (data != null && data.isCancelPending()) {
-                                setGraphic(waitingBox);
-                            } else {
-                                setGraphic(btn);
+                            if (data != null) {
+                                if ("Cancelled".equalsIgnoreCase(data.getStatus())) {
+                                    setGraphic(null);
+                                } else if (data.isCancelPending()) {
+                                    setGraphic(waitingBox);
+                                } else {
+                                    setGraphic(btn);
+                                }
                             }
                         }
                     }
@@ -123,22 +134,198 @@ public class StaffManageBookingController implements Initializable {
         };
         colAction.setCellFactory(cellFactory);
 
-        // ၄။ Table ထဲသို့ Sample Data များ ထည့်သွင်းခြင်း
-        ObservableList<BookingData> dummyData = FXCollections.observableArrayList(
-                new BookingData("BK-202601", "John Doe", "FL-101 (YGN-BKK)", "2026-07-24", "Confirmed"),
-                new BookingData("BK-202602", "Alice Smith", "FL-102 (YGN-MDL)", "2026-07-25", "Pending"),
-                new BookingData("BK-202603", "Bob Johnson", "FL-103 (MDL-HEH)", "2026-07-26", "Confirmed"),
-                new BookingData("BK-202604", "Emma Davis", "FL-104 (YGN-NYT)", "2026-07-27", "Confirmed")
-        );
-        bookingTable.setItems(dummyData);
+        // 🌟 Search လုပ်ရန် FilteredList အသုံးပြုခြင်း
+        setupSearchFilter();
+
+        setupTabs();
+        loadBookingsFromDatabase();
     }
 
     // ==========================================
-    // 🌟 WAITING MODAL ဖွင့်မည့် လုပ်ဆောင်ချက်
+    // 🌟 SEARCH FILTER (Booking ID & Passenger Name အစ စာလုံးဖြင့် ရှာရန်)
+    // ==========================================
+    private void setupSearchFilter() {
+        FilteredList<BookingData> filteredData = new FilteredList<>(bookingList, b -> true);
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(booking -> {
+                if (newValue == null || newValue.isEmpty() || newValue.isBlank()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                // ⚠️ startsWith ကိုပြောင်းလဲအသုံးပြုထားပါသည် ⚠️
+                // PNR Code ရဲ့ အစစာလုံး/ဂဏန်းများဖြင့် တိုက်စစ်မည်
+                if (booking.getPnrCode().toLowerCase().startsWith(lowerCaseFilter)) {
+                    return true;
+                }
+                // Passenger နာမည်ရဲ့ အစစာလုံးဖြင့် တိုက်စစ်မည်
+                else if (booking.getPassenger().toLowerCase().startsWith(lowerCaseFilter)) {
+                    return true;
+                }
+
+                return false;
+            });
+        });
+
+        SortedList<BookingData> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(bookingTable.comparatorProperty());
+        bookingTable.setItems(sortedData);
+    }
+
+    // ==========================================
+    // 🌟 TABS စီမံခန့်ခွဲမှု (Filter)
+    // ==========================================
+    private void setupTabs() {
+        if (tabAllBookings != null) {
+            tabAllBookings.setOnMouseClicked(e -> {
+                updateTabStyles(tabAllBookings);
+                currentFilter = "ALL";
+                loadBookingsFromDatabase();
+            });
+        }
+
+        if (tabCompleted != null) {
+            tabCompleted.setOnMouseClicked(e -> {
+                updateTabStyles(tabCompleted);
+                currentFilter = "COMPLETED";
+                loadBookingsFromDatabase();
+            });
+        }
+
+        if (tabCancelled != null) {
+            tabCancelled.setOnMouseClicked(e -> {
+                updateTabStyles(tabCancelled);
+                currentFilter = "CANCELLED";
+                loadBookingsFromDatabase();
+            });
+        }
+
+        if (tabAllBookings != null) {
+            updateTabStyles(tabAllBookings);
+        }
+    }
+
+    private void updateTabStyles(Label activeTab) {
+        String normalStyle = "-fx-border-width: 0; -fx-text-fill: #7F8C8D; -fx-font-weight: normal; -fx-padding: 10; -fx-cursor: hand;";
+        String activeStyle = "-fx-border-color: #0052CC; -fx-border-width: 0 0 2 0; -fx-text-fill: #0052CC; -fx-font-weight: bold; -fx-padding: 10; -fx-cursor: hand;";
+
+        if (tabAllBookings != null) tabAllBookings.setStyle(normalStyle);
+        if (tabCompleted != null) tabCompleted.setStyle(normalStyle);
+        if (tabCancelled != null) tabCancelled.setStyle(normalStyle);
+
+        if (activeTab != null) {
+            activeTab.setStyle(activeStyle);
+        }
+    }
+
+    // ==========================================
+    // 🌟 DATABASE မှ DATA များကို ဆွဲယူခြင်း
+    // ==========================================
+    private void loadBookingsFromDatabase() {
+        bookingList.clear();
+
+        String query = "SELECT b.booking_id, b.pnr_code, b.seat_id, b.status, " +
+                "p.full_name AS passenger_name, " +
+                "CONCAT(f.flight_number, ' (City ID: ', f.departure_city_id, '-', f.arrival_city_id, ')') AS route_info, " +
+                "DATE(f.departure_time) AS flight_date " +
+                "FROM bookings b " +
+                "JOIN passengers p ON b.passenger_id = p.passenger_id " +
+                "JOIN flights f ON b.flight_id = f.flight_id";
+
+        if (currentFilter.equals("COMPLETED")) {
+            query += " WHERE b.status = 'Confirmed' OR b.status = 'Completed'";
+        } else if (currentFilter.equals("CANCELLED")) {
+            query += " WHERE b.status = 'Cancelled'";
+        }
+
+        query += " ORDER BY b.booking_date DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                BookingData booking = new BookingData(
+                        rs.getInt("booking_id"),
+                        rs.getString("pnr_code"),
+                        rs.getString("passenger_name"),
+                        rs.getString("route_info"),
+                        rs.getString("flight_date"),
+                        rs.getString("status"),
+                        rs.getInt("seat_id")
+                );
+                bookingList.add(booking);
+            }
+
+            bookingTable.refresh();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ==========================================
+    // 🌟 DATABASE တွင် CANCEL ပြုလုပ်ခြင်း
+    // ==========================================
+    private void processDatabaseCancellation() {
+        if (pendingBookingData == null) return;
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+
+                try (Connection conn = DatabaseConnection.getConnection()) {
+                    conn.setAutoCommit(false);
+
+                    try {
+                        String updateBooking = "UPDATE bookings SET status = 'Cancelled' WHERE booking_id = ?";
+                        try (PreparedStatement stmt1 = conn.prepareStatement(updateBooking)) {
+                            stmt1.setInt(1, pendingBookingData.getBookingId());
+                            stmt1.executeUpdate();
+                        }
+
+                        String updateSeat = "UPDATE seats SET is_available = true WHERE seat_id = ?";
+                        try (PreparedStatement stmt2 = conn.prepareStatement(updateSeat)) {
+                            stmt2.setInt(1, pendingBookingData.getSeatId());
+                            stmt2.executeUpdate();
+                        }
+
+                        conn.commit();
+
+                    } catch (Exception ex) {
+                        conn.rollback();
+                        throw ex;
+                    } finally {
+                        conn.setAutoCommit(true);
+                    }
+                }
+
+                Platform.runLater(() -> {
+                    closeWaitingModalProgrammatically();
+                    loadBookingsFromDatabase();
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Platform.runLater(() -> {
+                    closeWaitingModalProgrammatically();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Cancel လုပ်ရာတွင် အမှားအယွင်းရှိပါသည်။");
+                    alert.show();
+                });
+            }
+        }).start();
+    }
+
+    // ==========================================
+    // 🌟 MODAL ANIMATIONS
     // ==========================================
     private void openWaitingModal() {
         waitingModal.setVisible(true);
-        spinTransition.play(); // 🌟 အဝိုင်းစလည်မည်
+        spinTransition.play();
 
         GaussianBlur blur = new GaussianBlur(0);
         mainContainer.setEffect(blur);
@@ -162,20 +349,21 @@ public class StaffManageBookingController implements Initializable {
         pt.play();
     }
 
-    // ==========================================
-    // 🌟 WAITING MODAL ပိတ်မည့် လုပ်ဆောင်ချက် (မစောင့်နိုင်၍ ထွက်လျှင် Table တွင် Spinner ပေါ်ရန်)
-    // ==========================================
     @FXML
     void closeWaitingModal(ActionEvent event) {
-
-        // 🌟 1. Table တွင် Pending State သို့ ပြောင်းပြီး Refresh လုပ်မည်
         if (pendingBookingData != null) {
             pendingBookingData.setCancelPending(true);
             bookingTable.refresh();
-            pendingBookingData = null; // Reset လုပ်ထားမည်
         }
+        executeCloseModalAnimation();
+    }
 
-        // 2. Background Blur ပြန်ကြည်လင်စေမည်
+    private void closeWaitingModalProgrammatically() {
+        pendingBookingData = null;
+        executeCloseModalAnimation();
+    }
+
+    private void executeCloseModalAnimation() {
         if (mainContainer.getEffect() instanceof GaussianBlur) {
             GaussianBlur blur = (GaussianBlur) mainContainer.getEffect();
             Timeline blurOut = new Timeline(
@@ -185,7 +373,6 @@ public class StaffManageBookingController implements Initializable {
             blurOut.play();
         }
 
-        // 3. Modal ပျောက်သွားမည်
         ScaleTransition scaleDown = new ScaleTransition(Duration.millis(250), waitingModal);
         scaleDown.setToX(0.5);
         scaleDown.setToY(0.5);
@@ -198,31 +385,41 @@ public class StaffManageBookingController implements Initializable {
         pt.setInterpolator(Interpolator.EASE_IN);
         pt.setOnFinished(e -> {
             waitingModal.setVisible(false);
-            spinTransition.stop(); // 🌟 ပျောက်သွားချိန်တွင် အဝိုင်းလည်ခြင်းကိုပါ ရပ်ထားမည်
+            spinTransition.stop();
         });
         pt.play();
     }
 
     // ==========================================
-    // 🌟 Sample Data Model (cancelPending ထပ်တိုးထားသည်)
+    // 🌟 DATA MODEL
     // ==========================================
     public static class BookingData {
-        private String bookingId, passenger, route, date, status;
-        private boolean cancelPending = false; // 🌟 ဤ Property အသစ် ထပ်တိုးထားပါသည်
+        private int bookingId;
+        private String pnrCode;
+        private String passenger;
+        private String route;
+        private String date;
+        private String status;
+        private int seatId;
+        private boolean cancelPending = false;
 
-        public BookingData(String bookingId, String passenger, String route, String date, String status) {
+        public BookingData(int bookingId, String pnrCode, String passenger, String route, String date, String status, int seatId) {
             this.bookingId = bookingId;
+            this.pnrCode = pnrCode;
             this.passenger = passenger;
             this.route = route;
             this.date = date;
             this.status = status;
+            this.seatId = seatId;
         }
 
-        public String getBookingId() { return bookingId; }
+        public int getBookingId() { return bookingId; }
+        public String getPnrCode() { return pnrCode; }
         public String getPassenger() { return passenger; }
         public String getRoute() { return route; }
         public String getDate() { return date; }
         public String getStatus() { return status; }
+        public int getSeatId() { return seatId; }
 
         public boolean isCancelPending() { return cancelPending; }
         public void setCancelPending(boolean cancelPending) { this.cancelPending = cancelPending; }

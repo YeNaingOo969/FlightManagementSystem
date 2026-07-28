@@ -8,6 +8,9 @@ public class Flight {
     private String airline;
     private int departureCityId;
     private int arrivalCityId;
+    // အသစ်ထည့်ထားသော City Name များ
+    private String departureCityName;
+    private String arrivalCityName;
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private int totalSeats;
@@ -16,12 +19,12 @@ public class Flight {
 
     public Flight() {}
 
-    public Flight(int flightId, String flightNumber, String airline, int departureCityId, int arrivalCityId, LocalDateTime departureTime, LocalDateTime arrivalTime, int totalSeats, double basePrice, String status) {
+    public Flight(int flightId, String flightNumber, String airline, String departureCityName, String arrivalCityName, LocalDateTime departureTime, LocalDateTime arrivalTime, int totalSeats, double basePrice, String status) {
         this.flightId = flightId;
         this.flightNumber = flightNumber;
         this.airline = airline;
-        this.departureCityId = departureCityId;
-        this.arrivalCityId = arrivalCityId;
+        this.departureCityName = departureCityName;
+        this.arrivalCityName = arrivalCityName;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.totalSeats = totalSeats;
@@ -29,6 +32,7 @@ public class Flight {
         this.status = status;
     }
 
+    // Getters and Setters
     public int getFlightId() { return flightId; }
     public void setFlightId(int flightId) { this.flightId = flightId; }
 
@@ -43,6 +47,12 @@ public class Flight {
 
     public int getArrivalCityId() { return arrivalCityId; }
     public void setArrivalCityId(int arrivalCityId) { this.arrivalCityId = arrivalCityId; }
+
+    public String getDepartureCityName() { return departureCityName; }
+    public void setDepartureCityName(String departureCityName) { this.departureCityName = departureCityName; }
+
+    public String getArrivalCityName() { return arrivalCityName; }
+    public void setArrivalCityName(String arrivalCityName) { this.arrivalCityName = arrivalCityName; }
 
     public LocalDateTime getDepartureTime() { return departureTime; }
     public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }
