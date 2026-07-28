@@ -9,7 +9,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox spacing="15.0" styleClass="root-layout" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffFlightSchedules.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<!-- 🌟 fx:controller နှင့် fx:id="rootLayout" ကို ထည့်သွင်းထားပါသည် 🌟 -->
+<VBox fx:id="rootLayout" spacing="15.0" styleClass="root-layout" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffFlightSchedules.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffViewFlightScheduleController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -37,14 +38,23 @@
             <!-- Table ခေါင်းစဉ် (Live Flight Schedules) -->
             <Label styleClass="section-title" text="Live Flight Schedules" />
 
-            <!-- Flight Schedules Table (Data အလွတ်) -->
+            <!-- 🌟 Database Flights Table Column များအတိုင်း ပြင်ဆင်ထားသော Table 🌟 -->
             <TableView fx:id="flightTable" VBox.vgrow="ALWAYS" styleClass="flight-table">
                 <columns>
-                    <TableColumn fx:id="colFlight" prefWidth="120.0" text="Flight" />
-                    <TableColumn fx:id="colRoute" prefWidth="150.0" text="Route" />
-                    <TableColumn fx:id="colDeparture" prefWidth="120.0" text="Departure" />
-                    <TableColumn fx:id="colArrival" prefWidth="120.0" text="Arrival" />
-                    <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+                    <TableColumn fx:id="colFlightId" prefWidth="60.0" text="flight_id" />
+                    <TableColumn fx:id="colFlightNumber" prefWidth="90.0" text="flight_number" />
+                    <TableColumn fx:id="colAirline" prefWidth="100.0" text="airline" />
+                    <!-- ID အစား City Name အဖြစ်ပြောင်းထားပါသည် -->
+                    <TableColumn fx:id="colDepCityName" prefWidth="110.0" text="departure_city" />
+                    <TableColumn fx:id="colArrCityName" prefWidth="110.0" text="arrival_city" />
+                    <TableColumn fx:id="colDepTime" prefWidth="130.0" text="departure_time" />
+                    <TableColumn fx:id="colArrTime" prefWidth="130.0" text="arrival_time" />
+                    <TableColumn fx:id="colTotalSeats" prefWidth="80.0" text="total_seats" />
+                    <TableColumn fx:id="colBasePrice" prefWidth="90.0" text="base_price" />
+                    <TableColumn fx:id="colStatus" prefWidth="90.0" text="status" />
+
+                    <!-- View Seat Button အတွက် Action Column -->
+                    <TableColumn fx:id="colAction" prefWidth="90.0" text="Action" />
                 </columns>
                 <columnResizePolicy>
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

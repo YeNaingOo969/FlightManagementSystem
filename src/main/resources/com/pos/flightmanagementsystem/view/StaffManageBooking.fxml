@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -30,6 +31,17 @@
                         <Label styleClass="main-title" text="Manage Booking" />
                     </children>
                 </HBox>
+
+                <!-- 🌟 ညာဘက်ကို တွန်းပို့ပေးရန် Region အသုံးပြုခြင်း -->
+                <Region HBox.hgrow="ALWAYS" />
+
+                <!-- 🌟 Search Box အပိုင်း -->
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="search-box" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-padding: 2 10 2 10;">
+                    <children>
+                        <SVGPath content="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#7F8C8D" />
+                        <TextField fx:id="searchField" prefWidth="250.0" promptText="Search by Booking ID or Passenger..." style="-fx-background-color: transparent; -fx-border-width: 0;" />
+                    </children>
+                </HBox>
             </children>
         </HBox>
 
@@ -37,9 +49,9 @@
             <children>
                 <HBox spacing="30.0" styleClass="tab-container">
                     <children>
-                        <Label styleClass="tab-label, active-tab" text="All Bookings" />
-                        <Label styleClass="tab-label" text="Completed" />
-                        <Label styleClass="tab-label" text="Cancelled" />
+                        <Label fx:id="tabAllBookings" styleClass="tab-label, active-tab" text="All Bookings" />
+                        <Label fx:id="tabCompleted" styleClass="tab-label" text="Completed" />
+                        <Label fx:id="tabCancelled" styleClass="tab-label" text="Cancelled" />
                     </children>
                 </HBox>
 
