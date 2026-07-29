@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<BorderPane prefHeight="775.0" prefWidth="1589.0" styleClass="super-dashboard-root" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffDashboardLight.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" >
+<BorderPane prefHeight="775.0" prefWidth="1589.0" styleClass="super-dashboard-root" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminDashboardLight.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" >
    <left>
       <VBox prefWidth="262.0" spacing="22.0" styleClass="super-sidebar" BorderPane.alignment="CENTER">
          <children>

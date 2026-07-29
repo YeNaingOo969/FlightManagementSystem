@@ -23,7 +23,6 @@ import javafx.util.Duration;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -114,7 +113,7 @@ public class SuperAdminController implements Initializable {
         if (isProfileOpen) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminProfile.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Profile.fxml"));
             Parent profileRoot = loader.load();
             updateStylesheets(profileRoot.getStylesheets());
 

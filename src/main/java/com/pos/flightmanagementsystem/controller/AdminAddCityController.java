@@ -1,18 +1,11 @@
 package com.pos.flightmanagementsystem.controller;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,41 +23,23 @@ public class AdminAddCityController {
     @FXML private Button btnCancel;
     @FXML private Button btnSave;
 
-    // 🌟 အပြင် Table ကို ချက်ချင်း Refresh လုပ်ရန် အသုံးပြုမည့် Callback 🌟
+    // 🌟 Parent Controller (AdminCityController) မှ လှမ်းခေါ်မည့် Callbacks များ 🌟
     private Runnable saveCallback;
+    private Runnable cancelCallback;
 
     public void setSaveCallback(Runnable saveCallback) {
         this.saveCallback = saveCallback;
     }
 
+    public void setCancelCallback(Runnable cancelCallback) {
+        this.cancelCallback = cancelCallback;
+    }
+
+    // 🌟 Cancel ကို နှိပ်လျှင် Parent ရှိ Callback မှတစ်ဆင့် Modal ကို အလွယ်တကူပိတ်ပါမည် 🌟
     @FXML
     void clickCancel(ActionEvent event) {
-        StackPane overlay = (StackPane) rootPane.getParent();
-
-        if (overlay != null) {
-            ScaleTransition scaleDown = new ScaleTransition(Duration.millis(350), rootPane);
-            scaleDown.setToX(0.0);
-            scaleDown.setToY(0.0);
-
-            TranslateTransition moveBack = new TranslateTransition(Duration.millis(350), rootPane);
-            moveBack.setToX(400);
-            moveBack.setToY(-300);
-
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(350), overlay);
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
-
-            ParallelTransition pt = new ParallelTransition(scaleDown, moveBack, fadeOut);
-            pt.setInterpolator(Interpolator.EASE_IN);
-
-            pt.setOnFinished(e -> {
-                StackPane mainRoot = (StackPane) overlay.getParent();
-                if (mainRoot != null) {
-                    mainRoot.getChildren().remove(overlay);
-                }
-            });
-
-            pt.play();
+        if (cancelCallback != null) {
+            cancelCallback.run();
         }
     }
 
@@ -92,14 +67,11 @@ public class AdminAddCityController {
                     int rowsAffected = pstmt.executeUpdate();
 
                     if (rowsAffected > 0) {
-                        showAlert(Alert.AlertType.INFORMATION, "Success", "City အသစ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။");
-
-                        // 🌟 သိမ်းဆည်းတာ အောင်မြင်သွားရင် အပြင်က Table ကို Refresh လုပ်ခိုင်းပါမည် 🌟
+                        // 🌟 Save အောင်မြင်သွားပါက Default Alert ကြီး "မပြတော့ဘဲ"
+                        // Parent ရှိ Callback ကိုသာ လှမ်းခေါ်ပါမည် (Background ဝါးတာတွေပြန်ရှင်းပြီး Toast ပေါ်လာပါမည်) 🌟
                         if (saveCallback != null) {
                             saveCallback.run();
                         }
-
-                        clickCancel(event);
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Failed", "City သိမ်းဆည်းခြင်း မအောင်မြင်ပါ။ ပြန်လည်ကြိုးစားကြည့်ပါ။");
                     }
@@ -116,6 +88,7 @@ public class AdminAddCityController {
         }
     }
 
+    // Validation Error, Database Error စသည့် ပြဿနာများအတွက်သာ Alert ကို ချန်ထားပါသည်
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

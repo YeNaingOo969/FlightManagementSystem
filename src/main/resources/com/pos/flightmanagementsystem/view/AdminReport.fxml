@@ -19,7 +19,6 @@
 
 <StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminViewSalesDetailDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
-   <!-- 🌟 အနောက်ခံ အရောင်ဝင်စေရန် super-content class ထည့်ပေးထားပါသည် -->
    <BorderPane prefHeight="816.0" prefWidth="1200.0" styleClass="super-content">
       <center>
          <VBox spacing="20.0" BorderPane.alignment="CENTER">
@@ -36,7 +35,7 @@
                      </children>
                   </StackPane>
 
-                  <VBox alignment="CENTER_LEFT">
+                  <VBox alignment="CENTER_LEFT" spacing="2.0">
                      <children>
                         <Label styleClass="super-page-title" text="Report &amp; Executive Analytics" />
                         <Label styleClass="super-section-subtitle" text="Detailed operational performance and staff revenue metrics." />

@@ -19,19 +19,21 @@
     <left>
         <VBox fx:id="sidebar" prefWidth="262.0" spacing="22.0" styleClass="super-sidebar" BorderPane.alignment="CENTER">
             <children>
-                <HBox styleClass="super-brand">
+                <!-- 🌟 FXML Class များနှင့် Spacing ကို Admin.fxml အတိုင်း အတိအကျ တူညီအောင် ပြင်ဆင်ထားပါသည် 🌟 -->
+                <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="super-brand">
                     <children>
                         <!-- Logo -->
-                        <StackPane styleClass="brand-logo-container">
+                        <StackPane styleClass="super-brand-logo" minWidth="44" maxWidth="44" minHeight="44" maxHeight="44">
                             <children>
-                                <SVGPath content="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z" styleClass="brand-logo-glyph" />
+                                <SVGPath content="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z" styleClass="super-brand-logo-glyph" />
                             </children>
                         </StackPane>
 
-                        <VBox styleClass="brand-text-box" HBox.hgrow="ALWAYS">
+                        <!-- Text -->
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS" maxWidth="100">
                             <children>
                                 <Label styleClass="super-brand-title" text="FlyPlan" />
-                                <Label styleClass="super-brand-kicker" text="Airline Manage..." />
+                                <Label styleClass="super-brand-kicker" text="Airline Management" />
                             </children>
                         </VBox>
 
@@ -110,7 +112,7 @@
                 <top>
                     <HBox styleClass="global-top-nav" BorderPane.alignment="CENTER">
                         <children>
-                            <!-- Notification Icon (Removed the Pink Dot) -->
+                            <!-- Notification Icon -->
                             <StackPane styleClass="nav-notification-btn">
                                 <SVGPath content="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" styleClass="nav-bell-icon" />
                             </StackPane>
@@ -140,7 +142,7 @@
             <!-- Floating Profile Overlay Layer -->
             <StackPane fx:id="profileOverlayBg" onMouseClicked="#closeProfilePopup" style="-fx-background-color: rgba(6, 8, 13, 0.6);" visible="false">
                 <children>
-                    <!-- SuperAdminProfile.fxml ကို ဤ Container အတွင်းသို့ Load လုပ်မည် -->
+                    <!-- Profile.fxml ကို ဤ Container အတွင်းသို့ Load လုပ်မည် -->
                     <StackPane fx:id="profilePopupContainer" maxHeight="-Infinity" maxWidth="-Infinity" StackPane.alignment="CENTER" />
                 </children>
             </StackPane>

@@ -10,13 +10,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -28,7 +31,6 @@ public class AdminBookingManagementController implements Initializable {
 
     @FXML private StackPane rootStackPane;
 
-    // --- Table Elements ---
     @FXML private TableView<BookingDummy> bookingTable;
     @FXML private TableColumn<BookingDummy, String> colBookingId;
     @FXML private TableColumn<BookingDummy, String> colCustomer;
@@ -39,15 +41,12 @@ public class AdminBookingManagementController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        // ၁။ Column များနှင့် Data Model ချိတ်ဆက်ခြင်း
         colBookingId.setCellValueFactory(new PropertyValueFactory<>("bookingId"));
         colCustomer.setCellValueFactory(new PropertyValueFactory<>("customer"));
         colFlight.setCellValueFactory(new PropertyValueFactory<>("flight"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // ၂။ Action Column တွင် "Cancel" Button လေးများ ဖန်တီးထည့်သွင်းခြင်း
         Callback<TableColumn<BookingDummy, Void>, TableCell<BookingDummy, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<BookingDummy, Void> call(final TableColumn<BookingDummy, Void> param) {
@@ -55,18 +54,13 @@ public class AdminBookingManagementController implements Initializable {
                     private final Button btn = new Button("Cancel");
 
                     {
-                        // CSS မှ btn-cancel-table class ကို ခေါ်သုံးထားသည်
                         btn.getStyleClass().add("btn-cancel-table");
-
-                        // 🌟 Button ကို Cell ၏ အလယ်တည့်တည့်တွင် ပေါ်စေရန် Alignment ချိန်ခြင်း
                         setAlignment(Pos.CENTER);
 
                         btn.setOnAction((ActionEvent event) -> {
                             BookingDummy data = getTableView().getItems().get(getIndex());
                             System.out.println("Attempting to cancel Booking: " + data.getBookingId());
-
-                            // Cancel Button ကို နှိပ်လျှင် Modal လှမ်းခေါ်ပါမည်
-                            openCancelModal();
+                            openCancelModal(btn);
                         });
                     }
 
@@ -84,7 +78,6 @@ public class AdminBookingManagementController implements Initializable {
         };
         colAction.setCellFactory(cellFactory);
 
-        // ၃။ Table ထဲသို့ Sample Data များ ထည့်သွင်းခြင်း
         ObservableList<BookingDummy> dummyData = FXCollections.observableArrayList(
                 new BookingDummy("BK-202601", "John Doe", "FL-101 (YGN-MDL)", "2026-07-24", "Confirmed"),
                 new BookingDummy("BK-202602", "Alice Smith", "FL-102 (YGN-NYU)", "2026-07-25", "Pending"),
@@ -94,35 +87,49 @@ public class AdminBookingManagementController implements Initializable {
         bookingTable.setItems(dummyData);
     }
 
-    // ==========================================
-    // 🌟 CANCEL MODAL ဖွင့်မည့် HELPER METHOD (Animation ပါဝင်သည်)
-    // ==========================================
-    private void openCancelModal() {
+    private void openCancelModal(Button sourceNode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/AdminCancelBookingReason.fxml"));
             Parent modalView = loader.load();
 
-            StackPane overlay = new StackPane(modalView);
-            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            // Remove the default dark background and center it
+            modalView.setStyle("-fx-background-color: transparent; -fx-max-width: USE_PREF_SIZE; -fx-max-height: USE_PREF_SIZE;");
 
-            // အနောက်ကနေ အရှေ့ကို Pop-up ထွက်လာရန် စစချင်း သေးထားမည် (Scale 0.5)
-            modalView.setScaleX(0.5);
-            modalView.setScaleY(0.5);
+            StackPane overlay = new StackPane(modalView);
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
+
+            // Apply blur to the main background
+            Node mainContent = rootStackPane.getChildren().get(0);
+            BoxBlur blur = new BoxBlur(8, 8, 3);
+            mainContent.setEffect(blur);
+
+            // Connect callback to hide overlay properly
+            AdminCancelBookingReasonController controller = loader.getController();
+            controller.setCancelCallback(() -> closeModal(overlay, mainContent));
+
+            // Optional: Dismiss on clicking the dark background
+            overlay.setOnMouseClicked(e -> {
+                if (e.getTarget() == overlay) {
+                    closeModal(overlay, mainContent);
+                }
+            });
 
             rootStackPane.getChildren().add(overlay);
 
-            // Zoom In ဖြစ်လာမည့် Animation (0.5 ကနေ 1.0 သို့)
+            // Same default animation logic
+            modalView.setScaleX(0.5);
+            modalView.setScaleY(0.5);
+
             ScaleTransition scaleUp = new ScaleTransition(Duration.millis(300), modalView);
             scaleUp.setToX(1.0);
             scaleUp.setToY(1.0);
 
-            // မှေးမှိန်ရာမှ လင်းလာမည့် Animation (Fade In)
             FadeTransition fadeIn = new FadeTransition(Duration.millis(300), overlay);
             fadeIn.setFromValue(0.0);
             fadeIn.setToValue(1.0);
 
             ParallelTransition pt = new ParallelTransition(scaleUp, fadeIn);
-            pt.setInterpolator(Interpolator.EASE_OUT); // အထွက်မြန်ပြီး အဆုံးသတ်ငြိမ့်သွားရန်
+            pt.setInterpolator(Interpolator.EASE_OUT);
             pt.play();
 
         } catch (Exception e) {
@@ -131,9 +138,25 @@ public class AdminBookingManagementController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 🌟 ယာယီအသုံးပြုရန် Sample Data Model Class
-    // ==========================================
+    private void closeModal(StackPane overlay, Node mainContent) {
+        Node modalView = overlay.getChildren().get(0);
+
+        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(250), modalView);
+        scaleDown.setToX(0.5);
+        scaleDown.setToY(0.5);
+        scaleDown.setInterpolator(Interpolator.EASE_IN);
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(250), overlay);
+        fadeOut.setToValue(0.0);
+
+        ParallelTransition pt = new ParallelTransition(scaleDown, fadeOut);
+        pt.setOnFinished(e -> {
+            rootStackPane.getChildren().remove(overlay);
+            mainContent.setEffect(null); // Remove the blur
+        });
+        pt.play();
+    }
+
     public static class BookingDummy {
         private String bookingId, customer, flight, date, status;
 

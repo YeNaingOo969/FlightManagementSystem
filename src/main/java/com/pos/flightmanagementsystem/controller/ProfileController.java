@@ -12,11 +12,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -26,11 +29,13 @@ import java.util.ResourceBundle;
 
 public class ProfileController implements Initializable {
 
-    @FXML private AnchorPane profileRoot;
+    @FXML private StackPane profileRoot;
     @FXML private StackPane profileView;
-    @FXML private StackPane modalOverlay; // 🌟 ဤနေရာတွင် Overlay အသစ်ကို ချိတ်ဆက်ထားသည်
+    @FXML private StackPane modalOverlay;
     @FXML private HBox notificationToast;
 
+    // 🌟 Profile Info Labels & Image 🌟
+    @FXML private Circle profileAvatarCircle;
     @FXML private Label lblFullName;
     @FXML private Label lblEmail;
     @FXML private Label lblRole;
@@ -39,54 +44,84 @@ public class ProfileController implements Initializable {
     private Parent pwdChangeView;
     private String loggedInUser = "";
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        new Thread(this::loadUserData).start();
+    // 🌟 Modal ပိတ်ရန် Callback 🌟
+    private Runnable closeCallback;
+
+    public void setCloseCallback(Runnable closeCallback) {
+        this.closeCallback = closeCallback;
     }
 
-    private void loadUserData() {
-        String query = "SELECT user_id, username, email, role FROM users LIMIT 1";
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Initialization တွင် Data မဆွဲတော့ဘဲ Parent (AdminController) မှ ထည့်ပေးသည်ကို စောင့်မည်
+    }
+
+    // ==========================================
+    // 🌟 ADMIN CONTROLLER မှ USER DATA လက်ခံရန် METHOD 🌟
+    // ==========================================
+    public void setUserData(String username, String role, String imagePath) {
+        this.loggedInUser = username;
+
+        // UI တွင် တိုက်ရိုက်ပြရန်
+        lblFullName.setText(username);
+        lblRole.setText(role != null ? role.toUpperCase() : "UNKNOWN");
+
+        // Profile ပုံကို ထည့်သွင်းရန်
+        if (profileAvatarCircle != null && imagePath != null && !imagePath.isEmpty()) {
+            try {
+                File imgFile = new File("src/main/resources/com/pos/flightmanagementsystem/image/" + imagePath);
+                if (imgFile.exists()) {
+                    Image image = new Image(imgFile.toURI().toString());
+                    profileAvatarCircle.setFill(new ImagePattern(image));
+                } else {
+                    URL url = getClass().getResource("/com/pos/flightmanagementsystem/image/" + imagePath);
+                    if (url != null) {
+                        Image image = new Image(url.toExternalForm());
+                        profileAvatarCircle.setFill(new ImagePattern(image));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Database မှ Email နှင့် User ID ကို အမှန်တကယ် ပြန်ဆွဲထုတ်ရန် Thread သုံးခြင်း
+        new Thread(() -> loadDatabaseInfo(username)).start();
+    }
+
+    private void loadDatabaseInfo(String username) {
+        // 🌟 ဝင်ထားသော User ၏ အချက်အလက်ကိုသာ အတိအကျ ဆွဲထုတ်မည် 🌟
+        String query = "SELECT user_id, email FROM users WHERE username = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            if (rs.next()) {
-                String username = rs.getString("username");
-                String email = rs.getString("email");
-                String role = rs.getString("role");
-                int userId = rs.getInt("user_id");
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String email = rs.getString("email");
+                    int userId = rs.getInt("user_id");
 
-                loggedInUser = username;
-
-                Platform.runLater(() -> {
-                    lblFullName.setText(username);
-                    lblEmail.setText(email != null && !email.isEmpty() ? email : "No Email Provided");
-                    lblRole.setText(role != null ? role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase() : "Unknown");
-                    lblEmployeeId.setText(String.format("EMP-%04d", userId));
-                });
-
-            } else {
-                Platform.runLater(() -> {
-                    lblFullName.setText("No User Found");
-                    lblEmail.setText("-");
-                    lblRole.setText("-");
-                    lblEmployeeId.setText("-");
-                });
+                    Platform.runLater(() -> {
+                        lblEmail.setText(email != null && !email.isEmpty() ? email : "No Email Provided");
+                        lblEmployeeId.setText(String.format("EMP-%04d", userId));
+                    });
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Platform.runLater(() -> {
-                lblFullName.setText("Database Error");
-                lblEmail.setText("Check Console");
-                lblRole.setText("Error");
-                lblEmployeeId.setText("Error");
-            });
+        }
+    }
+
+    @FXML
+    void clickClose(ActionEvent event) {
+        if (closeCallback != null) {
+            closeCallback.run(); // 🌟 Parent တွင် Animation နှင့် ပြန်ပိတ်မည့် Code ကို ခေါ်မည်
         }
     }
 
     // ==========================================
-    // 🌟 PASSWORD CHANGE တွင် FLOATING (POP-UP) EFFECT
+    // 🌟 PASSWORD CHANGE FLOATING (POP-UP) EFFECT 🌟
     // ==========================================
     @FXML
     void showPasswordView(ActionEvent event) {
@@ -101,18 +136,15 @@ public class ProfileController implements Initializable {
                     pwdController.setCurrentUser(loggedInUser);
                 }
 
-                // Profile ထဲ တိုက်ရိုက်မထည့်ဘဲ မှောင်နေမည့် Overlay ထဲသို့ ထည့်မည်
                 modalOverlay.getChildren().add(pwdChangeView);
             }
 
             modalOverlay.setVisible(true);
 
-            // ၁။ နောက်ခံအမည်းရောင် Overlay ကို မှောင်လာစေခြင်း (Fade In)
             FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), modalOverlay);
             fadeOverlay.setFromValue(0.0);
             fadeOverlay.setToValue(1.0);
 
-            // ၂။ ကတ်အသစ်လေးကို သေးရာမှ ကြီးလာစေခြင်း (Scale In)
             pwdChangeView.setScaleX(0.5);
             pwdChangeView.setScaleY(0.5);
             pwdChangeView.setOpacity(0.0);
@@ -123,17 +155,14 @@ public class ProfileController implements Initializable {
             ScaleTransition scaleModal = new ScaleTransition(Duration.millis(400), pwdChangeView);
             scaleModal.setToX(1.0);
             scaleModal.setToY(1.0);
-
-            // 💡 ကိုယ်ပိုင် Overshoot (ခုန်ထွက်လာသည့်) Effect လေး
-            Interpolator bouncyInterpolator = new Interpolator() {
+            scaleModal.setInterpolator(new Interpolator() {
                 @Override
                 protected double curve(double t) {
                     double tension = 2.0;
                     t -= 1.0;
                     return t * t * ((tension + 1) * t + tension) + 1.0;
                 }
-            };
-            scaleModal.setInterpolator(bouncyInterpolator);
+            });
 
             ParallelTransition pt = new ParallelTransition(fadeOverlay, fadeModal, scaleModal);
             pt.play();
@@ -144,7 +173,6 @@ public class ProfileController implements Initializable {
     }
 
     public void hidePasswordView() {
-        // ပိတ်လိုက်သည့်အခါ ပြန်လည်ပျောက်သွားစေခြင်း (Fade Out & Scale Down)
         FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), modalOverlay);
         fadeOverlay.setToValue(0.0);
 
@@ -157,14 +185,10 @@ public class ProfileController implements Initializable {
         fadeModal.setToValue(0.0);
 
         ParallelTransition pt = new ParallelTransition(fadeOverlay, scaleModal, fadeModal);
-        pt.setOnFinished(e -> modalOverlay.setVisible(false)); // Animation ပြီးမှ ဖျောက်မည်
+        pt.setOnFinished(e -> modalOverlay.setVisible(false));
         pt.play();
     }
 
-
-    // ==========================================
-    // Notification Animation Methods များ
-    // ==========================================
     public void showSuccessNotification() {
         notificationToast.setVisible(true);
         notificationToast.setTranslateY(150);
@@ -183,8 +207,6 @@ public class ProfileController implements Initializable {
 
         popUp.setInterpolator(overshootInterpolator);
         popUp.play();
-
-
 
         javafx.animation.PauseTransition delay = new javafx.animation.PauseTransition(Duration.seconds(5));
         delay.setOnFinished(e -> closeNotificationAnimation());

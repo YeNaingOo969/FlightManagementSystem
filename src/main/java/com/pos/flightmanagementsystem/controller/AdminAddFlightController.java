@@ -1,11 +1,6 @@
 package com.pos.flightmanagementsystem.controller;
 
 import com.pos.flightmanagementsystem.model.Flight;
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,8 +13,6 @@ import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -30,6 +23,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class AdminAddFlightController implements Initializable {
 
@@ -58,21 +52,22 @@ public class AdminAddFlightController implements Initializable {
 
     private Integer currentFlightId = null;
 
-    // Database မှ City ID နှင့် City Name တွဲသိမ်းရန် Map များ
     private Map<String, Integer> cityNameToIdMap = new HashMap<>();
     private Map<Integer, String> cityIdToNameMap = new HashMap<>();
-
-    // 🌟 City အားလုံးကို သိမ်းထားမည့် Master List
     private ObservableList<String> allCitiesList = FXCollections.observableArrayList();
 
-    // Infinite Loop မဖြစ်စေရန် ထိန်းချုပ်မည့် boolean flag
     private boolean isUpdatingCities = false;
 
-    // Table ကို ချက်ချင်း Refresh လုပ်ရန် Callback
-    private Runnable saveCallback;
+    // 🌟 Message ပေးပို့နိုင်ရန် Consumer ကို အသုံးပြုထားသည် 🌟
+    private Consumer<String> saveCallback;
+    private Runnable cancelCallback;
 
-    public void setSaveCallback(Runnable saveCallback) {
+    public void setSaveCallback(Consumer<String> saveCallback) {
         this.saveCallback = saveCallback;
+    }
+
+    public void setCancelCallback(Runnable cancelCallback) {
+        this.cancelCallback = cancelCallback;
     }
 
     @Override
@@ -120,9 +115,6 @@ public class AdminAddFlightController implements Initializable {
         cmbArrivalMinute.setItems(minutes);
     }
 
-    // ==========================================
-    // 🌟 Database မှ Cities များကို ဆွဲထုတ်ခြင်းနှင့် ComboBox သတ်မှတ်ခြင်း 🌟
-    // ==========================================
     private void setupCityComboBoxes() {
         allCitiesList.clear();
         String query = "SELECT city_id, city_name, city_code FROM cities";
@@ -145,19 +137,15 @@ public class AdminAddFlightController implements Initializable {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Cities Database မှ Data ဆွဲထုတ်ရာတွင် အမှားအယွင်းဖြစ်နေပါသည်။");
         }
 
-        // ကနဦးတွင် ComboBox နှစ်ခုလုံးသို့ City အားလုံး ထည့်သွင်းမည်
         cmbDepartureCity.setItems(FXCollections.observableArrayList(allCitiesList));
         cmbArrivalCity.setItems(FXCollections.observableArrayList(allCitiesList));
 
-        // 🌟 From (သို့) To မှ မြို့ရွေးလိုက်တိုင်း နောက်တစ်ဘက်တွင် ထပ်ရွေး၍မရအောင် Listener တပ်ဆင်ခြင်း 🌟
         cmbDepartureCity.valueProperty().addListener((observable, oldValue, newValue) -> updateCityComboBoxes());
         cmbArrivalCity.valueProperty().addListener((observable, oldValue, newValue) -> updateCityComboBoxes());
     }
 
-    // 🌟 ComboBox စာရင်းများကို အပြန်အလှန် စစ်ထုတ် (Filter) ပေးမည့် Method 🌟
     private void updateCityComboBoxes() {
         if (isUpdatingCities) return;
         isUpdatingCities = true;
@@ -168,16 +156,12 @@ public class AdminAddFlightController implements Initializable {
         ObservableList<String> depList = FXCollections.observableArrayList(allCitiesList);
         ObservableList<String> arrList = FXCollections.observableArrayList(allCitiesList);
 
-        // To (Arrival) မှာ ရွေးထားတာရှိရင် From (Departure) List ထဲကနေ ဖယ်ထုတ်မည်
         if (currentArr != null) depList.remove(currentArr);
-
-        // From (Departure) မှာ ရွေးထားတာရှိရင် To (Arrival) List ထဲကနေ ဖယ်ထုတ်မည်
         if (currentDep != null) arrList.remove(currentDep);
 
         cmbDepartureCity.setItems(depList);
         cmbArrivalCity.setItems(arrList);
 
-        // ယခင်ရွေးထားသော တန်ဖိုးများကို ပြန်လည်သတ်မှတ်ပေးမည်
         cmbDepartureCity.setValue(currentDep);
         cmbArrivalCity.setValue(currentArr);
 
@@ -282,14 +266,11 @@ public class AdminAddFlightController implements Initializable {
 
                     int rowsAffected = pstmt.executeUpdate();
                     if (rowsAffected > 0) {
-                        String msg = (currentFlightId == null) ? "Flight added successfully!" : "Flight updated successfully!";
-                        showAlert(Alert.AlertType.INFORMATION, "Success", msg);
-
+                        // 🌟 Default Alert အကြီးကြီးကို ဖယ်ရှားပြီး မိခင် Form ဆီသို့ Message ပေးပို့ပါမည် 🌟
+                        String msg = (currentFlightId == null) ? "Flight added successfully." : "Flight updated successfully.";
                         if (saveCallback != null) {
-                            saveCallback.run();
+                            saveCallback.accept(msg);
                         }
-
-                        clickCancel(event);
                     }
                 }
             } catch (SQLException e) {
@@ -304,31 +285,8 @@ public class AdminAddFlightController implements Initializable {
 
     @FXML
     void clickCancel(ActionEvent event) {
-        StackPane overlay = (StackPane) rootPane.getParent();
-        if (overlay != null) {
-            ScaleTransition scaleDown = new ScaleTransition(Duration.millis(350), rootPane);
-            scaleDown.setToX(0.0);
-            scaleDown.setToY(0.0);
-
-            TranslateTransition moveBack = new TranslateTransition(Duration.millis(350), rootPane);
-            moveBack.setToX(400);
-            moveBack.setToY(-300);
-
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(350), overlay);
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
-
-            ParallelTransition pt = new ParallelTransition(scaleDown, moveBack, fadeOut);
-            pt.setInterpolator(Interpolator.EASE_IN);
-
-            pt.setOnFinished(e -> {
-                StackPane mainRoot = (StackPane) overlay.getParent();
-                if (mainRoot != null) {
-                    mainRoot.getChildren().remove(overlay);
-                }
-            });
-
-            pt.play();
+        if (cancelCallback != null) {
+            cancelCallback.run();
         }
     }
 

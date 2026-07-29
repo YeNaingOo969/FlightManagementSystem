@@ -11,6 +11,9 @@
 /* =========================================================================
    1. SIDEBAR (SUBTLE TEAL AMBIENT GLOW)
    ========================================================================= */
+/* =========================================================================
+   1. SIDEBAR (SUBTLE TEAL AMBIENT GLOW)
+   ========================================================================= */
 .super-sidebar {
     -fx-background-color: #0B0E14, linear-gradient(to right, rgba(49, 196, 180, 0.08) 0%, rgba(49, 196, 180, 0) 80%);
     -fx-padding: 28px 22px 28px 22px;
@@ -24,14 +27,23 @@
     -fx-spacing: 8px;
 }
 
-.brand-logo-container {
-    -fx-min-width: 44px; -fx-min-height: 44px; -fx-max-width: 44px; -fx-max-height: 44px;
-    -fx-background-color: transparent;
-    -fx-border-color: #31C4B4;
-    -fx-border-radius: 14px;
-    -fx-border-width: 1.5px;
+/* 🌟 FXML နဲ့ တိုက်ဆိုင်သွားအောင် Class နာမည်များကို super-brand-logo ဟု ပြင်ဆင်ထားပါသည် 🌟 */
+.super-brand-logo {
+    -fx-min-width: 44px !important; -fx-min-height: 44px !important;
+    -fx-max-width: 44px !important; -fx-max-height: 44px !important;
+    -fx-background-color: transparent !important;
+    -fx-border-color: #31C4B4 !important;
+    -fx-border-radius: 12px !important;
+    -fx-border-width: 1.8px !important;
+    -fx-alignment: center !important;
 }
-.brand-logo-glyph { -fx-fill: #31C4B4; -fx-scale-x: 1.08; -fx-scale-y: 1.08; }
+
+/* 🌟 လေယာဉ်ပျံ Icon ကို ပိုကြီးအောင်ပါ တစ်ခါတည်း scale ချိန်ပေးထားပါသည် 🌟 */
+.super-brand-logo-glyph {
+    -fx-fill: #31C4B4 !important;
+    -fx-scale-x: 1.2 !important;
+    -fx-scale-y: 1.2 !important;
+}
 
 .brand-text-box {
     -fx-spacing: 2px;

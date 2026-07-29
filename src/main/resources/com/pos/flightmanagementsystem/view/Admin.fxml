@@ -8,12 +8,15 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.SVGPath?>
 
 <BorderPane fx:id="rootPane" fx:controller="com.pos.flightmanagementsystem.controller.AdminController"
             styleClass="super-dashboard-root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
 
-    <!-- ဘယ်ဘက် Sidebar အပိုင်း -->
+    <!-- ==============================================
+         LEFT SIDEBAR
+         ============================================== -->
     <left>
         <VBox fx:id="sidebar" prefWidth="262.0" spacing="22.0" styleClass="super-sidebar" BorderPane.alignment="CENTER">
             <children>
@@ -26,29 +29,28 @@
                             </children>
                         </StackPane>
 
-                        <!-- Text (MaxWidth 100) -->
+                        <!-- Text -->
                         <VBox spacing="2.0" HBox.hgrow="ALWAYS" maxWidth="100">
                             <children>
-                                <Label styleClass="super-brand-title" style="-fx-font-size: 19px; -fx-font-weight: bold;" text="FlyPlan" />
-                                <Label styleClass="super-brand-kicker" style="-fx-font-size: 11px; -fx-font-weight: bold;" text="Staff Portal" />
+                                <Label styleClass="super-brand-title" text="FlyPlan" />
+                                <Label styleClass="super-brand-kicker" text="Airline Management" />
                             </children>
                         </VBox>
 
                         <Region HBox.hgrow="ALWAYS" />
 
-                        <!-- 🌟 Theme Toggle Switch (Width 50, Height 26) 🌟 -->
-                        <StackPane fx:id="themeToggleBg" onMouseClicked="#toggleTheme" styleClass="theme-toggle-bg" style="-fx-pref-width: 50px; -fx-min-width: 50px; -fx-max-width: 50px; -fx-pref-height: 26px; -fx-min-height: 26px; -fx-max-height: 26px; -fx-background-radius: 13px; -fx-border-radius: 13px; -fx-border-width: 1.5px; -fx-cursor: hand; -fx-padding: 3px;">
-                            <StackPane fx:id="themeThumb" styleClass="theme-toggle-thumb" StackPane.alignment="CENTER_LEFT" style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;">
-                                <SVGPath fx:id="themeIcon" content="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" styleClass="theme-icon-glyph" style="-fx-scale-x: 0.6; -fx-scale-y: 0.6;" />
+                        <!-- Theme Toggle Switch -->
+                        <StackPane fx:id="themeToggleBg" onMouseClicked="#toggleTheme" styleClass="theme-toggle-bg">
+                            <StackPane fx:id="themeThumb" styleClass="theme-toggle-thumb" StackPane.alignment="CENTER_LEFT">
+                                <SVGPath fx:id="themeIcon" content="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" styleClass="theme-icon-glyph" />
                             </StackPane>
                         </StackPane>
                     </children>
                 </HBox>
 
-                <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                <!-- Navigation Menu -->
+                <VBox spacing="10.0" VBox.vgrow="ALWAYS" styleClass="nav-menu-box">
                     <children>
-
-                        <!-- 1. Dashboard -->
                         <Button fx:id="btnDashboard" mnemonicParsing="false" onAction="#clickDashboard" styleClass="super-nav-button" text="Dashboard">
                             <graphic>
                                 <StackPane styleClass="super-nav-icon">
@@ -57,16 +59,6 @@
                             </graphic>
                         </Button>
 
-                        <!-- 2. Profile -->
-                        <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#clickProfile" styleClass="super-nav-button" text="Profile">
-                            <graphic>
-                                <StackPane styleClass="super-nav-icon">
-                                    <SVGPath content="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" styleClass="super-nav-icon-glyph"/>
-                                </StackPane>
-                            </graphic>
-                        </Button>
-
-                        <!-- 3. Flight Schedule -->
                         <Button fx:id="btnFlightSchedule" mnemonicParsing="false" onAction="#clickFlightSchedule" styleClass="super-nav-button" text="Flight Schedule">
                             <graphic>
                                 <StackPane styleClass="super-nav-icon">
@@ -75,7 +67,6 @@
                             </graphic>
                         </Button>
 
-                        <!-- 4. View Available City -->
                         <Button fx:id="btnViewCity" mnemonicParsing="false" onAction="#clickViewCity" styleClass="super-nav-button" text="View Available City">
                             <graphic>
                                 <StackPane styleClass="super-nav-icon">
@@ -84,7 +75,6 @@
                             </graphic>
                         </Button>
 
-                        <!-- 5. Booking Management -->
                         <Button fx:id="btnBookingManagement" mnemonicParsing="false" onAction="#clickBookingManagement" styleClass="super-nav-button" text="Booking Management">
                             <graphic>
                                 <StackPane styleClass="super-nav-icon">
@@ -93,7 +83,6 @@
                             </graphic>
                         </Button>
 
-                        <!-- 6. View Sale Details -->
                         <Button fx:id="btnViewSaleDetails" mnemonicParsing="false" onAction="#clickViewSaleDetails" styleClass="super-nav-button" text="View Sale Details">
                             <graphic>
                                 <StackPane styleClass="super-nav-icon">
@@ -101,7 +90,6 @@
                                 </StackPane>
                             </graphic>
                         </Button>
-
                     </children>
                 </VBox>
 
@@ -116,6 +104,49 @@
             </children>
         </VBox>
     </left>
+
+    <!-- ==============================================
+         RIGHT MAIN CONTENT AREA & OVERLAYS
+         ============================================== -->
+    <center>
+        <StackPane fx:id="rightSideStack" style="-fx-background-color: transparent;">
+
+            <BorderPane styleClass="main-content-wrapper">
+                <!-- Top Navigation Bar (Profile & Notification) -->
+                <top>
+                    <HBox styleClass="global-top-nav" BorderPane.alignment="CENTER">
+                        <children>
+                            <!-- Notification Bell -->
+                            <StackPane styleClass="nav-notification-btn">
+                                <SVGPath content="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" styleClass="nav-bell-icon" />
+                            </StackPane>
+
+                            <!-- Profile Box -->
+                            <HBox fx:id="navProfileBox" onMouseClicked="#clickProfile" styleClass="nav-profile-box">
+                                <children>
+                                    <StackPane styleClass="nav-profile-avatar">
+                                        <!-- 🌟 Default SVG ကိုဖယ်ရှားပြီး Circle ထည့်သွင်းထားသည် 🌟 -->
+                                        <Circle fx:id="topNavAvatarCircle" fill="#31C4B4" radius="20.0" />
+                                    </StackPane>
+                                    <VBox styleClass="nav-profile-text-box">
+                                        <children>
+                                            <Label fx:id="topNavUsername" styleClass="nav-profile-name" text="Admin User" />
+                                            <Label fx:id="topNavRole" styleClass="nav-profile-role" text="ADMINISTRATOR" />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+                        </children>
+                    </HBox>
+                </top>
+                <!-- Main Content -->
+                <center>
+                    <StackPane fx:id="mainContentArea" styleClass="main-content-area" BorderPane.alignment="CENTER" />
+                </center>
+            </BorderPane>
+
+        </StackPane>
+    </center>
 
     <stylesheets>
         <URL value="@/com/pos/flightmanagementsystem/Style/SuperAdminSideBarDark.css" />
