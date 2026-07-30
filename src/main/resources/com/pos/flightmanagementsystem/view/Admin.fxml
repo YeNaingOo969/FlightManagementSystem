@@ -122,10 +122,9 @@
                             </StackPane>
 
                             <!-- Profile Box -->
-                            <HBox fx:id="navProfileBox" onMouseClicked="#clickProfile" styleClass="nav-profile-box">
+                            <HBox fx:id="navProfileBox" onMouseClicked="#openProfilePopup" styleClass="nav-profile-box">
                                 <children>
                                     <StackPane styleClass="nav-profile-avatar">
-                                        <!-- 🌟 Default SVG ကိုဖယ်ရှားပြီး Circle ထည့်သွင်းထားသည် 🌟 -->
                                         <Circle fx:id="topNavAvatarCircle" fill="#31C4B4" radius="20.0" />
                                     </StackPane>
                                     <VBox styleClass="nav-profile-text-box">
@@ -144,6 +143,13 @@
                     <StackPane fx:id="mainContentArea" styleClass="main-content-area" BorderPane.alignment="CENTER" />
                 </center>
             </BorderPane>
+
+            <!-- 🌟 Floating Profile Overlay Layer (Added) 🌟 -->
+            <StackPane fx:id="profileOverlayBg" onMouseClicked="#closeProfilePopup" style="-fx-background-color: rgba(6, 8, 13, 0.6);" visible="false">
+                <children>
+                    <StackPane fx:id="profilePopupContainer" maxHeight="-Infinity" maxWidth="-Infinity" StackPane.alignment="CENTER" />
+                </children>
+            </StackPane>
 
         </StackPane>
     </center>

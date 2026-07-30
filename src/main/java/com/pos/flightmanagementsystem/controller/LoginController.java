@@ -37,6 +37,9 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
+    // Global User Session for System Logs
+    public static com.pos.flightmanagementsystem.model.User loggedInUser;
+
     @FXML private StackPane animationContainer;
     @FXML private Circle orbitPath;
     @FXML private Group smallPlane;
@@ -44,24 +47,19 @@ public class LoginController implements Initializable {
     @FXML private StackPane leftPanel;
     @FXML private StackPane rightPanel;
 
-    // --- Sections ---
     @FXML private VBox loginSection;
     @FXML private VBox emailRequestSection;
     @FXML private VBox otpSection;
     @FXML private VBox resetPasswordSection;
 
-    // --- Success Custom Dialog ---
     @FXML private StackPane successOverlay;
     @FXML private VBox successBox;
-
-    // --- New Custom Alert Dialog ---
     @FXML private StackPane customAlertOverlay;
     @FXML private VBox customAlertBox;
     @FXML private SVGPath customAlertIcon;
     @FXML private Label customAlertTitle;
     @FXML private Label customAlertMessage;
 
-    // --- Fields ---
     @FXML private TextField txtUsername;
     @FXML private PasswordField txtPasswordHidden;
     @FXML private TextField txtPasswordVisible;
@@ -92,29 +90,20 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        // ==========================================
-        // LOGIN PAGE ENTRANCE ANIMATION
-        // ==========================================
         if (leftPanel != null && rightPanel != null) {
             leftPanel.setTranslateX(-800);
             rightPanel.setTranslateX(800);
 
             TranslateTransition leftIn = new TranslateTransition(Duration.millis(800), leftPanel);
-            leftIn.setToX(0);
-            leftIn.setInterpolator(Interpolator.EASE_OUT);
+            leftIn.setToX(0); leftIn.setInterpolator(Interpolator.EASE_OUT);
 
             TranslateTransition rightIn = new TranslateTransition(Duration.millis(800), rightPanel);
-            rightIn.setToX(0);
-            rightIn.setInterpolator(Interpolator.EASE_OUT);
+            rightIn.setToX(0); rightIn.setInterpolator(Interpolator.EASE_OUT);
 
             ParallelTransition ptIn = new ParallelTransition(leftIn, rightIn);
             ptIn.play();
         }
 
-        // ==========================================
-        // INITIALIZATIONS
-        // ==========================================
         if (txtPasswordHidden != null && txtPasswordVisible != null) txtPasswordVisible.textProperty().bindBidirectional(txtPasswordHidden.textProperty());
         if (txtNewPasswordHidden != null && txtNewPasswordVisible != null) txtNewPasswordVisible.textProperty().bindBidirectional(txtNewPasswordHidden.textProperty());
         if (txtConfirmPasswordHidden != null && txtConfirmPasswordVisible != null) txtConfirmPasswordVisible.textProperty().bindBidirectional(txtConfirmPasswordHidden.textProperty());
@@ -125,9 +114,6 @@ public class LoginController implements Initializable {
         }
         setupInputFocusEffects();
 
-        // ==========================================
-        // ENTER KEY LOGIN TRIGGER
-        // ==========================================
         if (txtUsername != null) txtUsername.setOnKeyPressed(this::handleEnterKey);
         if (txtPasswordHidden != null) txtPasswordHidden.setOnKeyPressed(this::handleEnterKey);
         if (txtPasswordVisible != null) txtPasswordVisible.setOnKeyPressed(this::handleEnterKey);
@@ -152,57 +138,46 @@ public class LoginController implements Initializable {
     }
 
     private void spawnSmokeParticle() {
-        Circle smoke = new Circle(3.5, Color.web("#00D4FF"));
+        Circle smoke = new Circle(3.5, Color.web("#06b6d4"));
         smoke.setEffect(new GaussianBlur(5));
         smoke.setTranslateX(smallPlane.getTranslateX());
         smoke.setTranslateY(smallPlane.getTranslateY());
-        double randomOffsetX = (Math.random() - 0.5) * 8;
-        double randomOffsetY = (Math.random() - 0.5) * 8;
-        smoke.setTranslateX(smoke.getTranslateX() + randomOffsetX);
-        smoke.setTranslateY(smoke.getTranslateY() + randomOffsetY);
-        int planeIndex = animationContainer.getChildren().indexOf(smallPlane);
-        animationContainer.getChildren().add(planeIndex, smoke);
+        smoke.setTranslateX(smoke.getTranslateX() + (Math.random() - 0.5) * 8);
+        smoke.setTranslateY(smoke.getTranslateY() + (Math.random() - 0.5) * 8);
+        animationContainer.getChildren().add(animationContainer.getChildren().indexOf(smallPlane), smoke);
 
         FadeTransition fade = new FadeTransition(Duration.millis(800), smoke);
-        fade.setFromValue(0.7);
-        fade.setToValue(0.0);
+        fade.setFromValue(0.7); fade.setToValue(0.0);
         ScaleTransition scale = new ScaleTransition(Duration.millis(800), smoke);
-        scale.setFromX(1); scale.setFromY(1);
-        scale.setToX(4.5); scale.setToY(4.5);
-        ParallelTransition particleAnimation = new ParallelTransition(smoke, fade, scale);
-        particleAnimation.setOnFinished(ev -> animationContainer.getChildren().remove(smoke));
-        particleAnimation.play();
+        scale.setFromX(1); scale.setFromY(1); scale.setToX(4.5); scale.setToY(4.5);
+        ParallelTransition pt = new ParallelTransition(smoke, fade, scale);
+        pt.setOnFinished(ev -> animationContainer.getChildren().remove(smoke));
+        pt.play();
     }
 
     private void createRadarPulse() {
         Circle radarPulse = new Circle(89.0, Color.TRANSPARENT);
-        radarPulse.setStroke(Color.web("#00D4FF"));
+        radarPulse.setStroke(Color.web("#06b6d4"));
         radarPulse.setStrokeWidth(1.5);
         animationContainer.getChildren().add(0, radarPulse);
         ScaleTransition scalePulse = new ScaleTransition(Duration.seconds(2.5), radarPulse);
-        scalePulse.setFromX(1.0); scalePulse.setFromY(1.0);
-        scalePulse.setToX(1.8); scalePulse.setToY(1.8);
+        scalePulse.setFromX(1.0); scalePulse.setFromY(1.0); scalePulse.setToX(1.8); scalePulse.setToY(1.8);
         FadeTransition fadePulse = new FadeTransition(Duration.seconds(2.5), radarPulse);
-        fadePulse.setFromValue(0.5);
-        fadePulse.setToValue(0.0);
-        ParallelTransition pulseAnimation = new ParallelTransition(scalePulse, fadePulse);
-        pulseAnimation.setCycleCount(Timeline.INDEFINITE);
-        pulseAnimation.play();
+        fadePulse.setFromValue(0.5); fadePulse.setToValue(0.0);
+        ParallelTransition pt = new ParallelTransition(scalePulse, fadePulse);
+        pt.setCycleCount(Timeline.INDEFINITE); pt.play();
     }
 
     private void createTwinklingStars() {
         Group starGroup = new Group();
         starGroup.setManaged(false);
         for (int i = 0; i < 80; i++) {
-            Circle star = new Circle(Math.random() * 1.5 + 0.8, Color.web("#E0E0E0"));
+            Circle star = new Circle(Math.random() * 1.5 + 0.8, Color.WHITE);
             star.setTranslateX((Math.random() - 0.5) * 1200);
             star.setTranslateY(-350 + Math.random() * 530);
             FadeTransition blink = new FadeTransition(Duration.seconds(0.5 + Math.random() * 1.0), star);
-            blink.setFromValue(0.1);
-            blink.setToValue(1.0);
-            blink.setAutoReverse(true);
-            blink.setCycleCount(Timeline.INDEFINITE);
-            blink.setDelay(Duration.seconds(Math.random()));
+            blink.setFromValue(0.1); blink.setToValue(1.0); blink.setAutoReverse(true);
+            blink.setCycleCount(Timeline.INDEFINITE); blink.setDelay(Duration.seconds(Math.random()));
             blink.play();
             starGroup.getChildren().add(star);
         }
@@ -214,49 +189,28 @@ public class LoginController implements Initializable {
             TextField currentField = otpFields[i];
             final int index = i;
             currentField.textProperty().addListener((obs, oldValue, newValue) -> {
-                if (!newValue.matches("\\d*")) {
-                    currentField.setText(newValue.replaceAll("[^\\d]", ""));
-                    return;
-                }
-                if (newValue.length() > 1) {
-                    currentField.setText(newValue.substring(0, 1));
-                    return;
-                }
-                if (newValue.length() == 1 && index < otpFields.length - 1) {
-                    otpFields[index + 1].requestFocus();
-                }
+                if (!newValue.matches("\\d*")) { currentField.setText(newValue.replaceAll("[^\\d]", "")); return; }
+                if (newValue.length() > 1) { currentField.setText(newValue.substring(0, 1)); return; }
+                if (newValue.length() == 1 && index < otpFields.length - 1) otpFields[index + 1].requestFocus();
             });
             currentField.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.BACK_SPACE && currentField.getText().isEmpty()) {
-                    if (index > 0) {
-                        otpFields[index - 1].requestFocus();
-                    }
-                }
+                if (event.getCode() == KeyCode.BACK_SPACE && currentField.getText().isEmpty() && index > 0) otpFields[index - 1].requestFocus();
             });
         }
     }
 
     private void setupInputFocusEffects() {
-        TextField[] fields = {txtUsername, txtPasswordHidden, txtPasswordVisible, emailField,
-                txtNewPasswordHidden, txtNewPasswordVisible,
-                txtConfirmPasswordHidden, txtConfirmPasswordVisible};
-
+        TextField[] fields = {txtUsername, txtPasswordHidden, txtPasswordVisible, emailField, txtNewPasswordHidden, txtNewPasswordVisible, txtConfirmPasswordHidden, txtConfirmPasswordVisible};
         for (TextField field : fields) {
             if (field != null) {
                 field.focusedProperty().addListener((obs, oldVal, isFocused) -> {
-                    javafx.scene.Parent parent = field.getParent();
+                    Parent parent = field.getParent();
                     javafx.scene.layout.HBox inputBox = null;
-                    if (parent instanceof javafx.scene.layout.HBox) {
-                        inputBox = (javafx.scene.layout.HBox) parent;
-                    } else if (parent.getParent() instanceof javafx.scene.layout.HBox) {
-                        inputBox = (javafx.scene.layout.HBox) parent.getParent();
-                    }
+                    if (parent instanceof javafx.scene.layout.HBox) inputBox = (javafx.scene.layout.HBox) parent;
+                    else if (parent.getParent() instanceof javafx.scene.layout.HBox) inputBox = (javafx.scene.layout.HBox) parent.getParent();
                     if (inputBox != null) {
-                        if (isFocused) {
-                            if (!inputBox.getStyleClass().contains("focused-box")) inputBox.getStyleClass().add("focused-box");
-                        } else {
-                            inputBox.getStyleClass().remove("focused-box");
-                        }
+                        if (isFocused) { if (!inputBox.getStyleClass().contains("focused-box")) inputBox.getStyleClass().add("focused-box"); }
+                        else { inputBox.getStyleClass().remove("focused-box"); }
                     }
                 });
             }
@@ -271,23 +225,11 @@ public class LoginController implements Initializable {
         if(emailRequestSection != null) { emailRequestSection.setVisible(false); emailRequestSection.setManaged(false); }
         if(otpSection != null) { otpSection.setVisible(false); otpSection.setManaged(false); }
         if(resetPasswordSection != null) { resetPasswordSection.setVisible(false); resetPasswordSection.setManaged(false); }
-
-        if(targetSection != null) {
-            targetSection.setVisible(true);
-            targetSection.setManaged(true);
-        }
+        if(targetSection != null) { targetSection.setVisible(true); targetSection.setManaged(true); }
     }
 
-    private void handleEnterKey(KeyEvent event) {
-        if (event.getCode() == KeyCode.ENTER) {
-            attemptLogin();
-        }
-    }
-
-    @FXML
-    void clickLogin(ActionEvent event) {
-        attemptLogin();
-    }
+    private void handleEnterKey(KeyEvent event) { if (event.getCode() == KeyCode.ENTER) attemptLogin(); }
+    @FXML void clickLogin(ActionEvent event) { attemptLogin(); }
 
     private void attemptLogin() {
         String username = txtUsername.getText().trim();
@@ -298,8 +240,7 @@ public class LoginController implements Initializable {
             return;
         }
 
-        // 🌟 Modified to fetch role and image_path 🌟
-        String query = "SELECT role, image_path FROM users WHERE username = ? AND password = ?";
+        String query = "SELECT user_id, role, image_path FROM users WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -308,12 +249,18 @@ public class LoginController implements Initializable {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                int userId = rs.getInt("user_id");
                 String role = rs.getString("role");
                 String imagePath = rs.getString("image_path");
 
+                // Logging System
+                loggedInUser = new com.pos.flightmanagementsystem.model.User();
+                loggedInUser.setUserId(userId);
+                loggedInUser.setRole(role);
+                insertLog(userId, "Login Successful");
+
                 Stage stage = (Stage) txtUsername.getScene().getWindow();
 
-                // 🌟 Pass the username, role, and imagePath forward 🌟
                 if (role.equalsIgnoreCase("Super Admin") || role.equalsIgnoreCase("superadmin")) {
                     playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml", username, role, imagePath);
                 } else if (role.equalsIgnoreCase("Admin")) {
@@ -324,6 +271,14 @@ public class LoginController implements Initializable {
                     showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
                 }
             } else {
+                int failedUserId = 0;
+                String checkUserQuery = "SELECT user_id FROM users WHERE username = ?";
+                try (PreparedStatement checkStmt = conn.prepareStatement(checkUserQuery)) {
+                    checkStmt.setString(1, username);
+                    ResultSet checkRs = checkStmt.executeQuery();
+                    if (checkRs.next()) failedUserId = checkRs.getInt("user_id");
+                }
+                insertLog(failedUserId, "Login Failed");
                 showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.");
             }
         } catch (SQLException e) {
@@ -332,17 +287,25 @@ public class LoginController implements Initializable {
         }
     }
 
-    // 🌟 Receive additional parameters 🌟
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            if (userId > 0) pstmt.setInt(1, userId);
+            else pstmt.setNull(1, java.sql.Types.INTEGER);
+
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
     private void playExitAnimation(Stage stage, String fxmlPath, String username, String role, String imagePath) {
         TranslateTransition leftAnim = new TranslateTransition(Duration.millis(700), leftPanel);
-        leftAnim.setByX(-800);
-        leftAnim.setInterpolator(Interpolator.EASE_IN);
+        leftAnim.setByX(-800); leftAnim.setInterpolator(Interpolator.EASE_IN);
         TranslateTransition rightAnim = new TranslateTransition(Duration.millis(700), rightPanel);
-        rightAnim.setByX(800);
-        rightAnim.setInterpolator(Interpolator.EASE_IN);
+        rightAnim.setByX(800); rightAnim.setInterpolator(Interpolator.EASE_IN);
         ParallelTransition pt = new ParallelTransition(leftAnim, rightAnim);
 
-        // 🌟 Forward to loadDashboard 🌟
         pt.setOnFinished(e -> loadDashboard(stage, fxmlPath, username, role, imagePath));
         pt.play();
     }
@@ -353,10 +316,12 @@ public class LoginController implements Initializable {
             Parent root = loader.load();
 
             Object controller = loader.getController();
-
-            // 🌟 Inject the user data into the destination controller 🌟
             if (controller instanceof AdminController) {
                 ((AdminController) controller).setLoggedInUser(username, role, imagePath);
+            } else if (controller instanceof SuperAdminController) {
+                ((SuperAdminController) controller).setLoggedInUser(username, role, imagePath);
+            } else if (controller instanceof StaffController) {
+                ((StaffController) controller).setLoggedInUser(username, role, imagePath);
             }
 
             stage.setScene(new Scene(root));
@@ -377,11 +342,11 @@ public class LoginController implements Initializable {
         if (isVisible) {
             visibleField.setVisible(true); hiddenField.setVisible(false);
             icon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z");
-            icon.setFill(Color.web("#00D4FF"));
+            icon.setFill(Color.web("#06b6d4"));
         } else {
             visibleField.setVisible(false); hiddenField.setVisible(true);
             icon.setContent("M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z");
-            icon.setFill(Color.web("#A093D6"));
+            icon.setFill(Color.web("#9ca3af"));
         }
     }
 
@@ -389,12 +354,9 @@ public class LoginController implements Initializable {
     void handleSendEmail(ActionEvent event) {
         String targetEmail = emailField.getText().trim();
         if (targetEmail.isEmpty() || !targetEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            statusLabel.setTextFill(Color.web("#FF2A6D"));
-            statusLabel.setText("Please enter a valid email address.");
-            return;
+            statusLabel.setTextFill(Color.RED); statusLabel.setText("Please enter a valid email address."); return;
         }
-        statusLabel.setTextFill(Color.web("#00D4FF"));
-        statusLabel.setText("Sending OTP... Please wait.");
+        statusLabel.setTextFill(Color.web("#06b6d4")); statusLabel.setText("Sending OTP... Please wait.");
         sendButton.setDisable(true);
         generatedOTP = String.format("%06d", new Random().nextInt(999999));
 
@@ -403,12 +365,9 @@ public class LoginController implements Initializable {
             Platform.runLater(() -> {
                 sendButton.setDisable(false);
                 if (isSent) {
-                    statusLabel.setTextFill(Color.web("#00FF9D"));
-                    statusLabel.setText("OTP sent successfully to your email.");
-                    switchSection(otpSection);
+                    statusLabel.setTextFill(Color.GREEN); statusLabel.setText("OTP sent successfully to your email."); switchSection(otpSection);
                 } else {
-                    statusLabel.setTextFill(Color.web("#FF2A6D"));
-                    statusLabel.setText("Failed to send OTP. Check your connection.");
+                    statusLabel.setTextFill(Color.RED); statusLabel.setText("Failed to send OTP. Check your connection.");
                 }
             });
         }).start();
@@ -416,24 +375,14 @@ public class LoginController implements Initializable {
 
     @FXML
     void handleVerifyOTP(ActionEvent event) {
-        String enteredOTP = otp1.getText() + otp2.getText() + otp3.getText() +
-                otp4.getText() + otp5.getText() + otp6.getText();
-
-        if (enteredOTP.length() < 6) {
-            statusLabel.setTextFill(Color.web("#FF2A6D"));
-            statusLabel.setText("Please enter the complete 6-digit OTP.");
-            return;
-        }
+        String enteredOTP = otp1.getText() + otp2.getText() + otp3.getText() + otp4.getText() + otp5.getText() + otp6.getText();
+        if (enteredOTP.length() < 6) { statusLabel.setTextFill(Color.RED); statusLabel.setText("Please enter the complete 6-digit OTP."); return; }
 
         if (enteredOTP.equals(generatedOTP)) {
-            statusLabel.setTextFill(Color.web("#00FF9D"));
-            statusLabel.setText("OTP Verified Successfully!");
-            verifyButton.setDisable(true);
-            switchSection(resetPasswordSection);
-            statusLabel.setText("");
+            statusLabel.setTextFill(Color.GREEN); statusLabel.setText("OTP Verified Successfully!");
+            verifyButton.setDisable(true); switchSection(resetPasswordSection); statusLabel.setText("");
         } else {
-            statusLabel.setTextFill(Color.web("#FF2A6D"));
-            statusLabel.setText("Invalid OTP. Please try again.");
+            statusLabel.setTextFill(Color.RED); statusLabel.setText("Invalid OTP. Please try again.");
         }
     }
 
@@ -443,182 +392,83 @@ public class LoginController implements Initializable {
         String confirmPassword = txtConfirmPasswordHidden.getText().trim();
         String targetEmail = emailField.getText().trim();
 
-        if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in both password fields.");
-            return;
-        }
-        if (!newPassword.equals(confirmPassword)) {
-            showAlert(Alert.AlertType.ERROR, "Password Mismatch", "The new passwords do not match.");
-            return;
-        }
+        if (newPassword.isEmpty() || confirmPassword.isEmpty()) { showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in both password fields."); return; }
+        if (!newPassword.equals(confirmPassword)) { showAlert(Alert.AlertType.ERROR, "Password Mismatch", "The new passwords do not match."); return; }
 
         String updateQuery = "UPDATE users SET password = ? WHERE email = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
-
-            pstmt.setString(1, newPassword);
-            pstmt.setString(2, targetEmail);
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+            pstmt.setString(1, newPassword); pstmt.setString(2, targetEmail);
             int rowsAffected = pstmt.executeUpdate();
-
             if (rowsAffected > 0) {
-                txtNewPasswordHidden.clear();
-                txtNewPasswordVisible.clear();
-                txtConfirmPasswordHidden.clear();
-                txtConfirmPasswordVisible.clear();
-                emailField.clear();
+                txtNewPasswordHidden.clear(); txtNewPasswordVisible.clear(); txtConfirmPasswordHidden.clear(); txtConfirmPasswordVisible.clear(); emailField.clear();
                 for (TextField tf : otpFields) tf.clear();
-                verifyButton.setDisable(false);
-                statusLabel.setText("");
-
+                verifyButton.setDisable(false); statusLabel.setText("");
                 playSuccessAnimation();
-
             } else {
                 showAlert(Alert.AlertType.ERROR, "Update Failed", "No account found associated with this email address.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to update your password.");
+            e.printStackTrace(); showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to update your password.");
         }
     }
 
     private void playSuccessAnimation() {
-        successOverlay.setVisible(true);
-        successOverlay.setOpacity(0.0);
-        successBox.setScaleX(0.5);
-        successBox.setScaleY(0.5);
-
-        FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), successOverlay);
-        fadeOverlay.setToValue(1.0);
-
-        ScaleTransition scaleBox = new ScaleTransition(Duration.millis(500), successBox);
-        scaleBox.setToX(1.0);
-        scaleBox.setToY(1.0);
-        scaleBox.setInterpolator(new Interpolator() {
-            @Override
-            protected double curve(double t) {
-                double tension = 2.0;
-                t -= 1.0;
-                return t * t * ((tension + 1) * t + tension) + 1.0;
-            }
-        });
-
-        FadeTransition fadeBox = new FadeTransition(Duration.millis(300), successBox);
-        fadeBox.setFromValue(0.0);
-        fadeBox.setToValue(1.0);
-
-        ParallelTransition pt = new ParallelTransition(fadeOverlay, scaleBox, fadeBox);
-        pt.play();
+        successOverlay.setVisible(true); successOverlay.setOpacity(0.0); successBox.setScaleX(0.5); successBox.setScaleY(0.5);
+        FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), successOverlay); fadeOverlay.setToValue(1.0);
+        ScaleTransition scaleBox = new ScaleTransition(Duration.millis(500), successBox); scaleBox.setToX(1.0); scaleBox.setToY(1.0);
+        scaleBox.setInterpolator(new Interpolator() { @Override protected double curve(double t) { double tension = 2.0; t -= 1.0; return t * t * ((tension + 1) * t + tension) + 1.0; } });
+        FadeTransition fadeBox = new FadeTransition(Duration.millis(300), successBox); fadeBox.setFromValue(0.0); fadeBox.setToValue(1.0);
+        ParallelTransition pt = new ParallelTransition(fadeOverlay, scaleBox, fadeBox); pt.play();
     }
 
     @FXML
     void closeSuccessDialog(ActionEvent event) {
-        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(300), successBox);
-        scaleDown.setToX(0.8);
-        scaleDown.setToY(0.8);
-        scaleDown.setInterpolator(Interpolator.EASE_IN);
-
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), successOverlay);
-        fadeOut.setToValue(0.0);
-
+        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(300), successBox); scaleDown.setToX(0.8); scaleDown.setToY(0.8); scaleDown.setInterpolator(Interpolator.EASE_IN);
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), successOverlay); fadeOut.setToValue(0.0);
         ParallelTransition pt = new ParallelTransition(scaleDown, fadeOut);
-        pt.setOnFinished(e -> {
-            successOverlay.setVisible(false);
-            switchSection(loginSection);
-        });
-        pt.play();
+        pt.setOnFinished(e -> { successOverlay.setVisible(false); switchSection(loginSection); }); pt.play();
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
-            customAlertTitle.setText(title);
-            customAlertMessage.setText(message);
-
+            customAlertTitle.setText(title); customAlertMessage.setText(message);
             customAlertBox.getStyleClass().removeAll("alert-error", "alert-warning", "alert-info");
 
             if (alertType == Alert.AlertType.ERROR) {
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z");
-                customAlertIcon.setFill(Color.web("#FF2A6D"));
-                customAlertBox.getStyleClass().add("alert-error");
+                customAlertIcon.setFill(Color.web("#ef4444")); customAlertBox.getStyleClass().add("alert-error");
             } else if (alertType == Alert.AlertType.WARNING) {
                 customAlertIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
-                customAlertIcon.setFill(Color.web("#FFE600"));
-                customAlertBox.getStyleClass().add("alert-warning");
+                customAlertIcon.setFill(Color.web("#f59e0b")); customAlertBox.getStyleClass().add("alert-warning");
             } else {
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
-                customAlertIcon.setFill(Color.web("#00D4FF"));
-                customAlertBox.getStyleClass().add("alert-info");
+                customAlertIcon.setFill(Color.web("#06b6d4")); customAlertBox.getStyleClass().add("alert-info");
             }
 
-            customAlertOverlay.setVisible(true);
-            customAlertOverlay.setOpacity(0.0);
-            customAlertBox.setScaleX(0.5);
-            customAlertBox.setScaleY(0.5);
-
-            FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), customAlertOverlay);
-            fadeOverlay.setToValue(1.0);
-
-            ScaleTransition scaleBox = new ScaleTransition(Duration.millis(400), customAlertBox);
-            scaleBox.setToX(1.0);
-            scaleBox.setToY(1.0);
-            scaleBox.setInterpolator(new Interpolator() {
-                @Override
-                protected double curve(double t) {
-                    double tension = 2.0;
-                    t -= 1.0;
-                    return t * t * ((tension + 1) * t + tension) + 1.0;
-                }
-            });
-
-            FadeTransition fadeBox = new FadeTransition(Duration.millis(300), customAlertBox);
-            fadeBox.setFromValue(0.0);
-            fadeBox.setToValue(1.0);
-
-            ParallelTransition pt = new ParallelTransition(fadeOverlay, scaleBox, fadeBox);
-            pt.play();
+            customAlertOverlay.setVisible(true); customAlertOverlay.setOpacity(0.0); customAlertBox.setScaleX(0.5); customAlertBox.setScaleY(0.5);
+            FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), customAlertOverlay); fadeOverlay.setToValue(1.0);
+            ScaleTransition scaleBox = new ScaleTransition(Duration.millis(400), customAlertBox); scaleBox.setToX(1.0); scaleBox.setToY(1.0);
+            scaleBox.setInterpolator(new Interpolator() { @Override protected double curve(double t) { double tension = 2.0; t -= 1.0; return t * t * ((tension + 1) * t + tension) + 1.0; } });
+            FadeTransition fadeBox = new FadeTransition(Duration.millis(300), customAlertBox); fadeBox.setFromValue(0.0); fadeBox.setToValue(1.0);
+            ParallelTransition pt = new ParallelTransition(fadeOverlay, scaleBox, fadeBox); pt.play();
         });
     }
 
     @FXML
     void closeCustomAlert(ActionEvent event) {
-        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(300), customAlertBox);
-        scaleDown.setToX(0.8);
-        scaleDown.setToY(0.8);
-        scaleDown.setInterpolator(Interpolator.EASE_IN);
-
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), customAlertOverlay);
-        fadeOut.setToValue(0.0);
-
+        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(300), customAlertBox); scaleDown.setToX(0.8); scaleDown.setToY(0.8); scaleDown.setInterpolator(Interpolator.EASE_IN);
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), customAlertOverlay); fadeOut.setToValue(0.0);
         ParallelTransition pt = new ParallelTransition(scaleDown, fadeOut);
-        pt.setOnFinished(e -> customAlertOverlay.setVisible(false));
-        pt.play();
+        pt.setOnFinished(e -> customAlertOverlay.setVisible(false)); pt.play();
     }
 
     private boolean sendEmail(String recipientEmail, String otpCode) {
-        Properties properties = new Properties();
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(senderEmail, senderPassword);
-            }
-        });
-
+        Properties properties = new Properties(); properties.put("mail.smtp.auth", "true"); properties.put("mail.smtp.starttls.enable", "true"); properties.put("mail.smtp.host", "smtp.gmail.com"); properties.put("mail.smtp.port", "587");
+        Session session = Session.getInstance(properties, new Authenticator() { @Override protected PasswordAuthentication getPasswordAuthentication() { return new PasswordAuthentication(senderEmail, senderPassword); } });
         try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(senderEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("Your Password Reset OTP - ArrLuuu Airline");
-            message.setText("Dear User,\n\nYour OTP for password reset is: " + otpCode +
-                    "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nArrLuuu Airline Team");
-            Transport.send(message);
-            return true;
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return false;
-        }
+            Message message = new MimeMessage(session); message.setFrom(new InternetAddress(senderEmail)); message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            message.setSubject("Your Password Reset OTP - ArrLuuu Airline"); message.setText("Dear User,\n\nYour OTP for password reset is: " + otpCode + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nArrLuuu Airline Team");
+            Transport.send(message); return true;
+        } catch (MessagingException e) { e.printStackTrace(); return false; }
     }
 }

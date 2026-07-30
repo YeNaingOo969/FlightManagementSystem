@@ -1,10 +1,7 @@
 package com.pos.flightmanagementsystem.controller;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +29,9 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class AdminController implements Initializable {
@@ -39,8 +39,10 @@ public class AdminController implements Initializable {
     @FXML private BorderPane rootPane;
     @FXML private StackPane rightSideStack;
     @FXML private StackPane mainContentArea;
+    @FXML private StackPane profileOverlayBg;
+    @FXML private StackPane profilePopupContainer;
 
-    @FXML private Button btnDashboard, btnFlightSchedule, btnViewCity, btnBookingManagement, btnViewSaleDetails, btnLogout;
+    @FXML private Button btnDashboard, btnProfile, btnFlightSchedule, btnViewCity, btnBookingManagement, btnViewSaleDetails, btnLogout;
 
     @FXML private Label topNavUsername;
     @FXML private Label topNavRole;
@@ -52,6 +54,7 @@ public class AdminController implements Initializable {
     @FXML private SVGPath themeIcon;
 
     private boolean isDarkMode = true;
+    private boolean isProfileOpen = false;
 
     private String loggedInUsername = "";
     private String loggedInRole = "";
@@ -64,7 +67,7 @@ public class AdminController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        navButtons = new Button[]{btnDashboard, btnFlightSchedule, btnViewCity, btnBookingManagement, btnViewSaleDetails};
+        navButtons = new Button[]{btnDashboard, btnProfile, btnFlightSchedule, btnViewCity, btnBookingManagement, btnViewSaleDetails};
         setActiveButton(btnDashboard);
         loadPage("SuperAdminDashboard.fxml");
     }
@@ -81,234 +84,180 @@ public class AdminController implements Initializable {
             try {
                 File imgFile = new File("src/main/resources/com/pos/flightmanagementsystem/image/" + imagePath);
                 if (imgFile.exists()) {
-                    Image image = new Image(imgFile.toURI().toString());
-                    topNavAvatarCircle.setFill(new ImagePattern(image));
+                    topNavAvatarCircle.setFill(new ImagePattern(new Image(imgFile.toURI().toString())));
                 } else {
                     URL url = getClass().getResource("/com/pos/flightmanagementsystem/image/" + imagePath);
-                    if (url != null) {
-                        Image image = new Image(url.toExternalForm());
-                        topNavAvatarCircle.setFill(new ImagePattern(image));
-                    }
+                    if (url != null) topNavAvatarCircle.setFill(new ImagePattern(new Image(url.toExternalForm())));
                 }
-            } catch (Exception e) {
-                System.err.println("Could not load profile picture: " + imagePath);
-            }
+            } catch (Exception e) { e.printStackTrace(); }
         }
     }
 
     // ==========================================
-    // 🌟 PROFILE MODAL FLOATING ANIMATION 🌟
+    // 🌟 TOP NAV PROFILE POPUP 🌟
     // ==========================================
     @FXML
-    void clickProfile(MouseEvent event) {
+    void openProfilePopup(MouseEvent event) {
+        if (isProfileOpen) return;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Profile.fxml"));
-            Parent modalView = loader.load();
+            Parent profileRoot = loader.load();
 
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
 
-            StackPane overlay = new StackPane(modalView);
-            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
+            updateStylesheets(profileRoot.getStylesheets());
+            profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
 
-            Node mainContent = rightSideStack.getChildren().get(0);
-            BoxBlur blur = new BoxBlur(12, 12, 3);
-            mainContent.setEffect(blur);
+            profilePopupContainer.getChildren().setAll(profileRoot);
+            profileOverlayBg.setVisible(true);
+            isProfileOpen = true;
 
             Bounds sourceBounds = navProfileBox.localToScene(navProfileBox.getBoundsInLocal());
-            double sourceCenterX = sourceBounds.getMinX() + (sourceBounds.getWidth() / 2);
-            double sourceCenterY = sourceBounds.getMinY() + (sourceBounds.getHeight() / 2);
-
             Bounds rootBounds = rightSideStack.localToScene(rightSideStack.getBoundsInLocal());
-            double rootCenterX = rootBounds.getMinX() + (rootBounds.getWidth() / 2);
-            double rootCenterY = rootBounds.getMinY() + (rootBounds.getHeight() / 2);
+            double startX = (sourceBounds.getMinX() + (sourceBounds.getWidth() / 2)) - (rootBounds.getMinX() + (rootBounds.getWidth() / 2));
+            double startY = (sourceBounds.getMinY() + (sourceBounds.getHeight() / 2)) - (rootBounds.getMinY() + (rootBounds.getHeight() / 2));
 
-            double startX = sourceCenterX - rootCenterX;
-            double startY = sourceCenterY - rootCenterY;
+            profilePopupContainer.setTranslateX(startX);
+            profilePopupContainer.setTranslateY(startY);
+            profilePopupContainer.setScaleX(0.05);
+            profilePopupContainer.setScaleY(0.05);
+            profilePopupContainer.setOpacity(0.0);
 
-            controller.setCloseCallback(() -> closeProfileModal(overlay, mainContent, startX, startY));
-            overlay.setOnMouseClicked(e -> {
-                if (e.getTarget() == overlay) closeProfileModal(overlay, mainContent, startX, startY);
-            });
+            controller.setCloseCallback(() -> closeProfileModal(startX, startY));
 
-            StackPane.setAlignment(modalView, Pos.CENTER);
+            Node mainContent = rightSideStack.getChildren().get(0);
+            mainContent.setEffect(new BoxBlur(12, 12, 3));
 
-            // 🌟 Animation စတင်မည့် နေရာနှင့် အရွယ်အစား 🌟
-            modalView.setTranslateX(startX);
-            modalView.setTranslateY(startY);
-            modalView.setScaleX(0.05); // 0 အစား 0.05 မှစ၍ rendering ပို smooth ဖြစ်စေရန်
-            modalView.setScaleY(0.05);
-            modalView.setOpacity(0.0); // ရုတ်တရက်ပေါ်မလာစေရန် Opacity 0 မှစပါမည်
-
-            rightSideStack.getChildren().add(overlay);
-
-            // 🌟 ကြီးလာခြင်းနှင့် ရွေ့လျားခြင်း နှစ်ခုလုံးအတွက် Interpolator တစ်ခုတည်းကိုသာ တွဲသုံးပါမည် 🌟
             Interpolator smoothOvershoot = new Interpolator() {
                 @Override
                 protected double curve(double t) {
-                    double tension = 1.1; // သိပ်မခုန်လွန်းဘဲ Smooth ဖြစ်အောင် Tension လျှော့ထားပါသည်
+                    double tension = 1.1;
                     t -= 1.0;
                     return t * t * ((tension + 1) * t + tension) + 1.0;
                 }
             };
 
-            ScaleTransition scaleUp = new ScaleTransition(Duration.millis(400), modalView);
-            scaleUp.setToX(1.0);
-            scaleUp.setToY(1.0);
-            scaleUp.setInterpolator(smoothOvershoot);
+            ScaleTransition scale = new ScaleTransition(Duration.millis(400), profilePopupContainer);
+            scale.setToX(1.0); scale.setToY(1.0); scale.setInterpolator(smoothOvershoot);
+            TranslateTransition translate = new TranslateTransition(Duration.millis(400), profilePopupContainer);
+            translate.setToX(0); translate.setToY(0); translate.setInterpolator(smoothOvershoot);
+            FadeTransition fade = new FadeTransition(Duration.millis(300), profilePopupContainer); fade.setToValue(1.0);
+            FadeTransition bgFade = new FadeTransition(Duration.millis(300), profileOverlayBg); bgFade.setFromValue(0.0); bgFade.setToValue(1.0);
 
-            TranslateTransition moveCenter = new TranslateTransition(Duration.millis(400), modalView);
-            moveCenter.setToX(0);
-            moveCenter.setToY(0);
-            moveCenter.setInterpolator(smoothOvershoot);
-
-            // Card လေးကို ဖြည်းဖြည်းချင်း လင်းလာစေမည့် Fade Effect ထပ်ပေါင်းထည့်ထားပါသည်
-            FadeTransition fadeModal = new FadeTransition(Duration.millis(300), modalView);
-            fadeModal.setToValue(1.0);
-
-            FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), overlay);
-            fadeOverlay.setFromValue(0.0);
-            fadeOverlay.setToValue(1.0);
-
-            ParallelTransition pt = new ParallelTransition(scaleUp, moveCenter, fadeModal, fadeOverlay);
+            ParallelTransition pt = new ParallelTransition(translate, scale, fade, bgFade);
             pt.play();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    void closeProfilePopup(MouseEvent event) {
+        if (event.getTarget() == profileOverlayBg) {
+            Bounds sourceBounds = navProfileBox.localToScene(navProfileBox.getBoundsInLocal());
+            Bounds rootBounds = rightSideStack.localToScene(rightSideStack.getBoundsInLocal());
+            double startX = (sourceBounds.getMinX() + (sourceBounds.getWidth() / 2)) - (rootBounds.getMinX() + (rootBounds.getWidth() / 2));
+            double startY = (sourceBounds.getMinY() + (sourceBounds.getHeight() / 2)) - (rootBounds.getMinY() + (rootBounds.getHeight() / 2));
+            closeProfileModal(startX, startY);
         }
     }
 
-    private void closeProfileModal(StackPane overlay, Node mainContent, double endX, double endY) {
-        Node modalView = overlay.getChildren().get(0);
+    private void closeProfileModal(double endX, double endY) {
+        TranslateTransition translate = new TranslateTransition(Duration.millis(300), profilePopupContainer);
+        translate.setToX(endX); translate.setToY(endY); translate.setInterpolator(Interpolator.EASE_IN);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(300), profilePopupContainer);
+        scale.setToX(0.05); scale.setToY(0.05); scale.setInterpolator(Interpolator.EASE_IN);
+        FadeTransition fade = new FadeTransition(Duration.millis(300), profilePopupContainer); fade.setToValue(0.0);
+        FadeTransition bgFade = new FadeTransition(Duration.millis(300), profileOverlayBg); bgFade.setToValue(0.0);
 
-        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(250), modalView);
-        scaleDown.setToX(0.05);
-        scaleDown.setToY(0.05);
-        scaleDown.setInterpolator(Interpolator.EASE_IN);
-
-        TranslateTransition moveBack = new TranslateTransition(Duration.millis(250), modalView);
-        moveBack.setToX(endX);
-        moveBack.setToY(endY);
-        moveBack.setInterpolator(Interpolator.EASE_IN);
-
-        FadeTransition fadeOutModal = new FadeTransition(Duration.millis(200), modalView);
-        fadeOutModal.setToValue(0.0);
-
-        FadeTransition fadeOutOverlay = new FadeTransition(Duration.millis(250), overlay);
-        fadeOutOverlay.setToValue(0.0);
-
-        ParallelTransition pt = new ParallelTransition(scaleDown, moveBack, fadeOutModal, fadeOutOverlay);
+        ParallelTransition pt = new ParallelTransition(translate, scale, fade, bgFade);
         pt.setOnFinished(e -> {
-            rightSideStack.getChildren().remove(overlay);
-            mainContent.setEffect(null);
+            profileOverlayBg.setVisible(false);
+            profilePopupContainer.getChildren().clear();
+            isProfileOpen = false;
+            rightSideStack.getChildren().get(0).setEffect(null);
         });
         pt.play();
     }
 
-    // ==========================================
-    // THEME TOGGLE, NAV BUTTONS & LOGOUT
-    // ==========================================
-
     @FXML
     public void toggleTheme(MouseEvent event) {
         isDarkMode = !isDarkMode;
-
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb);
         tt.setToX(isDarkMode ? 0 : 24);
         tt.setInterpolator(Interpolator.EASE_BOTH);
         tt.play();
 
-        String thumbBaseStyle = "-fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;";
-
         if (isDarkMode) {
             themeIcon.setContent(MOON_SVG);
-            themeThumb.setStyle("-fx-background-color: #00D4FF; " + thumbBaseStyle);
+            themeThumb.setStyle("-fx-background-color: #00D4FF; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
         } else {
             themeIcon.setContent(SUN_SVG);
-            themeThumb.setStyle("-fx-background-color: #F59E0B; " + thumbBaseStyle);
+            themeThumb.setStyle("-fx-background-color: #F59E0B; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
         }
-
         updateTheme();
     }
 
     private void updateTheme() {
         updateStylesheets(rootPane.getStylesheets());
-
         if (mainContentArea != null && !mainContentArea.getChildren().isEmpty()) {
-            Node activePage = mainContentArea.getChildren().get(0);
-            if (activePage instanceof Parent) {
-                updateStylesheets(((Parent) activePage).getStylesheets());
-            }
+            Node rightPage = mainContentArea.getChildren().get(0);
+            if (rightPage instanceof Parent) updateStylesheets(((Parent) rightPage).getStylesheets());
+        }
+        if (profilePopupContainer != null && !profilePopupContainer.getChildren().isEmpty()) {
+            Node profilePage = profilePopupContainer.getChildren().get(0);
+            if (profilePage instanceof Parent) updateStylesheets(((Parent) profilePage).getStylesheets());
         }
         Scene scene = rootPane.getScene();
-        if (scene != null) {
-            updateStylesheets(scene.getStylesheets());
-        }
+        if (scene != null) updateStylesheets(scene.getStylesheets());
     }
 
     private void updateStylesheets(ObservableList<String> stylesheets) {
         for (int i = 0; i < stylesheets.size(); i++) {
             String cssPath = stylesheets.get(i);
-            if (isDarkMode && cssPath.contains("Light")) {
-                stylesheets.set(i, cssPath.replace("Light", "Dark"));
-            } else if (!isDarkMode && cssPath.contains("Dark")) {
-                stylesheets.set(i, cssPath.replace("Dark", "Light"));
-            }
+            if (isDarkMode && cssPath.contains("Light")) stylesheets.set(i, cssPath.replace("Light", "Dark"));
+            else if (!isDarkMode && cssPath.contains("Dark")) stylesheets.set(i, cssPath.replace("Dark", "Light"));
         }
     }
 
     private void setActiveButton(Button clickedButton) {
         for (Button btn : navButtons) {
-            if (btn != null) {
-                btn.getStyleClass().remove("super-nav-button-active");
-            }
+            if (btn != null) btn.getStyleClass().remove("super-nav-button-active");
         }
-        if (clickedButton != null && !clickedButton.getStyleClass().contains("super-nav-button-active")) {
-            clickedButton.getStyleClass().add("super-nav-button-active");
-        }
+        if (clickedButton != null) clickedButton.getStyleClass().add("super-nav-button-active");
     }
 
     private void loadPage(String fxmlFileName) {
         try {
-            String path = "/com/pos/flightmanagementsystem/view/" + fxmlFileName;
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/" + fxmlFileName));
             Parent newView = loader.load();
-
             updateStylesheets(newView.getStylesheets());
             newView.setTranslateX(800);
-
-            if (mainContentArea != null && !mainContentArea.getChildren().isEmpty()) {
-                Node currentView = mainContentArea.getChildren().get(0);
-
+            Node currentView = mainContentArea.getChildren().isEmpty() ? null : mainContentArea.getChildren().get(0);
+            if (currentView != null) {
                 TranslateTransition slideOut = new TranslateTransition(Duration.millis(400), currentView);
-                slideOut.setToX(800);
-                slideOut.setInterpolator(Interpolator.EASE_IN);
-
+                slideOut.setToX(800); slideOut.setInterpolator(Interpolator.EASE_IN);
                 slideOut.setOnFinished(e -> {
                     mainContentArea.getChildren().clear();
                     mainContentArea.getChildren().add(newView);
-
                     TranslateTransition slideIn = new TranslateTransition(Duration.millis(400), newView);
-                    slideIn.setToX(0);
-                    slideIn.setInterpolator(Interpolator.EASE_OUT);
-                    slideIn.play();
+                    slideIn.setToX(0); slideIn.setInterpolator(Interpolator.EASE_OUT); slideIn.play();
                 });
                 slideOut.play();
             } else {
-                if (mainContentArea != null) {
-                    mainContentArea.getChildren().add(newView);
-                    TranslateTransition slideIn = new TranslateTransition(Duration.millis(800), newView);
-                    slideIn.setToX(0);
-                    slideIn.setInterpolator(Interpolator.EASE_OUT);
-                    slideIn.play();
-                }
+                mainContentArea.getChildren().add(newView);
+                TranslateTransition slideIn = new TranslateTransition(Duration.millis(800), newView);
+                slideIn.setToX(0); slideIn.setInterpolator(Interpolator.EASE_OUT); slideIn.play();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
+    // 🌟 SIDEBAR BUTTON ACTIONS 🌟
     @FXML void clickDashboard(ActionEvent event) { setActiveButton(btnDashboard); loadPage("SuperAdminDashboard.fxml"); }
+
+    // Friend's code for Sidebar Profile Button
+    @FXML void clickProfile(ActionEvent event) { setActiveButton(btnProfile); loadPage("StaffProfile.fxml"); }
+
     @FXML void clickFlightSchedule(ActionEvent event) { setActiveButton(btnFlightSchedule); loadPage("AdminFlightSchedule.fxml"); }
     @FXML void clickViewCity(ActionEvent event) { setActiveButton(btnViewCity); loadPage("AdminCity.fxml"); }
     @FXML void clickBookingManagement(ActionEvent event) { setActiveButton(btnBookingManagement); loadPage("AdminBookingManagement.fxml"); }
@@ -316,12 +265,16 @@ public class AdminController implements Initializable {
 
     @FXML
     void clickLogout(ActionEvent event) {
-        if (mainContentArea != null && !mainContentArea.getChildren().isEmpty()) {
-            Node centerNode = mainContentArea.getChildren().get(0);
+        if (LoginController.loggedInUser != null) {
+            insertLog(LoginController.loggedInUser.getUserId(), "Log out");
+            LoginController.loggedInUser = null;
+        }
+
+        Node centerNode = rootPane.getCenter();
+        if (centerNode != null) {
             TranslateTransition slideOutRight = new TranslateTransition(Duration.millis(600), centerNode);
             slideOutRight.setToX(800);
             slideOutRight.setInterpolator(Interpolator.EASE_IN);
-
             slideOutRight.setOnFinished(e -> performLogout(event));
             slideOutRight.play();
         } else {
@@ -331,17 +284,22 @@ public class AdminController implements Initializable {
 
     private void performLogout(ActionEvent event) {
         try {
-            Scene currentScene = ((Node) event.getSource()).getScene();
-            Stage stage = (Stage) currentScene.getWindow();
-
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
-            Parent root = loader.load();
-
-            currentScene.setRoot(root);
+            stage.setScene(new Scene(loader.load()));
+            stage.setMaximized(false);
             stage.setMaximized(true);
+            stage.show();
+        } catch (IOException e) { e.printStackTrace(); }
+    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 }
