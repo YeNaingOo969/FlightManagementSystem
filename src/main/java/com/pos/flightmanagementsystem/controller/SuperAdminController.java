@@ -211,35 +211,62 @@ public class SuperAdminController implements Initializable {
     // ==========================================
     // LOGOUT ANIMATION & LOGIC
     // ==========================================
-    @FXML void clickLogout(ActionEvent event) {
-        TranslateTransition leftAnim = new TranslateTransition(Duration.millis(700), sidebar);
-        leftAnim.setByX(-800);
-        leftAnim.setInterpolator(Interpolator.EASE_IN);
+    @FXML
+    void clickLogout(ActionEvent event) {
+        // 🌟 ၁။ ဝင်ထားတဲ့ User ရှိ/မရှိ စစ်ဆေးပြီး ရှိရင် Log Out မှတ်တမ်းတင်မယ်
+        if (com.pos.flightmanagementsystem.controller.LoginController.loggedInUser != null) {
+            int currentUserId = com.pos.flightmanagementsystem.controller.LoginController.loggedInUser.getUserId();
 
-        Node rightContent = rootPane.getCenter();
-        TranslateTransition rightAnim = new TranslateTransition(Duration.millis(700), rightContent);
-        if (rightContent != null) {
-            rightAnim.setByX(800);
-            rightAnim.setInterpolator(Interpolator.EASE_IN);
+            // Database logs table ထဲမှာ "Log out" ဆိုပြီး သွားမှတ်မယ်
+            insertLog(currentUserId, "Log out");
+
+            // မှတ်တမ်းတင်ပြီးရင် ဝင်ထားတဲ့ User Data ကို ရှင်းထုတ်ပါမယ်
+            com.pos.flightmanagementsystem.controller.LoginController.loggedInUser = null;
         }
 
-        ParallelTransition pt = new ParallelTransition(leftAnim, rightAnim);
-        pt.setOnFinished(e -> loadLoginPage(event));
-        pt.play();
+        // 🌟 ၂။ မူလ Animation နှင့် Page အကူး Code များ
+        Node centerNode = rootPane.getCenter();
+
+        if (centerNode != null) {
+            TranslateTransition slideOutRight = new TranslateTransition(Duration.millis(600), centerNode);
+            slideOutRight.setToX(800);
+            slideOutRight.setInterpolator(Interpolator.EASE_IN);
+
+            slideOutRight.setOnFinished(e -> performLogout(event));
+            slideOutRight.play();
+        } else {
+            performLogout(event);
+        }
     }
 
-    private void loadLoginPage(ActionEvent event) {
+    private void performLogout(ActionEvent event) {
         try {
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            Stage stage = (Stage) currentScene.getWindow();
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
             Parent root = loader.load();
-            stage.setScene(new Scene(root));
 
-            if (stage.isMaximized()) stage.setMaximized(false);
+            currentScene.setRoot(root);
             stage.setMaximized(true);
 
-            stage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 🌟 Logout အတွက် Database ထဲ Data လှမ်းထည့်မည့် Method (ဒီ Controller ထဲမှာပါ တစ်ခါတည်း ထည့်ထားပေးပါ)
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+
+        try (java.sql.Connection conn = com.pos.flightmanagementsystem.controller.DatabaseConnection.getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+
+        } catch (java.sql.SQLException e) {
             e.printStackTrace();
         }
     }

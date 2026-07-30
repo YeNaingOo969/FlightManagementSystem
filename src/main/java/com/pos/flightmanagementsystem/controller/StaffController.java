@@ -195,38 +195,61 @@ public class StaffController implements Initializable {
 
     @FXML
     void clickLogout(ActionEvent event) {
-        TranslateTransition slideOutLeft = new TranslateTransition(Duration.millis(600), sidebar);
-        slideOutLeft.setToX(-300);
-        slideOutLeft.setInterpolator(Interpolator.EASE_IN);
+        // 🌟 ၁။ ဝင်ထားတဲ့ User ရှိ/မရှိ စစ်ဆေးပြီး ရှိရင် Log Out မှတ်တမ်းတင်မယ်
+        if (com.pos.flightmanagementsystem.controller.LoginController.loggedInUser != null) {
+            int currentUserId = com.pos.flightmanagementsystem.controller.LoginController.loggedInUser.getUserId();
 
-        Node centerNode = rootPane.getCenter();
-        TranslateTransition slideOutRight = new TranslateTransition(Duration.millis(600), centerNode);
-        if (centerNode != null) {
-            slideOutRight.setToX(800);
-            slideOutRight.setInterpolator(Interpolator.EASE_IN);
+            // Database logs table ထဲမှာ "Log out" ဆိုပြီး သွားမှတ်မယ်
+            insertLog(currentUserId, "Log out");
+
+            // မှတ်တမ်းတင်ပြီးရင် ဝင်ထားတဲ့ User Data ကို ရှင်းထုတ်ပါမယ်
+            com.pos.flightmanagementsystem.controller.LoginController.loggedInUser = null;
         }
 
-        ParallelTransition ptOut = new ParallelTransition(slideOutLeft, slideOutRight);
-        ptOut.setOnFinished(e -> {
-            try {
-                // ၁။ လက်ရှိ ဖွင့်ထားတဲ့ Window (Stage) နှင့် Scene ကို ယူပါမည်
-                Scene currentScene = ((Node) event.getSource()).getScene();
-                Stage stage = (Stage) currentScene.getWindow();
+        // 🌟 ၂။ မူလ Animation နှင့် Page အကူး Code များ
+        Node centerNode = rootPane.getCenter();
 
-                // ၂။ Login Page ကို Load လုပ်ပါမည်
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
-                Parent root = loader.load();
+        if (centerNode != null) {
+            TranslateTransition slideOutRight = new TranslateTransition(Duration.millis(600), centerNode);
+            slideOutRight.setToX(800);
+            slideOutRight.setInterpolator(Interpolator.EASE_IN);
 
-                // 🌟 ၃။ အဓိက ပြင်ဆင်ချက် - Scene အသစ်မဆောက်တော့ဘဲ လက်ရှိ Scene ရဲ့ Root နေရာမှာပဲ Login ကို အစားထိုးလိုက်ပါမည်
-                currentScene.setRoot(root);
+            slideOutRight.setOnFinished(e -> performLogout(event));
+            slideOutRight.play();
+        } else {
+            performLogout(event);
+        }
+    }
 
-                // Window ကို Full Screen အနေအထား ဆက်ဖြစ်နေစေရန် သေချာစေခြင်း
-                stage.setMaximized(true);
+    private void performLogout(ActionEvent event) {
+        try {
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            Stage stage = (Stage) currentScene.getWindow();
 
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-        ptOut.play();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
+            Parent root = loader.load();
+
+            currentScene.setRoot(root);
+            stage.setMaximized(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 🌟 Logout အတွက် Database ထဲ Data လှမ်းထည့်မည့် Method (ဒီ Controller ထဲမှာပါ တစ်ခါတည်း ထည့်ထားပေးပါ)
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+
+        try (java.sql.Connection conn = com.pos.flightmanagementsystem.controller.DatabaseConnection.getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
