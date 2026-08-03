@@ -30,14 +30,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+
 public class LoginController implements Initializable {
+    public static com.pos.flightmanagementsystem.model.User loggedInUser;
 
     @FXML private StackPane animationContainer;
     @FXML private Circle orbitPath;
@@ -280,9 +281,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    // ==========================================
-    // ENTER KEY LOGIN LOGIC
-    // ==========================================
     private void handleEnterKey(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             attemptLogin();
@@ -303,7 +301,7 @@ public class LoginController implements Initializable {
             return;
         }
 
-        String query = "SELECT role FROM users WHERE username = ? AND password = ?";
+        String query = "SELECT user_id, role FROM users WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -312,8 +310,20 @@ public class LoginController implements Initializable {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                // =============== LOGIN SUCCESS ===============
+                int userId = rs.getInt("user_id");
                 String role = rs.getString("role");
+
+                // 🌟 Login ဝင်လာတဲ့ User ရဲ့ အချက်အလက်တွေကို User object ထဲထည့်ပြီး တစ်စနစ်လုံးစာ မှတ်ထားပါမယ်
+                loggedInUser = new com.pos.flightmanagementsystem.model.User();
+                loggedInUser.setUserId(userId);
+                loggedInUser.setRole(role);
+                // (လိုအပ်ရင် username, email စတာတွေကိုပါ rs.getString နဲ့ ဆွဲထုတ်ပြီး set လုပ်ထားလို့ ရပါတယ်)
+
                 Stage stage = (Stage) txtUsername.getScene().getWindow();
+
+                // Login အောင်မြင်ကြောင်း မှတ်တမ်းတင်ခြင်း
+                insertLog(userId, "Login Successful");
 
                 if (role.equalsIgnoreCase("Super Admin") || role.equalsIgnoreCase("superadmin")) {
                     playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml");
@@ -324,12 +334,58 @@ public class LoginController implements Initializable {
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
                 }
-            } else {
+            }
+             else {
+                // =============== LOGIN FAILED ===============
+                // Login Failed ဖြစ်သွားတဲ့အတွက် Username အမှန်ရှိ/မရှိ အရင်ရှာပါမယ်
+                int failedUserId = 0;
+                String checkUserQuery = "SELECT user_id FROM users WHERE username = ?";
+                try (PreparedStatement checkStmt = conn.prepareStatement(checkUserQuery)) {
+                    checkStmt.setString(1, username);
+                    ResultSet checkRs = checkStmt.executeQuery();
+                    if (checkRs.next()) {
+                        failedUserId = checkRs.getInt("user_id"); // Username မှန်ပေမယ့် Password မှားခဲ့ရင် ဒီထဲဝင်ပါမယ်
+                    }
+                }
+
+                // Login Failed ဖြစ်ကြောင်း Database ထဲ မှတ်တမ်းတင်ခြင်း
+                insertLog(failedUserId, "Login Failed");
+
                 showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to connect to the database.");
+        }
+    }
+
+    // ==========================================
+    // 🌟 Logs Table သို့ Data ထည့်သွင်းသည့် Method (Updated for Both Success & Failed)
+    // ==========================================
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+
+            // userId > 0 ဆိုရင် ID အမှန်ထည့်မည်၊ မဟုတ်ရင် (Username ပါ မှားနေရင်) null ထည့်မည်
+            if (userId > 0) {
+                pstmt.setInt(1, userId);
+            } else {
+                pstmt.setNull(1, java.sql.Types.INTEGER);
+            }
+
+            pstmt.setString(2, action);
+            int rowsInserted = pstmt.executeUpdate();
+
+            if (rowsInserted > 0) {
+                System.out.println("Log Saved: " + action);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Platform.runLater(() -> {
+                showAlert(Alert.AlertType.ERROR, "Log Insert Error", e.getMessage());
+            });
         }
     }
 
@@ -523,29 +579,23 @@ public class LoginController implements Initializable {
     // ==========================================
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
-        // UI ကို Main Thread မှ အမြဲ အပ်ဒိတ်လုပ်နိုင်ရန် သေချာစေခြင်း
         Platform.runLater(() -> {
             customAlertTitle.setText(title);
             customAlertMessage.setText(message);
 
-            // ယခင် Style Class များကို ရှင်းလင်းခြင်း
             customAlertBox.getStyleClass().removeAll("alert-error", "alert-warning", "alert-info");
 
-            // Alert အမျိုးအစားအလိုက် Theme နှင့် Icon ပြောင်းလဲခြင်း
             if (alertType == Alert.AlertType.ERROR) {
-                // ကြက်ခြေခတ် Icon
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z");
-                customAlertIcon.setFill(Color.web("#ef4444")); // Red
+                customAlertIcon.setFill(Color.web("#ef4444"));
                 customAlertBox.getStyleClass().add("alert-error");
             } else if (alertType == Alert.AlertType.WARNING) {
-                // သတိပေးတြိဂံ Icon
                 customAlertIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
-                customAlertIcon.setFill(Color.web("#f59e0b")); // Amber/Yellow
+                customAlertIcon.setFill(Color.web("#f59e0b"));
                 customAlertBox.getStyleClass().add("alert-warning");
             } else {
-                // Info (i) Icon
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
-                customAlertIcon.setFill(Color.web("#06b6d4")); // Cyan
+                customAlertIcon.setFill(Color.web("#06b6d4"));
                 customAlertBox.getStyleClass().add("alert-info");
             }
 
@@ -557,7 +607,6 @@ public class LoginController implements Initializable {
             FadeTransition fadeOverlay = new FadeTransition(Duration.millis(300), customAlertOverlay);
             fadeOverlay.setToValue(1.0);
 
-            // Bouncy Pop-up Effect
             ScaleTransition scaleBox = new ScaleTransition(Duration.millis(400), customAlertBox);
             scaleBox.setToX(1.0);
             scaleBox.setToY(1.0);

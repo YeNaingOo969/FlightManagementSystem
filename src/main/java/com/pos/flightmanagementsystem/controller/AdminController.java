@@ -138,6 +138,18 @@ public class AdminController implements Initializable {
     // ==========================================
     @FXML
     void clickLogout(ActionEvent event) {
+        // 🌟 ၁။ ဝင်ထားတဲ့ User ရှိ/မရှိ စစ်ဆေးပြီး ရှိရင် Log Out မှတ်တမ်းတင်မယ်
+        if (com.pos.flightmanagementsystem.controller.LoginController.loggedInUser != null) {
+            int currentUserId = com.pos.flightmanagementsystem.controller.LoginController.loggedInUser.getUserId();
+
+            // Database logs table ထဲမှာ "Log out" ဆိုပြီး သွားမှတ်မယ်
+            insertLog(currentUserId, "Log out");
+
+            // မှတ်တမ်းတင်ပြီးရင် ဝင်ထားတဲ့ User Data ကို ရှင်းထုတ်ပါမယ်
+            com.pos.flightmanagementsystem.controller.LoginController.loggedInUser = null;
+        }
+
+        // 🌟 ၂။ မူလ Animation နှင့် Page အကူး Code များ
         Node centerNode = rootPane.getCenter();
 
         if (centerNode != null) {
@@ -164,6 +176,22 @@ public class AdminController implements Initializable {
             stage.setMaximized(true);
 
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 🌟 Logout အတွက် Database ထဲ Data လှမ်းထည့်မည့် Method (ဒီ Controller ထဲမှာပါ တစ်ခါတည်း ထည့်ထားပေးပါ)
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+
+        try (java.sql.Connection conn = com.pos.flightmanagementsystem.controller.DatabaseConnection.getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+
+        } catch (java.sql.SQLException e) {
             e.printStackTrace();
         }
     }
