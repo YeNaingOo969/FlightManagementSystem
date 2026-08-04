@@ -39,7 +39,7 @@ public class SuperAdminSystemToolController implements Initializable {
     @FXML private Button btnBackupNow;
     @FXML private Button btnExportSql;
 
-    // --- TableView Variables (Updated to new Backup Model) ---
+    // --- TableView Variables ---
     @FXML private TableView<Backup> tvBackupHistory;
     @FXML private TableColumn<Backup, LocalDateTime> colDate;
     @FXML private TableColumn<Backup, String> colFileName;
@@ -59,7 +59,6 @@ public class SuperAdminSystemToolController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 1. Setup Table Columns (Model ထဲက Variable နာမည်အသစ်များအတိုင်း ပြင်ဆင်ထားသည်)
         colDate.setCellValueFactory(new PropertyValueFactory<>("backupDate"));
         colFileName.setCellValueFactory(new PropertyValueFactory<>("fileName"));
         colSize.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
@@ -67,10 +66,7 @@ public class SuperAdminSystemToolController implements Initializable {
 
         tvBackupHistory.setItems(backupList);
 
-        // 2. Load Existing Backup History
         loadBackupHistory();
-
-        // 3. Start 24-Hour Scheduled Backup Background Task
         startScheduledBackupTask();
     }
 
@@ -78,14 +74,11 @@ public class SuperAdminSystemToolController implements Initializable {
     // 24-HOUR SCHEDULED BACKUP LOGIC
     // ==========================================
     private void startScheduledBackupTask() {
-        // App ကို ပိတ်လိုက်ရင် Thread ပါ သေသွားအောင် Daemon Thread ဖြင့် တည်ဆောက်ခြင်း
         scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread thread = new Thread(r);
             thread.setDaemon(true);
             return thread;
         });
-
-        // (၁ ရက် = ၂၄ နာရီ) တစ်ကြိမ် အလုပ်လုပ်မည်
         scheduler.scheduleAtFixedRate(this::performScheduledBackup, 24, 24, TimeUnit.HOURS);
     }
 
@@ -100,17 +93,14 @@ public class SuperAdminSystemToolController implements Initializable {
         String fileName = "flight_db_scheduled_" + timestamp + ".sql";
 
         String fullOutputPath = backupDir.getAbsolutePath() + File.separator + fileName;
-
-        // Action Type ကို "Scheduled Backup" ဟု ခွဲခြားပေးမည်
         processDatabaseExport(fullOutputPath, fileName, "Scheduled Backup");
     }
 
     // ==========================================
-    // DATABASE HISTORY LOGIC (Updated for 'backups' table)
+    // DATABASE HISTORY LOGIC
     // ==========================================
     private void loadBackupHistory() {
         backupList.clear();
-        // ER Diagram အသစ်အရ backups table ကို ပြောင်းသုံးထားသည်
         String query = "SELECT * FROM backups ORDER BY backup_date DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -124,7 +114,6 @@ public class SuperAdminSystemToolController implements Initializable {
                 String actionType = rs.getString("action_type");
                 LocalDateTime backupDate = rs.getTimestamp("backup_date").toLocalDateTime();
 
-                // Constructor အသစ်ဖြင့် ထည့်သွင်းခြင်း
                 backupList.add(new Backup(id, fileName, fileSize, actionType, backupDate));
             }
         } catch (Exception e) {
@@ -133,7 +122,6 @@ public class SuperAdminSystemToolController implements Initializable {
     }
 
     private void saveBackupHistory(String fileName, String fileSize, String actionType) {
-        // ER Diagram အသစ်အရ backups table ကို ပြောင်းသုံးထားသည်
         String query = "INSERT INTO backups (file_name, file_size, action_type, backup_date) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -253,7 +241,7 @@ public class SuperAdminSystemToolController implements Initializable {
                     String fileSize = (length / 1024) + " KB";
 
                     saveBackupHistory(fileName, fileSize, actionType);
-                    loadBackupHistory(); // Refresh Table
+                    loadBackupHistory();
 
                     showToast("Backup Successful!", "Saved securely at:\n" + outputPath, true);
                 } else {
@@ -264,18 +252,24 @@ public class SuperAdminSystemToolController implements Initializable {
     }
 
     // ==========================================
-    // TOAST NOTIFICATION
+    // TOAST NOTIFICATION (🌟 ပြင်ဆင်ပြီး)
     // ==========================================
     private void showToast(String title, String message, boolean isSuccess) {
         lblToastTitle.setText(title);
         lblToastMessage.setText(message);
 
         if (isSuccess) {
-            toastIconBg.setStyle("-fx-background-color: #10b981; -fx-background-radius: 50%;");
+            // အစိမ်းရောင် နောက်ခံ၊ အဖြူရောင် အမှန်ခြစ်
+            toastIconBg.setStyle("-fx-background-color: #10B981; -fx-background-radius: 50%; -fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px;");
             toastIconPath.setContent("M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z");
+            toastIconPath.setStyle("-fx-fill: #FFFFFF;"); // 🌟 အဖြူရောင်ပြောင်းပေးခြင်း 🌟
+            notificationToast.setStyle("-fx-border-color: #10B981;");
         } else {
-            toastIconBg.setStyle("-fx-background-color: #ef4444; -fx-background-radius: 50%;");
+            // အနီရောင် နောက်ခံ၊ အဖြူရောင် ကြက်ခြေခတ်
+            toastIconBg.setStyle("-fx-background-color: #EF4444; -fx-background-radius: 50%; -fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px;");
             toastIconPath.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
+            toastIconPath.setStyle("-fx-fill: #FFFFFF;"); // 🌟 အဖြူရောင်ပြောင်းပေးခြင်း 🌟
+            notificationToast.setStyle("-fx-border-color: #EF4444;");
         }
 
         notificationToast.setVisible(true);

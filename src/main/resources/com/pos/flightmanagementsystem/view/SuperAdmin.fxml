@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.SVGPath?>
 
 <BorderPane fx:id="rootPane" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminController"
@@ -19,7 +20,6 @@
     <left>
         <VBox fx:id="sidebar" prefWidth="262.0" spacing="22.0" styleClass="super-sidebar" BorderPane.alignment="CENTER">
             <children>
-                <!-- 🌟 FXML Class များနှင့် Spacing ကို Admin.fxml အတိုင်း အတိအကျ တူညီအောင် ပြင်ဆင်ထားပါသည် 🌟 -->
                 <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="super-brand">
                     <children>
                         <!-- Logo -->
@@ -110,7 +110,8 @@
             <!-- ပုံမှန် မြင်နေရမည့် Top Nav နှင့် Pages များ -->
             <BorderPane styleClass="main-content-wrapper">
                 <top>
-                    <HBox styleClass="global-top-nav" BorderPane.alignment="CENTER">
+                    <!-- 🌟 ဤနေရာတွင် fx:id="topNavBar" ထည့်သွင်းထားပါသည် 🌟 -->
+                    <HBox fx:id="topNavBar" styleClass="global-top-nav" BorderPane.alignment="CENTER">
                         <children>
                             <!-- Notification Icon -->
                             <StackPane styleClass="nav-notification-btn">
@@ -121,7 +122,7 @@
                             <HBox fx:id="navProfileBox" onMouseClicked="#openProfilePopup" styleClass="nav-profile-box">
                                 <children>
                                     <StackPane styleClass="nav-profile-avatar">
-                                        <SVGPath content="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" styleClass="nav-profile-avatar-icon" />
+                                        <Circle fx:id="topNavAvatarCircle" fill="#31C4B4" radius="20.0" />
                                     </StackPane>
                                     <VBox styleClass="nav-profile-text-box">
                                         <children>
@@ -142,7 +143,6 @@
             <!-- Floating Profile Overlay Layer -->
             <StackPane fx:id="profileOverlayBg" onMouseClicked="#closeProfilePopup" style="-fx-background-color: rgba(6, 8, 13, 0.6);" visible="false">
                 <children>
-                    <!-- Profile.fxml ကို ဤ Container အတွင်းသို့ Load လုပ်မည် -->
                     <StackPane fx:id="profilePopupContainer" maxHeight="-Infinity" maxWidth="-Infinity" StackPane.alignment="CENTER" />
                 </children>
             </StackPane>

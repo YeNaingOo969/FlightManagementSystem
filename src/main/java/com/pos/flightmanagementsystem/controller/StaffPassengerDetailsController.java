@@ -2,8 +2,11 @@ package com.pos.flightmanagementsystem.controller;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,20 +14,27 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
@@ -68,9 +78,6 @@ public class StaffPassengerDetailsController implements Initializable {
         cmbNationality.getSelectionModel().selectFirst();
     }
 
-    // ==========================================
-    // 🌟 MMK ဖြင့် Total Price ကို တွက်ချက်ပြသခြင်း
-    // ==========================================
     public void setFlightData(String flightNo, String from, String to, String date, String price, int passengers) {
         this.currentFlightNo = flightNo;
         this.currentFrom = from;
@@ -85,16 +92,177 @@ public class StaffPassengerDetailsController implements Initializable {
         lblDeparture.setText(date);
 
         try {
-            // 🌟 ဥပမာ - "980,000 MMK" မှ ဂဏန်းများကိုသာ ဖြတ်ထုတ်ခြင်း
             double singlePrice = Double.parseDouble(price.replaceAll("[^\\d.]", ""));
             double totalPrice = singlePrice * passengers;
-
-            // 🌟 တွက်ချက်ပြီးသား Total ကို MMK ဖြင့် ပြန်လည်ဖော်ပြခြင်း
             lblTotalPrice.setText(String.format("%,.0f MMK", totalPrice));
         } catch (Exception e) {
-            // Error တက်ပါက မူလပါလာသော စာသားကိုသာ ပြမည်
             lblTotalPrice.setText(price);
         }
+    }
+
+    private void applyThemeRecursively(Parent node, boolean isDarkMode) {
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
+            ObservableList<String> styles = node.getStylesheets();
+            for (int i = 0; i < styles.size(); i++) {
+                String css = styles.get(i);
+                if (isDarkMode && css.contains("Light")) {
+                    styles.set(i, css.replace("Light", "Dark"));
+                } else if (!isDarkMode && css.contains("Dark")) {
+                    styles.set(i, css.replace("Dark", "Light"));
+                }
+            }
+        }
+        for (javafx.scene.Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) {
+                applyThemeRecursively((Parent) child, isDarkMode);
+            }
+        }
+    }
+
+    private boolean checkIsDarkMode() {
+        boolean isDarkMode = true;
+        Parent current = rootStackPane;
+        while (current != null) {
+            String currentStyles = current.getStylesheets().toString();
+            if (currentStyles.contains("Dark")) {
+                return true;
+            } else if (currentStyles.contains("Light")) {
+                return false;
+            }
+            current = current.getParent();
+        }
+        return isDarkMode;
+    }
+
+    // ==========================================
+    // 🌟 Animated Custom Modal Alert အသစ် 🌟
+    // ==========================================
+    private void showCustomAlert(boolean isError, String title, String message) {
+        // Overlay နောက်ခံအမည်းရောင်
+        StackPane overlay = new StackPane();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        overlay.setAlignment(Pos.CENTER);
+
+        // Alert Box Container
+        VBox dialogBox = new VBox(20);
+        dialogBox.setMaxWidth(400);
+        dialogBox.setMinHeight(180);
+        dialogBox.setMaxHeight(Region.USE_PREF_SIZE);
+
+        // အရောင်သတ်မှတ်ခြင်း (Error ဆိုလျှင် အနီ၊ Warning ဆိုလျှင် အဝါ)
+        String themeColor = isError ? "#FF4B72" : "#F59E0B";
+
+        dialogBox.setStyle("-fx-background-color: #0B0E14; -fx-border-color: " + themeColor + "; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 25px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 5);");
+
+        // Header (Title နှင့် 'X' ခလုတ်)
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label lblTitle = new Label(title);
+        lblTitle.setStyle("-fx-text-fill: " + themeColor + "; -fx-font-size: 18px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI';");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        // 'X' Button
+        Button btnCloseX = new Button();
+        SVGPath xIcon = new SVGPath();
+        xIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
+        xIcon.setFill(Color.web("#8B95A5"));
+        btnCloseX.setGraphic(xIcon);
+        btnCloseX.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
+        btnCloseX.setOnMouseEntered(e -> xIcon.setFill(Color.web("#FF4B72")));
+        btnCloseX.setOnMouseExited(e -> xIcon.setFill(Color.web("#8B95A5")));
+
+        header.getChildren().addAll(lblTitle, spacer, btnCloseX);
+
+        // Body (Icon နှင့် Message)
+        HBox body = new HBox(15);
+        body.setAlignment(Pos.CENTER_LEFT);
+
+        SVGPath icon = new SVGPath();
+        if (isError) {
+            icon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z");
+            icon.setFill(Color.web(themeColor));
+        } else {
+            icon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
+            icon.setFill(Color.web(themeColor));
+        }
+        icon.setScaleX(2.0);
+        icon.setScaleY(2.0);
+
+        StackPane iconPane = new StackPane(icon);
+        iconPane.setPrefWidth(50);
+
+        Label lblMessage = new Label(message);
+        lblMessage.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-family: 'Segoe UI';");
+        lblMessage.setWrapText(true);
+        lblMessage.setMaxWidth(300);
+
+        body.getChildren().addAll(iconPane, lblMessage);
+
+        // Footer (OK Button)
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER_RIGHT);
+
+        Button btnOk = new Button("OK");
+        String btnStyle = "-fx-background-color: transparent; -fx-border-color: " + themeColor + "; -fx-text-fill: " + themeColor + "; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-border-width: 1.5px; -fx-padding: 8px 25px; -fx-cursor: hand;";
+        String btnHoverStyle = "-fx-background-color: " + themeColor + "33; -fx-border-color: " + themeColor + "; -fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-border-width: 1.5px; -fx-padding: 8px 25px; -fx-cursor: hand;";
+
+        btnOk.setStyle(btnStyle);
+        btnOk.setOnMouseEntered(e -> btnOk.setStyle(btnHoverStyle));
+        btnOk.setOnMouseExited(e -> btnOk.setStyle(btnStyle));
+
+        footer.getChildren().add(btnOk);
+
+        // Assemble Dialog
+        dialogBox.getChildren().addAll(header, body, footer);
+        overlay.getChildren().add(dialogBox);
+        rootStackPane.getChildren().add(overlay);
+
+        // 🌟 နောက်ခံကို Blur လုပ်ခြင်း 🌟
+        GaussianBlur blur = new GaussianBlur(0);
+        mainContainer.setEffect(blur);
+        Timeline blurTimeline = new Timeline(new KeyFrame(Duration.millis(300), new KeyValue(blur.radiusProperty(), 15)));
+        blurTimeline.play();
+
+        // 🌟 အနောက်မှ အရှေ့သို့ Zoom In လုပ်၍ ပေါ်လာမည့် Animation 🌟
+        dialogBox.setScaleX(0.7);
+        dialogBox.setScaleY(0.7);
+        dialogBox.setOpacity(0);
+
+        ScaleTransition stIn = new ScaleTransition(Duration.millis(300), dialogBox);
+        stIn.setToX(1.0);
+        stIn.setToY(1.0);
+
+        FadeTransition ftIn = new FadeTransition(Duration.millis(300), dialogBox);
+        ftIn.setToValue(1.0);
+
+        ParallelTransition ptIn = new ParallelTransition(stIn, ftIn);
+        ptIn.setInterpolator(Interpolator.EASE_OUT);
+        ptIn.play();
+
+        // 🌟 အမှားခြစ် သို့မဟုတ် OK နှိပ်ပါက နောက်သို့ ပြန်ဝင်သွားမည့် Animation 🌟
+        Runnable closeAction = () -> {
+            Timeline blurOut = new Timeline(new KeyFrame(Duration.millis(300), new KeyValue(blur.radiusProperty(), 0)));
+            blurOut.setOnFinished(e -> mainContainer.setEffect(null));
+            blurOut.play();
+
+            ScaleTransition stOut = new ScaleTransition(Duration.millis(300), dialogBox);
+            stOut.setToX(0.7);
+            stOut.setToY(0.7);
+
+            FadeTransition ftOut = new FadeTransition(Duration.millis(300), dialogBox);
+            ftOut.setToValue(0.0);
+
+            ParallelTransition ptOut = new ParallelTransition(stOut, ftOut);
+            ptOut.setInterpolator(Interpolator.EASE_IN);
+            ptOut.setOnFinished(e -> rootStackPane.getChildren().remove(overlay));
+            ptOut.play();
+        };
+
+        btnCloseX.setOnAction(e -> closeAction.run());
+        btnOk.setOnAction(e -> closeAction.run());
     }
 
     @FXML
@@ -117,20 +285,17 @@ public class StaffPassengerDetailsController implements Initializable {
                 dob == null || gender == null || nationality == null ||
                 nrcPassport == null || nrcPassport.trim().isEmpty()) {
 
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Incomplete Data");
-            alert.setHeaderText(null);
-            alert.setContentText("ကျေးဇူးပြု၍ ခရီးသည်၏ အချက်အလက်များကို ပြည့်စုံစွာ ဖြည့်စွက်ပါ။");
-            alert.showAndWait();
+            // 🌟 Custom Animated Alert ကို အသုံးပြုထားပါသည် (false = Warning) 🌟
+            showCustomAlert(false, "Incomplete Data", "Please fill in all the passenger's details completely.");
             return;
         }
 
         String query = "INSERT INTO passengers (full_name, gender, nrc_passport_no, dob, nationality, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            if (conn == null) throw new Exception("Database Connection မရရှိပါ။");
+            if (conn == null) throw new Exception("Database Connection not available.");
 
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setString(1, fullName);
                 pstmt.setString(2, gender);
                 pstmt.setString(3, nrcPassport);
@@ -142,28 +307,32 @@ public class StaffPassengerDetailsController implements Initializable {
                 int rowsAffected = pstmt.executeUpdate();
 
                 if (rowsAffected > 0) {
-                    System.out.println("Passenger Data ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ။");
-                    loadSeatSelectionPage();
+                    int newPassengerId = -1;
+                    try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            newPassengerId = generatedKeys.getInt(1);
+                        }
+                    }
+                    loadSeatSelectionPage(newPassengerId);
                 } else {
-                    throw new Exception("Passenger Data သိမ်းဆည်းခြင်း မအောင်မြင်ပါ။");
+                    throw new Exception("Failed to save Passenger Data.");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Database Error");
-                alert.setHeaderText("Passenger အချက်အလက် သိမ်းဆည်းရာတွင် အမှားအယွင်းရှိနေပါသည်။");
-                alert.setContentText("Error: " + e.getMessage());
-                alert.showAndWait();
+                // 🌟 Custom Animated Alert ကို အသုံးပြုထားပါသည် (true = Error) 🌟
+                showCustomAlert(true, "Database Error", "An error occurred while saving passenger data.\nError: " + e.getMessage());
             });
         }
     }
 
-    private void loadSeatSelectionPage() {
+    private void loadSeatSelectionPage(int newPassengerId) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/StaffSeatSelection.fxml"));
             Parent nextView = loader.load();
+
+            applyThemeRecursively(nextView, checkIsDarkMode());
 
             StaffSeatSelectionController controller = loader.getController();
             controller.setFlightData(
@@ -173,7 +342,8 @@ public class StaffPassengerDetailsController implements Initializable {
                     currentDate,
                     currentPrice,
                     currentPassengers,
-                    txtFullName.getText()
+                    txtFullName.getText(),
+                    newPassengerId
             );
 
             nextView.setScaleX(0.8);
@@ -210,6 +380,8 @@ public class StaffPassengerDetailsController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent nextView = loader.load();
+
+            applyThemeRecursively(nextView, checkIsDarkMode());
 
             if (isBack) {
                 nextView.setScaleX(1.2);

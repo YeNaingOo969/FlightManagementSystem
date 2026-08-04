@@ -22,7 +22,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -76,14 +75,6 @@ public class AdminFlightScheduleController implements Initializable {
         loadFlightData();
 
         if (dpFilterDate != null) {
-            dpFilterDate.setDayCellFactory(picker -> new DateCell() {
-                @Override
-                public void updateItem(LocalDate date, boolean empty) {
-                    super.updateItem(date, empty);
-                    setDisable(empty || date.compareTo(LocalDate.now()) < 0);
-                }
-            });
-
             dpFilterDate.valueProperty().addListener((observable, oldValue, newValue) -> {
                 loadFlightData();
             });
@@ -211,11 +202,27 @@ public class AdminFlightScheduleController implements Initializable {
                     if (pstmt.executeUpdate() > 0) {
                         flightList.remove(flight);
                         showSuccessNotification("Success!", "Flight deleted successfully.");
+
+                        if (LoginController.loggedInUser != null) {
+                            insertLog(LoginController.loggedInUser.getUserId(), "Deleted Flight: " + flight.getFlightNumber());
+                        }
                     }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -228,6 +235,21 @@ public class AdminFlightScheduleController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/AdminAddFlight.fxml"));
             Parent modalView = loader.load();
+
+            // =========================================================================
+            // 🌟 Theme စစ်ဆေးပြီး သက်ဆိုင်ရာ Popup CSS ကို ဒိုင်းနမစ် (Dynamic) ချိတ်ဆက်ပေးခြင်း 🌟
+            // =========================================================================
+            if (rootStackPane != null && !rootStackPane.getStylesheets().isEmpty()) {
+                String currentMainStyle = rootStackPane.getStylesheets().get(0);
+                modalView.getStylesheets().clear(); // CSS အဟောင်းများကို ရှင်းလင်းခြင်း
+
+                if (currentMainStyle.contains("Light")) {
+                    modalView.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/AdminAddFlightLight.css").toExternalForm());
+                } else {
+                    modalView.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/AdminAddFlightDark.css").toExternalForm());
+                }
+            }
+            // =========================================================================
 
             modalView.setStyle("-fx-background-color: transparent; -fx-max-width: USE_PREF_SIZE; -fx-max-height: USE_PREF_SIZE;");
 
@@ -267,7 +289,6 @@ public class AdminFlightScheduleController implements Initializable {
                 }
             });
 
-            // 🌟 Save အောင်မြင်ပါက Custom Notification လှမ်းပြမည် 🌟
             controller.setSaveCallback((message) -> {
                 loadFlightData();
                 closeModal(overlay, mainContent, finalStartX, finalStartY);
@@ -294,7 +315,8 @@ public class AdminFlightScheduleController implements Initializable {
 
             TranslateTransition moveCenter = new TranslateTransition(Duration.millis(300), modalView);
             moveCenter.setToX(0);
-            moveCenter.setToY(0);
+            // 🌟 ကတ်ကို အောက်ရောက်မသွားစေရန် အပေါ်သို့ 45 Pixels တိုးတင်ပေးထားပါသည် 🌟
+            moveCenter.setToY(-45);
             moveCenter.setInterpolator(Interpolator.EASE_OUT);
 
             FadeTransition fadeIn = new FadeTransition(Duration.millis(300), overlay);
@@ -334,7 +356,7 @@ public class AdminFlightScheduleController implements Initializable {
     }
 
     // =========================================================================
-    // 🌟 CUSTOM TOAST NOTIFICATION (Green Success Theme) 🌟
+    // 🌟 CUSTOM TOAST NOTIFICATION
     // =========================================================================
     private void showSuccessNotification(String title, String message) {
         rootStackPane.getChildren().removeIf(node -> "custom-toast".equals(node.getId()));

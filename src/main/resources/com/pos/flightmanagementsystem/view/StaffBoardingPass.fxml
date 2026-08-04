@@ -10,7 +10,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<StackPane fx:id="modalRoot" styleClass="overlay-bg" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffBoardingPassLight.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffBoardingPassController">
+<!-- 🌟 overlay-bg ကိုဖြုတ်ပြီး transparent ဖြစ်အောင် ပြင်ဆင်ထားပါသည် -->
+<StackPane fx:id="modalRoot" style="-fx-background-color: transparent;" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffBoardingPassLight.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffBoardingPassController">
     <children>
         <VBox alignment="CENTER" maxWidth="750.0" spacing="20.0">
             <children>
@@ -18,12 +19,11 @@
                 <!-- BOARDING PASS CARD -->
                 <VBox styleClass="ticket-card">
                     <children>
-                        <!-- Top Banner (Cyberpunk Theme) -->
+                        <!-- Top Banner -->
                         <HBox alignment="CENTER_LEFT" styleClass="ticket-top-bar">
                             <children>
                                 <Label styleClass="banner-title" text="FLYPLAN AIRLINES" />
                                 <Region HBox.hgrow="ALWAYS" />
-                                <!-- 🌟 Class အမှန်ပေါ်ရန် fx:id ထည့်ထားသည် -->
                                 <Label fx:id="lblClass" styleClass="banner-class" text="ECONOMY" />
                             </children>
                         </HBox>
@@ -35,12 +35,10 @@
                                     <children>
                                         <VBox spacing="2.0">
                                             <Label styleClass="detail-label" text="PASSENGER NAME" />
-                                            <!-- 🌟 ခရီးသည်နာမည် အမှန်ပေါ်ရန် fx:id ထည့်ထားသည် -->
                                             <Label fx:id="lblPassengerName" styleClass="passenger-name" text="JOHN DOE" />
                                         </VBox>
 
                                         <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                            <!-- 🌟 From/To အမှန်ပေါ်ရန် fx:id ထည့်ထားသည် -->
                                             <Label fx:id="lblFrom" styleClass="route-text" text="RGN" />
                                             <SVGPath content="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" styleClass="route-arrow" />
                                             <Label fx:id="lblTo" styleClass="route-text" text="BKK" />
@@ -64,10 +62,13 @@
                                                 <Label styleClass="detail-label" text="Seat" />
                                                 <Label fx:id="lblSeat" styleClass="detail-value" text="1A" />
                                             </VBox>
+
+                                            <!-- 🌟 Gate အစား Payment ဖြင့် အစားထိုးထားသည် 🌟 -->
                                             <VBox spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                <Label styleClass="detail-label" text="Gate" />
-                                                <Label fx:id="lblGate" styleClass="detail-value" text="G12" />
+                                                <Label styleClass="detail-label" text="Payment" />
+                                                <Label fx:id="lblPaymentMethod" styleClass="detail-value" text="CASH" />
                                             </VBox>
+
                                         </GridPane>
                                     </children>
                                 </VBox>
@@ -77,10 +78,8 @@
                                 <VBox alignment="CENTER" spacing="15.0" styleClass="ticket-right-section">
                                     <children>
                                         <StackPane styleClass="qr-box">
-                                            <!-- 🌟 SVG ကို CSS မှ အရောင်ပြောင်းနိုင်ရန် Class ထည့်ထားပါသည် -->
                                             <SVGPath content="M2 2h8v8H2V2zm2 2v4h4V4H4zm-2 10h8v8H2v-8zm2 2v4h4v-4H4zM14 2h8v8h-8V2zm2 2v4h4V4h-4zm-2 10h2v2h-2v-2zm4 0h4v2h-4v-2zm-4 4h4v4h-4v-4zm6-2h2v6h-2v-6z" scaleX="3.0" scaleY="3.0" styleClass="qr-glyph" />
                                         </StackPane>
-                                        <!-- 🌟 SVG ကို CSS မှ အရောင်ပြောင်းနိုင်ရန် Class ထည့်ထားပါသည် -->
                                         <SVGPath content="M0,0 h3 v40 h-3 z M5,0 h5 v40 h-5 z M12,0 h2 v40 h-2 z M16,0 h6 v40 h-6 z M24,0 h3 v40 h-3 z M29,0 h5 v40 h-5 z M36,0 h2 v40 h-2 z M40,0 h6 v40 h-6 z M48,0 h3 v40 h-3 z M53,0 h4 v40 h-4 z M59,0 h2 v40 h-2 z M63,0 h5 v40 h-5 z" scaleX="1.5" styleClass="barcode-glyph" />
                                     </children>
                                 </VBox>

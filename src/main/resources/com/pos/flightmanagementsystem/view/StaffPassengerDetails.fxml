@@ -13,7 +13,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffPassengerDetails.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffPassengerDetailsController">
+<!-- 🌟 Stylesheet နာမည်တွင် Dark.css ဟု သေချာချိတ်ဆက်ထားပါသည် 🌟 -->
+<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffPassengerDetailsDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffPassengerDetailsController">
     <children>
         <VBox fx:id="mainContainer" prefHeight="680.0" prefWidth="980.0" spacing="25.0" styleClass="main-content-vbox">
             <children>
@@ -59,7 +60,6 @@
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
                                                 <Label styleClass="input-label" text="Full Name" />
-                                                <!-- 🌟 ထည့်သွင်းထားသော fx:id -->
                                                 <TextField fx:id="txtFullName" promptText="e.g. John Doe" styleClass="custom-input" />
                                             </children>
                                         </VBox>
@@ -72,14 +72,12 @@
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
                                                 <Label styleClass="input-label" text="NRC / Passport No." />
-                                                <!-- 🌟 ထည့်သွင်းထားသော fx:id -->
                                                 <TextField fx:id="txtNrcPassport" promptText="Enter NRC or Passport" styleClass="custom-input" />
                                             </children>
                                         </VBox>
                                         <VBox prefWidth="250.0" spacing="8.0">
                                             <children>
                                                 <Label styleClass="input-label" text="Date of Birth" />
-                                                <!-- 🌟 ထည့်သွင်းထားသော fx:id -->
                                                 <DatePicker fx:id="dpDateOfBirth" maxWidth="Infinity" promptText="DD/MM/YYYY" styleClass="custom-input" />
                                             </children>
                                         </VBox>
@@ -98,7 +96,6 @@
                                         <VBox prefWidth="250.0" spacing="8.0">
                                             <children>
                                                 <Label styleClass="input-label" text="Phone" />
-                                                <!-- 🌟 ထည့်သွင်းထားသော fx:id -->
                                                 <TextField fx:id="txtPhone" promptText="+95 9 123 456 789" styleClass="custom-input" />
                                             </children>
                                         </VBox>
@@ -111,7 +108,6 @@
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
                                                 <Label styleClass="input-label" text="Email Address" />
-                                                <!-- 🌟 ထည့်သွင်းထားသော fx:id -->
                                                 <TextField fx:id="txtEmail" promptText="john.doe@email.com" styleClass="custom-input" />
                                             </children>
                                         </VBox>

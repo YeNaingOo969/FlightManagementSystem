@@ -24,12 +24,14 @@
                                 <VBox alignment="CENTER_LEFT" spacing="4.0">
                                     <children>
                                         <Label styleClass="super-page-title" text="Flight Operations &amp; Schedules" />
+                                        <!-- 🌟 Dark Theme အတွက် အသုံးပြုသော super-section-subtitle သို့ ပြန်ပြောင်းထားပါသည် 🌟 -->
                                         <Label styleClass="super-section-subtitle" text="Live monitoring of departures, arrivals, and operational schedule updates." />
                                     </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS" />
 
                                 <!-- DatePicker -->
+                                <!-- 🌟 Dark Theme အတွက် သုံးသော super-date-picker သို့ ပြန်ပြောင်းထားပါသည် 🌟 -->
                                 <DatePicker fx:id="dpFilterDate" promptText="Filter by Date" styleClass="super-date-picker" />
 
                                 <!-- Add Flight Button -->
@@ -45,7 +47,7 @@
                                         <VBox spacing="4.0">
                                             <children>
                                                 <Label styleClass="super-section-title" text="Flight Schedule Details" />
-                                                <Label styleClass="super-side-copy" text="View, add, edit, and check all active flight routes and timings." />
+                                                <Label styleClass="super-section-subtitle" text="View, add, edit, and check all active flight routes and timings." />
                                             </children>
                                         </VBox>
                                     </children>
@@ -60,7 +62,6 @@
                                         <TableColumn fx:id="colTo" prefWidth="120.0" text="To" />
                                         <TableColumn fx:id="colDeparture" prefWidth="120.0" text="Departure" />
                                         <TableColumn fx:id="colArrival" prefWidth="120.0" text="Arrival" />
-                                        <!-- 🌟 CSS မှ အလယ်ကျစေရန် action-column Class အသစ်ထည့်ထားပါသည် 🌟 -->
                                         <TableColumn fx:id="colActions" prefWidth="150.0" styleClass="action-column" text="Actions" />
                                     </columns>
                                     <columnResizePolicy>

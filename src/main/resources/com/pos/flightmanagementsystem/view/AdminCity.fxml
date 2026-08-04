@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminCityDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminCityController">
+<StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminCityLight.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminCityController">
     <children>
-        <AnchorPane prefHeight="731.0" prefWidth="1031.0">
+        <AnchorPane prefHeight="731.0" prefWidth="1031.0" styleClass="super-content">
             <children>
                 <VBox spacing="20.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
                     <children>
@@ -37,9 +37,11 @@
                         </HBox>
 
                         <!-- Table Section -->
-                        <VBox spacing="20.0" styleClass="super-topbar" VBox.vgrow="ALWAYS">
+                        <!-- 🌟 ပြင်ဆင်ချက်: super-topbar အစား super-panel သို့ ပြောင်းထားပါသည် 🌟 -->
+                        <VBox spacing="20.0" styleClass="super-panel" VBox.vgrow="ALWAYS">
                             <children>
-                                <TableView fx:id="tableCities" VBox.vgrow="ALWAYS">
+                                <!-- 🌟 ပြင်ဆင်ချက်: styleClass="super-table" ထည့်သွင်းထားပါသည် 🌟 -->
+                                <TableView fx:id="tableCities" styleClass="super-table" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="colCityId" prefWidth="75.0" text="City ID" />
                                         <TableColumn fx:id="colCityCode" prefWidth="75.0" text="City Code" />

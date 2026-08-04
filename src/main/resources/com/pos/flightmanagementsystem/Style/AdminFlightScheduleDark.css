@@ -1,5 +1,5 @@
 /* =========================================================================
-   ✈️ FLIGHT SCHEDULES
+   ✈️ FLIGHT SCHEDULES (DARK THEME)
    ========================================================================= */
 
 .super-content {
@@ -14,18 +14,38 @@
 }
 
 .super-page-title { -fx-text-fill: #FFFFFF; -fx-font-size: 26px; -fx-font-weight: bold; }
-.super-section-subtitle, .super-side-copy { -fx-text-fill: #8B95A5; -fx-font-size: 13px; }
+
+/* 🌟 စာသားများ မှိန်မနေဘဲ ကြည်လင်စွာပေါ်စေရန် အရောင်သတ်မှတ်ပေးခြင်း 🌟 */
+.super-section-subtitle, .super-side-copy, .super-page-subtitle {
+        -fx-text-fill: #A0ABBD !important;
+        -fx-font-size: 13px;
+}
+
 .super-section-title { -fx-text-fill: #FFFFFF; -fx-font-size: 18px; -fx-font-weight: bold; }
 
 /* DATE PICKER */
 .super-date-picker {
         -fx-background-color: #0B0E14; -fx-border-color: #1F2633;
         -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-border-width: 1px; -fx-opacity: 1.0;
+        -fx-pref-height: 38px;
 }
-.super-date-picker > .text-field { -fx-background-color: transparent; -fx-border-width: 0; -fx-padding: 8px 12px; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #8B95A5; }
-.super-date-picker > .arrow-button { -fx-background-color: transparent; -fx-padding: 0 10px; }
-.super-date-picker > .arrow-button > .graphic { -fx-background-color: #8B95A5; }
-.super-date-picker:focused { -fx-border-color: #31C4B4; }
+.super-date-picker > .text-field {
+        -fx-background-color: transparent;
+        -fx-border-width: 0;
+        -fx-padding: 8px 12px;
+        -fx-text-fill: #FFFFFF;
+        -fx-prompt-text-fill: #8B95A5;
+}
+.super-date-picker > .arrow-button {
+        -fx-background-color: transparent;
+        -fx-padding: 0 10px;
+}
+.super-date-picker > .arrow-button > .graphic {
+        -fx-background-color: #8B95A5;
+}
+.super-date-picker:focused {
+        -fx-border-color: #31C4B4;
+}
 
 .date-picker-popup { -fx-background-color: #161B24; -fx-border-color: #1F2633; -fx-background-radius: 8px; -fx-border-radius: 8px; }
 .date-picker-popup .month-year-pane { -fx-background-color: #0B0E14; }
@@ -44,7 +64,7 @@
 .btn-primary:hover { -fx-background-color: linear-gradient(to right, #3BBAB1, #2EA39B); }
 
 /* =========================================================================
-   🌟 TABLE VIEW (Select လုပ်လျှင် မဲသွားသော ပြဿနာကို ဖြေရှင်းထားသည်)
+   🌟 TABLE VIEW
    ========================================================================= */
 .super-table, .table-view {
         -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #1A212D 0%, #0B0E14 100%);
@@ -92,7 +112,7 @@
 .btn-delete-table:hover { -fx-background-color: rgba(255, 75, 114, 0.15) !important; -fx-text-fill: #FFFFFF !important; }
 
 /* =========================================================================
-   🌟 CUSTOM TOAST NOTIFICATION (Green Success Theme)
+   🌟 CUSTOM TOAST NOTIFICATION
    ========================================================================= */
 .custom-toast-container {
         -fx-background-color: #11151E;

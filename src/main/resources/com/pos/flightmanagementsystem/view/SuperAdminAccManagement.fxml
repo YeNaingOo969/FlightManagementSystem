@@ -141,25 +141,34 @@
          </content>
       </ScrollPane>
 
-      <!-- Toast Notification -->
-      <HBox fx:id="notificationToast" prefWidth="340.0" styleClass="toast-notification-dark" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
+      <!-- 🌟 ပြင်ဆင်ထားသော TIKTOK STYLE TOAST NOTIFICATION 🌟 -->
+      <HBox fx:id="notificationToast" alignment="CENTER_LEFT" prefWidth="380.0" styleClass="toast-notification" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
          <children>
+            <!-- အစိမ်းရောင် အဝိုင်းလေးနှင့် အမှန်ခြစ် -->
             <StackPane styleClass="toast-icon-bg">
                <children>
                   <SVGPath content="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" styleClass="toast-icon-glyph" />
                </children>
             </StackPane>
-            <VBox styleClass="toast-text-box" HBox.hgrow="ALWAYS">
+
+            <!-- စာသားများ -->
+            <VBox alignment="CENTER_LEFT" styleClass="toast-text-box" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="lblToastTitle" styleClass="toast-title" text="Success!" />
                   <Label fx:id="lblToastMessage" styleClass="toast-message" text="User account created successfully." wrapText="true" />
                </children>
             </VBox>
-            <Button mnemonicParsing="false" onAction="#closeToast" styleClass="toast-close-btn">
-               <graphic>
-                  <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" styleClass="toast-close-icon" />
-               </graphic>
-            </Button>
+
+            <!-- ညာဘက်ထောင့်က ကြက်ခြေခတ် ခလုတ် -->
+            <VBox alignment="TOP_RIGHT">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#closeToast" styleClass="toast-close-btn">
+                     <graphic>
+                        <SVGPath content="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" styleClass="toast-close-icon" />
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
          </children>
       </HBox>
 

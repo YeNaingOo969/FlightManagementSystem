@@ -30,7 +30,7 @@ public class SystemLogsController implements Initializable {
 
     // --- UI Fields ---
     @FXML private ComboBox<String> cbRoleFilter;
-    @FXML private DatePicker dpDateFilter; // 🌟 DatePicker ကို ချိတ်ဆက်ထားပါသည်
+    @FXML private DatePicker dpDateFilter;
 
     // --- Table View Fields ---
     @FXML private TableView<Log> logsTable;
@@ -40,18 +40,18 @@ public class SystemLogsController implements Initializable {
     @FXML private TableColumn<Log, String> colRole;
     @FXML private TableColumn<Log, String> colAction;
 
-    // --- Data Caching (Model မပြင်ဘဲ သုံးရန်) ---
+    // --- Data Caching ---
     private Map<Integer, String> logUsernameMap = new HashMap<>();
     private Map<Integer, String> logRoleMap = new HashMap<>();
 
-    // Master Data သိမ်းထားရန်
+    // Master Data
     private ObservableList<Log> masterLogList = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupTable();
         loadLogsData();
-        setupFilters(); // 🌟 Filters များကို စတင်ရန်
+        setupFilters();
     }
 
     // ==========================================
@@ -132,20 +132,16 @@ public class SystemLogsController implements Initializable {
     // ==========================================
     // 🌟 FILTERING LOGIC (Role & Date)
     // ==========================================
-    // ==========================================
-    // 🌟 FILTERING LOGIC (Role & Date)
-    // ==========================================
     private void setupFilters() {
-        // ComboBox ပြောင်းလဲမှု နားထောင်ရန်
         if (cbRoleFilter != null) {
             cbRoleFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyDataToTable());
             cbRoleFilter.getSelectionModel().select("All");
         }
 
-        // DatePicker ပြောင်းလဲမှု နားထောင်ရန်
         if (dpDateFilter != null) {
             dpDateFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyDataToTable());
-            dpDateFilter.setValue(java.time.LocalDate.now());
+            // 🌟 ဖွင့်ဖွင့်ချင်း မှတ်တမ်းအကုန်မြင်ရစေရန် Date ကို null သတ်မှတ်ထားပါသည် 🌟
+            dpDateFilter.setValue(null);
         }
     }
 
@@ -165,19 +161,18 @@ public class SystemLogsController implements Initializable {
             // 2. Date ကို စစ်ဆေးခြင်း
             boolean matchesDate = true;
             if (dpDateFilter != null) {
-                LocalDate filterDate = dpDateFilter.getValue(); // ရွေးချယ်ထားသော Date ကို ယူမည်
+                LocalDate filterDate = dpDateFilter.getValue();
                 if (filterDate != null) {
                     LocalDateTime logTimestamp = log.getTimestamp();
                     if (logTimestamp != null) {
-                        LocalDate logDate = logTimestamp.toLocalDate(); // Timestamp ထဲမှ Date အပိုင်းကိုသာ ဆွဲထုတ်မည်
-                        matchesDate = logDate.equals(filterDate); // နေ့စွဲချင်း တူ/မတူ စစ်ဆေးမည်
+                        LocalDate logDate = logTimestamp.toLocalDate();
+                        matchesDate = logDate.equals(filterDate);
                     } else {
-                        matchesDate = false; // Timestamp မရှိပါက ဤ Date Filter ဖြင့် မပေါ်စေရန်
+                        matchesDate = false;
                     }
                 }
             }
 
-            // Role ရော Date ရော နှစ်ခုလုံး သတ်မှတ်ချက်ကိုက်ညီမှသာ (true) Table တွင် ပြမည်
             return matchesRole && matchesDate;
         });
 

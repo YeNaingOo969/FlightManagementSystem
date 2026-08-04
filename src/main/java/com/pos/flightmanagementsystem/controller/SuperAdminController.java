@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -39,6 +38,7 @@ public class SuperAdminController implements Initializable {
 
     @FXML private BorderPane rootPane;
     @FXML private VBox sidebar;
+    @FXML private HBox topNavBar;
     @FXML private StackPane rightSideStack;
     @FXML private StackPane mainContentArea;
     @FXML private StackPane profileOverlayBg;
@@ -66,18 +66,14 @@ public class SuperAdminController implements Initializable {
     private final String MOON_SVG = "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z";
     private final String SUN_SVG = "M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0 c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2 c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1 C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06 c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41 l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41 c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36 c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z";
 
+    private Button[] navButtons;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if (sidebar != null) {
-            sidebar.setTranslateX(-300);
-            TranslateTransition sidebarAnim = new TranslateTransition(Duration.millis(700), sidebar);
-            sidebarAnim.setToX(0); sidebarAnim.setInterpolator(Interpolator.EASE_OUT); sidebarAnim.play();
-        }
+        navButtons = new Button[]{btnDashboard, btnProfile, btnACManage, btnSystemLogs, btnSystemTools};
+        setActiveButton(btnDashboard);
 
-        Platform.runLater(() -> {
-            loadPage("/com/pos/flightmanagementsystem/view/SuperAdminDashboard.fxml");
-            setActiveButton(btnDashboard);
-        });
+        Platform.runLater(() -> loadPage("/com/pos/flightmanagementsystem/view/SuperAdminDashboard.fxml", false));
 
         startIconAnimations();
     }
@@ -103,9 +99,6 @@ public class SuperAdminController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 🌟 TOP NAV PROFILE POPUP 🌟
-    // ==========================================
     @FXML
     void openProfilePopup(MouseEvent event) {
         if (isProfileOpen) return;
@@ -208,64 +201,126 @@ public class SuperAdminController implements Initializable {
     }
 
     private void setActiveButton(Button clickedButton) {
-        Button[] allButtons = {btnDashboard, btnProfile, btnACManage, btnSystemLogs, btnSystemTools};
-        for (Button btn : allButtons) { if (btn != null) { btn.getStyleClass().remove("super-nav-button-active"); if (!btn.getStyleClass().contains("super-nav-button")) btn.getStyleClass().add("super-nav-button"); } }
+        for (Button btn : navButtons) { if (btn != null) { btn.getStyleClass().remove("super-nav-button-active"); if (!btn.getStyleClass().contains("super-nav-button")) btn.getStyleClass().add("super-nav-button"); } }
         if (clickedButton != null) { clickedButton.getStyleClass().remove("super-nav-button"); clickedButton.getStyleClass().add("super-nav-button-active"); }
     }
 
-    private void loadPage(String fxmlPath) {
+    private void loadPage(String fxmlPath, boolean animate) {
         Node currentPage = mainContentArea.getChildren().isEmpty() ? null : mainContentArea.getChildren().get(0);
-        if (currentPage != null) {
-            TranslateTransition slideOut = new TranslateTransition(Duration.millis(350), currentPage); slideOut.setToX(1200); slideOut.setInterpolator(Interpolator.EASE_IN); slideOut.setOnFinished(e -> showNewPage(fxmlPath, 400)); slideOut.play();
-        } else { showNewPage(fxmlPath, 700); }
+        if (currentPage != null && animate) {
+            TranslateTransition slideOut = new TranslateTransition(Duration.millis(350), currentPage); slideOut.setToX(1200); slideOut.setInterpolator(Interpolator.EASE_IN); slideOut.setOnFinished(e -> showNewPage(fxmlPath, 400, true)); slideOut.play();
+        } else { showNewPage(fxmlPath, 700, animate); }
     }
 
-    private void showNewPage(String fxmlPath, double durationMillis) {
+    private void showNewPage(String fxmlPath, double durationMillis, boolean animate) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath)); Parent newPage = loader.load();
             updateStylesheets(newPage.getStylesheets());
-            newPage.setTranslateX(1200); mainContentArea.getChildren().clear(); mainContentArea.getChildren().add(newPage);
-            TranslateTransition slideIn = new TranslateTransition(Duration.millis(durationMillis), newPage); slideIn.setToX(0); slideIn.setInterpolator(Interpolator.EASE_OUT); slideIn.play();
+            mainContentArea.getChildren().clear(); mainContentArea.getChildren().add(newPage);
+            if (animate) {
+                newPage.setTranslateX(1200);
+                TranslateTransition slideIn = new TranslateTransition(Duration.millis(durationMillis), newPage); slideIn.setToX(0); slideIn.setInterpolator(Interpolator.EASE_OUT); slideIn.play();
+            } else {
+                newPage.setTranslateX(0);
+            }
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    @FXML void clickDashboard(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminDashboard.fxml"); setActiveButton(btnDashboard); }
+    @FXML void clickDashboard(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminDashboard.fxml", true); setActiveButton(btnDashboard); }
+    @FXML void clickACManagement(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminAccManagement.fxml", true); setActiveButton(btnACManage); }
+    @FXML void clickSystemLogs(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminSystemLogs.fxml", true); setActiveButton(btnSystemLogs); }
+    @FXML void clickSystemTools(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminSystemTools.fxml", true); setActiveButton(btnSystemTools); }
 
-    // Friend's code for Sidebar Profile Button
-    @FXML void clickProfile(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminProfile.fxml"); setActiveButton(btnProfile); }
+    public void prepareIntroAnimation() {
+        if (sidebar != null) { sidebar.setTranslateX(-300); sidebar.setOpacity(0); }
+        if (topNavBar != null) { topNavBar.setTranslateY(-150); topNavBar.setOpacity(0); }
+        if (mainContentArea != null) { mainContentArea.setTranslateX(800); mainContentArea.setOpacity(0); }
+    }
 
-    @FXML void clickACManagement(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminAccManagement.fxml"); setActiveButton(btnACManage); }
-    @FXML void clickSystemLogs(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminSystemLogs.fxml"); setActiveButton(btnSystemLogs); }
-    @FXML void clickSystemTools(ActionEvent event) { loadPage("/com/pos/flightmanagementsystem/view/SuperAdminSystemTools.fxml"); setActiveButton(btnSystemTools); }
+    public void playIntroAnimation() {
+        ParallelTransition dashAnimIn = new ParallelTransition();
+        if (sidebar != null) {
+            TranslateTransition st = new TranslateTransition(Duration.millis(700), sidebar); st.setToX(0); st.setInterpolator(Interpolator.EASE_BOTH);
+            FadeTransition ft = new FadeTransition(Duration.millis(700), sidebar); ft.setToValue(1);
+            dashAnimIn.getChildren().addAll(st, ft);
+        }
+        if (topNavBar != null) {
+            TranslateTransition st = new TranslateTransition(Duration.millis(700), topNavBar); st.setToY(0); st.setInterpolator(Interpolator.EASE_BOTH);
+            FadeTransition ft = new FadeTransition(Duration.millis(700), topNavBar); ft.setToValue(1);
+            dashAnimIn.getChildren().addAll(st, ft);
+        }
+        if (mainContentArea != null) {
+            TranslateTransition st = new TranslateTransition(Duration.millis(700), mainContentArea); st.setToX(0); st.setInterpolator(Interpolator.EASE_BOTH);
+            FadeTransition ft = new FadeTransition(Duration.millis(700), mainContentArea); ft.setToValue(1);
+            dashAnimIn.getChildren().addAll(st, ft);
+        }
+        dashAnimIn.play();
+    }
 
     @FXML
     void clickLogout(ActionEvent event) {
         if (LoginController.loggedInUser != null) {
             insertLog(LoginController.loggedInUser.getUserId(), "Log out");
-            LoginController.loggedInUser = null;
         }
 
-        TranslateTransition leftAnim = new TranslateTransition(Duration.millis(700), sidebar); leftAnim.setByX(-800); leftAnim.setInterpolator(Interpolator.EASE_IN);
-        Node rightContent = rootPane.getCenter();
-        TranslateTransition rightAnim = new TranslateTransition(Duration.millis(700), rightContent);
-        if (rightContent != null) { rightAnim.setByX(800); rightAnim.setInterpolator(Interpolator.EASE_IN); }
-
-        ParallelTransition pt = new ParallelTransition(leftAnim, rightAnim);
-        pt.setOnFinished(e -> performLogout(event)); pt.play();
-    }
-
-    private void performLogout(ActionEvent event) {
         try {
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            LoginController.isFromLogout = true;
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
-            stage.setScene(new Scene(loader.load())); stage.setMaximized(false); stage.setMaximized(true); stage.show();
-        } catch (IOException e) { e.printStackTrace(); }
+            Parent loginRoot = loader.load();
+            LoginController loginCtrl = loader.getController();
+
+            Scene scene = btnLogout.getScene();
+            Parent currentDashboardRoot = scene.getRoot();
+
+            StackPane transitionWrapper = new StackPane();
+            transitionWrapper.setStyle("-fx-background-color: #06080D;");
+            transitionWrapper.getChildren().addAll(loginRoot, currentDashboardRoot);
+
+            scene.setRoot(transitionWrapper);
+            transitionWrapper.applyCss(); transitionWrapper.layout();
+            loginRoot.applyCss(); loginRoot.layout();
+
+            ParallelTransition dashOut = new ParallelTransition();
+            if (sidebar != null) {
+                TranslateTransition sOut = new TranslateTransition(Duration.millis(700), sidebar); sOut.setToX(-300); sOut.setInterpolator(Interpolator.EASE_BOTH);
+                FadeTransition fOut = new FadeTransition(Duration.millis(700), sidebar); fOut.setToValue(0);
+                dashOut.getChildren().addAll(sOut, fOut);
+            }
+            if (topNavBar != null) {
+                TranslateTransition tOut = new TranslateTransition(Duration.millis(700), topNavBar); tOut.setToY(-150); tOut.setInterpolator(Interpolator.EASE_BOTH);
+                FadeTransition fOut = new FadeTransition(Duration.millis(700), topNavBar); fOut.setToValue(0);
+                dashOut.getChildren().addAll(tOut, fOut);
+            }
+            if (mainContentArea != null) {
+                TranslateTransition mOut = new TranslateTransition(Duration.millis(700), mainContentArea); mOut.setToX(800); mOut.setInterpolator(Interpolator.EASE_BOTH);
+                FadeTransition fOut = new FadeTransition(Duration.millis(700), mainContentArea); fOut.setToValue(0);
+                dashOut.getChildren().addAll(mOut, fOut);
+            }
+
+            dashOut.setOnFinished(e -> {
+                // 🌟 Error ပြဿနာကို ဖြေရှင်းထားသော စာကြောင်း 🌟
+                transitionWrapper.getChildren().remove(loginRoot);
+                scene.setRoot(loginRoot);
+                if (loginCtrl != null) {
+                    loginCtrl.playLoginInAnimation();
+                }
+            });
+            dashOut.play();
+
+            LoginController.loggedInUser = null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void insertLog(int userId, String action) {
         String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
-            pstmt.setInt(1, userId); pstmt.setString(2, action); pstmt.executeUpdate();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); }
     }
 }

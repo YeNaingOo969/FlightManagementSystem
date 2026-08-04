@@ -4,6 +4,7 @@
 .super-content {
     -fx-background-color: transparent;
     -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-padding: 30px; /* 🌟 FXML မှ ဖယ်ထုတ်လိုက်သော Padding 🌟 */
 }
 
 /* ==========================================================

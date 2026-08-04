@@ -35,7 +35,6 @@
     -fx-effect: dropshadow(gaussian, rgba(22,135,158,0.24), 18, 0.20, 0, 7);
 }
 
-/* 🌟 ပြင်ဆင်ချက်: FXML နှင့် တူညီစေရန် super-brand-logo-glyph ဟု ပြောင်းထားပါသည် 🌟 */
 .super-brand-logo-glyph {
     -fx-fill: #ffffff;
     -fx-scale-x: 1.08;
@@ -184,3 +183,415 @@
    ========================================================================= */
 .main-content-wrapper { -fx-background-color: transparent; }
 .main-content-area { -fx-padding: 0; }
+
+/* ==========================================================
+   🌟 NOTIFICATION BADGE & BUBBLE (LIGHT MODE - SEAMLESS LOOK) 🌟
+========================================================== */
+
+/* Red Count Badge */
+.notification-badge {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 6px;
+    -fx-background-radius: 12px;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 12px;
+}
+
+/* 🌟 မြှားကို Box အပေါ်မှ ထပ်ပေါ်စေရန် 🌟 */
+.noti-arrow-container {
+    -fx-view-order: -1;
+}
+
+/* Arrow (အပေါ်သို့ ညွှန်ပြနေသော တြိဂံ) */
+.noti-bubble-arrow {
+    -fx-fill: #FFFFFF; /* Bubble Box ၏ Gradient ထိပ်ဆုံးအရောင်နှင့် ကွက်တိတူသည် */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, -2);
+    /* 🌟 Border အစင်းကြောင်းကို ဖုံးသွားစေရန် မြှားကို အောက်သို့ 1.5px ဆွဲချ၍ တစ်ဆက်တည်းဖြစ်စေသည် 🌟 */
+    -fx-translate-y: 1.5px;
+}
+
+/* Main Rectangular Bubble Box (Subtle Gradient ထည့်သွင်းထားသည်) */
+.noti-bubble-box {
+    -fx-background-color: linear-gradient(to bottom right, #FFFFFF, #F8FAFC);
+    -fx-background-radius: 12px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 18px;
+    -fx-pref-width: 380px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 6);
+}
+
+.noti-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F2937;
+}
+
+.noti-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.noti-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* 🌟 Individual Request Card (Subtle Linear Gradient သုံးထားသည်) 🌟 */
+.noti-request-card {
+    -fx-background-color: linear-gradient(to bottom right, #FFFFFF, #F1F5F9);
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);
+}
+
+.noti-request-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+.noti-request-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.noti-request-reason {
+    -fx-font-size: 13px;
+    -fx-text-fill: #EF4444;
+    -fx-padding: 5px 0px;
+}
+
+/* 🌟 Action Buttons 🌟 */
+.noti-btn-approve {
+    -fx-background-color: linear-gradient(to right, #10B981, #059669);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.noti-btn-approve:hover {
+    -fx-background-color: linear-gradient(to right, #34D399, #10B981);
+}
+
+.noti-btn-reject {
+    -fx-background-color: transparent;
+    -fx-text-fill: #EF4444;
+    -fx-border-color: #EF4444;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1.5px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.noti-btn-reject:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.1);
+}/* =========================================================================
+   ✈️ SUPER ADMIN SIDEBAR & TOP NAV (LIGHT MODE)
+   ========================================================================= */
+
+/* 🌌 Main Background */
+.super-dashboard-root {
+    -fx-font-family: "Segoe UI", "Inter", Arial, sans-serif;
+    -fx-background-color: #F4F7FB;
+}
+
+/* =========================================================================
+   1. SIDEBAR (Light Cyan Background with Blocky Buttons)
+   ========================================================================= */
+.super-sidebar {
+    -fx-background-color: rgb(196, 230, 235);
+    -fx-padding: 28px 22px 28px 22px;
+    -fx-border-color: transparent rgba(0,0,0,0.05) transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.super-brand {
+    -fx-padding: 8px 4px 16px 4px;
+    -fx-alignment: center-left;
+    -fx-spacing: 8px;
+}
+
+/* 🌟 ပြင်ဆင်ချက်: FXML နှင့် တူညီစေရန် super-brand-logo ဟု ပြောင်းထားပါသည် 🌟 */
+.super-brand-logo {
+    -fx-min-width: 44px; -fx-min-height: 44px; -fx-max-width: 44px; -fx-max-height: 44px;
+    -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
+    -fx-background-radius: 14px;
+    -fx-border-color: rgba(255,255,255,0.62);
+    -fx-border-radius: 14px;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(22,135,158,0.24), 18, 0.20, 0, 7);
+}
+
+.super-brand-logo-glyph {
+    -fx-fill: #ffffff;
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
+
+.brand-text-box {
+    -fx-spacing: 2px;
+    -fx-max-width: 100px;
+}
+.super-brand-title { -fx-text-fill: #10243f; -fx-font-size: 19px; -fx-font-weight: bold; }
+.super-brand-kicker { -fx-text-fill: #1687d9; -fx-font-size: 11px; -fx-font-weight: bold; }
+
+/* =========================================================================
+   2. THEME TOGGLE SWITCH (Light Mode)
+   ========================================================================= */
+.theme-toggle-bg {
+    -fx-background-color: #E2E8F0;
+    -fx-pref-width: 50px; -fx-min-width: 50px; -fx-max-width: 50px;
+    -fx-pref-height: 26px; -fx-min-height: 26px; -fx-max-height: 26px;
+    -fx-background-radius: 13px; -fx-border-radius: 13px;
+    -fx-border-color: #CBD5E1; -fx-border-width: 1px;
+    -fx-cursor: hand; -fx-padding: 3px;
+}
+.theme-toggle-thumb {
+    -fx-background-color: #F59E0B; /* Sun Color */
+    -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px;
+    -fx-background-radius: 50%; -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(245, 158, 11, 0.4), 8, 0, 0, 0);
+}
+.theme-icon-glyph { -fx-fill: #FFFFFF; -fx-scale-x: 0.6; -fx-scale-y: 0.6; }
+
+/* =========================================================================
+   3. NAVIGATION BUTTONS
+   ========================================================================= */
+.nav-menu-box {
+    -fx-padding: 10px 0 0 0;
+    -fx-spacing: 10px;
+}
+
+.super-nav-button, .super-nav-button-active {
+    -fx-pref-height: 48px; -fx-max-width: 100000;
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-alignment: CENTER_LEFT; -fx-content-display: LEFT; -fx-graphic-text-gap: 12px;
+    -fx-padding: 0 16px 0 16px; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;
+}
+
+.super-nav-button {
+    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.58), rgba(255,255,255,0.24));
+    -fx-border-color: rgba(255,255,255,0.72);
+    -fx-border-width: 1px;
+    -fx-text-fill: #2f6678;
+    -fx-effect: dropshadow(gaussian, rgba(28,92,110,0.14), 16, 0.18, 0, 6);
+}
+.super-nav-button:hover {
+    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.78), rgba(112,217,231,0.34));
+    -fx-border-color: rgba(255,255,255,0.92);
+    -fx-effect: dropshadow(gaussian, rgba(22,135,158,0.22), 18, 0.20, 0, 8);
+}
+
+.super-nav-button-active {
+    -fx-background-color: linear-gradient(to right, #00C6FF, #20E3B2);
+    -fx-border-color: transparent;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(32, 227, 178, 0.4), 10, 0, 0, 4);
+}
+
+.super-nav-icon { -fx-min-width: 22px; -fx-min-height: 22px; -fx-max-width: 22px; -fx-max-height: 22px; -fx-alignment: CENTER; }
+.super-nav-icon-glyph { -fx-fill: #2f6678; -fx-scale-x: 0.82; -fx-scale-y: 0.82; }
+.super-nav-button-active .super-nav-icon-glyph { -fx-fill: #ffffff; }
+
+/* Logout Button */
+.super-logout-button {
+    -fx-pref-height: 48px; -fx-max-width: 100000;
+    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.58), rgba(255,255,255,0.24));
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-border-color: rgba(255,255,255,0.72); -fx-border-width: 1px;
+    -fx-text-fill: #2f6678; -fx-font-weight: bold; -fx-font-size: 13px;
+    -fx-cursor: hand; -fx-content-display: LEFT; -fx-graphic-text-gap: 12px;
+    -fx-padding: 0 16px 0 16px;
+    -fx-effect: dropshadow(gaussian, rgba(28,92,110,0.14), 16, 0.18, 0, 6);
+}
+.super-logout-button:hover {
+    -fx-background-color: #ef476f;
+    -fx-border-color: transparent;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(239,71,111,0.28), 18, 0.20, 0, 8);
+}
+.super-logout-button .super-nav-icon-glyph { -fx-fill: #2f6678; -fx-scale-x: 0.82; -fx-scale-y: 0.82;}
+.super-logout-button:hover .super-nav-icon-glyph { -fx-fill: #ffffff; }
+
+/* =========================================================================
+   4. SIDEBAR STATUS CARD
+   ========================================================================= */
+.sidebar-status-box {
+    -fx-padding: 12px 16px 12px 16px;
+    -fx-background-color: rgba(255,255,255,0.6);
+    -fx-background-radius: 12px;
+    -fx-border-color: rgba(255,255,255,0.8);
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-spacing: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(28,92,110,0.05), 10, 0, 0, 2);
+}
+.status-title { -fx-text-fill: #60728a; -fx-font-size: 13px; -fx-font-weight: bold; }
+.status-value { -fx-text-fill: #08775e; -fx-font-size: 12px; -fx-font-weight: bold; }
+.status-note { -fx-text-fill: #2f6678; -fx-font-size: 11px; }
+
+/* =========================================================================
+   5. GLOBAL TOP NAVBAR (Light Mode Style)
+   ========================================================================= */
+.global-top-nav {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 16px 35px 16px 35px;
+    -fx-border-color: transparent transparent #E2E8F0 transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-alignment: center-right;
+    -fx-spacing: 24px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.03), 10, 0, 0, 2);
+}
+
+.nav-notification-btn { -fx-cursor: hand; -fx-padding: 5px; }
+.nav-bell-icon { -fx-fill: #64748b; -fx-scale-x: 1.1; -fx-scale-y: 1.1; -fx-transition: all 0.2s ease; }
+.nav-notification-btn:hover .nav-bell-icon { -fx-fill: #0ea5e9; }
+
+.nav-profile-box {
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-alignment: center-left;
+    -fx-spacing: 12px;
+}
+.nav-profile-avatar {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px; -fx-min-height: 40px; -fx-max-width: 40px; -fx-max-height: 40px;
+    -fx-border-color: #0ea5e9; -fx-border-radius: 50%; -fx-border-width: 1px;
+}
+.nav-profile-avatar-icon { -fx-fill: #0ea5e9; -fx-scale-x: 1.0; -fx-scale-y: 1.0; }
+
+.nav-profile-text-box { -fx-alignment: center-left; }
+.nav-profile-name { -fx-text-fill: #0f172a; -fx-font-size: 14px; -fx-font-weight: bold; }
+.nav-profile-role { -fx-text-fill: #64748b; -fx-font-size: 11px; -fx-text-transform: uppercase; }
+
+/* =========================================================================
+   6. MAIN CONTENT AREA
+   ========================================================================= */
+.main-content-wrapper { -fx-background-color: transparent; }
+.main-content-area { -fx-padding: 0; }
+
+/* ==========================================================
+   🌟 NOTIFICATION BADGE & BUBBLE (LIGHT MODE - SEAMLESS LOOK) 🌟
+========================================================== */
+
+/* Red Count Badge */
+.notification-badge {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 6px;
+    -fx-background-radius: 12px;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 12px;
+}
+
+/* 🌟 မြှားကို Box အပေါ်မှ ထပ်ပေါ်စေရန် 🌟 */
+.noti-arrow-container {
+    -fx-view-order: -1;
+}
+
+/* Arrow (အပေါ်သို့ ညွှန်ပြနေသော တြိဂံ) */
+.noti-bubble-arrow {
+    -fx-fill: #FFFFFF; /* Bubble Box ၏ Gradient ထိပ်ဆုံးအရောင်နှင့် ကွက်တိတူသည် */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, -2);
+    /* 🌟 Border အစင်းကြောင်းကို ဖုံးသွားစေရန် မြှားကို အောက်သို့ 1.5px ဆွဲချ၍ တစ်ဆက်တည်းဖြစ်စေသည် 🌟 */
+    -fx-translate-y: 1.5px;
+}
+
+/* Main Rectangular Bubble Box (Subtle Gradient ထည့်သွင်းထားသည်) */
+.noti-bubble-box {
+    -fx-background-color: linear-gradient(to bottom right, #FFFFFF, #F8FAFC);
+    -fx-background-radius: 12px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 18px;
+    -fx-pref-width: 380px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 6);
+}
+
+.noti-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F2937;
+}
+
+.noti-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.noti-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* 🌟 Individual Request Card (Subtle Linear Gradient သုံးထားသည်) 🌟 */
+.noti-request-card {
+    -fx-background-color: linear-gradient(to bottom right, #FFFFFF, #F1F5F9);
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);
+}
+
+.noti-request-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0F172A;
+}
+
+.noti-request-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.noti-request-reason {
+    -fx-font-size: 13px;
+    -fx-text-fill: #EF4444;
+    -fx-padding: 5px 0px;
+}
+
+/* 🌟 Action Buttons 🌟 */
+.noti-btn-approve {
+    -fx-background-color: linear-gradient(to right, #10B981, #059669);
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.noti-btn-approve:hover {
+    -fx-background-color: linear-gradient(to right, #34D399, #10B981);
+}
+
+.noti-btn-reject {
+    -fx-background-color: transparent;
+    -fx-text-fill: #EF4444;
+    -fx-border-color: #EF4444;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1.5px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.noti-btn-reject:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.1);
+}

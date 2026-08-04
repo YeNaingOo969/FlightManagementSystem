@@ -132,6 +132,7 @@
                                         <TableColumn fx:id="colDate" prefWidth="120.0" text="Date" />
                                         <TableColumn fx:id="colTime" prefWidth="100.0" text="Time" />
                                         <TableColumn fx:id="colPrice" prefWidth="90.0" text="Price" />
+                                        <!-- 🌟 အလယ်ကျစေရန် action-column ကို ထည့်ထားပါသည် 🌟 -->
                                         <TableColumn fx:id="colAction" prefWidth="110.0" styleClass="action-column" />
                                     </columns>
                                     <columnResizePolicy>

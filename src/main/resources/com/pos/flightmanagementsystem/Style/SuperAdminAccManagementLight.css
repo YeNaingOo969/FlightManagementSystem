@@ -380,3 +380,74 @@
 .corner {
     -fx-background-color: transparent;
 }
+
+/* ==========================================================
+   TOAST NOTIFICATION (SUCCESS ALERT)
+========================================================== */
+.toast-notification {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1.5px;
+    -fx-padding: 16px 18px 16px 18px;
+    -fx-spacing: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 8);
+}
+
+/* Green Circle Background for Checkmark */
+.toast-icon-bg {
+    -fx-background-color: #EAFBF2;
+    -fx-background-radius: 50%;
+    -fx-min-width: 42px;
+    -fx-min-height: 42px;
+    -fx-max-width: 42px;
+    -fx-max-height: 42px;
+}
+
+/* Checkmark Icon */
+.toast-icon-glyph {
+    -fx-fill: #22C55E;
+    -fx-scale-x: 1.4;
+    -fx-scale-y: 1.4;
+}
+
+/* Text Box Container */
+.toast-text-box {
+    -fx-spacing: 4px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Title Font */
+.toast-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F2937;
+}
+
+/* Subtitle Font */
+.toast-message {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B7280;
+}
+
+/* Close (X) Button */
+.toast-close-btn {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 6px;
+    -fx-background-radius: 50%;
+}
+.toast-close-btn:hover {
+    -fx-background-color: #F1F5F9; /* Slight gray background on hover */
+}
+
+/* Close (X) Icon */
+.toast-close-icon {
+    -fx-fill: #9CA3AF;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+.toast-close-btn:hover .toast-close-icon {
+    -fx-fill: #EF4444; /* Turn red on hover */
+}

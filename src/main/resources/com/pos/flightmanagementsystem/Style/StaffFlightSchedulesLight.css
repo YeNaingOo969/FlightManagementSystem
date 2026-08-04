@@ -1,5 +1,5 @@
 /* Background styling (ကတ်များကို ကြွလာစေရန်) */
-.root-layout {
+.super-content {
     -fx-background-color: #F4F7FE;
 }
 
@@ -15,14 +15,19 @@
     -fx-padding: 20px 25px;
 }
 
-/* လေယာဉ်ပျံ Icon ထည့်ထားသည့် အဝိုင်း Background */
+/* 🌟 Icon နောက်ခံကို Theme အရောင် (Teal အဖျော့) ပြောင်းထားပါသည် 🌟 */
 .icon-badge {
-    -fx-background-color: #1E3A8A;
+    -fx-background-color: rgba(49, 196, 180, 0.15);
     -fx-background-radius: 50%;
     -fx-min-width: 38px;
     -fx-min-height: 38px;
     -fx-max-width: 38px;
     -fx-max-height: 38px;
+}
+
+/* 🌟 Icon ကို Theme အရောင် (Teal) ပြောင်းထားပါသည် 🌟 */
+.header-icon-glyph {
+    -fx-fill: #31C4B4;
 }
 
 .main-title {
@@ -46,17 +51,20 @@
 
 /* Live Flight Schedules ခေါင်းစဉ် */
 .section-title {
-    -fx-text-fill: #1E3A8A;
+    -fx-text-fill: #0F172A;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-padding: 0 0 5 0;
 }
 
-/* TableView Styling */
+/* =========================================
+   TableView Styling (လိုင်းများဖျောက်ခြင်း)
+   ========================================= */
 .flight-table {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent; /* 🌟 Table အတွင်းရှိ Grid လိုင်းများကို ဖျောက်ရန် 🌟 */
 }
 
 .flight-table .column-header-background {
@@ -68,6 +76,7 @@
 .flight-table .column-header {
     -fx-background-color: transparent;
     -fx-size: 45px;
+    -fx-border-width: 0; /* 🌟 Header ဘေးလိုင်းများ ဖျောက်ရန် 🌟 */
 }
 
 .flight-table .column-header .label {
@@ -80,7 +89,7 @@
 
 .flight-table .table-row-cell {
     -fx-background-color: #FFFFFF;
-    -fx-border-color: transparent transparent #F1F5F9 transparent;
+    -fx-border-color: transparent transparent #F1F5F9 transparent; /* အောက်ခြေလိုင်း ခပ်ရေးရေးလေးသာ ထားပါသည် */
     -fx-border-width: 0 0 1 0;
     -fx-cell-size: 50px;
 }
@@ -95,4 +104,10 @@
     -fx-text-fill: #334155;
     -fx-alignment: center-left;
     -fx-padding: 0 0 0 5;
+    -fx-border-width: 0; /* 🌟 Cell များကြားရှိ ဒေါင်လိုက်လိုင်းများ ဖျောက်ရန် 🌟 */
+}
+
+/* 🌟 အလွတ်ဖြစ်နေသော Table အောက်ခြေအပိုင်းမှ လိုင်းများကို ဖျောက်ရန် 🌟 */
+.flight-table .filler {
+    -fx-background-color: transparent;
 }

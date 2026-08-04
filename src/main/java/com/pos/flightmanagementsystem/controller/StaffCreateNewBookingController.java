@@ -126,9 +126,6 @@ public class StaffCreateNewBookingController implements Initializable {
         });
     }
 
-    // ==========================================
-    // 🌟 Flight များ အားလုံးကို ဆွဲထုတ်ခြင်း (MMK ပြောင်းလဲမှုပါဝင်သည်)
-    // ==========================================
     private void fetchAllFlightsFromDatabase() {
         ObservableList<FlightDummy> allFlights = FXCollections.observableArrayList();
         String query = "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, " +
@@ -142,7 +139,6 @@ public class StaffCreateNewBookingController implements Initializable {
             if (conn == null) throw new Exception("Database Connection မရရှိပါ။");
             try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
                 while (rs.next()) {
-                    // Database မှ price ကို ယူ၍ 980,000 MMK ပုံစံပြောင်းခြင်း
                     double price = rs.getDouble("base_price");
                     String formattedPrice = String.format("%,.0f MMK", price);
 
@@ -178,9 +174,6 @@ public class StaffCreateNewBookingController implements Initializable {
         fetchFlightsFromDatabase(from, to, date);
     }
 
-    // ==========================================
-    // 🌟 Flight များကို ရှာဖွေခြင်း (MMK ပြောင်းလဲမှုပါဝင်သည်)
-    // ==========================================
     private void fetchFlightsFromDatabase(String fromCity, String toCity, LocalDate depDate) {
         ObservableList<FlightDummy> searchResults = FXCollections.observableArrayList();
         String query = "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, " +
@@ -198,7 +191,6 @@ public class StaffCreateNewBookingController implements Initializable {
                 pstmt.setDate(3, java.sql.Date.valueOf(depDate));
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        // Database မှ price ကို ယူ၍ 980,000 MMK ပုံစံပြောင်းခြင်း
                         double price = rs.getDouble("base_price");
                         String formattedPrice = String.format("%,.0f MMK", price);
 
@@ -252,10 +244,54 @@ public class StaffCreateNewBookingController implements Initializable {
         colAction.setCellFactory(cellFactory);
     }
 
+    // ==========================================
+    // 🌟 Theme အား အကုန်လိုက်ပြောင်းပေးမည့် Method (Recursive Method)
+    // ==========================================
+    private void applyThemeRecursively(Parent node, boolean isDarkMode) {
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
+            ObservableList<String> styles = node.getStylesheets();
+            for (int i = 0; i < styles.size(); i++) {
+                String css = styles.get(i);
+                if (isDarkMode && css.contains("Light")) {
+                    styles.set(i, css.replace("Light", "Dark"));
+                } else if (!isDarkMode && css.contains("Dark")) {
+                    styles.set(i, css.replace("Dark", "Light"));
+                }
+            }
+        }
+        // အတွင်းပိုင်း Node တွေပါ အကုန်လိုက်စစ်ရန်
+        for (javafx.scene.Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) {
+                applyThemeRecursively((Parent) child, isDarkMode);
+            }
+        }
+    }
+
     private void loadPassengerDetailsPage(FlightDummy selectedFlight, int passengers) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/StaffPassengerDetails.fxml"));
             Parent nextView = loader.load();
+
+            // -----------------------------------------------------------------
+            // 🌟 Theme ကို သေချာဖမ်းပြီး Next Page ရဲ့ အစွန်အဖျားထိ လိုက်ပြောင်းပေးခြင်း
+            // -----------------------------------------------------------------
+            boolean isDarkMode = true; // Default ထားပါသည်
+            Parent current = rootStackPane;
+            while (current != null) {
+                String currentStyles = current.getStylesheets().toString();
+                if (currentStyles.contains("Dark")) {
+                    isDarkMode = true;
+                    break;
+                } else if (currentStyles.contains("Light")) {
+                    isDarkMode = false;
+                    break;
+                }
+                current = current.getParent();
+            }
+
+            // Next Page တစ်ခုလုံးကို အပေါ်က Method ဖြင့် Theme ဝင်အောင် ဖိချိန်းပါမည်
+            applyThemeRecursively(nextView, isDarkMode);
+            // -----------------------------------------------------------------
 
             StaffPassengerDetailsController controller = loader.getController();
             controller.setFlightData(

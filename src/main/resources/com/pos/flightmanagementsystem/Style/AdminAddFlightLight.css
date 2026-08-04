@@ -1,5 +1,5 @@
 .root{
-    -fx-background-color: #F4F7FC;
+    -fx-background-color: transparent;
     -fx-font-family: "Segoe UI", sans-serif;
 }
 
@@ -7,11 +7,21 @@
    CARD & HEADINGS
 ========================================================== */
 
+/* Modal အဖြူရောင် Card အတွက် */
+.modal-card {
+    -fx-background-color: white;
+    -fx-padding: 30;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(17, 40, 72, 0.08);
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 30, 0, 0, 10);
+}
+
 .form-card{
     -fx-background-color: white;
     -fx-background-radius: 18;
-    -fx-padding: 35;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0.1, 0, 5);
+    -fx-padding: 10;
 }
 
 .page-title{
@@ -37,24 +47,28 @@
 ========================================================== */
 
 .text-field, .combo-box, .date-picker {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #F8FAFC;
     -fx-background-radius: 8px;
     -fx-border-color: #E2E8F0;
     -fx-border-radius: 8px;
-    -fx-border-width: 1px;
+    -fx-border-width: 1.5px;
+    -fx-pref-height: 40px;
 }
 
 /* အတွင်း Padding များကို TextField နှင့် ComboBox တူညီစေရန် */
 .text-field {
-    -fx-padding: 10px 12px;
+    -fx-padding: 8px 12px;
     -fx-font-size: 14px;
-    -fx-text-fill: #334155;
+    -fx-text-fill: #1E293B;
+    -fx-prompt-text-fill: #94A3B8; /* Placeholder အရောင်ပေါ်စေရန် */
 }
 
-.combo-box > .list-cell {
-    -fx-padding: 10px 12px;
+/* 🌟 ComboBox စာသားများ ပေါ်လာစေရန် အထူးပြင်ဆင်ချက် 🌟 */
+.combo-box .list-cell {
+    -fx-padding: 5px 10px; /* HH, MM ကဲ့သို့ ဘောက်စ်သေးများတွင် စာမပျောက်စေရန် Padding လျှော့ထားသည် */
     -fx-font-size: 14px;
-    -fx-text-fill: #334155;
+    -fx-text-fill: #1E293B;
+    -fx-background-color: transparent;
 }
 
 /* Hover & Focus Effects */
@@ -64,8 +78,8 @@
 
 .text-field:focused, .combo-box:focused, .date-picker:focused {
     -fx-background-color: #FFFFFF;
-    -fx-border-color: #00C6FF; /* Accent Cyan Line */
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.15), 8, 0, 0, 0);
+    -fx-border-color: #0EA5E9; /* Accent Blue Line */
+    -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.2), 8, 0, 0, 0);
 }
 
 /* ==========================================================
@@ -74,11 +88,11 @@
 
 .combo-box .arrow-button {
     -fx-background-color: transparent; /* Default Gray Background ကို ဖျောက်သည် */
-    -fx-padding: 0 12px;
+    -fx-padding: 0 10px;
 }
 
 .combo-box .arrow {
-    -fx-background-color: #94A3B8; /* Arrow အရောင်ကို ခဲနုရောင် ပြောင်းသည် */
+    -fx-background-color: #64748B; /* Arrow အရောင်ကို ခဲနုရောင် ပြောင်းသည် */
     -fx-padding: 2.5px 4px;
 }
 
@@ -93,12 +107,14 @@
 
 .combo-box-popup .list-cell {
     -fx-padding: 10px 12px;
-    -fx-text-fill: #334155;
+    -fx-text-fill: #1E293B;
     -fx-font-size: 14px;
+    -fx-background-color: transparent;
 }
 
 .combo-box-popup .list-cell:filled:hover {
     -fx-background-color: #F1F5F9; /* Mouse ထောက်လျှင် မီးခိုးနုရောင် */
+    -fx-text-fill: #0EA5E9;
 }
 
 .combo-box-popup .list-cell:filled:selected {
@@ -113,7 +129,9 @@
 .date-picker > .text-field {
     -fx-background-color: transparent;
     -fx-border-width: 0;
-    -fx-padding: 10px 12px;
+    -fx-padding: 8px 12px;
+    -fx-text-fill: #1E293B;
+    -fx-prompt-text-fill: #94A3B8;
 }
 
 .date-picker > .arrow-button {
@@ -123,7 +141,7 @@
 }
 
 .date-picker > .arrow-button > .graphic {
-    -fx-background-color: #94A3B8; /* ပြက္ခဒိန် Icon အရောင် */
+    -fx-background-color: #64748B; /* ပြက္ခဒိန် Icon အရောင် */
 }
 
 /* ==========================================================
@@ -131,28 +149,28 @@
 ========================================================== */
 
 .btn-primary {
-    -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
+    -fx-background-color: linear-gradient(to right, #0EA5E9, #22D3EE);
     -fx-background-radius: 8px;
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-padding: 10px 24px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(49,136,149,0.20), 14, 0.16, 0, 5);
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.3), 10, 0, 0, 4);
 }
 
 .btn-primary:hover {
-    -fx-background-color: linear-gradient(to bottom right, #22D3EE, #0EA5E9);
-    -fx-effect: dropshadow(three-pass-box, rgba(34, 211, 238, 0.4), 10, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
 .btn-primary:pressed {
-    -fx-background-color: linear-gradient(to bottom right, #0369A1, #075985);
-    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
 .btn-secondary {
-    -fx-background-color: #F1F5F9;
+    -fx-background-color: #FFFFFF;
     -fx-text-fill: #475569;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -165,13 +183,13 @@
 }
 
 .btn-secondary:hover {
-    -fx-background-color: #E2E8F0;
-    -fx-text-fill: #1E293B;
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #94A3B8;
 }
 
 .btn-secondary:pressed {
-    -fx-background-color: #CBD5E1;
-    -fx-effect: innershadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
 /* ==========================================================
@@ -183,24 +201,12 @@
     -fx-min-height: 44;
     -fx-max-width: 44;
     -fx-max-height: 44;
-    -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
+    -fx-background-color: #E0F2FE;
     -fx-background-radius: 12;
-    -fx-border-color: rgba(255,255,255,0.62);
-    -fx-border-radius: 12;
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(22,135,158,0.24), 18, 0.20, 0, 7);
 }
 
 .super-brand-logo-glyph {
-    -fx-fill: #ffffff;
-    -fx-scale-x: 1.08;
-    -fx-scale-y: 1.08;
-}
-
-/* Modal အဖြူရောင် Card အတွက် */
-.modal-card {
-    -fx-background-color: white;
-    -fx-padding: 30;
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-fill: #0284C7;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
 }

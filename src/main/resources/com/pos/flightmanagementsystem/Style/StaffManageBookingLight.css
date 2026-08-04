@@ -15,13 +15,19 @@
     -fx-padding: 20px 25px;
 }
 
+/* 🌟 Icon ရဲ့ နောက်ခံကို Theme အရောင် (Teal အဖျော့) ပြောင်းထားပါသည် 🌟 */
 .icon-badge {
-    -fx-background-color: #1E3A8A;
+    -fx-background-color: rgba(49, 196, 180, 0.15);
     -fx-background-radius: 50%;
     -fx-min-width: 38px;
     -fx-min-height: 38px;
     -fx-max-width: 38px;
     -fx-max-height: 38px;
+}
+
+/* 🌟 Icon ကို Theme အရောင် (Teal) ပြောင်းထားပါသည် 🌟 */
+.header-icon-glyph {
+    -fx-fill: #31C4B4;
 }
 
 .main-title {
@@ -58,21 +64,26 @@
     -fx-padding: 5 10 5 10;
 }
 
+/* 🌟 Tab Hover ကို Theme Color ပြောင်းထားပါသည် 🌟 */
 .tab-label:hover {
-    -fx-text-fill: #1E3A8A;
+    -fx-text-fill: #31C4B4;
 }
 
+/* 🌟 Active Tab ကို Theme Color ပြောင်းထားပါသည် 🌟 */
 .active-tab {
-    -fx-text-fill: #1E3A8A;
+    -fx-text-fill: #31C4B4;
     -fx-font-weight: bold;
-    -fx-border-color: transparent transparent #1E3A8A transparent;
+    -fx-border-color: transparent transparent #31C4B4 transparent;
     -fx-border-width: 0 0 3 0;
 }
 
-/* TableView Styling */
+/* =========================================
+   TableView Styling (လိုင်းများဖျောက်ခြင်း)
+   ========================================= */
 .booking-table {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent; /* 🌟 Table အတွင်းရှိ Grid လိုင်းများကို ဖျောက်ရန် 🌟 */
 }
 
 .booking-table .column-header-background {
@@ -84,6 +95,7 @@
 .booking-table .column-header {
     -fx-background-color: transparent;
     -fx-size: 45px;
+    -fx-border-width: 0; /* 🌟 Header ဘေးလိုင်းများ ဖျောက်ရန် 🌟 */
 }
 
 .booking-table .column-header .label {
@@ -96,7 +108,7 @@
 
 .booking-table .table-row-cell {
     -fx-background-color: #FFFFFF;
-    -fx-border-color: transparent transparent #F1F5F9 transparent;
+    -fx-border-color: transparent transparent #F1F5F9 transparent; /* အောက်ခြေလိုင်း ခပ်ရေးရေးလေးသာ ထားပါသည် */
     -fx-border-width: 0 0 1 0;
     -fx-cell-size: 55px;
 }
@@ -111,6 +123,12 @@
     -fx-text-fill: #334155;
     -fx-alignment: center-left;
     -fx-padding: 0 0 0 5;
+    -fx-border-width: 0; /* 🌟 Cell များကြားရှိ ဒေါင်လိုက်လိုင်းများ ဖျောက်ရန် 🌟 */
+}
+
+/* 🌟 အလွတ်ဖြစ်နေသော Table အောက်ခြေအပိုင်းမှ လိုင်းများကို ဖျောက်ရန် 🌟 */
+.booking-table .filler {
+    -fx-background-color: transparent;
 }
 
 /* =========================================
@@ -141,7 +159,6 @@
    🌟 Modal & Overlay Styles
    ========================================= */
 .overlay-bg {
-    /* အမည်းရောင် Glassy အရောင်ကြီးကို ဖြုတ်ပြီး Transparent ထားလိုက်ပါပြီ (Blur Effect ဖြင့်သာ သုံးမည်) */
     -fx-background-color: transparent;
 }
 
@@ -192,4 +209,93 @@
 ========================================================== */
 .action-column {
     -fx-alignment: CENTER !important;
+}
+
+/* ==========================================================
+   🌟 CANCEL REASON MODAL (LIGHT THEME) 🌟
+========================================================== */
+
+/* Modal ရဲ့ အဓိက နောက်ခံ အဖြူရောင် Card */
+.modal-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 30, 0, 0, 8);
+}
+
+/* ခေါင်းစဉ်စာသား (Cancel Booking) */
+.danger-text {
+    -fx-text-fill: #EF4444; /* သတိပြုမိစေရန် အနီရောင်ပြထားသည် */
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* Subtitle စာသား */
+.super-section-subtitle {
+    -fx-text-fill: #64748B;
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* Please Input Reason စာသား */
+.form-label {
+    -fx-text-fill: #334155;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* Reason ရိုက်ထည့်မည့် Box */
+.text-area-reason {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #CBD5E1;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1E293B;
+    -fx-prompt-text-fill: #94A3B8;
+}
+
+.text-area-reason:focused {
+    -fx-border-color: #31C4B4; /* Focus ဖြစ်လျှင် Theme အရောင် ပြောင်းမည် */
+    -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.25), 8, 0, 0, 2);
+}
+
+.text-area-reason .content {
+    -fx-background-color: transparent;
+}
+
+/* Cancel ခလုတ် (မီးခိုးရောင်) */
+.btn-secondary {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #475569;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #0F172A;
+}
+
+/* Confirm Cancellation ခလုတ် (အနီရောင်) */
+.btn-danger {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.3), 8, 0, 0, 3);
+}
+
+.btn-danger:hover {
+    -fx-background-color: #DC2626;
 }

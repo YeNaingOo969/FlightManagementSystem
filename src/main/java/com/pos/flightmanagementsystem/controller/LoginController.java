@@ -6,10 +6,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -37,8 +39,8 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
-    // Global User Session for System Logs
     public static com.pos.flightmanagementsystem.model.User loggedInUser;
+    public static boolean isFromLogout = false;
 
     @FXML private StackPane animationContainer;
     @FXML private Circle orbitPath;
@@ -91,17 +93,14 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (leftPanel != null && rightPanel != null) {
-            leftPanel.setTranslateX(-800);
-            rightPanel.setTranslateX(800);
-
-            TranslateTransition leftIn = new TranslateTransition(Duration.millis(800), leftPanel);
-            leftIn.setToX(0); leftIn.setInterpolator(Interpolator.EASE_OUT);
-
-            TranslateTransition rightIn = new TranslateTransition(Duration.millis(800), rightPanel);
-            rightIn.setToX(0); rightIn.setInterpolator(Interpolator.EASE_OUT);
-
-            ParallelTransition ptIn = new ParallelTransition(leftIn, rightIn);
-            ptIn.play();
+            if (!isFromLogout) {
+                leftPanel.setTranslateX(-800);
+                rightPanel.setTranslateX(800);
+                playLoginInAnimation();
+            } else {
+                leftPanel.setTranslateX(-800);
+                rightPanel.setTranslateX(800);
+            }
         }
 
         if (txtPasswordHidden != null && txtPasswordVisible != null) txtPasswordVisible.textProperty().bindBidirectional(txtPasswordHidden.textProperty());
@@ -137,8 +136,21 @@ public class LoginController implements Initializable {
         }
     }
 
+    public void playLoginInAnimation() {
+        if (leftPanel == null || rightPanel == null) return;
+        TranslateTransition leftIn = new TranslateTransition(Duration.millis(700), leftPanel);
+        leftIn.setToX(0); leftIn.setInterpolator(Interpolator.EASE_BOTH);
+
+        TranslateTransition rightIn = new TranslateTransition(Duration.millis(700), rightPanel);
+        rightIn.setToX(0); rightIn.setInterpolator(Interpolator.EASE_BOTH);
+
+        ParallelTransition loginIn = new ParallelTransition(leftIn, rightIn);
+        loginIn.setOnFinished(e -> isFromLogout = false);
+        loginIn.play();
+    }
+
     private void spawnSmokeParticle() {
-        Circle smoke = new Circle(3.5, Color.web("#06b6d4"));
+        Circle smoke = new Circle(3.5, Color.web("#31C4B4"));
         smoke.setEffect(new GaussianBlur(5));
         smoke.setTranslateX(smallPlane.getTranslateX());
         smoke.setTranslateY(smallPlane.getTranslateY());
@@ -146,10 +158,8 @@ public class LoginController implements Initializable {
         smoke.setTranslateY(smoke.getTranslateY() + (Math.random() - 0.5) * 8);
         animationContainer.getChildren().add(animationContainer.getChildren().indexOf(smallPlane), smoke);
 
-        FadeTransition fade = new FadeTransition(Duration.millis(800), smoke);
-        fade.setFromValue(0.7); fade.setToValue(0.0);
-        ScaleTransition scale = new ScaleTransition(Duration.millis(800), smoke);
-        scale.setFromX(1); scale.setFromY(1); scale.setToX(4.5); scale.setToY(4.5);
+        FadeTransition fade = new FadeTransition(Duration.millis(800), smoke); fade.setFromValue(0.7); fade.setToValue(0.0);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(800), smoke); scale.setFromX(1); scale.setFromY(1); scale.setToX(4.5); scale.setToY(4.5);
         ParallelTransition pt = new ParallelTransition(smoke, fade, scale);
         pt.setOnFinished(ev -> animationContainer.getChildren().remove(smoke));
         pt.play();
@@ -157,13 +167,10 @@ public class LoginController implements Initializable {
 
     private void createRadarPulse() {
         Circle radarPulse = new Circle(89.0, Color.TRANSPARENT);
-        radarPulse.setStroke(Color.web("#06b6d4"));
-        radarPulse.setStrokeWidth(1.5);
+        radarPulse.setStroke(Color.web("#31C4B4")); radarPulse.setStrokeWidth(1.5);
         animationContainer.getChildren().add(0, radarPulse);
-        ScaleTransition scalePulse = new ScaleTransition(Duration.seconds(2.5), radarPulse);
-        scalePulse.setFromX(1.0); scalePulse.setFromY(1.0); scalePulse.setToX(1.8); scalePulse.setToY(1.8);
-        FadeTransition fadePulse = new FadeTransition(Duration.seconds(2.5), radarPulse);
-        fadePulse.setFromValue(0.5); fadePulse.setToValue(0.0);
+        ScaleTransition scalePulse = new ScaleTransition(Duration.seconds(2.5), radarPulse); scalePulse.setFromX(1.0); scalePulse.setFromY(1.0); scalePulse.setToX(1.8); scalePulse.setToY(1.8);
+        FadeTransition fadePulse = new FadeTransition(Duration.seconds(2.5), radarPulse); fadePulse.setFromValue(0.5); fadePulse.setToValue(0.0);
         ParallelTransition pt = new ParallelTransition(scalePulse, fadePulse);
         pt.setCycleCount(Timeline.INDEFINITE); pt.play();
     }
@@ -173,11 +180,8 @@ public class LoginController implements Initializable {
         starGroup.setManaged(false);
         for (int i = 0; i < 80; i++) {
             Circle star = new Circle(Math.random() * 1.5 + 0.8, Color.WHITE);
-            star.setTranslateX((Math.random() - 0.5) * 1200);
-            star.setTranslateY(-350 + Math.random() * 530);
-            FadeTransition blink = new FadeTransition(Duration.seconds(0.5 + Math.random() * 1.0), star);
-            blink.setFromValue(0.1); blink.setToValue(1.0); blink.setAutoReverse(true);
-            blink.setCycleCount(Timeline.INDEFINITE); blink.setDelay(Duration.seconds(Math.random()));
+            star.setTranslateX((Math.random() - 0.5) * 1200); star.setTranslateY(-350 + Math.random() * 530);
+            FadeTransition blink = new FadeTransition(Duration.seconds(0.5 + Math.random() * 1.0), star); blink.setFromValue(0.1); blink.setToValue(1.0); blink.setAutoReverse(true); blink.setCycleCount(Timeline.INDEFINITE); blink.setDelay(Duration.seconds(Math.random()));
             blink.play();
             starGroup.getChildren().add(star);
         }
@@ -205,9 +209,9 @@ public class LoginController implements Initializable {
             if (field != null) {
                 field.focusedProperty().addListener((obs, oldVal, isFocused) -> {
                     Parent parent = field.getParent();
-                    javafx.scene.layout.HBox inputBox = null;
-                    if (parent instanceof javafx.scene.layout.HBox) inputBox = (javafx.scene.layout.HBox) parent;
-                    else if (parent.getParent() instanceof javafx.scene.layout.HBox) inputBox = (javafx.scene.layout.HBox) parent.getParent();
+                    HBox inputBox = null;
+                    if (parent instanceof HBox) inputBox = (HBox) parent;
+                    else if (parent.getParent() instanceof HBox) inputBox = (HBox) parent.getParent();
                     if (inputBox != null) {
                         if (isFocused) { if (!inputBox.getStyleClass().contains("focused-box")) inputBox.getStyleClass().add("focused-box"); }
                         else { inputBox.getStyleClass().remove("focused-box"); }
@@ -229,6 +233,7 @@ public class LoginController implements Initializable {
     }
 
     private void handleEnterKey(KeyEvent event) { if (event.getCode() == KeyCode.ENTER) attemptLogin(); }
+
     @FXML void clickLogin(ActionEvent event) { attemptLogin(); }
 
     private void attemptLogin() {
@@ -253,7 +258,6 @@ public class LoginController implements Initializable {
                 String role = rs.getString("role");
                 String imagePath = rs.getString("image_path");
 
-                // Logging System
                 loggedInUser = new com.pos.flightmanagementsystem.model.User();
                 loggedInUser.setUserId(userId);
                 loggedInUser.setRole(role);
@@ -262,11 +266,11 @@ public class LoginController implements Initializable {
                 Stage stage = (Stage) txtUsername.getScene().getWindow();
 
                 if (role.equalsIgnoreCase("Super Admin") || role.equalsIgnoreCase("superadmin")) {
-                    playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml", username, role, imagePath);
+                    loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml", username, role, imagePath);
                 } else if (role.equalsIgnoreCase("Admin")) {
-                    playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/Admin.fxml", username, role, imagePath);
+                    loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/Admin.fxml", username, role, imagePath);
                 } else if (role.equalsIgnoreCase("Staff")) {
-                    playExitAnimation(stage, "/com/pos/flightmanagementsystem/view/Staff.fxml", username, role, imagePath);
+                    loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/Staff.fxml", username, role, imagePath);
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
                 }
@@ -293,28 +297,17 @@ public class LoginController implements Initializable {
              PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
             if (userId > 0) pstmt.setInt(1, userId);
             else pstmt.setNull(1, java.sql.Types.INTEGER);
-
             pstmt.setString(2, action);
             pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    private void playExitAnimation(Stage stage, String fxmlPath, String username, String role, String imagePath) {
-        TranslateTransition leftAnim = new TranslateTransition(Duration.millis(700), leftPanel);
-        leftAnim.setByX(-800); leftAnim.setInterpolator(Interpolator.EASE_IN);
-        TranslateTransition rightAnim = new TranslateTransition(Duration.millis(700), rightPanel);
-        rightAnim.setByX(800); rightAnim.setInterpolator(Interpolator.EASE_IN);
-        ParallelTransition pt = new ParallelTransition(leftAnim, rightAnim);
-
-        pt.setOnFinished(e -> loadDashboard(stage, fxmlPath, username, role, imagePath));
-        pt.play();
-    }
-
-    private void loadDashboard(Stage stage, String fxmlPath, String username, String role, String imagePath) {
+    private void loadDashboardWithSmoothAnimation(Stage stage, String fxmlPath, String username, String role, String imagePath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
+            Parent dashboardRoot = loader.load();
 
+            // 🌟 ဤနေရာတွင် Controller အားလုံးအတွက် User Data လှမ်းပို့ပေးသော ကုဒ်ကို အပြည့်အစုံ ပြန်ဖြည့်ထားပါသည် 🌟
             Object controller = loader.getController();
             if (controller instanceof AdminController) {
                 ((AdminController) controller).setLoggedInUser(username, role, imagePath);
@@ -324,10 +317,41 @@ public class LoginController implements Initializable {
                 ((StaffController) controller).setLoggedInUser(username, role, imagePath);
             }
 
-            stage.setScene(new Scene(root));
-            if (stage.isMaximized()) stage.setMaximized(false);
-            stage.setMaximized(true);
-            stage.show();
+            Scene scene = txtUsername.getScene();
+            Parent loginRoot = scene.getRoot();
+            loginRoot.setStyle("-fx-background-color: transparent;");
+
+            StackPane transitionContainer = new StackPane();
+            transitionContainer.setStyle("-fx-background-color: #06080D;");
+            transitionContainer.getChildren().addAll(dashboardRoot, loginRoot);
+
+            scene.setRoot(transitionContainer);
+            if (!stage.isMaximized()) stage.setMaximized(true);
+
+            try {
+                controller.getClass().getMethod("prepareIntroAnimation").invoke(controller);
+            } catch (Exception ignored) {}
+
+            TranslateTransition leftOut = new TranslateTransition(Duration.millis(700), leftPanel);
+            leftOut.setToX(-800); leftOut.setInterpolator(Interpolator.EASE_BOTH);
+
+            TranslateTransition rightOut = new TranslateTransition(Duration.millis(700), rightPanel);
+            rightOut.setToX(800); rightOut.setInterpolator(Interpolator.EASE_BOTH);
+
+            ParallelTransition loginAnimOut = new ParallelTransition(leftOut, rightOut);
+
+            loginAnimOut.setOnFinished(e -> {
+                // 🌟 loginRoot အစား dashboardRoot ကို အရင်ဖြုတ်ပေးရပါမည် 🌟
+                transitionContainer.getChildren().remove(dashboardRoot);
+
+                scene.setRoot(dashboardRoot);
+                try {
+                    controller.getClass().getMethod("playIntroAnimation").invoke(controller);
+                } catch (Exception ex) { ex.printStackTrace(); }
+            });
+
+            loginAnimOut.play();
+
         } catch (IOException e) {
             e.printStackTrace();
             Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not load the dashboard file."));
@@ -342,11 +366,11 @@ public class LoginController implements Initializable {
         if (isVisible) {
             visibleField.setVisible(true); hiddenField.setVisible(false);
             icon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z");
-            icon.setFill(Color.web("#06b6d4"));
+            icon.setFill(Color.web("#31C4B4"));
         } else {
             visibleField.setVisible(false); hiddenField.setVisible(true);
             icon.setContent("M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z");
-            icon.setFill(Color.web("#9ca3af"));
+            icon.setFill(Color.web("#8B95A5"));
         }
     }
 
@@ -354,9 +378,9 @@ public class LoginController implements Initializable {
     void handleSendEmail(ActionEvent event) {
         String targetEmail = emailField.getText().trim();
         if (targetEmail.isEmpty() || !targetEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            statusLabel.setTextFill(Color.RED); statusLabel.setText("Please enter a valid email address."); return;
+            statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Please enter a valid email address."); return;
         }
-        statusLabel.setTextFill(Color.web("#06b6d4")); statusLabel.setText("Sending OTP... Please wait.");
+        statusLabel.setTextFill(Color.web("#31C4B4")); statusLabel.setText("Sending OTP... Please wait.");
         sendButton.setDisable(true);
         generatedOTP = String.format("%06d", new Random().nextInt(999999));
 
@@ -365,9 +389,9 @@ public class LoginController implements Initializable {
             Platform.runLater(() -> {
                 sendButton.setDisable(false);
                 if (isSent) {
-                    statusLabel.setTextFill(Color.GREEN); statusLabel.setText("OTP sent successfully to your email."); switchSection(otpSection);
+                    statusLabel.setTextFill(Color.web("#10B981")); statusLabel.setText("OTP sent successfully to your email."); switchSection(otpSection);
                 } else {
-                    statusLabel.setTextFill(Color.RED); statusLabel.setText("Failed to send OTP. Check your connection.");
+                    statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Failed to send OTP. Check your connection.");
                 }
             });
         }).start();
@@ -376,13 +400,13 @@ public class LoginController implements Initializable {
     @FXML
     void handleVerifyOTP(ActionEvent event) {
         String enteredOTP = otp1.getText() + otp2.getText() + otp3.getText() + otp4.getText() + otp5.getText() + otp6.getText();
-        if (enteredOTP.length() < 6) { statusLabel.setTextFill(Color.RED); statusLabel.setText("Please enter the complete 6-digit OTP."); return; }
+        if (enteredOTP.length() < 6) { statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Please enter the complete 6-digit OTP."); return; }
 
         if (enteredOTP.equals(generatedOTP)) {
-            statusLabel.setTextFill(Color.GREEN); statusLabel.setText("OTP Verified Successfully!");
+            statusLabel.setTextFill(Color.web("#10B981")); statusLabel.setText("OTP Verified Successfully!");
             verifyButton.setDisable(true); switchSection(resetPasswordSection); statusLabel.setText("");
         } else {
-            statusLabel.setTextFill(Color.RED); statusLabel.setText("Invalid OTP. Please try again.");
+            statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Invalid OTP. Please try again.");
         }
     }
 
@@ -436,13 +460,13 @@ public class LoginController implements Initializable {
 
             if (alertType == Alert.AlertType.ERROR) {
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z");
-                customAlertIcon.setFill(Color.web("#ef4444")); customAlertBox.getStyleClass().add("alert-error");
+                customAlertIcon.setFill(Color.web("#FF4B72")); customAlertBox.getStyleClass().add("alert-error");
             } else if (alertType == Alert.AlertType.WARNING) {
                 customAlertIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
-                customAlertIcon.setFill(Color.web("#f59e0b")); customAlertBox.getStyleClass().add("alert-warning");
+                customAlertIcon.setFill(Color.web("#F59E0B")); customAlertBox.getStyleClass().add("alert-warning");
             } else {
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
-                customAlertIcon.setFill(Color.web("#06b6d4")); customAlertBox.getStyleClass().add("alert-info");
+                customAlertIcon.setFill(Color.web("#31C4B4")); customAlertBox.getStyleClass().add("alert-info");
             }
 
             customAlertOverlay.setVisible(true); customAlertOverlay.setOpacity(0.0); customAlertBox.setScaleX(0.5); customAlertBox.setScaleY(0.5);
