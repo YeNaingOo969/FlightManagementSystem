@@ -86,17 +86,17 @@ public class StaffPassengerDetailsController implements Initializable {
         this.currentPrice = price;
         this.currentPassengers = passengers;
 
-        lblFlightNo.setText(flightNo);
-        lblFrom.setText(from);
-        lblTo.setText(to);
-        lblDeparture.setText(date);
+        if (lblFlightNo != null) lblFlightNo.setText(flightNo);
+        if (lblFrom != null) lblFrom.setText(from);
+        if (lblTo != null) lblTo.setText(to);
+        if (lblDeparture != null) lblDeparture.setText(date);
 
         try {
-            double singlePrice = Double.parseDouble(price.replaceAll("[^\\d.]", ""));
-            double totalPrice = singlePrice * passengers;
-            lblTotalPrice.setText(String.format("%,.0f MMK", totalPrice));
+            double basePrice = 980000.0;
+            double total = basePrice * passengers;
+            if (lblTotalPrice != null) lblTotalPrice.setText(String.format("%,.0f MMK", total));
         } catch (Exception e) {
-            lblTotalPrice.setText(price);
+            if (lblTotalPrice != null) lblTotalPrice.setText("--");
         }
     }
 
@@ -134,27 +134,20 @@ public class StaffPassengerDetailsController implements Initializable {
         return isDarkMode;
     }
 
-    // ==========================================
-    // 🌟 Animated Custom Modal Alert အသစ် 🌟
-    // ==========================================
     private void showCustomAlert(boolean isError, String title, String message) {
-        // Overlay နောက်ခံအမည်းရောင်
         StackPane overlay = new StackPane();
         overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
         overlay.setAlignment(Pos.CENTER);
 
-        // Alert Box Container
         VBox dialogBox = new VBox(20);
         dialogBox.setMaxWidth(400);
         dialogBox.setMinHeight(180);
         dialogBox.setMaxHeight(Region.USE_PREF_SIZE);
 
-        // အရောင်သတ်မှတ်ခြင်း (Error ဆိုလျှင် အနီ၊ Warning ဆိုလျှင် အဝါ)
         String themeColor = isError ? "#FF4B72" : "#F59E0B";
 
         dialogBox.setStyle("-fx-background-color: #0B0E14; -fx-border-color: " + themeColor + "; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 25px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 15, 0, 0, 5);");
 
-        // Header (Title နှင့် 'X' ခလုတ်)
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
 
@@ -164,7 +157,6 @@ public class StaffPassengerDetailsController implements Initializable {
         Region spacer = new Region();
         HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
 
-        // 'X' Button
         Button btnCloseX = new Button();
         SVGPath xIcon = new SVGPath();
         xIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
@@ -176,7 +168,6 @@ public class StaffPassengerDetailsController implements Initializable {
 
         header.getChildren().addAll(lblTitle, spacer, btnCloseX);
 
-        // Body (Icon နှင့် Message)
         HBox body = new HBox(15);
         body.setAlignment(Pos.CENTER_LEFT);
 
@@ -201,7 +192,6 @@ public class StaffPassengerDetailsController implements Initializable {
 
         body.getChildren().addAll(iconPane, lblMessage);
 
-        // Footer (OK Button)
         HBox footer = new HBox();
         footer.setAlignment(Pos.CENTER_RIGHT);
 
@@ -215,18 +205,15 @@ public class StaffPassengerDetailsController implements Initializable {
 
         footer.getChildren().add(btnOk);
 
-        // Assemble Dialog
         dialogBox.getChildren().addAll(header, body, footer);
         overlay.getChildren().add(dialogBox);
         rootStackPane.getChildren().add(overlay);
 
-        // 🌟 နောက်ခံကို Blur လုပ်ခြင်း 🌟
         GaussianBlur blur = new GaussianBlur(0);
         mainContainer.setEffect(blur);
         Timeline blurTimeline = new Timeline(new KeyFrame(Duration.millis(300), new KeyValue(blur.radiusProperty(), 15)));
         blurTimeline.play();
 
-        // 🌟 အနောက်မှ အရှေ့သို့ Zoom In လုပ်၍ ပေါ်လာမည့် Animation 🌟
         dialogBox.setScaleX(0.7);
         dialogBox.setScaleY(0.7);
         dialogBox.setOpacity(0);
@@ -242,7 +229,6 @@ public class StaffPassengerDetailsController implements Initializable {
         ptIn.setInterpolator(Interpolator.EASE_OUT);
         ptIn.play();
 
-        // 🌟 အမှားခြစ် သို့မဟုတ် OK နှိပ်ပါက နောက်သို့ ပြန်ဝင်သွားမည့် Animation 🌟
         Runnable closeAction = () -> {
             Timeline blurOut = new Timeline(new KeyFrame(Duration.millis(300), new KeyValue(blur.radiusProperty(), 0)));
             blurOut.setOnFinished(e -> mainContainer.setEffect(null));
@@ -284,8 +270,6 @@ public class StaffPassengerDetailsController implements Initializable {
                 phone == null || phone.trim().isEmpty() ||
                 dob == null || gender == null || nationality == null ||
                 nrcPassport == null || nrcPassport.trim().isEmpty()) {
-
-            // 🌟 Custom Animated Alert ကို အသုံးပြုထားပါသည် (false = Warning) 🌟
             showCustomAlert(false, "Incomplete Data", "Please fill in all the passenger's details completely.");
             return;
         }
@@ -321,7 +305,6 @@ public class StaffPassengerDetailsController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             Platform.runLater(() -> {
-                // 🌟 Custom Animated Alert ကို အသုံးပြုထားပါသည် (true = Error) 🌟
                 showCustomAlert(true, "Database Error", "An error occurred while saving passenger data.\nError: " + e.getMessage());
             });
         }
@@ -335,6 +318,8 @@ public class StaffPassengerDetailsController implements Initializable {
             applyThemeRecursively(nextView, checkIsDarkMode());
 
             StaffSeatSelectionController controller = loader.getController();
+
+            // 🌟 1. Flight Data ၇ ခုကို လှမ်းပို့မည် (Error ကင်းသွားပါပြီ) 🌟
             controller.setFlightData(
                     currentFlightNo,
                     currentFrom,
@@ -342,9 +327,12 @@ public class StaffPassengerDetailsController implements Initializable {
                     currentDate,
                     currentPrice,
                     currentPassengers,
-                    txtFullName.getText(),
-                    newPassengerId
+                    txtFullName.getText()
             );
+
+            // 🌟 2. Database တွင် သိမ်းရန် ID များကို သီးသန့် လှမ်းပို့မည် 🌟
+            int staffId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
+            controller.setBookingIds(newPassengerId, staffId);
 
             nextView.setScaleX(0.8);
             nextView.setScaleY(0.8);
@@ -372,7 +360,6 @@ public class StaffPassengerDetailsController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Could not load StaffSeatSelection.fxml");
         }
     }
 

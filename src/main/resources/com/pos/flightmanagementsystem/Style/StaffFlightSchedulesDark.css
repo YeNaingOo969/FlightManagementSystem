@@ -38,3 +38,20 @@
 .flight-table .table-row-cell:filled:hover { -fx-background-color: rgba(255, 255, 255, 0.04); -fx-background-radius: 8px; }
 .flight-table .table-row-cell:selected { -fx-background-color: rgba(49, 196, 180, 0.15); -fx-background-radius: 8px; }
 .flight-table .table-cell { -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-padding: 0 15px; -fx-border-width: 0; -fx-alignment: CENTER; }
+
+/* 🌟 View Seat Button (Dark Mode) 🌟 */
+.btn-view-seat {
+    -fx-background-color: #31C4B4;
+    -fx-text-fill: #06080D;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.btn-view-seat:hover {
+    -fx-background-color: #24a193;
+}
+.action-column {
+    -fx-alignment: CENTER !important;
+}
