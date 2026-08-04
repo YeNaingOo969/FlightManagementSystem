@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -30,12 +31,21 @@
                         <Label styleClass="main-title" text="Manage Booking" />
                     </children>
                 </HBox>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <!-- 🌟 ညာဘက်အပေါ်ထောင့် Search Box 🌟 -->
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="search-box" style="-fx-background-color: transparent; -fx-border-color: #31C4B4; -fx-border-radius: 8; -fx-padding: 4 12;">
+                    <children>
+                        <SVGPath content="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#94A3B8" />
+                        <TextField fx:id="searchField" prefWidth="250.0" promptText="Search by Booking ID or Passenger..." style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #64748B;" />
+                    </children>
+                </HBox>
             </children>
         </HBox>
 
         <VBox spacing="15.0" styleClass="content-card" VBox.vgrow="ALWAYS">
             <children>
-                <!-- 🌟 Tab Labels များတွင် Click Action များနှင့် ID များ ထည့်ထားပါသည် 🌟 -->
                 <HBox spacing="30.0" styleClass="tab-container">
                     <children>
                         <Label fx:id="lblTabAll" onMouseClicked="#filterAll" styleClass="tab-label, active-tab" text="All Bookings" />

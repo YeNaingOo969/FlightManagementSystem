@@ -25,8 +25,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.effect.GaussianBlur;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -43,6 +43,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class StaffSeatSelectionController implements Initializable {
 
@@ -72,26 +73,35 @@ public class StaffSeatSelectionController implements Initializable {
     @FXML private Label lblTotal;
 
     @FXML private Button btnBack;
+    @FXML private Button btnContinue;
 
     private boolean isTopViewVisible = false;
     private Button currentlySelectedSeat = null;
 
-    private String currentFlightNo;
-    private String currentFrom;
-    private String currentTo;
-    private String currentDate;
-    private String currentPrice;
-    private int currentPassengers;
-    private String currentPassengerName;
+    private String currentFlightNo, currentFrom, currentTo, currentDate, currentPrice, currentPassengerName;
+    private int currentPassengers = 1;
 
     private int currentFlightId = -1;
+    private int currentPassengerId = -1;
+    private int currentStaffId = 1;
+
     private double ticketPriceValue = 0.0;
     private double currentTotalPrice = 0.0;
+    private boolean isViewOnlyMode = false;
 
-    private int currentPassengerId;
-    private int currentStaffId;
+    public void setViewOnlyMode(boolean isViewOnly) {
+        this.isViewOnlyMode = isViewOnly;
+        if (btnContinue != null) {
+            btnContinue.setVisible(!isViewOnly);
+            btnContinue.setManaged(!isViewOnly);
+        }
+        if (cmbPaymentMethod != null) {
+            cmbPaymentMethod.setVisible(!isViewOnly);
+            cmbPaymentMethod.setManaged(!isViewOnly);
+        }
+    }
 
-    public void setFlightData(String flightNo, String from, String to, String date, String price, int passengers, String passengerName, int passengerId) {
+    public void setFlightData(String flightNo, String from, String to, String date, String price, int passengers, String passengerName) {
         this.currentFlightNo = flightNo;
         this.currentFrom = from;
         this.currentTo = to;
@@ -99,13 +109,6 @@ public class StaffSeatSelectionController implements Initializable {
         this.currentPrice = price;
         this.currentPassengers = passengers;
         this.currentPassengerName = passengerName;
-        this.currentPassengerId = passengerId;
-
-        if (LoginController.loggedInUser != null) {
-            this.currentStaffId = LoginController.loggedInUser.getUserId();
-        } else {
-            this.currentStaffId = 1;
-        }
 
         lblTopFlight.setText("Flight: " + flightNo);
         lblTopRoute.setText(from + " ➔ " + to);
@@ -121,11 +124,17 @@ public class StaffSeatSelectionController implements Initializable {
             lblSeatCharge.setText("0 MMK");
             lblTotal.setText(String.format("%,.0f MMK", ticketPriceValue));
         } catch (Exception e) {
-            ticketPriceValue = 980000.0;
-            currentTotalPrice = ticketPriceValue;
+            lblTicketPrice.setText("--");
+            lblSeatCharge.setText("--");
+            lblTotal.setText("--");
         }
 
         fetchFlightDetailsAndBookedSeats();
+    }
+
+    public void setBookingIds(int passengerId, int staffId) {
+        this.currentPassengerId = passengerId;
+        this.currentStaffId = staffId;
     }
 
     @Override
@@ -136,9 +145,15 @@ public class StaffSeatSelectionController implements Initializable {
         clipRect.heightProperty().bind(viewportPane.heightProperty());
         viewportPane.setClip(clipRect);
 
+        generateSeats(businessSection, 6, "Business");
+        generateSeats(premiumSection, 6, "Premium Economic");
+        generateSeats(economySection, 6, "Economic");
+
         classComboBox.setOnAction(e -> animatePlaneToSection(classComboBox.getValue()));
 
-        setupPaymentMethods();
+        if (cmbPaymentMethod != null) {
+            setupPaymentMethods();
+        }
     }
 
     private void setupPaymentMethods() {
@@ -163,83 +178,71 @@ public class StaffSeatSelectionController implements Initializable {
                     switch (item) {
                         case "Cash":
                             icon.setContent("M2 4v16h20V4H2zm18 14H4V6h16v12zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z");
-                            icon.setFill(Color.web("#10B981")); // Green
+                            icon.setFill(Color.web("#10B981"));
                             break;
                         case "KBZ Pay":
                             icon.setContent("M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z");
-                            icon.setFill(Color.web("#2196F3")); // Blue
+                            icon.setFill(Color.web("#2196F3"));
                             break;
                         case "Wave Pay":
                             icon.setContent("M2 12c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2v6H2v-6z");
-                            icon.setFill(Color.web("#FFC107")); // Yellow
+                            icon.setFill(Color.web("#FFC107"));
                             break;
                         case "CB Pay":
                             icon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z");
-                            icon.setFill(Color.web("#FF9800")); // Orange
+                            icon.setFill(Color.web("#FF9800"));
                             break;
                         case "AYA Pay":
                             icon.setContent("M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z");
-                            icon.setFill(Color.web("#E53935")); // Red
+                            icon.setFill(Color.web("#E53935"));
                             break;
                         case "Credit/Debit Card":
                             icon.setContent("M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z");
-                            icon.setFill(Color.web("#9C27B0")); // Purple
+                            icon.setFill(Color.web("#9C27B0"));
                             break;
                     }
-                    icon.setScaleX(0.9);
-                    icon.setScaleY(0.9);
-
+                    icon.setScaleX(0.9); icon.setScaleY(0.9);
                     Label label = new Label(item);
-                    // 🌟 Light Mode တွင် စာသားကို ရှင်းလင်းစွာ မြင်ရစေရန် #1E293B သို့ ပြောင်းထားပါသည် 🌟
-                    label.setStyle("-fx-text-fill: #1E293B; -fx-font-size: 14px; -fx-font-weight: bold;");
+                    label.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold;");
                     box.getChildren().addAll(icon, label);
                     setGraphic(box);
                 }
             }
         };
-
         cmbPaymentMethod.setCellFactory(cellFactory);
         cmbPaymentMethod.setButtonCell(cellFactory.call(null));
     }
 
-    private void applyThemeRecursively(Parent node, boolean isDarkMode) {
-        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
-            ObservableList<String> styles = node.getStylesheets();
-            for (int i = 0; i < styles.size(); i++) {
-                String css = styles.get(i);
-                if (isDarkMode && css.contains("Light")) {
-                    styles.set(i, css.replace("Light", "Dark"));
-                } else if (!isDarkMode && css.contains("Dark")) {
-                    styles.set(i, css.replace("Dark", "Light"));
-                }
-            }
-        }
-        for (Node child : node.getChildrenUnmodifiable()) {
-            if (child instanceof Parent) {
-                applyThemeRecursively((Parent) child, isDarkMode);
-            }
+    private void generateSeats(VBox section, int numRows, String className) {
+        section.getChildren().removeIf(node -> !(node instanceof Label));
+        section.setSpacing(15);
+        for (int i = 1; i <= numRows; i++) {
+            HBox row = new HBox(15); row.setAlignment(Pos.CENTER);
+            Button seatA = createSeatButton(i + "A", className);
+            Button seatB = createSeatButton(i + "B", className);
+            Label rowNumberLabel = new Label(String.valueOf(i));
+            rowNumberLabel.setPrefWidth(30); rowNumberLabel.setAlignment(Pos.CENTER);
+            rowNumberLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+            Button seatC = createSeatButton(i + "C", className);
+            Button seatD = createSeatButton(i + "D", className);
+            row.getChildren().addAll(seatA, seatB, rowNumberLabel, seatC, seatD);
+            section.getChildren().add(row);
         }
     }
 
-    private boolean checkIsDarkMode() {
-        boolean isDarkMode = true;
-        Parent current = rootStackPane;
-        while (current != null) {
-            String currentStyles = current.getStylesheets().toString();
-            if (currentStyles.contains("Dark")) {
-                return true;
-            } else if (currentStyles.contains("Light")) {
-                return false;
-            }
-            current = current.getParent();
-        }
-        return isDarkMode;
+    private Button createSeatButton(String seatNumber, String className) {
+        Button btn = new Button(seatNumber);
+        btn.setUserData(className + "_" + seatNumber);
+        btn.setPrefSize(45, 45);
+        btn.getStyleClass().add("seat-available");
+        btn.setStyle("-fx-cursor: hand; -fx-background-radius: 5;");
+        btn.setOnAction(this::selectSeat);
+        return btn;
     }
 
     private void fetchFlightDetailsAndBookedSeats() {
         String flightQuery = "SELECT flight_id, TIME_FORMAT(departure_time, '%h:%i %p') as time_str FROM flights WHERE flight_number = ? AND DATE(departure_time) = ?";
-        String seatsQuery = "SELECT seat_number FROM seats WHERE flight_id = ? AND is_available = false";
-
+        String seatsQuery = "SELECT seat_number, seat_class FROM seats WHERE flight_id = ? AND is_available = false";
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) return;
             try (PreparedStatement flightStmt = conn.prepareStatement(flightQuery)) {
@@ -253,36 +256,27 @@ public class StaffSeatSelectionController implements Initializable {
                 }
             }
             if (currentFlightId == -1) return;
-
             List<String> bookedSeats = new ArrayList<>();
             try (PreparedStatement seatStmt = conn.prepareStatement(seatsQuery)) {
                 seatStmt.setInt(1, currentFlightId);
                 try (ResultSet rs = seatStmt.executeQuery()) {
-                    while (rs.next()) {
-                        bookedSeats.add(rs.getString("seat_number"));
-                    }
+                    while (rs.next()) bookedSeats.add(rs.getString("seat_class") + "_" + rs.getString("seat_number"));
                 }
             }
             disableBookedSeats(businessSection, bookedSeats);
             disableBookedSeats(premiumSection, bookedSeats);
             disableBookedSeats(economySection, bookedSeats);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private void disableBookedSeats(Pane parent, List<String> bookedSeats) {
         for (Node node : parent.getChildren()) {
             if (node instanceof Button) {
                 Button btn = (Button) node;
-                if (bookedSeats.contains(btn.getText())) {
-                    btn.getStyleClass().remove("seat-available");
-                    btn.getStyleClass().add("seat-booked");
-                    btn.setDisable(true);
+                if (btn.getUserData() != null && bookedSeats.contains(btn.getUserData().toString())) {
+                    btn.getStyleClass().remove("seat-available"); btn.getStyleClass().add("seat-booked"); btn.setDisable(true);
                 }
-            } else if (node instanceof Pane) {
-                disableBookedSeats((Pane) node, bookedSeats);
-            }
+            } else if (node instanceof Pane) disableBookedSeats((Pane) node, bookedSeats);
         }
     }
 
@@ -292,90 +286,109 @@ public class StaffSeatSelectionController implements Initializable {
         else if (selectedClass.equals("Premium Economic")) targetY = -(premiumSection.getLayoutY() - 30);
         else if (selectedClass.equals("Economic")) targetY = -(economySection.getLayoutY() - 30);
 
-        ParallelTransition parallelTransition = new ParallelTransition();
+        ParallelTransition pt = new ParallelTransition();
         if (!isTopViewVisible) {
-            FadeTransition fadeOutSide = new FadeTransition(Duration.millis(500), sideViewPlane);
-            fadeOutSide.setToValue(0);
-            FadeTransition fadeInTop = new FadeTransition(Duration.millis(800), topViewPlane);
-            fadeInTop.setToValue(1);
-            parallelTransition.getChildren().addAll(fadeOutSide, fadeInTop);
+            FadeTransition fadeOutSide = new FadeTransition(Duration.millis(500), sideViewPlane); fadeOutSide.setToValue(0);
+            FadeTransition fadeInTop = new FadeTransition(Duration.millis(800), topViewPlane); fadeInTop.setToValue(1);
+            pt.getChildren().addAll(fadeOutSide, fadeInTop);
             isTopViewVisible = true;
         }
-
-        TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane);
-        slidePlane.setToY(targetY);
-        parallelTransition.getChildren().add(slidePlane);
-        parallelTransition.play();
+        TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane); slidePlane.setToY(targetY);
+        pt.getChildren().add(slidePlane); pt.play();
     }
 
     @FXML
     void selectSeat(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
-
         if (clickedButton.getStyleClass().contains("seat-booked") || clickedButton.isDisabled()) return;
 
         if (currentlySelectedSeat != null) {
-            currentlySelectedSeat.getStyleClass().remove("seat-selected");
-            currentlySelectedSeat.getStyleClass().add("seat-available");
+            currentlySelectedSeat.getStyleClass().remove("seat-selected"); currentlySelectedSeat.getStyleClass().add("seat-available");
         }
+        clickedButton.getStyleClass().remove("seat-available"); clickedButton.getStyleClass().add("seat-selected"); currentlySelectedSeat = clickedButton;
 
-        clickedButton.getStyleClass().remove("seat-available");
-        clickedButton.getStyleClass().add("seat-selected");
-        currentlySelectedSeat = clickedButton;
-
-        String selectedClass = classComboBox.getValue() != null ? classComboBox.getValue() : "Economic";
+        String[] seatData = clickedButton.getUserData().toString().split("_");
+        String selectedClass = seatData[0];
         lblSelectedSeat.setText(selectedClass + " - " + clickedButton.getText());
 
         double seatCharge = 0.0;
-        if (selectedClass.equals("Business")) {
-            seatCharge = 676000.0 * currentPassengers;
-        } else if (selectedClass.equals("Premium Economic")) {
-            seatCharge = 418000.0 * currentPassengers;
-        } else {
-            seatCharge = 0.0;
-        }
+        if (selectedClass.equals("Business")) seatCharge = 676000.0 * currentPassengers;
+        else if (selectedClass.equals("Premium Economic")) seatCharge = 418000.0 * currentPassengers;
 
         lblSeatCharge.setText(String.format("%,.0f MMK", seatCharge));
         currentTotalPrice = ticketPriceValue + seatCharge;
         lblTotal.setText(String.format("%,.0f MMK", currentTotalPrice));
     }
 
+    // 🌟 Back သို့ ပြန်ထွက်သည့် Zoom Out Animation အလန်းစားလေး 🌟
     @FXML
     void clickBack(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/StaffPassengerDetails.fxml"));
-            Parent previousView = loader.load();
+            String targetFxml = isViewOnlyMode
+                    ? "/com/pos/flightmanagementsystem/view/StaffFlightSchedules.fxml"
+                    : "/com/pos/flightmanagementsystem/view/StaffPassengerDetails.fxml";
 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(targetFxml));
+            Parent previousView = loader.load();
             applyThemeRecursively(previousView, checkIsDarkMode());
 
-            StaffPassengerDetailsController controller = loader.getController();
-            controller.setFlightData(currentFlightNo, currentFrom, currentTo, currentDate, currentPrice, currentPassengers);
+            Pane parentContainer = (Pane) rootStackPane.getParent();
+            if (parentContainer != null) {
+                // အရင် Page သည် အနောက်တွင် ငယ်ရာမှ ပုံမှန်အရွယ်သို့ ပြန်ကြီးလာမည်
+                previousView.setScaleX(0.8);
+                previousView.setScaleY(0.8);
+                previousView.setOpacity(0.0);
 
-            previousView.setScaleX(1.2);
-            previousView.setScaleY(1.2);
-            previousView.setOpacity(0.0);
-            rootStackPane.getChildren().add(previousView);
+                // လက်ရှိ Page ၏ အနောက်တွင် ယခင် Page ကို ထည့်သွင်းသည်
+                parentContainer.getChildren().add(0, previousView);
 
-            ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), mainContainer);
-            scaleOut.setToX(0.8);
-            scaleOut.setToY(0.8);
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(400), mainContainer);
-            fadeOut.setToValue(0.0);
+                // လက်ရှိ Page သည် မျက်နှာပြင်သို့ ကြီး၍ ပျောက်ကွယ်သွားမည်
+                ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), rootStackPane);
+                scaleOut.setToX(1.2);
+                scaleOut.setToY(1.2);
+                FadeTransition fadeOut = new FadeTransition(Duration.millis(400), rootStackPane);
+                fadeOut.setToValue(0.0);
 
-            ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), previousView);
-            scaleIn.setToX(1.0);
-            scaleIn.setToY(1.0);
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(400), previousView);
-            fadeIn.setToValue(1.0);
+                ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), previousView);
+                scaleIn.setToX(1.0);
+                scaleIn.setToY(1.0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), previousView);
+                fadeIn.setToValue(1.0);
 
-            ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn);
-            pt.setInterpolator(Interpolator.EASE_BOTH);
-            pt.setOnFinished(e -> rootStackPane.getChildren().remove(mainContainer));
-            pt.play();
-
+                ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn);
+                pt.setInterpolator(Interpolator.EASE_BOTH);
+                pt.setOnFinished(e -> parentContainer.getChildren().remove(rootStackPane));
+                pt.play();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void applyThemeRecursively(Parent node, boolean isDarkMode) {
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
+            ObservableList<String> styles = node.getStylesheets();
+            for (int i = 0; i < styles.size(); i++) {
+                String css = styles.get(i);
+                if (isDarkMode && css.contains("Light")) styles.set(i, css.replace("Light", "Dark"));
+                else if (!isDarkMode && css.contains("Dark")) styles.set(i, css.replace("Dark", "Light"));
+            }
+        }
+        for (javafx.scene.Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) applyThemeRecursively((Parent) child, isDarkMode);
+        }
+    }
+
+    private boolean checkIsDarkMode() {
+        boolean isDarkMode = true;
+        Parent current = rootStackPane;
+        while (current != null) {
+            String currentStyles = current.getStylesheets().toString();
+            if (currentStyles.contains("Dark")) return true;
+            else if (currentStyles.contains("Light")) return false;
+            current = current.getParent();
+        }
+        return isDarkMode;
     }
 
     @FXML
@@ -383,14 +396,14 @@ public class StaffSeatSelectionController implements Initializable {
         if (currentlySelectedSeat == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Seat Selected");
-            alert.setHeaderText(null);
             alert.setContentText("ကျေးဇူးပြု၍ ထိုင်ခုံတစ်ခု ရွေးချယ်ပါ။");
             alert.showAndWait();
             return;
         }
 
-        String seatNumber = currentlySelectedSeat.getText();
-        String seatClass = classComboBox.getValue();
+        String[] seatData = currentlySelectedSeat.getUserData().toString().split("_");
+        String seatClass = seatData[0];
+        String dbSeatNumber = seatData[1];
         String timeString = lblTopTime.getText().replace("Time: ", "").trim();
 
         String selectedPayment = cmbPaymentMethod.getValue();
@@ -398,53 +411,28 @@ public class StaffSeatSelectionController implements Initializable {
             selectedPayment = "Cash";
         }
 
-        loadBoardingPassPage(seatClass, timeString, seatNumber, selectedPayment);
+        loadBoardingPassPage(seatClass, timeString, dbSeatNumber, selectedPayment);
     }
 
     private void loadBoardingPassPage(String seatClass, String timeString, String seatNumber, String paymentMethod) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/StaffBoardingPass.fxml"));
             Parent modalView = loader.load();
-
             StaffBoardingPassController controller = loader.getController();
 
-            controller.setBoardingPassData(
-                    currentPassengerName,
-                    seatClass,
-                    currentFrom,
-                    currentTo,
-                    currentDate,
-                    timeString,
-                    currentFlightNo,
-                    seatNumber
-            );
-
+            controller.setBoardingPassData(currentPassengerName, seatClass, currentFrom, currentTo, currentDate, timeString, currentFlightNo, seatNumber);
             controller.setBookingDetailsForDatabase(currentFlightId, currentPassengerId, currentStaffId, currentTotalPrice, paymentMethod);
 
-            modalView.setScaleX(0.5);
-            modalView.setScaleY(0.5);
-            modalView.setOpacity(0.0);
+            modalView.setScaleX(0.5); modalView.setScaleY(0.5); modalView.setOpacity(0.0);
             rootStackPane.getChildren().add(modalView);
 
-            GaussianBlur blur = new GaussianBlur(0);
-            mainContainer.setEffect(blur);
-            Timeline blurTimeline = new Timeline(
-                    new KeyFrame(Duration.millis(400), new KeyValue(blur.radiusProperty(), 15))
-            );
-            blurTimeline.play();
+            GaussianBlur blur = new GaussianBlur(0); mainContainer.setEffect(blur);
+            Timeline blurTimeline = new Timeline(new KeyFrame(Duration.millis(400), new KeyValue(blur.radiusProperty(), 15))); blurTimeline.play();
 
-            ScaleTransition scaleUp = new ScaleTransition(Duration.millis(400), modalView);
-            scaleUp.setToX(1.0);
-            scaleUp.setToY(1.0);
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(400), modalView);
-            fadeIn.setToValue(1.0);
+            ScaleTransition scaleUp = new ScaleTransition(Duration.millis(400), modalView); scaleUp.setToX(1.0); scaleUp.setToY(1.0);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(400), modalView); fadeIn.setToValue(1.0);
 
-            ParallelTransition pt = new ParallelTransition(scaleUp, fadeIn);
-            pt.setInterpolator(Interpolator.EASE_OUT);
-            pt.play();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            ParallelTransition pt = new ParallelTransition(scaleUp, fadeIn); pt.setInterpolator(Interpolator.EASE_OUT); pt.play();
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }
