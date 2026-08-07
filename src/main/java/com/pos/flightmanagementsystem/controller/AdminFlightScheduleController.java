@@ -126,20 +126,28 @@ public class AdminFlightScheduleController implements Initializable {
                 }
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        Flight flight = new Flight(
-                                rs.getInt("flight_id"),
-                                rs.getString("flight_number"),
-                                rs.getString("airline"),
-                                rs.getInt("departure_city_id"),
-                                rs.getInt("arrival_city_id"),
-                                rs.getTimestamp("departure_time").toLocalDateTime(),
-                                rs.getTimestamp("arrival_time").toLocalDateTime(),
-                                rs.getInt("total_seats"),
-                                rs.getDouble("base_price"),
-                                rs.getString("status")
-                        );
+                        // 🌟 Data Type Error မဖြစ်စေရန် Setter များဖြင့် အစားထိုး အသုံးပြုထားပါသည် 🌟
+                        Flight flight = new Flight();
+                        flight.setFlightId(rs.getInt("flight_id"));
+                        flight.setFlightNumber(rs.getString("flight_number"));
+                        flight.setAirline(rs.getString("airline"));
+                        flight.setDepartureCityId(rs.getInt("departure_city_id"));
+                        flight.setArrivalCityId(rs.getInt("arrival_city_id"));
+
+                        // Map မှတဆင့် မြို့နာမည်များကိုပါ တခါတည်း ဆွဲထည့်ပေးထားပါသည်
+                        flight.setDepartureCityName(getCityName(rs.getInt("departure_city_id")));
+                        flight.setArrivalCityName(getCityName(rs.getInt("arrival_city_id")));
+
+                        flight.setDepartureTime(rs.getTimestamp("departure_time").toLocalDateTime());
+                        flight.setArrivalTime(rs.getTimestamp("arrival_time").toLocalDateTime());
+                        flight.setTotalSeats(rs.getInt("total_seats"));
+                        flight.setBasePrice(rs.getDouble("base_price"));
+                        flight.setStatus(rs.getString("status"));
+
+                        // Table List ထဲသို့ ထည့်ခြင်း
                         flightList.add(flight);
                     }
+                    // Loop ပြီးသွားမှသာ Table ထဲသို့ Data များ ထည့်သွင်းပါမည်
                     tblFlights.setItems(flightList);
                 }
             }

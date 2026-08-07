@@ -15,17 +15,11 @@
     -fx-padding: 20px 25px;
 }
 
-/* 🌟 Icon နောက်ခံကို Theme အရောင် (Teal အဖျော့) ပြောင်းထားပါသည် 🌟 */
 .icon-badge {
     -fx-background-color: rgba(49, 196, 180, 0.15);
     -fx-background-radius: 50%;
-    -fx-min-width: 38px;
-    -fx-min-height: 38px;
-    -fx-max-width: 38px;
-    -fx-max-height: 38px;
+    -fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px;
 }
-
-/* 🌟 Icon ကို Theme အရောင် (Teal) ပြောင်းထားပါသည် 🌟 */
 .header-icon-glyph {
     -fx-fill: #31C4B4;
 }
@@ -49,7 +43,6 @@
     -fx-padding: 20px 25px;
 }
 
-/* Live Flight Schedules ခေါင်းစဉ် */
 .section-title {
     -fx-text-fill: #0F172A;
     -fx-font-size: 16px;
@@ -59,26 +52,23 @@
 }
 
 /* =========================================
-   TableView Styling (လိုင်းများဖျောက်ခြင်း)
+   TableView Styling
    ========================================= */
 .flight-table {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-table-cell-border-color: transparent; /* 🌟 Table အတွင်းရှိ Grid လိုင်းများကို ဖျောက်ရန် 🌟 */
+    -fx-table-cell-border-color: transparent;
 }
-
 .flight-table .column-header-background {
     -fx-background-color: transparent;
     -fx-border-color: transparent transparent #E2E8F0 transparent;
     -fx-border-width: 0 0 1 0;
 }
-
 .flight-table .column-header {
     -fx-background-color: transparent;
     -fx-size: 45px;
-    -fx-border-width: 0; /* 🌟 Header ဘေးလိုင်းများ ဖျောက်ရန် 🌟 */
+    -fx-border-width: 0;
 }
-
 .flight-table .column-header .label {
     -fx-font-size: 13px;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
@@ -86,28 +76,40 @@
     -fx-font-weight: bold;
     -fx-alignment: center-left;
 }
-
 .flight-table .table-row-cell {
     -fx-background-color: #FFFFFF;
-    -fx-border-color: transparent transparent #F1F5F9 transparent; /* အောက်ခြေလိုင်း ခပ်ရေးရေးလေးသာ ထားပါသည် */
+    -fx-border-color: transparent transparent #F1F5F9 transparent;
     -fx-border-width: 0 0 1 0;
     -fx-cell-size: 50px;
 }
-
 .flight-table .table-row-cell:hover {
     -fx-background-color: #F8FAFC;
 }
-
 .flight-table .table-cell {
     -fx-font-size: 13px;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-text-fill: #334155;
     -fx-alignment: center-left;
     -fx-padding: 0 0 0 5;
-    -fx-border-width: 0; /* 🌟 Cell များကြားရှိ ဒေါင်လိုက်လိုင်းများ ဖျောက်ရန် 🌟 */
+    -fx-border-width: 0;
 }
-
-/* 🌟 အလွတ်ဖြစ်နေသော Table အောက်ခြေအပိုင်းမှ လိုင်းများကို ဖျောက်ရန် 🌟 */
 .flight-table .filler {
     -fx-background-color: transparent;
+}
+
+/* 🌟 View Seat Button (Light Mode) 🌟 */
+.btn-view-seat {
+    -fx-background-color: #0ea5e9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.btn-view-seat:hover {
+    -fx-background-color: #0284c7;
+}
+.action-column {
+    -fx-alignment: CENTER !important;
 }
