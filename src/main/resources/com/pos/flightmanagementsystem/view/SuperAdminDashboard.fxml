@@ -2,116 +2,164 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
-<!-- ဒီ VBox က စောနက BorderPane ရဲ့ Center ထဲကို ဝင်သွားမယ့်ကောင်ပါ -->
-<VBox fx:id="contentArea" spacing="24.0" styleClass="super-content" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
-   <padding>
-      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-   </padding>
-   <children>
-      <HBox alignment="CENTER_LEFT" spacing="18.0" styleClass="super-topbar">
+<!-- 🌟 အလယ်က Content သာ Scroll ဖြစ်ရန် ScrollPane ဖြင့် အုပ်ပေးထားပါသည် 🌟 -->
+<ScrollPane fitToWidth="true" styleClass="dashboard-scroll-pane" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminDashboardDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminDashboardController">
+   <content>
+      <VBox fx:id="contentArea" spacing="24.0" styleClass="super-content">
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
          <children>
-            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+            <!-- 🌟 TOPBAR 🌟 -->
+            <HBox alignment="CENTER_LEFT" spacing="18.0" styleClass="super-topbar">
                <children>
-                  <Label styleClass="super-page-kicker" text="SUPER ADMIN DASHBOARD" />
-                  <Label styleClass="super-page-title" text="Airline Operations Overview" />
-                  <Label styleClass="super-page-subtitle" text="Monitor bookings, flight activity, revenue, and staff actions from one control room." />
-               </children>
-            </VBox>
-            <VBox alignment="CENTER_RIGHT" spacing="8.0">
-               <children>
-                  <Label styleClass="super-status-pill" text="Live Monitoring" />
-                  <Label styleClass="super-time-label" text="Today" />
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-      <HBox spacing="18.0" styleClass="super-metrics-row" VBox.vgrow="NEVER">
-         <children>
-            <StackPane styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS" />
-            <StackPane styleClass="super-metric-card-red" HBox.hgrow="ALWAYS" />
-            <StackPane styleClass="super-metric-card-green" HBox.hgrow="ALWAYS" />
-            <StackPane styleClass="super-metric-card-gold" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <HBox spacing="18.0" VBox.vgrow="ALWAYS">
-         <children>
-            <VBox spacing="16.0" styleClass="super-panel" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                  <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                      <children>
+                        <Label styleClass="super-page-kicker" text="CEO EXECUTIVE DASHBOARD" />
+                        <Label styleClass="super-page-title" text="Airline Financial &amp; Operations Overview" />
+                        <Label styleClass="super-page-subtitle" text="Monitor net profits, occupancy rates, top routes, and flight health from one control room." />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER_RIGHT" spacing="8.0">
+                     <children>
+                        <Label styleClass="super-status-pill" text="Live Monitoring" />
+                        <Label fx:id="lblCurrentDate" styleClass="super-time-label" text="Today" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- 🌟 4 METRIC CARDS (CEO Focus) 🌟 -->
+            <HBox spacing="18.0" styleClass="super-metrics-row">
+               <children>
+                  <!-- 1. Total Revenue -->
+                  <StackPane styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS">
+                     <VBox alignment="CENTER_LEFT" spacing="5">
+                        <Label styleClass="super-metric-label" text="Gross Revenue (This Month)" />
+                        <Label fx:id="lblTotalRevenue" styleClass="super-metric-value" text="0 MMK" />
+                        <HBox alignment="CENTER_LEFT" spacing="5">
+                           <SVGPath fx:id="iconRevenueTrend" />
+                           <Label fx:id="lblRevenueTrend" text="+0% vs last month" />
+                        </HBox>
+                     </VBox>
+                  </StackPane>
+
+                  <!-- 2. Net Profit -->
+                  <StackPane styleClass="super-metric-card-green" HBox.hgrow="ALWAYS">
+                     <VBox alignment="CENTER_LEFT" spacing="5">
+                        <Label styleClass="super-metric-label" text="Est. Net Profit (This Month)" />
+                        <Label fx:id="lblNetProfit" styleClass="super-metric-value" text="0 MMK" />
+                        <HBox alignment="CENTER_LEFT" spacing="5">
+                           <SVGPath fx:id="iconProfitTrend" />
+                           <Label fx:id="lblProfitTrend" text="+0% vs last month" />
+                        </HBox>
+                     </VBox>
+                  </StackPane>
+
+                  <!-- 3. Occupancy Rate -->
+                  <StackPane styleClass="super-metric-card-purple" HBox.hgrow="ALWAYS">
+                     <VBox alignment="CENTER_LEFT" spacing="5">
+                        <Label styleClass="super-metric-label" text="Average Occupancy Rate" />
+                        <Label fx:id="lblOccupancyRate" styleClass="super-metric-value" text="0%" />
+                        <Label styleClass="super-metric-label" style="-fx-font-size: 11px;" text="Based on active scheduled flights" />
+                     </VBox>
+                  </StackPane>
+
+                  <!-- 4. Cancellations -->
+                  <StackPane styleClass="super-metric-card-red" HBox.hgrow="ALWAYS">
+                     <VBox alignment="CENTER_LEFT" spacing="5">
+                        <Label styleClass="super-metric-label" text="Cancellations (This Month)" />
+                        <Label fx:id="lblCancellations" styleClass="super-metric-value" text="0 Bookings" />
+                        <Label fx:id="lblRefundAmount" styleClass="super-metric-label" style="-fx-font-size: 11px;" text="Refunds: 0 MMK" />
+                     </VBox>
+                  </StackPane>
+               </children>
+            </HBox>
+
+            <!-- 🌟 CHARTS ROW (Trend & Top Routes) 🌟 -->
+            <HBox spacing="18.0" VBox.vgrow="SOMETIMES">
+               <children>
+                  <!-- Area Chart (Revenue Trend) -->
+                  <VBox styleClass="super-panel" HBox.hgrow="ALWAYS" prefHeight="260.0">
+                     <Label styleClass="super-section-title" text="Revenue Trend (Last 6 Months)" />
+                     <AreaChart fx:id="revenueChart" legendVisible="false" VBox.vgrow="ALWAYS">
+                        <xAxis><CategoryAxis fx:id="xAxis" tickLabelFill="#8B95A5" /></xAxis>
+                        <yAxis><NumberAxis fx:id="yAxis" tickLabelFill="#8B95A5" /></yAxis>
+                     </AreaChart>
+                  </VBox>
+
+                  <!-- Bar Chart (Top Routes) -->
+                  <VBox styleClass="super-panel" prefWidth="420.0" prefHeight="260.0">
+                     <Label styleClass="super-section-title" text="Top Performing Routes" />
+                     <Label styleClass="super-section-subtitle" text="By total confirmed bookings" />
+                     <BarChart fx:id="topRoutesChart" legendVisible="false" VBox.vgrow="ALWAYS" styleClass="route-bar-chart">
+                        <xAxis><CategoryAxis fx:id="xAxisRoutes" tickLabelFill="#8B95A5" /></xAxis>
+                        <yAxis><NumberAxis fx:id="yAxisRoutes" tickLabelFill="#8B95A5" /></yAxis>
+                     </BarChart>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- 🌟 BOTTOM ROW (Logs Table & Health) 🌟 -->
+            <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox spacing="16.0" styleClass="super-panel" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                     <HBox alignment="CENTER_LEFT" spacing="12.0">
                         <VBox spacing="4.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label styleClass="super-section-title" text="Recent Activity" />
-                              <Label styleClass="super-section-subtitle" text="Latest administrative actions and operational events" />
-                           </children>
+                           <Label styleClass="super-section-title" text="Recent System Activity" />
+                           <Label styleClass="super-section-subtitle" text="Latest administrative actions and operational events" />
                         </VBox>
                         <Label styleClass="super-table-chip" text="System Logs" />
-                     </children>
-                  </HBox>
-                  <!-- Dashboard ရဲ့ ဇယား -->
-                  <TableView fx:id="activityTable" styleClass="super-table" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-                     <columns>
-                        <TableColumn prefWidth="180.0" text="Action" />
-                        <TableColumn prefWidth="160.0" text="User" />
-                        <TableColumn prefWidth="160.0" text="Date" />
-                        <TableColumn prefWidth="420.0" text="Detail" />
-                     </columns>
-                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                     </columnResizePolicy>
-                     <placeholder>
-                        <Label text="No recent activity yet" />
-                     </placeholder>
-                  </TableView>
-               </children>
-            </VBox>
-            <VBox prefWidth="310.0" spacing="18.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <VBox spacing="12.0" styleClass="super-side-panel">
-                     <children>
+                     </HBox>
+                     <TableView fx:id="logsTable" styleClass="super-table" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                        <columns>
+                           <TableColumn fx:id="colLogDate" prefWidth="150.0" text="Date &amp; Time" />
+                           <TableColumn fx:id="colLogUser" prefWidth="150.0" text="User" />
+                           <TableColumn fx:id="colLogAction" prefWidth="350.0" text="Action Detail" />
+                        </columns>
+                        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                        <placeholder><Label text="No recent activity yet" /></placeholder>
+                     </TableView>
+                  </VBox>
+
+                  <VBox prefWidth="310.0" spacing="18.0">
+                     <VBox spacing="12.0" styleClass="super-side-panel">
                         <Label styleClass="super-section-title" text="Flight Health" />
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label styleClass="super-dot-green" text=" " />
-                              <Label styleClass="super-side-copy" text="Schedule service online" />
-                           </children>
+                           <Label styleClass="super-dot-green" text=" " />
+                           <Label styleClass="super-side-copy" text="Schedule service online" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label styleClass="super-dot-blue" text=" " />
-                              <Label styleClass="super-side-copy" text="Booking desk active" />
-                           </children>
+                           <Label styleClass="super-dot-blue" text=" " />
+                           <Label styleClass="super-side-copy" text="Booking desk active" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label styleClass="super-dot-gold" text=" " />
-                              <Label styleClass="super-side-copy" text="Revenue tracking ready" />
-                           </children>
+                           <Label styleClass="super-dot-gold" text=" " />
+                           <Label styleClass="super-side-copy" text="Revenue tracking ready" />
                         </HBox>
-                     </children>
-                  </VBox>
-                  <VBox spacing="10.0" styleClass="super-side-panel-accent" VBox.vgrow="NEVER">
-                     <children>
+                     </VBox>
+                     <VBox spacing="10.0" styleClass="super-side-panel-accent">
                         <Label styleClass="super-section-title-light" text="Admin Focus" />
                         <Label styleClass="super-side-copy-light" text="Use account management and system tools to keep staff access and airline operations secure." wrapText="true" />
-                     </children>
+                     </VBox>
                   </VBox>
-                  <Region VBox.vgrow="ALWAYS" />
                </children>
-            </VBox>
+            </HBox>
          </children>
-      </HBox>
-   </children>
-
-   <stylesheets>
-      <URL value="@/com/pos/flightmanagementsystem/Style/SuperAdminDashboardDark.css" />
-   </stylesheets>
-</VBox>
+      </VBox>
+   </content>
+</ScrollPane>

@@ -121,4 +121,40 @@
     -fx-text-fill: #8B95A5; -fx-font-size: 14px; -fx-font-weight: bold;
     -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-padding: 10px 24px; -fx-cursor: hand;
 }
+/* ==========================================================
+   ☑️ CHECKBOX STYLING (Modern Dark Theme)
+========================================================== */
+.check-box {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+/* Checkbox အခွံ (Box လေး) ရဲ့ ပုံစံ */
+.check-box .box {
+    -fx-background-color: #0B0E14;
+    -fx-border-color: #1F2633;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+}
+
+/* Mouse တင်လိုက်ချိန် (Hover) */
+.check-box:hover .box {
+    -fx-border-color: #31C4B4;
+    -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.3), 5, 0, 0, 0);
+}
+
+/* Click နှိပ်ပြီး ရွေးချယ်လိုက်ချိန် (Checked) */
+.check-box:selected .box {
+    -fx-background-color: #31C4B4;
+    -fx-border-color: #31C4B4;
+}
+
+/* အလယ်က အမှန်ခြစ်လေး (Tick Mark) ရဲ့ အရောင် */
+.check-box:selected .mark {
+    -fx-background-color: #06080D; /* နောက်ခံအမည်းနဲ့ လိုက်ဖက်အောင် အမှန်ခြစ်ကို အမည်းပေးထားပါသည် */
+}
 .btn-secondary:hover { -fx-background-color: rgba(139, 149, 165, 0.15); -fx-text-fill: #FFFFFF; -fx-border-color: #FFFFFF; }

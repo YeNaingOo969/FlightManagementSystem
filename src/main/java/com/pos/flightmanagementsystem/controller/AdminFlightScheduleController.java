@@ -324,7 +324,7 @@ public class AdminFlightScheduleController implements Initializable {
             TranslateTransition moveCenter = new TranslateTransition(Duration.millis(300), modalView);
             moveCenter.setToX(0);
             // 🌟 ကတ်ကို အောက်ရောက်မသွားစေရန် အပေါ်သို့ 45 Pixels တိုးတင်ပေးထားပါသည် 🌟
-            moveCenter.setToY(-45);
+            moveCenter.setToY(-110);
             moveCenter.setInterpolator(Interpolator.EASE_OUT);
 
             FadeTransition fadeIn = new FadeTransition(Duration.millis(300), overlay);
