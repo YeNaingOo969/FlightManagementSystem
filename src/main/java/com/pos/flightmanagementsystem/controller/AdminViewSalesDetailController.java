@@ -4,28 +4,31 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
+
+// 🔴 သင့်ရဲ့ Database Connection Class ကို Import လုပ်ပါ
+// import com.pos.flightmanagementsystem.utils.DBConnection;
 
 public class AdminViewSalesDetailController implements Initializable {
 
-    // Date Pickers
     @FXML private DatePicker dpFromDate;
     @FXML private DatePicker dpToDate;
 
-    // KPI Labels
     @FXML private Label lblTotalRevenue;
     @FXML private Label lblRevenuePercent;
     @FXML private Label lblTotalTickets;
@@ -34,56 +37,51 @@ public class AdminViewSalesDetailController implements Initializable {
     @FXML private Label lblTopStaff;
     @FXML private Label lblTopStaffRevenue;
 
-    // Flight Sales Table
     @FXML private TableView<FlightSalesData> flightSalesTable;
     @FXML private TableColumn<FlightSalesData, String> colFlightNo;
     @FXML private TableColumn<FlightSalesData, String> colRoute;
     @FXML private TableColumn<FlightSalesData, Integer> colFlightTickets;
     @FXML private TableColumn<FlightSalesData, Double> colFlightRevenue;
 
-    // Staff Sales Table
     @FXML private TableView<StaffSalesData> staffSalesTable;
     @FXML private TableColumn<StaffSalesData, String> colStaffName;
     @FXML private TableColumn<StaffSalesData, String> colStaffRole;
     @FXML private TableColumn<StaffSalesData, Integer> colStaffTickets;
     @FXML private TableColumn<StaffSalesData, Double> colStaffRevenue;
 
-    // Database Connection URL (သင့်ရဲ့ DB အချက်အလက်နဲ့ ပြောင်းထည့်ပါ)
-    private final String DB_URL = "jdbc:mysql://localhost:3306/flightmanagementsystem";
-    private final String DB_USER = "root";
-    private final String DB_PASSWORD = "password";
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 1. Table Columns များကို Model class များနှင့် ချိတ်ဆက်ခြင်း
-        colFlightNo.setCellValueFactory(new PropertyValueFactory<>("flightNo"));
-        colRoute.setCellValueFactory(new PropertyValueFactory<>("route"));
-        colFlightTickets.setCellValueFactory(new PropertyValueFactory<>("ticketsSold"));
-        colFlightRevenue.setCellValueFactory(new PropertyValueFactory<>("totalRevenue"));
 
-        colStaffName.setCellValueFactory(new PropertyValueFactory<>("staffName"));
-        colStaffRole.setCellValueFactory(new PropertyValueFactory<>("role"));
-        colStaffTickets.setCellValueFactory(new PropertyValueFactory<>("ticketsSold"));
-        colStaffRevenue.setCellValueFactory(new PropertyValueFactory<>("revenueGen"));
+        // Table Column များကို Model လေးများနှင့် ချိတ်ဆက်ခြင်း
+        colFlightNo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFlightNo()));
+        colRoute.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRoute()));
+        colFlightTickets.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getTicketsSold()).asObject());
+        colFlightRevenue.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotalRevenue()).asObject());
 
-        // Default အနေဖြင့် Data မပြဘဲ Date ရွေးမှသာ ပြရန်အတွက် KPI များကို အလွတ်ထားပါမည်
-        clearDashboard();
+        colStaffName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStaffName()));
+        colStaffRole.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRole()));
+        colStaffTickets.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getTicketsSold()).asObject());
+        colStaffRevenue.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getRevenueGen()).asObject());
 
-        // 2. Date Picker များတွင် Date ရွေးချယ်မှု ပြောင်းလဲတိုင်း Data ပြန်ဆွဲရန် Listener ထည့်ခြင်း
+        // Date ရွေးလိုက်တာနဲ့ Data ဆွဲထုတ်မည့် Listeners များ
         dpFromDate.valueProperty().addListener((obs, oldVal, newVal) -> loadDashboardData());
         dpToDate.valueProperty().addListener((obs, oldVal, newVal) -> loadDashboardData());
-    }
 
-    private Connection getConnection() throws Exception {
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        dpFromDate.setOnAction(e -> loadDashboardData());
+        dpToDate.setOnAction(e -> loadDashboardData());
+
+        // 🌟 လက်ရှိရောက်နေသော လ၏ ၁ ရက်နေ့ မှ လကုန်ရက် အထိ Default ပြပေးရန် သတ်မှတ်ခြင်း 🌟
+        LocalDate today = LocalDate.now();
+        dpFromDate.setValue(today.withDayOfMonth(1)); // ဒီလ၏ ၁ ရက်နေ့
+        dpToDate.setValue(today.withDayOfMonth(today.lengthOfMonth())); // ဒီလ၏ နောက်ဆုံးရက် (လကုန်ရက်)
     }
 
     private void clearDashboard() {
-        lblTotalRevenue.setText("$0.00");
+        lblTotalRevenue.setText("0.00 MMK");
         lblTotalTickets.setText("0");
         lblTopFlight.setText("N/A");
         lblTopStaff.setText("N/A");
-        lblTopStaffRevenue.setText("$0.00");
+        lblTopStaffRevenue.setText("0.00 MMK generated");
         lblRevenuePercent.setText("");
         lblTicketsPercent.setText("");
         flightSalesTable.setItems(FXCollections.observableArrayList());
@@ -94,52 +92,60 @@ public class AdminViewSalesDetailController implements Initializable {
         LocalDate fromDate = dpFromDate.getValue();
         LocalDate toDate = dpToDate.getValue();
 
-        // Date နှစ်ခုလုံး ရွေးချယ်ပြီးမှသာ Database ကို Query လုပ်ပါမည်
+        // Date ၂ ခုလုံး မရွေးရသေးရင် အလုပ်မလုပ်ဘဲ ရပ်နေပါမည် (သို့မဟုတ်) ရှင်းထုတ်ပစ်ပါမည်
         if (fromDate == null || toDate == null) {
+            clearDashboard();
             return;
         }
 
-        try (Connection conn = getConnection()) {
+        // 🔴 အောက်ပါ DBConnection နေရာတွင် သင့် Connection Method ကို ပြောင်းသုံးပါ
+        try (Connection conn = DatabaseConnection.getConnection()) {
+
+            if (conn == null) {
+                System.out.println("❌ Database ချိတ်ဆက်မှု မအောင်မြင်ပါ။ (Connection is null)");
+                return;
+            }
+
             loadKPIs(conn, fromDate, toDate);
             loadFlightSales(conn, fromDate, toDate);
             loadStaffSales(conn, fromDate, toDate);
+
         } catch (Exception e) {
+            System.out.println("❌ Database Error ဖြစ်နေပါသည်: " + e.getMessage());
             e.printStackTrace();
+            showErrorAlert("Database Error", "Error: " + e.getMessage());
         }
     }
 
     private void loadKPIs(Connection conn, LocalDate fromDate, LocalDate toDate) throws Exception {
-        // Current Period Queries
-        String currentPeriodQuery = "SELECT SUM(total_price) AS rev, COUNT(booking_id) AS tix FROM bookings " +
-                "WHERE status = 'Confirmed' AND DATE(booking_date) BETWEEN ? AND ?";
+        String currentQuery = "SELECT SUM(total_price) AS rev, COUNT(booking_id) AS tix FROM bookings " +
+                "WHERE status = 'Confirmed' AND DATE(booking_date) >= ? AND DATE(booking_date) <= ?";
 
         double currentRev = 0;
         int currentTix = 0;
 
-        try (PreparedStatement pstmt = conn.prepareStatement(currentPeriodQuery)) {
-            pstmt.setString(1, fromDate.toString());
-            pstmt.setString(2, toDate.toString());
+        try (PreparedStatement pstmt = conn.prepareStatement(currentQuery)) {
+            pstmt.setDate(1, Date.valueOf(fromDate));
+            pstmt.setDate(2, Date.valueOf(toDate));
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 currentRev = rs.getDouble("rev");
                 currentTix = rs.getInt("tix");
             }
         }
-
-        lblTotalRevenue.setText(String.format("$%,.2f", currentRev));
+        lblTotalRevenue.setText(String.format("%,.2f MMK", currentRev));
         lblTotalTickets.setText(String.format("%,d", currentTix));
 
-        // Previous Period (For Percentage Calculation)
-        long daysBetween = ChronoUnit.DAYS.between(fromDate, toDate) + 1;
-        LocalDate prevFromDate = fromDate.minusDays(daysBetween);
-        LocalDate prevToDate = toDate.minusDays(daysBetween);
+        // အရင်လကထက် Percent % ဘယ်လောက်တိုးလာလဲ တွက်ရန်
+        LocalDate prevFromDate = fromDate.minusMonths(1);
+        LocalDate prevToDate = toDate.minusMonths(1);
 
         double prevRev = 0;
         int prevTix = 0;
 
-        try (PreparedStatement pstmt = conn.prepareStatement(currentPeriodQuery)) {
-            pstmt.setString(1, prevFromDate.toString());
-            pstmt.setString(2, prevToDate.toString());
+        try (PreparedStatement pstmt = conn.prepareStatement(currentQuery)) {
+            pstmt.setDate(1, Date.valueOf(prevFromDate));
+            pstmt.setDate(2, Date.valueOf(prevToDate));
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 prevRev = rs.getDouble("rev");
@@ -147,24 +153,23 @@ public class AdminViewSalesDetailController implements Initializable {
             }
         }
 
-        // Calculate and Set Percentages
         setPercentageLabel(lblRevenuePercent, currentRev, prevRev);
         setPercentageLabel(lblTicketsPercent, currentTix, prevTix);
     }
 
     private void setPercentageLabel(Label label, double current, double previous) {
         if (previous == 0) {
-            label.setText(current > 0 ? "+100% (No previous data)" : "0%");
-            label.setStyle("-fx-text-fill: #2ecc71;"); // Green
+            label.setText(current > 0 ? "+100% from last month" : "0%");
+            label.setStyle("-fx-text-fill: #2ecc71;");
             return;
         }
         double percent = ((current - previous) / previous) * 100;
         if (percent >= 0) {
-            label.setText(String.format("+%.1f%% from last period", percent));
-            label.setStyle("-fx-text-fill: #2ecc71;"); // Green
+            label.setText(String.format("+%.1f%% from last month", percent));
+            label.setStyle("-fx-text-fill: #2ecc71;");
         } else {
-            label.setText(String.format("%.1f%% from last period", percent));
-            label.setStyle("-fx-text-fill: #e74c3c;"); // Red
+            label.setText(String.format("%.1f%% from last month", percent));
+            label.setStyle("-fx-text-fill: #e74c3c;");
         }
     }
 
@@ -176,15 +181,17 @@ public class AdminViewSalesDetailController implements Initializable {
                 "JOIN bookings b ON f.flight_id = b.flight_id " +
                 "JOIN cities dc ON f.departure_city_id = dc.city_id " +
                 "JOIN cities ac ON f.arrival_city_id = ac.city_id " +
-                "WHERE b.status = 'Confirmed' AND DATE(b.booking_date) BETWEEN ? AND ? " +
+                "WHERE b.status = 'Confirmed' AND DATE(b.booking_date) >= ? AND DATE(b.booking_date) <= ? " +
                 "GROUP BY f.flight_id ORDER BY revenue DESC";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, fromDate.toString());
-            pstmt.setString(2, toDate.toString());
+            pstmt.setDate(1, Date.valueOf(fromDate));
+            pstmt.setDate(2, Date.valueOf(toDate));
             ResultSet rs = pstmt.executeQuery();
 
             boolean isFirst = true;
+            lblTopFlight.setText("N/A");
+
             while (rs.next()) {
                 String flightNo = rs.getString("flight_number");
                 String route = rs.getString("route");
@@ -193,7 +200,6 @@ public class AdminViewSalesDetailController implements Initializable {
 
                 flightData.add(new FlightSalesData(flightNo, route, tickets, revenue));
 
-                // ပထမဆုံး row သည် Top Selling Flight ဖြစ်သည်
                 if (isFirst) {
                     lblTopFlight.setText(route + " (" + flightNo + ")");
                     isFirst = false;
@@ -208,15 +214,18 @@ public class AdminViewSalesDetailController implements Initializable {
         String query = "SELECT u.username, u.role, COUNT(b.booking_id) AS tickets, SUM(b.total_price) AS revenue " +
                 "FROM users u " +
                 "JOIN bookings b ON u.user_id = b.staff_id " +
-                "WHERE b.status = 'Confirmed' AND DATE(b.booking_date) BETWEEN ? AND ? " +
+                "WHERE b.status = 'Confirmed' AND DATE(b.booking_date) >= ? AND DATE(b.booking_date) <= ? " +
                 "GROUP BY u.user_id ORDER BY revenue DESC";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, fromDate.toString());
-            pstmt.setString(2, toDate.toString());
+            pstmt.setDate(1, Date.valueOf(fromDate));
+            pstmt.setDate(2, Date.valueOf(toDate));
             ResultSet rs = pstmt.executeQuery();
 
             boolean isFirst = true;
+            lblTopStaff.setText("N/A");
+            lblTopStaffRevenue.setText("0.00 MMK generated");
+
             while (rs.next()) {
                 String name = rs.getString("username");
                 String role = rs.getString("role");
@@ -225,10 +234,9 @@ public class AdminViewSalesDetailController implements Initializable {
 
                 staffData.add(new StaffSalesData(name, role, tickets, revenue));
 
-                // ပထမဆုံး row သည် Top Performing Staff ဖြစ်သည်
                 if (isFirst) {
                     lblTopStaff.setText(name);
-                    lblTopStaffRevenue.setText(String.format("$%,.2f generated", revenue));
+                    lblTopStaffRevenue.setText(String.format("%,.2f MMK generated", revenue));
                     isFirst = false;
                 }
             }
@@ -236,14 +244,19 @@ public class AdminViewSalesDetailController implements Initializable {
         staffSalesTable.setItems(staffData);
     }
 
-    // ==========================================
-    // Data Models for TableView
-    // ==========================================
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     public static class FlightSalesData {
-        private String flightNo;
-        private String route;
-        private int ticketsSold;
-        private double totalRevenue;
+        private final String flightNo;
+        private final String route;
+        private final int ticketsSold;
+        private final double totalRevenue;
 
         public FlightSalesData(String flightNo, String route, int ticketsSold, double totalRevenue) {
             this.flightNo = flightNo;
@@ -259,10 +272,10 @@ public class AdminViewSalesDetailController implements Initializable {
     }
 
     public static class StaffSalesData {
-        private String staffName;
-        private String role;
-        private int ticketsSold;
-        private double revenueGen;
+        private final String staffName;
+        private final String role;
+        private final int ticketsSold;
+        private final double revenueGen;
 
         public StaffSalesData(String staffName, String role, int ticketsSold, double revenueGen) {
             this.staffName = staffName;

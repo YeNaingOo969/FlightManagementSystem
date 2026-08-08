@@ -56,6 +56,14 @@ public class StaffCreateNewBookingController implements Initializable {
         passengersSpinner.setValueFactory(valueFactory);
 
         departureDatePicker.setValue(LocalDate.now());
+
+        // 🌟 Departure Date ကို ဖျက်လို့ရအောင် (Clear Date) လုပ်ပေးထားခြင်း
+        departureDatePicker.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                departureDatePicker.setValue(null);
+            }
+        });
+
         loadCitiesFromDatabase();
         setupToComboBoxDisableLogic();
         btnSearchFlights.setOnAction(this::handleSearchAction);
@@ -83,9 +91,44 @@ public class StaffCreateNewBookingController implements Initializable {
             }
             fromComboBox.setItems(allCitiesList);
             toComboBox.setItems(allCitiesList);
+
+            // 🌟 From နဲ့ To ComboBox တွေကို ရိုက်ပြီးရှာလို့ရအောင် လုပ်ဆောင်ပေးခြင်း
+            setupSearchableComboBox(fromComboBox, allCitiesList);
+            setupSearchableComboBox(toComboBox, allCitiesList);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // 🌟 ComboBox တွင် စာရိုက်ထည့်ပြီး ရှာဖွေနိုင်ရန် (Searchable / Autocomplete) ထည့်သွင်းထားသော Method
+    private void setupSearchableComboBox(ComboBox<String> comboBox, ObservableList<String> itemsList) {
+        comboBox.setEditable(true); // ရိုက်ထည့်ခွင့်ပြုရန်
+
+        comboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            final TextField editor = comboBox.getEditor();
+            final String selected = comboBox.getSelectionModel().getSelectedItem();
+
+            if (selected == null || !selected.equals(editor.getText())) {
+                ObservableList<String> filteredList = FXCollections.observableArrayList();
+                for (String item : itemsList) {
+                    if (item.toLowerCase().contains(newValue.toLowerCase())) {
+                        filteredList.add(item);
+                    }
+                }
+                comboBox.setItems(filteredList);
+                // User ရိုက်နေချိန်မှသာ Dropdown ကျလာစေရန်
+                if (!filteredList.isEmpty() && comboBox.isFocused()) {
+                    comboBox.show();
+                }
+            }
+        });
+
+        // နှိပ်လိုက်ချိန်တွင် Data အကုန်ပြန်ပေါ်လာစေရန်
+        comboBox.getEditor().setOnMouseClicked(event -> {
+            comboBox.setItems(itemsList);
+            comboBox.show();
+        });
     }
 
     private void setupToComboBoxDisableLogic() {
@@ -102,7 +145,8 @@ public class StaffCreateNewBookingController implements Initializable {
                             setStyle("");
                         } else {
                             setText(item);
-                            String selectedFrom = fromComboBox.getValue();
+                            // ရိုက်ထည့်ထားတဲ့ စာကိုပါ ယူနိုင်ဖို့ editor.getText() ကိုသုံးထားပါတယ်
+                            String selectedFrom = fromComboBox.getEditor().getText();
                             if (item.equals(selectedFrom)) {
                                 setDisable(true);
                                 setStyle("-fx-text-fill: #a0a0a0; -fx-font-style: italic;");
@@ -117,8 +161,9 @@ public class StaffCreateNewBookingController implements Initializable {
         });
 
         fromComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && newVal.equals(toComboBox.getValue())) {
+            if (newVal != null && newVal.equals(toComboBox.getEditor().getText())) {
                 toComboBox.getSelectionModel().clearSelection();
+                toComboBox.getEditor().clear();
             }
             ObservableList<String> items = toComboBox.getItems();
             toComboBox.setItems(null);
@@ -159,36 +204,63 @@ public class StaffCreateNewBookingController implements Initializable {
     }
 
     private void handleSearchAction(ActionEvent event) {
-        String from = fromComboBox.getValue();
-        String to = toComboBox.getValue();
+        // Editable ဖြစ်သွားတဲ့အတွက် getEditor().getText() ဖြင့်စာကို ဖမ်းယူပါသည်
+        String from = fromComboBox.getEditor().getText().trim();
+        String to = toComboBox.getEditor().getText().trim();
         LocalDate date = departureDatePicker.getValue();
 
-        if(from == null || to == null || date == null) {
+        // Date ကို မစစ်တော့ဘဲ From နဲ့ To ပါမပါကိုသာ စစ်ဆေးပါမည်
+        if(from.isEmpty() || to.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incomplete Data");
             alert.setHeaderText(null);
-            alert.setContentText("ကျေးဇူးပြု၍ From, To နှင့် Departure Date အားလုံးကို ရွေးချယ်ပါ။");
+            alert.setContentText("ကျေးဇူးပြု၍ ထွက်ခွာမည့်မြို့ (From) နှင့် ဆိုက်ရောက်မည့်မြို့ (To) ကို ရွေးချယ်ပါ။");
             alert.showAndWait();
             return;
         }
+
+        // From နဲ့ To မြို့ချင်းတူနေပါက တားဆီးရန်
+        if(from.equalsIgnoreCase(to)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Data");
+            alert.setHeaderText(null);
+            alert.setContentText("ထွက်ခွာမည့်မြို့နှင့် ဆိုက်ရောက်မည့်မြို့ တူညီနေပါသည်။ ကျေးဇူးပြု၍ ပြန်လည်ရွေးချယ်ပါ။");
+            alert.showAndWait();
+            return;
+        }
+
         fetchFlightsFromDatabase(from, to, date);
     }
 
     private void fetchFlightsFromDatabase(String fromCity, String toCity, LocalDate depDate) {
         ObservableList<FlightDummy> searchResults = FXCollections.observableArrayList();
-        String query = "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, " +
-                "DATE(f.departure_time) AS dep_date, TIME(f.departure_time) AS dep_time, f.base_price " +
-                "FROM flights f " +
-                "INNER JOIN cities c1 ON f.departure_city_id = c1.city_id " +
-                "INNER JOIN cities c2 ON f.arrival_city_id = c2.city_id " +
-                "WHERE c1.city_name = ? AND c2.city_name = ? AND DATE(f.departure_time) = ?";
+
+        // 🌟 Date မပါဘဲ ရှာလို့ရရန် Query ကို Dynamic တည်ဆောက်ထားပါသည်
+        StringBuilder queryBuilder = new StringBuilder(
+                "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, " +
+                        "DATE(f.departure_time) AS dep_date, TIME(f.departure_time) AS dep_time, f.base_price " +
+                        "FROM flights f " +
+                        "INNER JOIN cities c1 ON f.departure_city_id = c1.city_id " +
+                        "INNER JOIN cities c2 ON f.arrival_city_id = c2.city_id " +
+                        "WHERE c1.city_name = ? AND c2.city_name = ?"
+        );
+
+        if (depDate != null) {
+            queryBuilder.append(" AND DATE(f.departure_time) = ?");
+        }
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) throw new Exception("Database Connection မရရှိပါ။");
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            try (PreparedStatement pstmt = conn.prepareStatement(queryBuilder.toString())) {
                 pstmt.setString(1, fromCity);
                 pstmt.setString(2, toCity);
-                pstmt.setDate(3, java.sql.Date.valueOf(depDate));
+
+                // Date ပါလာမှသာ Parameter အဖြစ် ထည့်သွင်းပေးပါမည်
+                if (depDate != null) {
+                    pstmt.setDate(3, java.sql.Date.valueOf(depDate));
+                }
+
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
                         double price = rs.getDouble("base_price");
