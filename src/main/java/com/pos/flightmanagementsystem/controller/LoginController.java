@@ -245,7 +245,8 @@ public class LoginController implements Initializable {
             return;
         }
 
-        String query = "SELECT user_id, role, image_path FROM users WHERE username = ? AND password = ?";
+        // 🌟 1. SQL Query တွင် status ကိုပါ ဆွဲထုတ်မည် 🌟
+        String query = "SELECT user_id, role, image_path, status FROM users WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -257,6 +258,14 @@ public class LoginController implements Initializable {
                 int userId = rs.getInt("user_id");
                 String role = rs.getString("role");
                 String imagePath = rs.getString("image_path");
+                String status = rs.getString("status");
+
+                // 🌟 2. Inactive ဖြစ်နေပါက ဝင်ခွင့်မပြုဘဲ Custom Alert ပြမည် 🌟
+                if (status == null || !status.equalsIgnoreCase("Active")) {
+                    insertLog(userId, "Failed Login: Account Inactive");
+                    showAlert(Alert.AlertType.ERROR, "Account Suspended", "Your account is currently inactive.\nPlease contact the administrator.");
+                    return;
+                }
 
                 loggedInUser = new com.pos.flightmanagementsystem.model.User();
                 loggedInUser.setUserId(userId);
@@ -307,7 +316,6 @@ public class LoginController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent dashboardRoot = loader.load();
 
-            // 🌟 ဤနေရာတွင် Controller အားလုံးအတွက် User Data လှမ်းပို့ပေးသော ကုဒ်ကို အပြည့်အစုံ ပြန်ဖြည့်ထားပါသည် 🌟
             Object controller = loader.getController();
             if (controller instanceof AdminController) {
                 ((AdminController) controller).setLoggedInUser(username, role, imagePath);
@@ -341,7 +349,6 @@ public class LoginController implements Initializable {
             ParallelTransition loginAnimOut = new ParallelTransition(leftOut, rightOut);
 
             loginAnimOut.setOnFinished(e -> {
-                // 🌟 loginRoot အစား dashboardRoot ကို အရင်ဖြုတ်ပေးရပါမည် 🌟
                 transitionContainer.getChildren().remove(dashboardRoot);
 
                 scene.setRoot(dashboardRoot);

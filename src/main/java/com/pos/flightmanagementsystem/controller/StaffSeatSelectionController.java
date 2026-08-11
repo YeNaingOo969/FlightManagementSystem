@@ -116,7 +116,10 @@ public class StaffSeatSelectionController implements Initializable {
         lblPassengerName.setText(passengerName);
 
         try {
-            double basePrice = 980000.0;
+            // 🌟 ဈေးနှုန်းစာသား ("300,000 MMK") မှ ဂဏန်းများကိုသာ ဆွဲထုတ်ခြင်း (Merged) 🌟
+            String numericPriceStr = price.replaceAll("[^\\d.]", "");
+            double basePrice = Double.parseDouble(numericPriceStr);
+
             ticketPriceValue = basePrice * passengers;
             currentTotalPrice = ticketPriceValue;
 
@@ -320,7 +323,6 @@ public class StaffSeatSelectionController implements Initializable {
         lblTotal.setText(String.format("%,.0f MMK", currentTotalPrice));
     }
 
-    // 🌟 Back သို့ ပြန်ထွက်သည့် Zoom Out Animation အလန်းစားလေး 🌟
     @FXML
     void clickBack(ActionEvent event) {
         try {
@@ -334,15 +336,12 @@ public class StaffSeatSelectionController implements Initializable {
 
             Pane parentContainer = (Pane) rootStackPane.getParent();
             if (parentContainer != null) {
-                // အရင် Page သည် အနောက်တွင် ငယ်ရာမှ ပုံမှန်အရွယ်သို့ ပြန်ကြီးလာမည်
                 previousView.setScaleX(0.8);
                 previousView.setScaleY(0.8);
                 previousView.setOpacity(0.0);
 
-                // လက်ရှိ Page ၏ အနောက်တွင် ယခင် Page ကို ထည့်သွင်းသည်
                 parentContainer.getChildren().add(0, previousView);
 
-                // လက်ရှိ Page သည် မျက်နှာပြင်သို့ ကြီး၍ ပျောက်ကွယ်သွားမည်
                 ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), rootStackPane);
                 scaleOut.setToX(1.2);
                 scaleOut.setToY(1.2);

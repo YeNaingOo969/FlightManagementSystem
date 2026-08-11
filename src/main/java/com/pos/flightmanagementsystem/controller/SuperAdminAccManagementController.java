@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -48,6 +49,7 @@ public class SuperAdminAccManagementController implements Initializable {
     @FXML private Button btnCreateUser;
     @FXML private TextField txtSearch;
     @FXML private ComboBox<String> comboFilterRole;
+    @FXML private ComboBox<String> comboFilterStatus;
 
     @FXML private Label lblTotalUsers;
     @FXML private Label lblActiveUsers;
@@ -59,7 +61,7 @@ public class SuperAdminAccManagementController implements Initializable {
     @FXML private TableColumn<User, String> colPassword;
     @FXML private TableColumn<User, String> colRole;
     @FXML private TableColumn<User, String> colEmail;
-    @FXML private TableColumn<User, String> colImagePath;
+    @FXML private TableColumn<User, String> colStatus;
 
     @FXML private HBox profileCardsContainer;
 
@@ -77,7 +79,9 @@ public class SuperAdminAccManagementController implements Initializable {
                 colPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
                 colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
                 colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-                colImagePath.setCellValueFactory(new PropertyValueFactory<>("imagePath"));
+
+                colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+                setupStatusColumn();
             }
 
             if (comboFilterRole != null) {
@@ -86,11 +90,17 @@ public class SuperAdminAccManagementController implements Initializable {
                 comboFilterRole.valueProperty().addListener((observable, oldValue, newValue) -> filterUsers());
             }
 
+            if (comboFilterStatus != null) {
+                comboFilterStatus.getItems().addAll("Active", "Inactive");
+                comboFilterStatus.setValue("Active");
+                comboFilterStatus.valueProperty().addListener((observable, oldValue, newValue) -> filterUsers());
+            }
+
             if (txtSearch != null) {
                 txtSearch.textProperty().addListener((observable, oldValue, newValue) -> filterUsers());
             }
 
-            loadUserData("", "All");
+            loadUserData("", "All", "Active");
             updateDashboardStats();
 
         } catch (Exception e) {
@@ -98,9 +108,63 @@ public class SuperAdminAccManagementController implements Initializable {
         }
     }
 
+    private void setupStatusColumn() {
+        colStatus.setCellFactory(column -> new TableCell<User, String>() {
+            private final Button statusBtn = new Button();
+
+            {
+                statusBtn.setOnAction(event -> {
+                    User user = getTableView().getItems().get(getIndex());
+                    toggleUserStatus(user);
+                });
+            }
+
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setGraphic(null);
+                } else {
+                    statusBtn.setText(status);
+                    if (status.equalsIgnoreCase("Active")) {
+                        statusBtn.getStyleClass().setAll("status-btn-active");
+                    } else {
+                        statusBtn.getStyleClass().setAll("status-btn-inactive");
+                    }
+                    setGraphic(statusBtn);
+                }
+            }
+        });
+    }
+
+    // 🌟 Profile Card နှင့် Table များကို Real-Time ချက်ချင်း Update လုပ်ပေးမည့် Method 🌟
+    private void toggleUserStatus(User user) {
+        String newStatus = user.getStatus().equalsIgnoreCase("Active") ? "Inactive" : "Active";
+        String sql = "UPDATE users SET status = ? WHERE user_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, newStatus);
+            pstmt.setInt(2, user.getUserId());
+
+            if (pstmt.executeUpdate() > 0) {
+                // Database ထဲ ပြန်မခေါ်ဘဲ လက်ရှိ Object ကိုသာ တိုက်ရိုက်ပြောင်းပေးမည် (Dynamic Update)
+                user.setStatus(newStatus);
+                usersTable.refresh();
+                updateProfileCards();
+                updateDashboardStats();
+
+                showToast("Status Updated", user.getUsername() + "'s account is now " + newStatus + ".");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void updateDashboardStats() {
-        String query = "SELECT role, COUNT(*) as count FROM users GROUP BY role";
-        int total = 0, adminCount = 0, staffCount = 0;
+        String query = "SELECT role, status, COUNT(*) as count FROM users GROUP BY role, status";
+        int total = 0, adminCount = 0, staffCount = 0, activeCount = 0;
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
@@ -108,8 +172,15 @@ public class SuperAdminAccManagementController implements Initializable {
 
             while (rs.next()) {
                 String role = rs.getString("role");
+                String status = rs.getString("status");
                 int count = rs.getInt("count");
+
                 total += count;
+
+                if (status != null && status.equalsIgnoreCase("Active")) {
+                    activeCount += count;
+                }
+
                 if (role != null) {
                     if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("superadmin")) {
                         adminCount += count;
@@ -123,7 +194,7 @@ public class SuperAdminAccManagementController implements Initializable {
         }
 
         if (lblTotalUsers != null) lblTotalUsers.setText(total + (total == 1 ? " person" : " persons"));
-        if (lblActiveUsers != null) lblActiveUsers.setText(total + (total == 1 ? " person" : " persons"));
+        if (lblActiveUsers != null) lblActiveUsers.setText(activeCount + (activeCount == 1 ? " person" : " persons"));
         if (lblStaffMembers != null) lblStaffMembers.setText(staffCount + (staffCount == 1 ? " person" : " persons"));
         if (lblAdministrators != null) lblAdministrators.setText(adminCount + (adminCount == 1 ? " person" : " persons"));
     }
@@ -131,18 +202,21 @@ public class SuperAdminAccManagementController implements Initializable {
     private void filterUsers() {
         String keyword = txtSearch != null ? txtSearch.getText() : "";
         String selectedRole = comboFilterRole != null ? comboFilterRole.getValue() : "All";
-        loadUserData(keyword, selectedRole);
+        String selectedStatus = comboFilterStatus != null ? comboFilterStatus.getValue() : "Active";
+        loadUserData(keyword, selectedRole, selectedStatus);
     }
 
-    public void loadUserData(String keyword, String roleFilter) {
+    public void loadUserData(String keyword, String roleFilter, String statusFilter) {
         userList.clear();
         StringBuilder query = new StringBuilder("SELECT user_id, username, email, password, role, status, image_path, created_at FROM users WHERE 1=1");
 
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         boolean hasRole = roleFilter != null && !roleFilter.equals("All") && !roleFilter.trim().isEmpty();
+        boolean hasStatus = statusFilter != null && !statusFilter.trim().isEmpty();
 
         if (hasKeyword) query.append(" AND LOWER(username) LIKE LOWER(?)");
         if (hasRole) query.append(" AND LOWER(role) = LOWER(?)");
+        if (hasStatus) query.append(" AND LOWER(status) = LOWER(?)");
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query.toString())) {
@@ -150,6 +224,7 @@ public class SuperAdminAccManagementController implements Initializable {
             int paramIndex = 1;
             if (hasKeyword) pstmt.setString(paramIndex++, keyword.trim() + "%");
             if (hasRole) pstmt.setString(paramIndex++, roleFilter.trim());
+            if (hasStatus) pstmt.setString(paramIndex++, statusFilter.trim());
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -168,24 +243,28 @@ public class SuperAdminAccManagementController implements Initializable {
             }
 
             if (usersTable != null) usersTable.setItems(userList);
-            if (profileCardsContainer != null) {
-                profileCardsContainer.getChildren().clear();
-                for (User user : userList) {
-                    profileCardsContainer.getChildren().add(createUserCard(user));
-                }
-            }
+            updateProfileCards();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 🌟 Profile ပုံနှင့် ဘောင်များကို အဝိုင်းတိတိကျကျဖြစ်အောင် ပြင်ဆင်ထားသော Method 🌟
+    private void updateProfileCards() {
+        if (profileCardsContainer != null) {
+            profileCardsContainer.getChildren().clear();
+            for (User user : userList) {
+                profileCardsContainer.getChildren().add(createUserCard(user));
+            }
+        }
+    }
+
     private VBox createUserCard(User user) {
         VBox card = new VBox();
         card.getStyleClass().add("user-profile-card");
 
         StackPane iconPane = new StackPane();
-        iconPane.getStyleClass().add("user-card-avatar-container"); // CSS ဖိုင်မှ Class အသစ်ကို ချိတ်ဆက်ထားပါသည်
+        iconPane.getStyleClass().add("user-card-avatar-container");
         VBox.setMargin(iconPane, new Insets(0, 0, 15.0, 0));
 
         boolean hasImage = false;
@@ -193,15 +272,10 @@ public class SuperAdminAccManagementController implements Initializable {
             File imgFile = new File("src/main/resources/com/pos/flightmanagementsystem/image/" + user.getImagePath());
             if (imgFile.exists()) {
                 ImageView imageView = new ImageView(new Image(imgFile.toURI().toString()));
-
-                // ပုံအရွယ်အစားကို အတိအကျသတ်မှတ်ခြင်း
                 imageView.setFitWidth(80.0);
                 imageView.setFitHeight(80.0);
-
-                // အဝိုင်းတိတိကျကျ ဖြတ်ထုတ်ခြင်း
                 Circle clip = new Circle(40, 40, 40);
                 imageView.setClip(clip);
-
                 iconPane.getChildren().add(imageView);
                 hasImage = true;
             }
@@ -225,8 +299,13 @@ public class SuperAdminAccManagementController implements Initializable {
         roleLbl.getStyleClass().add("profile-label");
         roleLbl.setPadding(new Insets(0, 0, 12.0, 0));
 
-        Label statusLbl = new Label("ACTIVE");
-        statusLbl.getStyleClass().add("status-active");
+        String currentStatus = user.getStatus() != null ? user.getStatus() : "Active";
+        Label statusLbl = new Label(currentStatus.toUpperCase());
+        if (currentStatus.equalsIgnoreCase("Active")) {
+            statusLbl.getStyleClass().add("status-active");
+        } else {
+            statusLbl.getStyleClass().add("status-inactive");
+        }
         statusLbl.setPadding(new Insets(0, 0, 12.0, 0));
 
         card.getChildren().addAll(iconPane, nameLbl, roleLbl, statusLbl);
@@ -239,22 +318,16 @@ public class SuperAdminAccManagementController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminCreateUser.fxml"));
             Parent createUserRoot = loader.load();
 
-            // =========================================================================
-            // 🌟 Theme စစ်ဆေးပြီး သက်ဆိုင်ရာ Popup CSS ကို ဒိုင်းနမစ် (Dynamic) ချိတ်ဆက်ပေးခြင်း 🌟
-            // =========================================================================
             if (!acRootPane.getStylesheets().isEmpty()) {
                 String currentMainStyle = acRootPane.getStylesheets().get(0);
-                createUserRoot.getStylesheets().clear(); // FXML ထဲမှာ ကပ်ပါလာတဲ့ CSS အဟောင်းတွေကို အရင်ရှင်းထုတ်မည်
+                createUserRoot.getStylesheets().clear();
 
                 if (currentMainStyle.contains("Light")) {
-                    // Main Page က Light Mode ဖြစ်နေရင် Light CSS ကို ထည့်မည်
                     createUserRoot.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/SuperAdminCreateUserLight.css").toExternalForm());
                 } else {
-                    // Main Page က Dark Mode ဖြစ်နေရင် Dark CSS ကို ထည့်မည်
                     createUserRoot.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/SuperAdminCreateUserDark.css").toExternalForm());
                 }
             }
-            // =========================================================================
 
             SuperAdminCreateUserController createUserController = loader.getController();
 

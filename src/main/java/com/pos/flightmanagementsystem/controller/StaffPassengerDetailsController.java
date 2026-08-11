@@ -92,7 +92,9 @@ public class StaffPassengerDetailsController implements Initializable {
         if (lblDeparture != null) lblDeparture.setText(date);
 
         try {
-            double basePrice = 980000.0;
+            // 🌟 ဈေးနှုန်းစာသားမှ ဂဏန်းများကိုသာ ဆွဲထုတ်ခြင်း (Merged) 🌟
+            String numericPriceStr = price.replaceAll("[^\\d.]", "");
+            double basePrice = Double.parseDouble(numericPriceStr);
             double total = basePrice * passengers;
             if (lblTotalPrice != null) lblTotalPrice.setText(String.format("%,.0f MMK", total));
         } catch (Exception e) {
@@ -319,7 +321,6 @@ public class StaffPassengerDetailsController implements Initializable {
 
             StaffSeatSelectionController controller = loader.getController();
 
-            // 🌟 1. Flight Data ၇ ခုကို လှမ်းပို့မည် (Error ကင်းသွားပါပြီ) 🌟
             controller.setFlightData(
                     currentFlightNo,
                     currentFrom,
@@ -330,7 +331,6 @@ public class StaffPassengerDetailsController implements Initializable {
                     txtFullName.getText()
             );
 
-            // 🌟 2. Database တွင် သိမ်းရန် ID များကို သီးသန့် လှမ်းပို့မည် 🌟
             int staffId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
             controller.setBookingIds(newPassengerId, staffId);
 
