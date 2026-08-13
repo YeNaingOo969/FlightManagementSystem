@@ -32,6 +32,125 @@
 }
 
 /* =========================================
+   🌟 Search Filters (ComboBox, DatePicker, Button)
+   ========================================= */
+
+/* ComboBox Styling */
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1.5px;
+    -fx-padding: 2px 4px; /* ဘောင်များကို သပ်ရပ်စေရန် Padding အနည်းငယ်ပြင်ထားသည် */
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.combo-box:focused, .combo-box:hover {
+    -fx-border-color: #00bcd4;
+}
+
+/* 🌟 အတွင်းက လေးထောင့်ဘောင်ကြီးကို လုံးဝဖျောက်ပေးမည့်အပိုင်း 🌟 */
+.combo-box > .list-cell {
+    -fx-background-color: transparent; /* အတွင်းနောက်ခံကို ဖျောက်လိုက်ပါသည် */
+    -fx-text-fill: #1F2937;
+    -fx-padding: 6px 10px; /* စာသားကို အလယ်ကျအောင် ညှိထားသည် */
+}
+
+/* Editable ComboBox သုံးခဲ့လျှင် အတွင်း Text Field ဘောင်ကိုပါ ဖျောက်ရန် */
+.combo-box > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-text-fill: #1F2937;
+    -fx-padding: 6px 10px;
+}
+
+/* Focus ဝင်ချိန်တွင်လည်း အတွင်းဘောင် မပေါ်စေရန် သေချာပိတ်ထားခြင်း */
+.combo-box:focused > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1F2937;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 10px 0 0; /* မြှားလေးကို ဘေးနားကပ်ရန် */
+}
+.combo-box .arrow {
+    -fx-background-color: #64748b;
+}
+
+/* Dropdown ကျလာသည့် List အပိုင်း */
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #E2E8F0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 4);
+}
+.combo-box-popup .list-cell {
+    -fx-padding: 8px 12px;
+}
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: #f0fdfa;
+    -fx-text-fill: #00bcd4;
+}
+
+/* DatePicker Styling */
+.date-picker {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 1.5px;
+    -fx-padding: 0;
+}
+.date-picker:focused, .date-picker:hover {
+    -fx-border-color: #00bcd4;
+}
+/* 🌟 DatePicker အတွင်းက လေးထောင့်ဘောင်ကိုပါ သေချာဖျောက်ထားသည် 🌟 */
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 6px 10px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1F2937;
+}
+.date-picker > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 8px 8px 0;
+    -fx-cursor: hand;
+    -fx-padding: 0 10px;
+}
+.date-picker > .arrow-button > .arrow {
+    -fx-background-color: #64748b;
+}
+
+/* Search Button Styling */
+.btn-choose {
+    -fx-background-color: linear-gradient(to bottom right, #0ea5e9, #06b6d4);
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 24px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(6, 182, 212, 0.25), 8, 0, 0, 3);
+}
+.btn-choose:hover {
+    -fx-background-color: linear-gradient(to bottom right, #0284c7, #0891b2);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+.btn-choose:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+    -fx-effect: none;
+}
+
+/* =========================================
    Content Section
    ========================================= */
 .content-card {
@@ -112,4 +231,13 @@
 }
 .action-column {
     -fx-alignment: CENTER !important;
+}
+
+/* ScrollBar များကို သန့်ရှင်းစေရန် */
+.flight-table .scroll-bar:horizontal, .flight-table .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+.flight-table .corner {
+    -fx-background-color: transparent;
+
 }

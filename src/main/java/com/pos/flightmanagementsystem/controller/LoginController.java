@@ -2,13 +2,17 @@ package com.pos.flightmanagementsystem.controller;
 
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -41,6 +45,8 @@ public class LoginController implements Initializable {
 
     public static com.pos.flightmanagementsystem.model.User loggedInUser;
     public static boolean isFromLogout = false;
+
+    public static boolean isLightMode = false;
 
     @FXML private StackPane animationContainer;
     @FXML private Circle orbitPath;
@@ -92,6 +98,38 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        Platform.runLater(() -> {
+            Parent root = leftPanel.getParent();
+            if (root != null) {
+                root.getStylesheets().clear();
+                String cssFile = isLightMode ? "LoginLight.css" : "LoginDark.css";
+                URL cssUrl = getClass().getResource("/com/pos/flightmanagementsystem/Style/" + cssFile);
+                if (cssUrl != null) {
+                    root.getStylesheets().add(cssUrl.toExternalForm());
+                }
+            }
+
+            if (smallPlane != null && !smallPlane.getChildren().isEmpty()) {
+                Node node = smallPlane.getChildren().get(0);
+                if (node instanceof SVGPath) {
+                    ((SVGPath) node).setFill(Color.web(isLightMode ? "#00838f" : "#00D4FF"));
+                }
+            }
+
+            for (Node node : animationContainer.getChildren()) {
+                if (node instanceof ImageView) {
+                    if (isLightMode) {
+                        Lighting tint = new Lighting(new Light.Distant(45, 45, Color.web("#00838f")));
+                        tint.setSurfaceScale(0.0);
+                        node.setEffect(tint);
+                    } else {
+                        node.setEffect(null);
+                    }
+                }
+            }
+        });
+
         if (leftPanel != null && rightPanel != null) {
             if (!isFromLogout) {
                 leftPanel.setTranslateX(-800);
@@ -131,8 +169,12 @@ public class LoginController implements Initializable {
             smokeEmitter.setCycleCount(Timeline.INDEFINITE);
             smokeEmitter.play();
 
-            createTwinklingStars();
-            createRadarPulse();
+            if (isLightMode) {
+                createAestheticSun();
+            } else {
+                createTwinklingStars();
+                createRadarPulse();
+            }
         }
     }
 
@@ -150,15 +192,15 @@ public class LoginController implements Initializable {
     }
 
     private void spawnSmokeParticle() {
-        Circle smoke = new Circle(3.5, Color.web("#31C4B4"));
-        smoke.setEffect(new GaussianBlur(5));
+        Circle smoke = new Circle(3.5, Color.web(isLightMode ? "#00bcd4" : "#31C4B4", isLightMode ? 0.4 : 1.0));
+        smoke.setEffect(new GaussianBlur(isLightMode ? 3 : 5));
         smoke.setTranslateX(smallPlane.getTranslateX());
         smoke.setTranslateY(smallPlane.getTranslateY());
         smoke.setTranslateX(smoke.getTranslateX() + (Math.random() - 0.5) * 8);
         smoke.setTranslateY(smoke.getTranslateY() + (Math.random() - 0.5) * 8);
         animationContainer.getChildren().add(animationContainer.getChildren().indexOf(smallPlane), smoke);
 
-        FadeTransition fade = new FadeTransition(Duration.millis(800), smoke); fade.setFromValue(0.7); fade.setToValue(0.0);
+        FadeTransition fade = new FadeTransition(Duration.millis(800), smoke); fade.setFromValue(isLightMode ? 0.4 : 0.7); fade.setToValue(0.0);
         ScaleTransition scale = new ScaleTransition(Duration.millis(800), smoke); scale.setFromX(1); scale.setFromY(1); scale.setToX(4.5); scale.setToY(4.5);
         ParallelTransition pt = new ParallelTransition(smoke, fade, scale);
         pt.setOnFinished(ev -> animationContainer.getChildren().remove(smoke));
@@ -186,6 +228,34 @@ public class LoginController implements Initializable {
             starGroup.getChildren().add(star);
         }
         animationContainer.getChildren().add(0, starGroup);
+    }
+
+    private void createAestheticSun() {
+        Circle sunOuter = new Circle(140, Color.web("#FFE082", 0.35));
+        sunOuter.setTranslateX(-160);
+        sunOuter.setTranslateY(-200);
+        sunOuter.setEffect(new GaussianBlur(70));
+
+        Circle sunInner = new Circle(60, Color.web("#FFF59D", 0.6));
+        sunInner.setTranslateX(-160);
+        sunInner.setTranslateY(-200);
+        sunInner.setEffect(new GaussianBlur(35));
+
+        animationContainer.getChildren().add(0, sunOuter);
+        animationContainer.getChildren().add(1, sunInner);
+
+        ScaleTransition stOuter = new ScaleTransition(Duration.seconds(5), sunOuter);
+        stOuter.setFromX(1.0); stOuter.setFromY(1.0);
+        stOuter.setToX(1.15); stOuter.setToY(1.15);
+        stOuter.setAutoReverse(true); stOuter.setCycleCount(Timeline.INDEFINITE);
+
+        ScaleTransition stInner = new ScaleTransition(Duration.seconds(5), sunInner);
+        stInner.setFromX(1.0); stInner.setFromY(1.0);
+        stInner.setToX(1.1); stInner.setToY(1.1);
+        stInner.setAutoReverse(true); stInner.setCycleCount(Timeline.INDEFINITE);
+
+        stOuter.play();
+        stInner.play();
     }
 
     private void setupOTPInputs() {
@@ -245,7 +315,6 @@ public class LoginController implements Initializable {
             return;
         }
 
-        // 🌟 1. SQL Query တွင် status ကိုပါ ဆွဲထုတ်မည် 🌟
         String query = "SELECT user_id, role, image_path, status FROM users WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -260,7 +329,6 @@ public class LoginController implements Initializable {
                 String imagePath = rs.getString("image_path");
                 String status = rs.getString("status");
 
-                // 🌟 2. Inactive ဖြစ်နေပါက ဝင်ခွင့်မပြုဘဲ Custom Alert ပြမည် 🌟
                 if (status == null || !status.equalsIgnoreCase("Active")) {
                     insertLog(userId, "Failed Login: Account Inactive");
                     showAlert(Alert.AlertType.ERROR, "Account Suspended", "Your account is currently inactive.\nPlease contact the administrator.");
@@ -311,10 +379,44 @@ public class LoginController implements Initializable {
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
+    // 🌟 CSS ဖိုင်များကို သေချာစစ်ဆေးပြီးမှသာ အစားထိုးပေးမည့် Safety Method 🌟
+    private void applyThemeRecursively(Parent node, boolean lightMode) {
+        if (node == null) return;
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
+            ObservableList<String> styles = node.getStylesheets();
+            for (int i = 0; i < styles.size(); i++) {
+                String cssPath = styles.get(i);
+                String newCssPath = null;
+                if (!lightMode && cssPath.contains("Light")) {
+                    newCssPath = cssPath.replace("Light", "Dark");
+                } else if (lightMode && cssPath.contains("Dark")) {
+                    newCssPath = cssPath.replace("Dark", "Light");
+                }
+
+                if (newCssPath != null) {
+                    try {
+                        String resourceName = newCssPath.substring(newCssPath.indexOf("/com/pos/"));
+                        if (getClass().getResource(resourceName) != null) {
+                            styles.set(i, newCssPath);
+                        }
+                    } catch (Exception e) {}
+                }
+            }
+        }
+        for (Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) {
+                applyThemeRecursively((Parent) child, lightMode);
+            }
+        }
+    }
+
     private void loadDashboardWithSmoothAnimation(Stage stage, String fxmlPath, String username, String role, String imagePath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent dashboardRoot = loader.load();
+
+            // Safety Check ဖြင့် Theme များကို ချိန်းပေးမည် (Dashboard မပျက်စီးစေရန်)
+            applyThemeRecursively(dashboardRoot, isLightMode);
 
             Object controller = loader.getController();
             if (controller instanceof AdminController) {
@@ -330,7 +432,7 @@ public class LoginController implements Initializable {
             loginRoot.setStyle("-fx-background-color: transparent;");
 
             StackPane transitionContainer = new StackPane();
-            transitionContainer.setStyle("-fx-background-color: #06080D;");
+            transitionContainer.setStyle("-fx-background-color: " + (isLightMode ? "#f4f9f9" : "#06080D") + ";");
             transitionContainer.getChildren().addAll(dashboardRoot, loginRoot);
 
             scene.setRoot(transitionContainer);
@@ -350,7 +452,6 @@ public class LoginController implements Initializable {
 
             loginAnimOut.setOnFinished(e -> {
                 transitionContainer.getChildren().remove(dashboardRoot);
-
                 scene.setRoot(dashboardRoot);
                 try {
                     controller.getClass().getMethod("playIntroAnimation").invoke(controller);
@@ -373,7 +474,7 @@ public class LoginController implements Initializable {
         if (isVisible) {
             visibleField.setVisible(true); hiddenField.setVisible(false);
             icon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z");
-            icon.setFill(Color.web("#31C4B4"));
+            icon.setFill(Color.web(isLightMode ? "#00bcd4" : "#31C4B4"));
         } else {
             visibleField.setVisible(false); hiddenField.setVisible(true);
             icon.setContent("M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z");
@@ -387,7 +488,7 @@ public class LoginController implements Initializable {
         if (targetEmail.isEmpty() || !targetEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Please enter a valid email address."); return;
         }
-        statusLabel.setTextFill(Color.web("#31C4B4")); statusLabel.setText("Sending OTP... Please wait.");
+        statusLabel.setTextFill(Color.web(isLightMode ? "#0097a7" : "#31C4B4")); statusLabel.setText("Sending OTP... Please wait.");
         sendButton.setDisable(true);
         generatedOTP = String.format("%06d", new Random().nextInt(999999));
 
@@ -473,7 +574,7 @@ public class LoginController implements Initializable {
                 customAlertIcon.setFill(Color.web("#F59E0B")); customAlertBox.getStyleClass().add("alert-warning");
             } else {
                 customAlertIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
-                customAlertIcon.setFill(Color.web("#31C4B4")); customAlertBox.getStyleClass().add("alert-info");
+                customAlertIcon.setFill(Color.web(isLightMode ? "#00bcd4" : "#31C4B4")); customAlertBox.getStyleClass().add("alert-info");
             }
 
             customAlertOverlay.setVisible(true); customAlertOverlay.setOpacity(0.0); customAlertBox.setScaleX(0.5); customAlertBox.setScaleY(0.5);

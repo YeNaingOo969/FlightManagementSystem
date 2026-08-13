@@ -59,6 +59,12 @@
             <version>21.0.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>21.0.1</version> <!-- အစ်ကိုသုံးနေတဲ့ JavaFX Version အတိုင်းထားပေးပါ (ဥပမာ - 17.0.2 / 21.0.1) -->
+        </dependency>
+
     </dependencies>
 
     <build>

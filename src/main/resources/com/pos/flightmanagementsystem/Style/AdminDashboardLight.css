@@ -1,964 +1,272 @@
 /* =========================================================================
-   ✈️ LUXURY AIRLINE GLOBAL STYLE SHEET (NO SIDEBAR - SOFT ICE CYAN THEME)
+   ✈️ ADMIN DASHBOARD PAGE (MODERN LIGHT THEME - GLOWING BORDERLESS)
    ========================================================================= */
 
-.root {
-    -fx-font-family: "Inter","Segoe UI","Arial";
-    -fx-font-size: 13px;
-    
-    -fx-background-color: #ffffff; 
-}
-
-/* =========================================================================
-   📦 PREMIUM FLOATING GREY CARD EFFECT (HBox ကို ကတ်ပြားသီးသန့် ကြွစေခြင်း)
-   ========================================================================= */
-.grey-glass-hbox {
-    /* 🎯 Card Background - အဖြူဘက်သန်းသော မီးခိုးနုရောင်ကို သုံးပြီး Transparency ညှိခြင်း */
-    -fx-background-color: rgba(255, 255, 255, 0.75);
-    
-    /* ကတ်ပြားပုံစံ ထောင့်ဝိုင်းဒီဇိုင်း */
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    
-    /* 🎯 Border လိုင်းကို အနုစားလေးသာခတ်ပြီး အနားသတ်များကို ထင်ရှားစေခြင်း */
-    -fx-border-color: rgba(200, 210, 220, 0.4);
-    -fx-border-width: 1px;
-    
-    /* ကတ်ပြားအတွင်းပိုင်း အကွာအဝေး (စိတ်ကြိုက်ညှိနိုင်သည်) */
-    -fx-padding: 18px;
-    
-    /* 🎯 အဓိကအချက် - နောက်ခံကနေ ကတ်ပြားကြီး လုံးဝကြွတက်နေစေမည့် Soft & Deep Drop Shadow */
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 20, 0.1, 0, 8);
-}
-
-/* ⚡️ Mouse Hover ဖြစ်သွားချိန် ပိုမိုကြွတက်လာပြီး လင်းလက်သွားစေရန် (Floating Animation Effect) */
-.grey-glass-hbox:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.9);
-    -fx-border-color: rgba(0, 198, 255, 0.3); /* Hover ဖြစ်ချိန် Card ဘောင်ကို Cyan နုနုလေးသန်းစေခြင်း */
-    
-    /* Hover ဖြစ်ချိန် ကတ်ပြား ပိုမိုအပေါ်သို့ ကြွတက်လာသလို အရိပ်ကို ပိုကျယ်စေခြင်း */
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.12), 25, 0.15, 0, 12);
-}
-/* =========================================================================
-   📅 1. TOP BAR HBOX (Date Cards & Button ပါဝင်သော အပေါ်ဆုံးတန်း)
-   ========================================================================= */
-.top-bar-container {
-    /* 🎨 HBox ရဲ့ Background အရောင်ဖျော့ကို သတ်မှတ်ခြင်း */
-    -fx-background-color: #ffffff; 
-    
-    /* 📐 အတွင်းဘက် Padding (အပေါ် ၂၀၊ ညာ ၂၅၊ အောက် ၂၀၊ ဘယ် ၂၅) ထည့်ပြီး ဘောင်နှင့် မကပ်အောင်လုပ်ထားသည် */
-    -fx-padding: 20 25 20 25;
-    
-    /* ↔️ ကတ်ပြားများနှင့် ခလုတ်တစ်ခုချင်းစီကြား အကွာအဝေး (Spacing) */
-    -fx-spacing: 20;            
-    
-    -fx-alignment: CENTER_LEFT; 
-    -fx-background-radius: 12; /* လိုအပ်ပါက HBox ကိုပါ ထောင့်ဝိုင်းရန် */
-}
-/* Left Sidebar Panel Styling */
-.sidebar {
-    /* Sidebar နောက်ခံကို အနီဖျော့ Tint သို့ ပြောင်းလဲထားသည် */
-    -fx-background-color: rgb(196, 230, 235);
-    -fx-border-color: transparent #EAD4D6 transparent transparent;
-    -fx-border-width: 0 1 0 0;
-    -fx-padding: 20;
-    -fx-spacing: 15;
-}
-/* =========================================================================
-   SIDEBAR BUTTONS (ပုံထဲက အနီရောင်ကို အခြေခံ၍ Gradient နှင့် Shadow ညှိထားသည်)
-   ========================================================================= */
-.sidebar-button {
-    -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9))s; 
-    -fx-background-radius: 12;
-    -fx-border-color: transparent;
-    -fx-border-radius: 12;
-    -fx-border-width: 1;
-    -fx-text-fill: #103340;  
-    -fx-padding: 12 14;
-    -fx-pref-height: 42;
-    -fx-pref-width: 210;
-    -fx-alignment: CENTER_LEFT;
-    -fx-cursor: hand;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(128, 26, 31, 0.22), 8, 0, 0, 2);
-}
-
-/* Hover ထောက်လိုက်ချိန် */
-.sidebar-button:hover {
-	/* 🎨 Background ကို အဖြူဖျော့အစား ပိုမိုစိုပြည်ပြီး ရင့်သော Cyan/Teal Gradient သို့ ပြောင်းလဲခြင်း */
-	    -fx-background-color: linear-gradient(to bottom, #4DEEEA, #00A8B5); 
-	    
-	    /* 🎯 ဘောင်လိုင်း (Border) ကို အဖြူရောင်အစား ထင်ရှားသော Deep Teal (အရောင်ရင့်) သို့ ပြောင်းလဲခြင်း */
-	    -fx-border-color: #007A87;
-	    -fx-border-width: 1px;
-	    
-	    /* Shadow Glow ကို အရောင်ရင့်နှင့် လိုက်ဖက်အောင် ညှိခြင်း */
-	    -fx-effect: dropshadow(three-pass-box, rgba(0, 168, 181, 0.5), 16, 0.1, 0, 4);
-	    
-	    /* Smooth Pop-up Effect */
-	    -fx-scale-x: 1.03;
-	    -fx-scale-y: 1.03;
-	    -fx-cursor: hand;
-}
-
-/* ဖိနှိပ်ထားချိန် */
-.sidebar-button:pressed { 
-	/* လက်တွေ့နှိပ်လိုက်သလို ခံစားချက်ရစေရန် အနည်းငယ်ပြန်ကျုံ့သွားမည် */
-	    -fx-scale-x: 0.97;
-	    -fx-scale-y: 0.97;
-	    -fx-effect: dropshadow(three-pass-box, rgba(104, 207, 235, 0.25), 6, 0.0, 0, 1);
-}
-.sider-button:armed{
-	/* နှိပ်လိုက်လျှင် ပိုမိုရင့်မှောင်သော အရောင်သို့ ပြောင်းလဲခြင်း */
-	    -fx-background-color: linear-gradient(to bottom, #00A8B5, #007A87);
-	    -fx-scale-x: 0.97;
-	    -fx-scale-y: 0.97;
-	    -fx-effect: dropshadow(three-pass-box, rgba(0, 122, 135, 0.3), 6, 0.0, 0, 1);
-}
-.sidebar-button .label, 
-.sidebar-button .text,
-.sidebar-button .glyph-icon {
-    /* 🎯 ရွှေရောင်နေရာတွင် နောက်ခံနှင့်လိုက်ဖက်သော Deep Teal (အရောင်ရင့်) သို့ ပြောင်းလဲထားသည် */
-	-fx-text-fill: #000000;
-	    -fx-fill: #000000;
-    
-    -fx-font-weight: bold;
-    -fx-font-size: 12px;
-}
-/* လက်ရှိ Active ဖြစ်နေသော (နှိပ်ထားသော) Sidebar ခလုတ် */
-.sidebar-button-active {
-    -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9))s;
-    -fx-background-radius: 12;
-    /* ဘယ်ဘက်အနားသတ်လိုင်းကို Champagne Gold ရွှေရောင်နုလေးဖြင့် အလှဆင်ထားသည် */
-    -fx-border-color: transparent transparent transparent #005f60;
-    -fx-border-radius: 12;
-    -fx-border-width: 0 0 0 3;
-    -fx-text-fill: #E6C687; 
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(230, 198, 135, 0.3), 10, 0, 0, 2); 
-}
-
-
-
-
-/* =========================================================================
-   🔲 2. CARDS ROW HBOX (Summary Cards ၄ ခုပါဝင်သော အလယ်တန်း)
-   ========================================================================= */
-.cards-row {
-    -fx-background-color: #ffffff; /* သို့မဟုတ် ပတ်ဝန်းကျင်နှင့် လိုက်ဖက်မည့် အရောင် */
-    
-    /* 📐 ကတ်ပြားများ ဘောင်နှင့် လုံးဝမကပ်စေရန် Padding စနစ်တကျထည့်သွင်းခြင်း */
-    -fx-padding: 20 25 20 25; 
-    
-    /* ↔️ ကတ်တစ်ခုနှင့်တစ်ခုကြား သင့်တော်သော အကွာအဝေး */
-    -fx-spacing: 20;
-	-fx-background-radius: 12;
-    -fx-alignment: CENTER_LEFT;
-}
-
-/* =========================================================================
-   📊 3. CHARTS CONTAINER HBOX (အောက်ခြေ Chart ကတ်များပါဝင်သောတန်း)
-   ========================================================================= */
-.charts-container {
-    -fx-background-color: #ffffff;
-    
-    /* 📐 Chart Area ဘေးပတ်ပတ်လည် မကပ်စေရန် Padding ထည့်သွင်းခြင်း */
-    -fx-padding: 20 25 20 25;
-    
-    /* ↔️ Chart ကတ်များကြား အကွာအဝေး */
-    -fx-spacing: 25;
-	-fx-background-radius: 12;
-    -fx-alignment: CENTER_LEFT;
-}
-
-.VBox {
-	-fx-background-color: #F5F5F7;
-    -fx-spacing: 25;
-}
-/* ထိပ်ဆုံးက "Report & Analytics" ခေါင်းစဉ်ကြီး */
-.page-title {
-    -fx-text-fill: #133C45; /* Deep Navy Teal */
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-	
-}
-
-/* 🏷️ Date Picker အပေါ်က Label စာသား (စာသားနှင့် Date Field ကြား အကွာအဝေး ညှိထားသည်) */
-.field-label {
-    -fx-text-fill: #1F4B5D; 
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    
-    /* 🎯 အောက်ခြေ Padding ကို 6px မှ 12px သို့ တိုးမြှင့်ပြီး အကွာအဝေး ညှိထားသည် */
-    -fx-padding: 0 0 12 2; 
-}
-
-/* 📅 2. DATEPICKER INNER NODES PERFECT FIT FIX (တစ်သားတည်းဖြစ်စေရန် အဓိကပြင်ဆင်ချက်) */
-.date-picker {
-    -fx-background-color: #FFFFFF; 
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: rgba(31, 75, 93, 0.3); 
-    -fx-border-width: 1px;
-    
-    -fx-pref-width: 166px;   
-    -fx-pref-height: 32px;  
-}
-/* =========================================================================
-   📅 DATE PICKER CARDS (Solid Vibrant Cyan Border Style)
-   ========================================================================= */
-.date-picker-card {
-    -fx-background-color: rgba(248, 250, 252, 0.85);
-    -fx-background-radius: 16;
-    
-    /* 🎯 Solid Vibrant Cyan Border အသေခတ်ထားသည် */
-    -fx-border-color: #24B3C8; 
-    -fx-border-width: 1.5px;
-    -fx-border-radius: 16;
-    
-    -fx-padding: 10 16 10 16; 
-    -fx-pref-width: 230; 
-    -fx-pref-height: 72;
-    
-    -fx-effect: dropshadow(three-pass-box, rgba(36, 179, 200, 0.25), 16, 0.0, 0, 5);
-    -fx-transition: all 0.3s ease;
-}
-/* ✏️ DatePicker ရဲ့ အတွင်းက စာရေးတဲ့ Text Field ကို ထောင့်ကွေးညှိခြင်း */
-.date-picker > .text-field {
+/* 🌌 ScrollPane Fix (အဖြူတန်းကြီး လုံးဝပျောက်စေရန်) */
+.dashboard-scroll-pane {
     -fx-background-color: transparent;
-    -fx-background-radius: 7 0 0 7; /* ဘယ်ဘက်အပေါ်အောက် ထောင့်ကွေးများကိုသာ ယူသည် */
-    -fx-border-radius: 7 0 0 7;
-    -fx-padding: 0 0 0 10;
-    -fx-text-fill: #1F1E19; 
-    -fx-font-weight: 500;
-    -fx-font-size: 12px;
-}
-
-/* 🗓️ DatePicker ရဲ့ ညာဘက်ခြမ်း ပြက္ခဒိန် Button အား ဘောင်နှင့် ကပ်ရပ်ညီညာစေခြင်း */
-.date-picker > .arrow-button {
-    -fx-background-color: rgba(31, 75, 93, 0.05); /* Soft Blue Tint ဖြည့်ထားသည် */
-    -fx-background-radius: 0 7 7 0; /* ညာဘက်အပေါ်အောက် ထောင့်ကွေးများကိုသာ ယူသည် */
-    -fx-border-radius: 0 7 7 0;
     -fx-background-insets: 0;
-    -fx-padding: 0 8 0 8;
+    -fx-padding: 0;
 }
-
-/* ပြက္ခဒိန် Icon လေးကို ချိန်ညှိခြင်း */
-.date-picker > .arrow-button > .graphic {
-    -fx-background-color: #1F4B5D;
-}
-
-.date-picker:focused {
-    -fx-border-color: #68CFEB; /* Focus ဖြစ်ချိန်တွင် လှပသော Aqua ဘောင်လိုင်းပြောင်းလဲမည် */
-	-fx-effect: dropshadow(gaussian, rgba(53, 141, 156, 0.15), 6, 0, 0, 0);
-}
-
-/* =========================================================================
-   📥 VIEW REPORTS BUTTON (PREMIUM MODERN AQUA GLASS STYLE)
-   ========================================================================= */
-.btn-view-report {
-    /* 🎨 ပေးထားသော အရောင်ကို အခြေခံ၍ အထက်အောက် ပိုမိုကြည်လင်တောက်ပစေသော Glass Gradient */
-    -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9));
-    
-    /* 🖋️ စာသားကို ပိုမိုထင်ရှားပြတ်သားပြီး ဖတ်ရလွယ်ကူစေမည့် Deep Slate Green */
-    -fx-text-fill: #103340; 
-    
-    /* 📐 ပိုမိုဝိုင်းစက်ပြီး Modern ကျစေမည့် Border Radius */
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    
-    /* ✨ မှန်သားအနားသတ်အလင်းပြန်လိုင်း (Frosted White Inner-border Accent) */
-    -fx-border-color: rgba(255, 255, 255, 0.7);
-    -fx-border-width: 1px; 
-    
-    -fx-pref-width: 140px;
-    -fx-pref-height: 40px;  
-    
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-    
-    -fx-margin: 20 0 0 0; 
-    
-    /* ☁️ ခလုတ်အောက်ခြေကို လင်းထိန်စေမည့် Soft Cyan Aura Shadow (အလင်းဝါးဝါးကျဆင်းမှု) */
-    -fx-effect: dropshadow(three-pass-box, rgba(104, 207, 235, 0.35), 12, 0.0, 0, 3);
-    
-    -fx-transition: all 0.25s ease-in-out;
-}
-
-/* ⚡️ Mouse Hover State (ခလုတ်ပေါ် Mouse တင်လိုက်ချိန်) */
-.btn-view-report:hover { 
-    /* 🎨 Background ကို အဖြူဖျော့အစား ပိုမိုစိုပြည်ပြီး ရင့်သော Cyan/Teal Gradient သို့ ပြောင်းလဲခြင်း */
-    -fx-background-color: linear-gradient(to bottom, #4DEEEA, #00A8B5); 
-    
-    /* 🎯 ဘောင်လိုင်း (Border) ကို အဖြူရောင်အစား ထင်ရှားသော Deep Teal (အရောင်ရင့်) သို့ ပြောင်းလဲခြင်း */
-    -fx-border-color: #007A87;
-    -fx-border-width: 1px;
-    
-    /* Shadow Glow ကို အရောင်ရင့်နှင့် လိုက်ဖက်အောင် ညှိခြင်း */
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 168, 181, 0.5), 16, 0.1, 0, 4);
-    
-    /* Smooth Pop-up Effect */
-    -fx-scale-x: 1.03;
-    -fx-scale-y: 1.03;
-    -fx-cursor: hand;
-}
-
-/* 🖋️ Hover လုပ်ချိန် စာသား (Label) နှင့် Icon ကိုပါ အဖြူရောင်စစ်စစ် ဖြစ်အောင် ထိန်းထားခြင်း (စာဖတ်ရ ပြတ်သားစေရန်) */
-.btn-view-report:hover .label,
-.btn-view-report:hover .glyph-icon {
-    -fx-text-fill: #FFFFFF;
-    -fx-fill: #FFFFFF;
-}
-
-/* 🖱 Armed/Pressed State (ခလုတ်ကို နှိပ်လိုက်ချိန်) */
-.btn-view-report:armed {
-    /* နှိပ်လိုက်လျှင် ပိုမိုရင့်မှောင်သော အရောင်သို့ ပြောင်းလဲခြင်း */
-    -fx-background-color: linear-gradient(to bottom, #00A8B5, #007A87);
-    -fx-scale-x: 0.97;
-    -fx-scale-y: 0.97;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 122, 135, 0.3), 6, 0.0, 0, 1);
-}
-
-
-/* =========================================================================
-   🔲 2. DATA CARDS (Modern Cyan Shadow Glow & Float Effect)
-   ========================================================================= */
-.card {
-    /* 🔮 Glassmorphism Soft Base for Pure White Background */
-    -fx-background-color: rgba(248, 250, 252, 0.8);
-    -fx-background-radius: 16;
-    -fx-border-color: rgba(255, 255, 255, 0.9); 
-    -fx-border-width: 1.5px;
-    -fx-border-radius: 16;
-    -fx-padding: 18 20; 
-    -fx-pref-width: 230; 
-    -fx-pref-height: 100;
-    
-    /* 🌟 Modern Cyan Drop Shadow & Blur Effect */
-    -fx-effect: dropshadow(three-pass-box, rgba(104, 207, 235, 0.22), 16, 0.0, 0, 5);
-    -fx-transition: all 0.3s ease;
-}
-
-
-/* Mouse ထောက်လိုက်ချိန် 3D ကြွတက်မည့် Hover Effect */
-.card:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.95); 
-    -fx-border-color: rgba(104, 207, 235, 0.8);
-    
-    /* Hover ဖြစ်ချိန်တွင် Cyan Shadow ပိုမိုတောက်ပပြီး ကြွလာစေခြင်း */
-    -fx-effect: dropshadow(three-pass-box, rgba(104, 207, 235, 0.45), 22, 0.0, 0, 8);
-    -fx-scale-x: 1.03;
-    -fx-scale-y: 1.03;
-    -fx-cursor: hand;
-}
-
-/* Card ထဲက Title စာသား (ဥပမာ- Total Bookings) */
-.card-title {
-    -fx-text-fill: #1F4B5D;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-/* Card ထဲက ထင်ရှားပြတ်သားသော ကိန်းဂဏန်း (ဥပမာ- 342) */
-.card-value {
-    -fx-text-fill: #1F1E19;
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
-    -fx-padding: 5 0 0 0;
-}
-/* =========================================================================
-   📊 3. CHARTS & TABLES STYLING (အောက်ခြေ ဇယားနှင့် Chart များအတွက်)
-   ========================================================================= */
-.chart-panel-title {
-    -fx-text-fill: #133C45;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 0 0 10 0;
-}
-/* =========================================================================
-   🔲 INDIVIDUAL PREMIUM GRADIENT CARDS (Size + Color တစ်ခါတည်း တွဲသတ်မှတ်ခြင်း)
-   ========================================================================= */
-
-/* 🔲 CARD 1: Total Bookings (Aqua Blue-Green) */
-.total-bookings-card {
-    -fx-background-color: linear-gradient(to bottom right, #00C6FF, #0072FF);
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: rgba(255, 255, 255, 0.4);
-    -fx-border-width: 1px;
-    -fx-padding: 20 22;
-    -fx-pref-width: 260px;
-    -fx-pref-height: 115px;
-    -fx-min-width: 260px;
-    -fx-min-height: 115px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.35), 18, 0, 0, 6);
-}
-
-/* 🔲 CARD 2: Cancelled Bookings (Soft Royal Blue) */
-.cancelled-bookings-card {
-    -fx-background-color: linear-gradient(to bottom right, #7F7FD5, #86A8E7, #91EAE4);
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: rgba(255, 255, 255, 0.4);
-    -fx-border-width: 1px;
-    -fx-padding: 20 22;
-    -fx-pref-width: 260px;
-    -fx-pref-height: 115px;
-    -fx-min-width: 260px;
-    -fx-min-height: 115px;
-    -fx-effect: dropshadow(three-pass-box, rgba(134, 168, 231, 0.35), 18, 0, 0, 6);
-}
-
-/* 🔲 CARD 3: Active Flights (Coral Pink-Rose) */
-.active-flights-card {
-    -fx-background-color: linear-gradient(to bottom right, #FF9A9E, #FECFEF);
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: rgba(255, 255, 255, 0.4);
-    -fx-border-width: 1px;
-    -fx-padding: 20 22;
-    -fx-pref-width: 260px;
-    -fx-pref-height: 115px;
-    -fx-min-width: 260px;
-    -fx-min-height: 115px;
-    -fx-effect: dropshadow(three-pass-box, rgba(255, 154, 158, 0.35), 18, 0, 0, 6);
-}
-
-/* 🔲 CARD 4: Revenue (Lavender Purple) */
-.revenue-card {
-    -fx-background-color: linear-gradient(to bottom right, #a18cd1, #fbc2eb);
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: rgba(255, 255, 255, 0.4);
-    -fx-border-width: 1px;
-    -fx-padding: 20 22;
-    -fx-pref-width: 260px;
-    -fx-pref-height: 115px;
-    -fx-min-width: 260px;
-    -fx-min-height: 115px;
-    -fx-effect: dropshadow(three-pass-box, rgba(161, 140, 209, 0.35), 18, 0, 0, 6);
-}
-
-/* =========================================================================
-   🖋️ TEXT STYLES FOR INSIDE LABELS
-   ========================================================================= */
-/* ခေါင်းစဉ်စာသား အရောင်ပြောင်းရန် */
-.total-bookings-card .card-title, .cancelled-bookings-card .card-title, .revenue-card .card-title {
-    -fx-text-fill: rgba(255, 255, 255, 0.9);
-    -fx-font-weight: bold;
-}
-/* ကိန်းဂဏန်းစာသား အရောင်ပြောင်းရန် */
-.total-bookings-card .card-value, .cancelled-bookings-card .card-value, .revenue-card .card-value {
-    -fx-text-fill: #FFFFFF;
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-}
-
-/* Pink Card အတွက် စာသားအရောင် အမည်းဘက် ညှိပေးထားခြင်း */
-.active-flights-card .card-title { -fx-text-fill: rgba(120, 40, 60, 0.85); -fx-font-weight: bold; }
-.active-flights-card .card-value { -fx-text-fill: #5E192A; -fx-font-size: 28px; -fx-font-weight: bold; }
-
-/* Bar Chart ထဲက တိုင်အရောင်များကို Blueprint အတိုင်း Soft Ice Blue ပြောင်းလဲခြင်း */
-.chart-bar {
-    -fx-bar-fill: #358D9C;
-}
-   /* =========================================================================
-      📊 PREMIUM TABLE VIEW - FIXED BACKGROUND & COLUMN SEPARATORS
-      ========================================================================= */
-
-   /* 1️⃣ TABLE BASE LAYER */
-   .table-view {
-       -fx-background-color: #FFFFFF;
-       -fx-background-radius: 12;
-       -fx-border-radius: 12;
-       -fx-border-color: rgba(0, 198, 255, 0.2);
-       -fx-border-width: 1px;
-   }
-
-   /* 2️⃣ MAIN HEADER BACKGROUND (အပြာရောင် Gradient တစ်ခုလုံးကို အုပ်ပေးထားသည့်နေရာ) */
-   .table-view .column-header-background {
-       -fx-background-color: linear-gradient(to bottom, rgba(142, 227, 242, 0.85), rgba(90, 203, 223, 0.9))s; 
-       -fx-background-radius: 12 12 0 0;
-       -fx-pref-height: 40px;
-   }
-
-   /* 3️⃣ INDIVIDUAL HEADERS (ခေါင်းစဉ် တစ်ခုချင်းစီ၏ နောက်ခံကို transparent လုပ်၍ အရောင်ပြန်ဖော်ခြင်း) */
-   .table-view .column-header {
-       /* 🎯 မူလအပြာရောင်ကို ကွယ်စေသော Default Gray Background ကို ဖျောက်ချလိုက်ခြင်း */
-       -fx-background-color: transparent; 
-       
-       /* 🎯 ခေါင်းစဉ်တစ်ခုချင်းစီကြားတွင် အဖြူရောင်ဖျော့ဖျော့ ဒေါင်လိုက်လိုင်းလေး ခြားပေးခြင်း */
-       -fx-border-color: transparent rgba(255, 255, 255, 0.3) transparent transparent;
-       -fx-border-width: 0 1 0 0; 
-   }
-
-   /* အဆုံးစွန်ဆုံး ညာဘက် Column header ၏ လိုင်းကို ဖျောက်ခြင်း */
-   .table-view .column-header:last-visible {
-       -fx-border-color: transparent;
-   }
-
-   /* ခေါင်းစဉ်စာသား (Action, User, Date, Detail) */
-   .table-view .column-header .label {
-       -fx-text-fill: #000000; /* Pure White စာသား */
-       -fx-font-weight: bold;
-       -fx-font-size: 13px;
-       -fx-alignment: CENTER;
-       -fx-padding: 0 0 0 15; 
-   }
-
-   /* 4️⃣ TABLE DATA CELLS (အောက်ခြေ အချက်အလက်ပြ ကွက်လပ်များကြား လိုင်းခြားခြင်း) */
-   .table-cell {
-       -fx-text-fill: #333333;
-       -fx-font-size: 13px;
-       -fx-alignment: CENTER_LEFT;
-       -fx-padding: 0 0 0 15; 
-       
-       /* 🎯 Data Cell များကြားတွင် မီးခိုးနုရောင် ဒေါင်လိုက်လိုင်း ခြားခြင်း */
-       -fx-border-color: transparent rgba(0, 0, 0, 0.06) transparent transparent;
-       -fx-border-width: 0 1 0 0;
-   }
-
-   /* အဆုံးစွန်ဆုံး ညာဘက် Cell ၏ လိုင်းကို ဖျောက်ခြင်း */
-   .table-cell:last-visible {
-       -fx-border-color: transparent;
-   }
-
-   /* 5️⃣ TABLE ROWS CONFIGURATION (အလျားလိုက်လိုင်းများနှင့် Hover Effect) */
-   .table-row-cell {
-       -fx-background-color: transparent;
-       -fx-padding: 10 0 10 0; 
-   }
-
-   /* Rows များကြား အလျားလိုက်လိုင်းနုနုလေး */
-   .table-row-cell:filled {
-       -fx-border-color: transparent transparent rgba(0, 0, 0, 0.05) transparent;
-       -fx-border-width: 0 0 1 0;
-   }
-
-   /* Mouse Hover Effect */
-   .table-row-cell:filled:hover {
-       -fx-background-color: rgba(0, 198, 255, 0.08); 
-   }
-
-/* Row ကို ကလစ်နှိပ်ပြီး ရွေးချယ်ထားချိန် အရောင် */
-.table-row-cell:filled:selected {
-    -fx-background-color: rgba(0, 114, 255, 0.15);
-}
-
-/* 4. TABLE CELLS TEXT (အတွင်းက စာသားများ အနေအထား) */
-.table-cell {
-    -fx-text-fill: #333333;
-    -fx-font-size: 13px;
-    -fx-padding: 0 12 0 12; /* စာသားများ ဘေးဘောင်နှင့် မကပ်စေရန် */
-}
-
-/* 5. CENTER "NO CONTENT IN TABLE" TEXT (စာသားမရှိပါက ပြသမည့် စာလုံးဒီဇိုင်း) */
-.table-view .placeholder .label {
-    -fx-text-fill: #888888;
-    -fx-font-size: 14px;
-    -fx-font-style: italic;
-}
-
-/* 6. SCROLL BAR SMOOTHING (ညာဘက်က Scroll Bar ကို သန့်ရှင်းအောင် ညှိခြင်း) */
-.table-view .scroll-bar:vertical,
-.table-view .scroll-bar:horizontal {
+.dashboard-scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
-.table-view .scroll-bar:vertical .thumb,
-.table-view .scroll-bar:horizontal .thumb {
-    -fx-background-color: rgba(0, 198, 255, 0.2);
-    -fx-background-radius: 4;
-}
 
-/* =========================================================================
-   SUPER ADMIN AIRLINE DASHBOARD - MODERN PROFESSIONAL UI
-   ========================================================================= */
-
-.super-dashboard-root {
-    -fx-font-family: "Segoe UI", "Inter", Arial, sans-serif;
-    -fx-background-color: #f4f7fb;
-}
-
-.super-sidebar {
-    -fx-background-color: rgb(196, 230, 235);
-    -fx-padding: 28 22 28 22;
-    -fx-border-color: transparent rgba(255,255,255,0.08) transparent transparent;
-    -fx-border-width: 0 1 0 0;
-}
-
-.super-brand {
-    -fx-padding: 8 4 16 4;
-}
-
-.super-brand-logo {
-    -fx-min-width: 44;
-    -fx-min-height: 44;
-    -fx-max-width: 44;
-    -fx-max-height: 44;
-    -fx-background-color: linear-gradient(to bottom right, #16a3ff, #23d3b6);
-    -fx-background-radius: 14;
-    -fx-border-color: rgba(255,255,255,0.62);
-    -fx-border-radius: 14;
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(22,135,158,0.24), 18, 0.20, 0, 7);
-}
-
-.super-brand-logo-glyph {
-    -fx-fill: #ffffff;
-    -fx-scale-x: 1.08;
-    -fx-scale-y: 1.08;
-}
-
-.super-brand-kicker {
-    -fx-text-fill: #2f6678;
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-}
-
-.super-brand-title {
-    -fx-text-fill: #2f6678;
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-}
-
-.super-brand-subtitle,
-.super-sidebar-card-note {
-    -fx-text-fill: #9db1cc;
-    -fx-font-size: 12px;
-}
-
-.super-nav-button,
-.super-nav-button-active {
-    -fx-pref-height: 48;
-    -fx-max-width: 100000;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-alignment: CENTER_LEFT;
-    -fx-content-display: LEFT;  
-    -fx-graphic-text-gap: 12;
-    -fx-padding: 0 16 0 16;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-.super-nav-button {
-    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.58), rgba(255,255,255,0.24));
-    -fx-border-color: rgba(255,255,255,0.72);
-    -fx-border-width: 1;
-    -fx-text-fill: #2f6678;
-    -fx-effect: dropshadow(gaussian, rgba(28,92,110,0.14), 16, 0.18, 0, 6);
-}
-
-.super-nav-button:hover {
-    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.78), rgba(112,217,231,0.34));
-    -fx-border-color: rgba(255,255,255,0.92);
-    -fx-effect: dropshadow(gaussian, rgba(22,135,158,0.22), 18, 0.20, 0, 8);
-}
-
-.super-nav-button-active {
-    -fx-background-color: linear-gradient(to right, #16a3ff, #23d3b6);
-    -fx-border-color: transparent;
-    -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(gaussian, rgba(22,163,255,0.30), 18, 0.20, 0, 8);
-}
-
-.super-nav-icon {
-    -fx-min-width: 22;
-    -fx-min-height: 22;
-    -fx-max-width: 22;
-    -fx-max-height: 22;
-    -fx-alignment: CENTER;
-}
-
-.super-nav-icon-glyph {
-    -fx-fill: #2f6678;
-    -fx-scale-x: 0.82;
-    -fx-scale-y: 0.82;
-}
-
-.super-nav-button-active .super-nav-icon-glyph {
-    -fx-fill: #ffffff;
-}
-
-.super-sidebar-card {
-    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.52), rgba(255,255,255,0.20));
-    -fx-background-radius: 16;
-    -fx-border-radius: 16;
-    -fx-border-color: rgba(255,255,255,0.62);
-    -fx-border-width: 1;
-    -fx-padding: 16;
-    -fx-effect: dropshadow(gaussian, rgba(28,92,110,0.12), 16, 0.16, 0, 6);
-}
-
-.super-sidebar-card-title {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-.super-sidebar-card-value {
-    -fx-text-fill: #64f1c7;
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-}
-
-.super-logout-button {
-    -fx-pref-height: 44;
-    -fx-max-width: 100000;
-    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.58), rgba(255,255,255,0.24));
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: rgba(255,255,255,0.72);
-    -fx-border-width: 1;
-    -fx-text-fill: #2f6678;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-    -fx-content-display: LEFT;
-    -fx-graphic-text-gap: 12;
-    -fx-effect: dropshadow(gaussian, rgba(28,92,110,0.14), 16, 0.18, 0, 6);
-}
-
-.super-logout-button:hover {
-    -fx-background-color: #ef476f;
-    -fx-border-color: transparent;
-    -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(gaussian, rgba(239,71,111,0.28), 18, 0.20, 0, 8);
-}
-
-.super-logout-button .super-nav-icon-glyph {
-    -fx-fill: #2f6678;
-}
-
-.super-logout-button:hover .super-nav-icon-glyph {
-    -fx-fill: #ffffff;
-}
-
-.super-content {
+/* 🌟 Background & Root */
+.dashboard-root, .super-dashboard-content, .super-content {
     -fx-background-color:
-        radial-gradient(center 90% 5%, radius 70%, rgba(35,211,182,0.16), transparent 55%),
-        linear-gradient(to bottom right, #f7faff, #edf3f8);
+            radial-gradient(center 50% 50%, radius 75%, rgba(49, 196, 180, 0.08), transparent 60%),
+            #f4f9f9;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-padding: 10px 35px 35px 35px;
 }
 
-.super-topbar,
-.super-panel,
-.super-side-panel,
-.super-side-panel-accent {
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-width: 1;
-}
-
-.super-topbar,
-.super-panel,
-.super-side-panel {
-    -fx-background-color: rgba(255,255,255,0.92);
-    -fx-border-color: rgba(17,40,72,0.08);
-    -fx-effect: dropshadow(gaussian, rgba(17,40,72,0.08), 22, 0.12, 0, 10);
-}
-
+/* ==========================================================
+   PAGE TITLE & TOPBAR
+========================================================== */
 .super-topbar {
-    -fx-padding: 24 26 24 26;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-border-color: #e5e7eb;
+    -fx-padding: 20px 26px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 15, 0, 0, 4);
 }
 
-.super-page-kicker {
-    -fx-text-fill: #1687d9;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
+.super-page-kicker { -fx-text-fill: #00bcd4; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-transform: uppercase; }
+.super-page-title { -fx-text-fill: #1f2937; -fx-font-size: 26px; -fx-font-weight: bold; }
+.super-page-subtitle { -fx-text-fill: #6b7280; -fx-font-size: 13px; }
+
+.super-section-title, .super-section-title-light { -fx-text-fill: #1f2937; -fx-font-size: 18px; -fx-font-weight: bold; }
+.super-section-title-light { -fx-text-fill: #ffffff; }
+.super-section-subtitle { -fx-text-fill: #6b7280; -fx-font-size: 12px; }
+.super-time-label { -fx-text-fill: #9ca3af; -fx-font-size: 12px; -fx-font-weight: bold; }
+
+/* ==========================================================
+   📦 PANELS
+========================================================== */
+.super-panel {
+    -fx-background-color:
+            radial-gradient(center 50% 50%, radius 85%, rgba(49, 196, 180, 0.05), transparent 65%),
+            #ffffff;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1px;
+    -fx-padding: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 20, 0, 0, 6);
 }
 
-.super-page-title {
-    -fx-text-fill: #10243f;
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
+.super-side-panel {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1px;
+    -fx-padding: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 20, 0, 0, 6);
 }
 
-.super-page-subtitle,
-.super-section-subtitle,
-.super-side-copy {
-    -fx-text-fill: #60728a;
-    -fx-font-size: 13px;
+.super-side-panel-accent {
+    -fx-background-color: linear-gradient(to bottom right, #00838f, #00bcd4);
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-padding: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 188, 212, 0.25), 18, 0, 0, 6);
 }
 
-.super-status-pill,
-.super-table-chip {
-    -fx-background-color: #e9f8f3;
-    -fx-background-radius: 999;
-    -fx-border-radius: 999;
-    -fx-border-color: #bcefe0;
-    -fx-padding: 8 14 8 14;
-    -fx-text-fill: #08775e;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
+.super-side-copy { -fx-text-fill: #4b5563; -fx-font-size: 12px; -fx-wrap-text: true; }
+.super-side-copy-light { -fx-text-fill: rgba(255, 255, 255, 0.9); -fx-font-size: 12px; -fx-wrap-text: true; }
 
-.super-time-label {
-    -fx-text-fill: #6b7e95;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
+/* ==========================================================
+   📊 METRIC CARDS
+========================================================== */
+.super-metrics-row { -fx-spacing: 20px; }
 
-.super-metrics-row {
-    -fx-alignment: CENTER_LEFT;
-}
-
-.super-metric-card-blue,
-.super-metric-card-red,
-.super-metric-card-green,
-.super-metric-card-gold {
-    -fx-min-height: 132;
+.super-metric-card-blue, .super-metric-card-carbon, .super-metric-card-violet,
+.super-metric-card-pink, .super-metric-card-purple, .super-metric-card-orange,
+.super-metric-card-red, .super-metric-card-green, .super-metric-card-gold {
+    -fx-min-height: 120px;
     -fx-max-width: 100000;
-    -fx-padding: 20 22 20 22;
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(255,255,255,0.42);
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(17,40,72,0.10), 20, 0.14, 0, 10);
+    -fx-padding: 20px 22px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-width: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 5);
 }
 
-.super-metric-card-blue {
-      -fx-background-color: linear-gradient(to bottom right, #38BDF8, #0284C7) !important;
-}
+.super-metric-card-blue { -fx-background-color: linear-gradient(to bottom right, #0ea5e9, #06b6d4); }
+.super-metric-card-green { -fx-background-color: linear-gradient(to bottom right, #10b981, #34d399); }
+.super-metric-card-purple { -fx-background-color: linear-gradient(to bottom right, #8b5cf6, #a855f7); }
+.super-metric-card-red { -fx-background-color: linear-gradient(to bottom right, #f43f5e, #fb7185); }
+.super-metric-card-gold { -fx-background-color: linear-gradient(to bottom right, #f59e0b, #fbbf24); }
 
-.super-metric-card-red {
-	-fx-background-color: linear-gradient(to bottom right, #FB7185, #E11D48) !important;
- }
-
-.super-metric-card-green {
-	-fx-background-color: linear-gradient(to bottom right, #34D399, #059669) !important;
-}
-
-.super-metric-card-gold {
- -fx-background-color: linear-gradient(to bottom right, #FBBF24, #D97706) !important;
-
-
-}
-
-.super-metric-label,
-.super-metric-note {
-    -fx-text-fill: rgba(255,255,255,0.88);
+.super-metric-label, .super-metric-note {
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
-
 .super-metric-value {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 32px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 28px;
     -fx-font-weight: bold;
 }
 
 .super-metric-icon {
-    -fx-min-width: 46;
-    -fx-min-height: 46;
-    -fx-max-width: 46;
-    -fx-max-height: 46;
-    -fx-background-color: rgba(255,255,255,0.22);
+    -fx-min-width: 46; -fx-min-height: 46; -fx-max-width: 46; -fx-max-height: 46;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
     -fx-background-radius: 999;
-    -fx-border-color: rgba(255,255,255,0.32);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-radius: 999;
-    -fx-border-width: 1;
+    -fx-border-width: 1px;
 }
-
 .super-metric-icon-glyph {
-    -fx-fill: #ffffff;
-    -fx-scale-x: 0.92;
-    -fx-scale-y: 0.92;
+    -fx-fill: #FFFFFF;
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
 }
 
-.super-panel,
-.super-side-panel {
-    -fx-padding: 22;
+/* ==========================================================
+   🟢 STATUS DOTS
+========================================================== */
+.super-dot-green { -fx-background-color: #10b981; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-gold, .super-dot-yellow { -fx-background-color: #f59e0b; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-blue, .super-dot-cyan { -fx-background-color: #00bcd4; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+
+/* ==========================================================
+   📋 TABLE VIEW
+========================================================== */
+.table-view, .super-table {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 80%, rgba(230, 250, 248, 1), #ffffff);
+    -fx-border-color: #e5e7eb;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px;
 }
 
-.super-side-panel-accent {
-    -fx-padding: 22;
-    -fx-background-color: linear-gradient(to bottom right, #10B981, #065F46) !important;
-    -fx-border-color: rgba(255,255,255,0.16);
-    -fx-effect: dropshadow(gaussian, rgba(22,135,217,0.22), 24, 0.22, 0, 10);
+.table-view .column-header-background, .super-table .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0 0 10px 0;
 }
-
-.super-section-title {
-    -fx-text-fill: #10243f;
-    -fx-font-size: 18px;
+.table-view .filler, .super-table .filler {
+    -fx-background-color: transparent;
+}
+.table-view .column-header, .super-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.table-view .column-header .label, .super-table .column-header .label {
+    -fx-text-fill: #6b7280;
     -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-alignment: center;
 }
 
-.super-section-title-light {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
+.table-row-cell, .super-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-cell-size: 50px;
+}
+.table-row-cell:empty, .super-table .table-row-cell:empty {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+.table-row-cell:filled {
+    -fx-background-color: transparent;
+}
+.table-row-cell:filled:hover, .super-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(0, 188, 212, 0.05);
+    -fx-background-radius: 8px;
+}
+.table-row-cell:selected, .super-table .table-row-cell:selected {
+    -fx-background-color: rgba(0, 188, 212, 0.15);
+    -fx-background-radius: 8px;
 }
 
-.super-side-copy-light {
-    -fx-text-fill: rgba(255,255,255,0.86);
+.table-view .table-cell, .super-table .table-cell {
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-text-fill: #374151;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-padding: 0 10px;
+}
+
+.table-view .placeholder .label, .super-table .placeholder .label {
+    -fx-text-fill: #9ca3af;
+    -fx-font-style: italic;
     -fx-font-size: 13px;
 }
 
-.super-dot-green,
-.super-dot-blue,
-.super-dot-gold {
-    -fx-min-width: 10;
-    -fx-min-height: 10;
-    -fx-max-width: 10;
-    -fx-max-height: 10;
-    -fx-background-radius: 999;
-}
-
-.super-dot-green {
-    -fx-background-color: #2dd4bf;
-}
-
-.super-dot-blue {
-    -fx-background-color: #1687d9;
-}
-
-.super-dot-gold {
-    -fx-background-color: #f6c85f;
-}
-
-.super-table {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-color: #dce6f2;
-    -fx-border-width: 1;
-}
-
-.super-table .column-header-background {
-    -fx-background-color: #eff5fb;
-    -fx-background-radius: 14 14 0 0;
-}
-
-.super-table .column-header,
-.super-table .filler {
+/* ==========================================================
+   🔧 CUSTOM SCROLLBAR FOR DASHBOARD
+========================================================== */
+.table-view .scroll-bar:horizontal,
+.table-view .scroll-bar:vertical {
     -fx-background-color: transparent;
-    -fx-size: 42;
+}
+.dashboard-scroll-pane .scroll-bar:vertical, .super-table .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+.dashboard-scroll-pane .scroll-bar:vertical .track, .super-table .scroll-bar:vertical .track,
+.scroll-bar:horizontal .track-background, .scroll-bar:vertical .track-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.dashboard-scroll-pane .scroll-bar:vertical .thumb, .super-table .scroll-bar:vertical .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 4px;
+}
+.dashboard-scroll-pane .scroll-bar:vertical .thumb:hover, .super-table .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #00bcd4;
+}
+.dashboard-scroll-pane .scroll-bar:horizontal, .super-table .scroll-bar:horizontal {
+    -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0;
+}
+.dashboard-scroll-pane .scroll-bar .increment-button, .dashboard-scroll-pane .scroll-bar .decrement-button,
+.super-table .scroll-bar .increment-button, .super-table .scroll-bar .decrement-button {
+    -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0; -fx-padding: 0;
+}
+.dashboard-scroll-pane .corner, .super-table .corner {
+    -fx-background-color: transparent;
 }
 
-.super-table .column-header .label {
-    -fx-text-fill: #41546b;
+/* 🌟 Focus Rings Reset 🌟 */
+.table-view:focused, .scroll-pane:focused, .dashboard-root:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ==========================================================
+   🌟 STATUS PILLS FOR TABLE (LIGHT)
+========================================================== */
+.table-status-pill {
+    -fx-padding: 4px 12px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
+    -fx-alignment: center;
 }
-
-.super-table .table-row-cell {
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent transparent #edf1f6 transparent;
+.pill-pending {
+    -fx-background-color: #FEF3C7;
+    -fx-text-fill: #D97706;
 }
-
-.super-table .table-row-cell:filled:hover {
-    -fx-background-color: #f3f9ff;
+.pill-approved {
+    -fx-background-color: #D1FAE5;
+    -fx-text-fill: #059669;
 }
-
-.super-table .table-cell {
-    -fx-text-fill: #2b3d52;
-    -fx-font-size: 13px;
-    -fx-padding: 10 14 10 14;
-}
-
-.super-table .placeholder .label {
-    -fx-text-fill: #8a9ab0;
-    -fx-font-size: 13px;
+.pill-cancelled {
+    -fx-background-color: #FFE4E6;
+    -fx-text-fill: #E11D48;
 }

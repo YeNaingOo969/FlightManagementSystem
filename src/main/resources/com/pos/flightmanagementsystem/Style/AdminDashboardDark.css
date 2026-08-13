@@ -1,0 +1,267 @@
+/* =========================================================================
+   ✈️ ADMIN DASHBOARD PAGE (MATCHING SUPERADMIN DARK THEME)
+   ========================================================================= */
+
+/* 🌌 ScrollPane Fix (အဖြူတန်းကြီး လုံးဝပျောက်စေရန်) */
+.dashboard-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.dashboard-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* 🌟 Background & Root */
+.dashboard-root, .super-dashboard-content, .super-content {
+    -fx-background-color:
+            radial-gradient(center 50% 50%, radius 75%, rgba(49, 196, 180, 0.12), transparent 60%),
+            #06080D;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-padding: 10px 35px 35px 35px;
+}
+
+/* ==========================================================
+   PAGE TITLE & TOPBAR
+========================================================== */
+.super-topbar {
+    -fx-background-color: linear-gradient(to bottom right, #1A212D 0%, #0B0E14 70%);
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-border-color: #1F2633;
+    -fx-padding: 20px 26px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0, 0, 4);
+}
+
+.super-page-kicker { -fx-text-fill: #8B95A5; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-transform: uppercase; }
+.super-page-title { -fx-text-fill: #FFFFFF; -fx-font-size: 26px; -fx-font-weight: bold; }
+.super-page-subtitle { -fx-text-fill: #8B95A5; -fx-font-size: 13px; }
+
+.super-section-title, .super-section-title-light { -fx-text-fill: #FFFFFF; -fx-font-size: 18px; -fx-font-weight: bold; }
+.super-section-subtitle { -fx-text-fill: #8B95A5; -fx-font-size: 12px; }
+.super-time-label { -fx-text-fill: #8B95A5; -fx-font-size: 12px; -fx-font-weight: bold; }
+
+/* ==========================================================
+   📦 PANELS
+========================================================== */
+.super-panel {
+    -fx-background-color:
+            radial-gradient(center 50% 50%, radius 85%, rgba(49, 196, 180, 0.07), transparent 65%),
+            #11151E;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #1A212D;
+    -fx-border-width: 1px;
+    -fx-padding: 22px;
+}
+
+.super-side-panel {
+    -fx-background-color: #11151E;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #1A212D;
+    -fx-border-width: 1px;
+    -fx-padding: 22px;
+}
+
+.super-side-panel-accent {
+    -fx-background-color: linear-gradient(to bottom right, #1A1F2B, #0E121A);
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #1F2633;
+    -fx-border-width: 1px;
+    -fx-padding: 22px;
+}
+
+.super-side-copy, .super-side-copy-light { -fx-text-fill: #8B95A5; -fx-font-size: 12px; -fx-wrap-text: true; }
+
+/* ==========================================================
+   📊 METRIC CARDS
+========================================================== */
+.super-metrics-row { -fx-spacing: 20px; }
+
+.super-metric-card-blue, .super-metric-card-carbon, .super-metric-card-violet,
+.super-metric-card-pink, .super-metric-card-purple, .super-metric-card-orange,
+.super-metric-card-red, .super-metric-card-green, .super-metric-card-gold {
+    -fx-min-height: 120px;
+    -fx-max-width: 100000;
+    -fx-padding: 20px 22px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-width: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);
+}
+
+.super-metric-card-blue { -fx-background-color: linear-gradient(to bottom right, #2BC9BB, #128C84); }
+.super-metric-card-green { -fx-background-color: linear-gradient(to bottom right, #10B981, #047857); }
+.super-metric-card-purple { -fx-background-color: linear-gradient(to bottom right, #7A3DF3, #431CB6); }
+.super-metric-card-red { -fx-background-color: linear-gradient(to bottom right, #F43F5E, #BE123C); }
+.super-metric-card-gold { -fx-background-color: linear-gradient(to bottom right, #F8B12C, #D97706); }
+
+.super-metric-label, .super-metric-note {
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.super-metric-value {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.super-metric-icon {
+    -fx-min-width: 46; -fx-min-height: 46; -fx-max-width: 46; -fx-max-height: 46;
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-radius: 999;
+    -fx-border-color: rgba(255, 255, 255, 0.25);
+    -fx-border-radius: 999;
+    -fx-border-width: 1px;
+}
+.super-metric-icon-glyph {
+    -fx-fill: #FFFFFF;
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+}
+
+/* ==========================================================
+   🟢 STATUS DOTS
+========================================================== */
+.super-dot-green { -fx-background-color: #1DA853; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-gold, .super-dot-yellow { -fx-background-color: #F8B12C; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-blue, .super-dot-cyan { -fx-background-color: #31C4B4; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+
+/* ==========================================================
+   📋 TABLE VIEW
+========================================================== */
+.table-view, .super-table {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 80%, rgba(24, 34, 54, 1), #06080D);
+    -fx-border-color: #1A212D;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px;
+}
+.table-view .column-header-background, .super-table .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0 0 10px 0;
+}
+.table-view .filler, .super-table .filler {
+    -fx-background-color: transparent;
+}
+.table-view .column-header, .super-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.table-view .column-header .label, .super-table .column-header .label {
+    -fx-text-fill: #8B95A5;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-alignment: center;
+}
+.table-row-cell, .super-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-cell-size: 50px;
+}
+.table-row-cell:empty, .super-table .table-row-cell:empty {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+.table-row-cell:filled {
+    -fx-background-color: transparent;
+}
+.table-row-cell:filled:hover, .super-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+    -fx-background-radius: 8px;
+}
+.table-row-cell:selected, .super-table .table-row-cell:selected {
+    -fx-background-color: rgba(49, 196, 180, 0.1);
+    -fx-background-radius: 8px;
+}
+.table-view .table-cell, .super-table .table-cell {
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-padding: 0 10px;
+}
+.table-view .placeholder .label, .super-table .placeholder .label {
+    -fx-text-fill: #6B7280;
+    -fx-font-style: italic;
+    -fx-font-size: 13px;
+}
+
+/* ==========================================================
+   🔧 CUSTOM SCROLLBAR FOR DASHBOARD
+========================================================== */
+.table-view .scroll-bar:horizontal,
+.table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+.dashboard-scroll-pane .scroll-bar:vertical, .super-table .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+.dashboard-scroll-pane .scroll-bar:vertical .track, .super-table .scroll-bar:vertical .track,
+.scroll-bar:horizontal .track-background, .scroll-bar:vertical .track-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.dashboard-scroll-pane .scroll-bar:vertical .thumb, .super-table .scroll-bar:vertical .thumb {
+    -fx-background-color: #2A3441;
+    -fx-background-radius: 4px;
+}
+.dashboard-scroll-pane .scroll-bar:vertical .thumb:hover, .super-table .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #31C4B4;
+}
+.dashboard-scroll-pane .scroll-bar:horizontal, .super-table .scroll-bar:horizontal {
+    -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0;
+}
+.dashboard-scroll-pane .scroll-bar .increment-button, .dashboard-scroll-pane .scroll-bar .decrement-button,
+.super-table .scroll-bar .increment-button, .super-table .scroll-bar .decrement-button {
+    -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0; -fx-padding: 0;
+}
+.dashboard-scroll-pane .corner, .super-table .corner {
+    -fx-background-color: transparent;
+}
+
+/* 🌟 Focus Rings Reset 🌟 */
+.table-view:focused, .scroll-pane:focused, .dashboard-root:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ==========================================================
+   🌟 STATUS PILLS FOR TABLE (DARK)
+========================================================== */
+.table-status-pill {
+    -fx-padding: 4px 12px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-width: 1px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+.pill-pending {
+    -fx-background-color: rgba(245, 158, 11, 0.15);
+    -fx-border-color: rgba(245, 158, 11, 0.3);
+    -fx-text-fill: #FCD34D;
+}
+.pill-approved {
+    -fx-background-color: rgba(16, 185, 129, 0.15);
+    -fx-border-color: rgba(16, 185, 129, 0.3);
+    -fx-text-fill: #6EE7B7;
+}
+.pill-cancelled {
+    -fx-background-color: rgba(244, 63, 94, 0.15);
+    -fx-border-color: rgba(244, 63, 94, 0.3);
+    -fx-text-fill: #FDA4AF;
+}

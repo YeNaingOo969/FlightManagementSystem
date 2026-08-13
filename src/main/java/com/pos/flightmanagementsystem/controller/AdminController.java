@@ -88,7 +88,25 @@ public class AdminController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         navButtons = new Button[]{btnDashboard, btnProfile, btnFlightSchedule, btnViewCity, btnBookingManagement, btnViewSaleDetails};
         setActiveButton(btnDashboard);
-        loadPage("SuperAdminDashboard.fxml", false);
+
+        // 🌟 1. Login Controller မှ Theme ကို လှမ်းယူပြီး Sync လုပ်ခြင်း 🌟
+        this.isDarkMode = !LoginController.isLightMode;
+
+        // 🌟 2. ယူလိုက်သော Theme အတိုင်း Toggle ခလုတ် UI ချက်ချင်း ပြောင်းပေးခြင်း 🌟
+        Platform.runLater(() -> {
+            if (isDarkMode) {
+                themeThumb.setTranslateX(0);
+                themeIcon.setContent(MOON_SVG);
+                themeThumb.setStyle("-fx-background-color: #00D4FF; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
+            } else {
+                themeThumb.setTranslateX(24);
+                themeIcon.setContent(SUN_SVG);
+                themeThumb.setStyle("-fx-background-color: #F59E0B; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
+            }
+            updateTheme();
+        });
+
+        Platform.runLater(() -> loadPage("AdminDashboard.fxml", false));
 
         // 🌟 App စဖွင့်ချိန် Notification များကို စစ်ဆေးပါမည်
         fetchNotifications();
@@ -123,7 +141,6 @@ public class AdminController implements Initializable {
         int unreadCount = 0;
         int totalCount = 0;
 
-        // 🌟 ၂၄ နာရီအတွင်းက Data များ နှင့် Staff Name ကိုပါ ဆွဲထုတ်မည် 🌟
         String query = "SELECT r.request_id, r.booking_id, r.reason, r.created_at, b.pnr_code, p.full_name, " +
                 "(SELECT username FROM users WHERE user_id = r.staff_id) AS staff_name " +
                 "FROM requests r " +
@@ -149,7 +166,6 @@ public class AdminController implements Initializable {
 
                 if (staffName == null) staffName = "Unknown Staff";
 
-                // 🌟 နောက်ဆုံးကြည့်ခဲ့သည့်အချိန်ထက် နောက်ကျမှဝင်လာသော Noti များကိုသာ Badge တွင် ပြမည် 🌟
                 if (lastViewedTime == null || (createdAt != null && createdAt.toLocalDateTime().isAfter(lastViewedTime))) {
                     unreadCount++;
                 }
@@ -158,7 +174,6 @@ public class AdminController implements Initializable {
                 notificationListContainer.getChildren().add(requestCard);
             }
 
-            // Update Badge Count
             if (unreadCount > 0) {
                 notificationBadge.setText(String.valueOf(unreadCount));
                 notificationBadge.setVisible(true);
@@ -177,7 +192,6 @@ public class AdminController implements Initializable {
         }
     }
 
-    // 🌟 Staff Name ကိုပါ လက်ခံနိုင်ရန် parameter ထပ်ထည့်ထားပါသည် 🌟
     private VBox createNotificationCard(int requestId, int bookingId, String pnrCode, String passengerName, String reason, String staffName) {
         VBox card = new VBox(8);
         card.getStyleClass().add("noti-request-card");
@@ -185,7 +199,6 @@ public class AdminController implements Initializable {
         Label lblTitle = new Label("Cancellation Request: " + pnrCode);
         lblTitle.getStyleClass().add("noti-request-title");
 
-        // 🌟 Passenger Name နှင့် ၎င်းကို Request လုပ်သော Staff Name ပါ တွဲပြမည် 🌟
         Label lblPassenger = new Label("Passenger: " + passengerName + "   •   Staff: " + staffName);
         lblPassenger.getStyleClass().add("noti-request-subtitle");
 
@@ -212,7 +225,7 @@ public class AdminController implements Initializable {
         int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
 
         String reqStatus = isApprove ? "Approved" : "Cancelled";
-        String bookingStatus = isApprove ? "Cancelled" : "Confirmed"; // ပြန်ပယ်ချလျှင် Confirmed/Completed အဖြစ် ပြန်ထားမည်
+        String bookingStatus = isApprove ? "Cancelled" : "Confirmed";
 
         String updateReq = "UPDATE requests SET status = ?, admin_id = ? WHERE request_id = ?";
         String updateBooking = "UPDATE bookings SET status = ? WHERE booking_id = ?";
@@ -239,7 +252,6 @@ public class AdminController implements Initializable {
                 conn.setAutoCommit(true);
             }
 
-            // Database ပြင်ပြီးပါက Notifications များကို Refresh လုပ်ပါမည်
             fetchNotifications();
 
         } catch (SQLException e) {
@@ -251,11 +263,10 @@ public class AdminController implements Initializable {
     void openNotificationPopup(MouseEvent event) {
         if (isNotificationOpen) return;
 
-        // 🌟 Noti ကို ဖွင့်ကြည့်လိုက်ပြီ ဖြစ်သောကြောင့် လက်ရှိအချိန်ကို မှတ်ထားပြီး Badge ဖျောက်ပါမည် 🌟
         lastViewedTime = LocalDateTime.now();
         notificationBadge.setVisible(false);
 
-        fetchNotifications(); // ဖွင့်လိုက်တိုင်း အသစ်ပြန်ဆွဲထုတ်မည်
+        fetchNotifications();
         notificationOverlayBg.setVisible(true);
         isNotificationOpen = true;
 
@@ -263,10 +274,7 @@ public class AdminController implements Initializable {
             Bounds bellBounds = navNotificationBtn.localToScene(navNotificationBtn.getBoundsInLocal());
             Bounds rootBounds = rightSideStack.localToScene(rightSideStack.getBoundsInLocal());
 
-            // Bell ရဲ့ Center မှ Screen ညာဘက်အစွန်းထိ အကွာအဝေးကို တွက်မည်
             double distanceFromRight = rootBounds.getMaxX() - (bellBounds.getMinX() + bellBounds.getWidth() / 2);
-
-            // မြှားအလယ်မှတ်သည် Bubble ၏ ညာဘက်မှ 52px အကွာတွင်ရှိသည် (padding 40 + arrow half width 12 = 52)
             double translateX = -(distanceFromRight - 52);
             notificationBubble.setTranslateX(translateX);
         });
@@ -318,7 +326,8 @@ public class AdminController implements Initializable {
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
 
-            updateStylesheets(profileRoot.getStylesheets());
+            // 🌟 Profile ကိုလည်း Theme အတိုင်း အတိအကျ ပြောင်းပေးမည် 🌟
+            applyThemeRecursively(profileRoot);
             profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
 
             profilePopupContainer.getChildren().setAll(profileRoot);
@@ -393,11 +402,15 @@ public class AdminController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 REMAINDER OF YOUR CODE (Theme, Nav)
+    // 🌟 THEME & NAVIGATION 🌟
     // ==========================================
     @FXML
     public void toggleTheme(MouseEvent event) {
         isDarkMode = !isDarkMode;
+
+        // 🌟 Theme ပြောင်းတိုင်း Global State (LoginController) ကိုပါ အသိပေးမည် 🌟
+        LoginController.isLightMode = !isDarkMode;
+
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb);
         tt.setToX(isDarkMode ? 0 : 24);
         tt.setInterpolator(Interpolator.EASE_BOTH);
@@ -413,26 +426,39 @@ public class AdminController implements Initializable {
         updateTheme();
     }
 
-    private void updateTheme() {
-        updateStylesheets(rootPane.getStylesheets());
-        if (mainContentArea != null && !mainContentArea.getChildren().isEmpty()) {
-            Node rightPage = mainContentArea.getChildren().get(0);
-            if (rightPage instanceof Parent) updateStylesheets(((Parent) rightPage).getStylesheets());
+    // 🌟 File တကယ်ရှိမှသာ Theme ပြောင်းပေးမည့် Safe Logic 🌟
+    private void applyThemeRecursively(Parent node) {
+        if (node == null) return;
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
+            ObservableList<String> styles = node.getStylesheets();
+            for (int i = 0; i < styles.size(); i++) {
+                String cssPath = styles.get(i);
+                String newCssPath = null;
+                if (isDarkMode && cssPath.contains("Light")) {
+                    newCssPath = cssPath.replace("Light", "Dark");
+                } else if (!isDarkMode && cssPath.contains("Dark")) {
+                    newCssPath = cssPath.replace("Dark", "Light");
+                }
+
+                if (newCssPath != null) {
+                    try {
+                        String resourceName = newCssPath.substring(newCssPath.indexOf("/com/pos/"));
+                        if (getClass().getResource(resourceName) != null) {
+                            styles.set(i, newCssPath);
+                        }
+                    } catch (Exception e) {}
+                }
+            }
         }
-        if (profilePopupContainer != null && !profilePopupContainer.getChildren().isEmpty()) {
-            Node profilePage = profilePopupContainer.getChildren().get(0);
-            if (profilePage instanceof Parent) updateStylesheets(((Parent) profilePage).getStylesheets());
+        for (Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) {
+                applyThemeRecursively((Parent) child);
+            }
         }
-        Scene scene = rootPane.getScene();
-        if (scene != null) updateStylesheets(scene.getStylesheets());
     }
 
-    private void updateStylesheets(ObservableList<String> stylesheets) {
-        for (int i = 0; i < stylesheets.size(); i++) {
-            String cssPath = stylesheets.get(i);
-            if (isDarkMode && cssPath.contains("Light")) stylesheets.set(i, cssPath.replace("Light", "Dark"));
-            else if (!isDarkMode && cssPath.contains("Dark")) stylesheets.set(i, cssPath.replace("Dark", "Light"));
-        }
+    private void updateTheme() {
+        applyThemeRecursively(rootPane);
     }
 
     private void setActiveButton(Button clickedButton) {
@@ -446,7 +472,9 @@ public class AdminController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/" + fxmlFileName));
             Parent newView = loader.load();
-            updateStylesheets(newView.getStylesheets());
+
+            // 🌟 Load သွင်းလိုက်သော အလယ်စာမျက်နှာ (Center FXML) ကိုပါ Theme အတိအကျ သွင်းပေးမည် 🌟
+            applyThemeRecursively(newView);
 
             if (animate) {
                 newView.setTranslateX(800);
@@ -474,7 +502,7 @@ public class AdminController implements Initializable {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    @FXML void clickDashboard(ActionEvent event) { setActiveButton(btnDashboard); loadPage("SuperAdminDashboard.fxml", true); }
+    @FXML void clickDashboard(ActionEvent event) { setActiveButton(btnDashboard); loadPage("AdminDashboard.fxml", true); }
     @FXML void clickProfile(ActionEvent event) { setActiveButton(btnProfile); loadPage("StaffProfile.fxml", true); }
     @FXML void clickFlightSchedule(ActionEvent event) { setActiveButton(btnFlightSchedule); loadPage("AdminFlightSchedule.fxml", true); }
     @FXML void clickViewCity(ActionEvent event) { setActiveButton(btnViewCity); loadPage("AdminCity.fxml", true); }
@@ -515,6 +543,10 @@ public class AdminController implements Initializable {
 
         try {
             LoginController.isFromLogout = true;
+
+            // 🌟 Logout ထွက်ချိန်တွင် Global Theme ကို သေချာ Update ပြန်လုပ်ပေးမည် 🌟
+            LoginController.isLightMode = !this.isDarkMode;
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
             Parent loginRoot = loader.load();
             LoginController loginCtrl = loader.getController();
@@ -523,7 +555,9 @@ public class AdminController implements Initializable {
             Parent currentDashboardRoot = scene.getRoot();
 
             StackPane transitionWrapper = new StackPane();
-            transitionWrapper.setStyle("-fx-background-color: #06080D;");
+
+            // 🌟 Theme အလိုက် Logout အထွက် Background အရောင်ကို အတိအကျပြောင်းပေးမည် 🌟
+            transitionWrapper.setStyle("-fx-background-color: " + (!LoginController.isLightMode ? "#06080D" : "#f4f9f9") + ";");
             transitionWrapper.getChildren().addAll(loginRoot, currentDashboardRoot);
 
             scene.setRoot(transitionWrapper);

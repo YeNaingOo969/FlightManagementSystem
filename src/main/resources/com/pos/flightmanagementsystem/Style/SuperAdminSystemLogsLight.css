@@ -6,6 +6,13 @@
             radial-gradient(center 90% 5%, radius 70%, rgba(35,211,182,0.16), transparent 55%),
             linear-gradient(to bottom right, #f7faff, #edf3f8);
     -fx-font-family:"Inter","Segoe UI";
+    /* 🌟 ဘေးဘောင်နှင့် အရမ်းကပ်မနေစေရန် Padding ထည့်သွင်းပေးထားပါသည် 🌟 */
+    -fx-padding: 10px 35px 35px 35px;
+}
+
+.main-container {
+    /* 🌟 FXML တွင် main-container class သုံးထားပါက အလုပ်လုပ်စေရန် 🌟 */
+    -fx-padding: 10px 35px 35px 35px;
 }
 
 /* ==========================================================
@@ -261,30 +268,28 @@
     -fx-background-color: #ffffff;
     -fx-background-radius: 14px;
     -fx-border-radius: 14px;
-    -fx-border-color: #E2E8F0; /* ဒုတိယပုံကလို မီးခိုးရောင်ဘောင် */
+    -fx-border-color: #E2E8F0;
     -fx-border-width: 1px;
-    -fx-padding: 0; /* 🌟 ဘေးကပ်နေတဲ့ အဖြူရောင် Gap ကို ဖျောက်ရန် 🌟 */
+    -fx-padding: 0;
     -fx-background-insets: 0;
 }
 
 .table-view .column-header-background, .super-table .column-header-background {
-    -fx-background-color: #F8FAFC; /* 🌟 ဒုတိယပုံကလို Header မီးခိုးနုရောင် နောက်ခံ 🌟 */
+    -fx-background-color: #F8FAFC;
     -fx-background-radius: 13px 13px 0 0;
     -fx-border-color: transparent transparent #E2E8F0 transparent;
     -fx-border-width: 0 0 1px 0;
 }
 
-/* 🌟 Header ညာဘက်အစွန်က ကွက်လပ် (Filler) ကိုပါ အရောင်တူဖြစ်စေရန် 🌟 */
 .table-view .filler, .super-table .filler {
     -fx-background-color: transparent;
 }
 
-/* Header (Centered & No Vertical Lines) */
 .table-view .column-header, .super-table .column-header {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 0px;
-    -fx-alignment: CENTER; /* ခေါင်းစဉ်များကို အလယ်ပို့ရန် */
+    -fx-alignment: CENTER;
     -fx-size: 48px;
 }
 
@@ -295,15 +300,13 @@
     -fx-alignment: CENTER;
 }
 
-/* Rows & Cells (Centered & Grid Lines fix) */
 .table-row-cell, .super-table .table-row-cell {
     -fx-background-color: transparent;
-    -fx-border-color: transparent transparent #F1F5F9 transparent; /* Data ရှိရင် အောက်ခြေလိုင်းဖျော့လေးပြရန် */
+    -fx-border-color: transparent transparent #F1F5F9 transparent;
     -fx-border-width: 0 0 1px 0;
     -fx-cell-size: 50px;
 }
 
-/* 🌟 Data မရှိတဲ့ အတန်းတွေမှာ လိုင်းတွေအပြည့်ပေါ်မနေအောင် ဖျောက်ထားခြင်း 🌟 */
 .table-row-cell:empty, .super-table .table-row-cell:empty {
     -fx-border-color: transparent;
 }
@@ -315,13 +318,12 @@
 .table-view .table-cell, .super-table .table-cell {
     -fx-border-color: transparent;
     -fx-border-width: 0px;
-    -fx-text-fill: #475569; /* Light Mode စာသားအရောင် */
+    -fx-text-fill: #475569;
     -fx-font-size: 13px;
-    -fx-alignment: CENTER; /* စာသားများကို အလယ်တည့်တည့်ပို့ရန် */
-    -fx-padding: 0 20px; /* 🌟 Data များ ဘေးဘောင်နှင့် မကပ်စေရန် Padding ထည့်ခြင်း 🌟 */
+    -fx-alignment: CENTER;
+    -fx-padding: 0 20px;
 }
 
-/* Hover & Selected States */
 .table-row-cell:filled:hover {
     -fx-background-color: #F8FAFC;
 }
@@ -336,7 +338,6 @@
     -fx-alignment: CENTER;
 }
 
-/* ScrollBar များကို သန့်ရှင်းစေရန် */
 .table-view .scroll-bar:horizontal, .table-view .scroll-bar:vertical {
     -fx-background-color: transparent;
 }

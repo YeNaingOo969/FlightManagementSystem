@@ -11,12 +11,19 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -164,15 +171,125 @@ public class StaffCreateNewBookingController implements Initializable {
         LocalDate date = departureDatePicker.getValue();
 
         if(from == null || to == null || date == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Incomplete Data");
-            alert.setHeaderText(null);
-            alert.setContentText("ကျေးဇူးပြု၍ From, To နှင့် Departure Date အားလုံးကို ရွေးချယ်ပါ။");
-            alert.showAndWait();
+            // 🌟 Default Alert အစား Custom Animated Modal ကို ခေါ်သုံးထားပါသည် 🌟
+            showWarningModal("Incomplete Data", "Please choose From,To and Departure Date");
             return;
         }
         fetchFlightsFromDatabase(from, to, date);
     }
+
+    // =========================================================================
+    // 🌟 CUSTOM WARNING MODAL (ANIMATED & BLURRED BACKGROUND) 🌟
+    // =========================================================================
+    private void showWarningModal(String title, String message) {
+        // 1. အမည်းရောင် နောက်ခံ Overlay ဖန်တီးခြင်း
+        StackPane overlay = new StackPane();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
+
+        // 2. နောက်ခံ Main Container ကို ဝါးသွားစေရန် Blur Effect ထည့်ခြင်း
+        BoxBlur blur = new BoxBlur(8, 8, 3);
+        mainContainer.setEffect(blur);
+
+        // 3. သတိပေး ကတ်ပြား (Modal Card) ဖန်တီးခြင်း
+        VBox modalCard = new VBox(20);
+        modalCard.setMaxSize(420, Region.USE_PREF_SIZE);
+        modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: #F59E0B; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
+
+        // Header (Title + Close Button)
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle("-fx-text-fill: #F59E0B; -fx-font-size: 16px; -fx-font-weight: bold;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        StackPane closeBtn = new StackPane();
+        SVGPath closeIcon = new SVGPath();
+        closeIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
+        closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;");
+        closeBtn.getChildren().add(closeIcon);
+        closeBtn.setCursor(Cursor.HAND);
+        closeBtn.setOnMouseEntered(e -> closeIcon.setStyle("-fx-fill: #FFFFFF; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"));
+        closeBtn.setOnMouseExited(e -> closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"));
+
+        header.getChildren().addAll(titleLabel, spacer, closeBtn);
+
+        // Body (Icon + Message)
+        HBox body = new HBox(15);
+        body.setAlignment(Pos.CENTER_LEFT);
+        SVGPath warningIcon = new SVGPath();
+        // Warning Triangle Icon
+        warningIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
+        warningIcon.setStyle("-fx-fill: #F59E0B; -fx-scale-x: 1.5; -fx-scale-y: 1.5;");
+        StackPane iconPane = new StackPane(warningIcon);
+        iconPane.setPadding(new Insets(0, 10, 0, 10));
+
+        Label messageLabel = new Label(message);
+        messageLabel.setStyle("-fx-text-fill: #E2E8F0; -fx-font-size: 14px;");
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(300);
+
+        body.getChildren().addAll(iconPane, messageLabel);
+
+        // Footer (OK Button)
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER_RIGHT);
+        Button okBtn = new Button("OK");
+        okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #F59E0B; -fx-text-fill: #F59E0B; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;");
+        okBtn.setOnMouseEntered(e -> okBtn.setStyle("-fx-background-color: rgba(245, 158, 11, 0.15); -fx-border-color: #F59E0B; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;"));
+        okBtn.setOnMouseExited(e -> okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #F59E0B; -fx-text-fill: #F59E0B; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;"));
+
+        footer.getChildren().add(okBtn);
+
+        modalCard.getChildren().addAll(header, body, footer);
+        overlay.getChildren().add(modalCard);
+        rootStackPane.getChildren().add(overlay);
+
+        // 4. Animation (အနောက်မှ အရှေ့သို့ ကြွတက်လာခြင်း)
+        modalCard.setScaleX(0.5);
+        modalCard.setScaleY(0.5);
+        modalCard.setOpacity(0);
+        overlay.setOpacity(0);
+
+        ScaleTransition stIn = new ScaleTransition(Duration.millis(300), modalCard);
+        stIn.setToX(1);
+        stIn.setToY(1);
+        stIn.setInterpolator(Interpolator.EASE_OUT);
+
+        FadeTransition ftIn = new FadeTransition(Duration.millis(300), modalCard);
+        ftIn.setToValue(1);
+
+        FadeTransition bgFtIn = new FadeTransition(Duration.millis(300), overlay);
+        bgFtIn.setToValue(1);
+
+        ParallelTransition ptIn = new ParallelTransition(stIn, ftIn, bgFtIn);
+        ptIn.play();
+
+        // 5. Close Button Actions (ပိတ်သည့်အခါ အနောက်သို့ ပြန်ဝင်သွားခြင်း)
+        Runnable closeAction = () -> {
+            ScaleTransition stOut = new ScaleTransition(Duration.millis(200), modalCard);
+            stOut.setToX(0.5);
+            stOut.setToY(0.5);
+            stOut.setInterpolator(Interpolator.EASE_IN);
+
+            FadeTransition ftOut = new FadeTransition(Duration.millis(200), modalCard);
+            ftOut.setToValue(0);
+
+            FadeTransition bgFtOut = new FadeTransition(Duration.millis(200), overlay);
+            bgFtOut.setToValue(0);
+
+            ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
+            ptOut.setOnFinished(ev -> {
+                rootStackPane.getChildren().remove(overlay);
+                mainContainer.setEffect(null); // Blur Effect ကို ပြန်ဖြုတ်ပါမည်
+            });
+            ptOut.play();
+        };
+
+        closeBtn.setOnMouseClicked(e -> closeAction.run());
+        okBtn.setOnAction(e -> closeAction.run());
+    }
+    // =========================================================================
 
     private void fetchFlightsFromDatabase(String fromCity, String toCity, LocalDate depDate) {
         ObservableList<FlightDummy> searchResults = FXCollections.observableArrayList();
@@ -244,9 +361,6 @@ public class StaffCreateNewBookingController implements Initializable {
         colAction.setCellFactory(cellFactory);
     }
 
-    // ==========================================
-    // 🌟 Theme အား အကုန်လိုက်ပြောင်းပေးမည့် Method (Recursive Method)
-    // ==========================================
     private void applyThemeRecursively(Parent node, boolean isDarkMode) {
         if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
             ObservableList<String> styles = node.getStylesheets();
@@ -259,7 +373,6 @@ public class StaffCreateNewBookingController implements Initializable {
                 }
             }
         }
-        // အတွင်းပိုင်း Node တွေပါ အကုန်လိုက်စစ်ရန်
         for (javafx.scene.Node child : node.getChildrenUnmodifiable()) {
             if (child instanceof Parent) {
                 applyThemeRecursively((Parent) child, isDarkMode);
@@ -272,10 +385,7 @@ public class StaffCreateNewBookingController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/StaffPassengerDetails.fxml"));
             Parent nextView = loader.load();
 
-            // -----------------------------------------------------------------
-            // 🌟 Theme ကို သေချာဖမ်းပြီး Next Page ရဲ့ အစွန်အဖျားထိ လိုက်ပြောင်းပေးခြင်း
-            // -----------------------------------------------------------------
-            boolean isDarkMode = true; // Default ထားပါသည်
+            boolean isDarkMode = true;
             Parent current = rootStackPane;
             while (current != null) {
                 String currentStyles = current.getStylesheets().toString();
@@ -289,9 +399,7 @@ public class StaffCreateNewBookingController implements Initializable {
                 current = current.getParent();
             }
 
-            // Next Page တစ်ခုလုံးကို အပေါ်က Method ဖြင့် Theme ဝင်အောင် ဖိချိန်းပါမည်
             applyThemeRecursively(nextView, isDarkMode);
-            // -----------------------------------------------------------------
 
             StaffPassengerDetailsController controller = loader.getController();
             controller.setFlightData(

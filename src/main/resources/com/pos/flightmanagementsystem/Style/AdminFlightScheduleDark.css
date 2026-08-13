@@ -1,53 +1,46 @@
 /* =========================================================================
-   ✈️ FLIGHT SCHEDULES (DARK THEME)
+   ✈️ ADMIN FLIGHT SCHEDULES (DARK THEME - SYNCED WITH STAFF)
    ========================================================================= */
 
 .super-content {
-        -fx-font-family: "Segoe UI", "Inter", sans-serif;
-        -fx-background-color: #06080D;
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: #06080D;
 }
 
+/* ==========================================================
+   📦 PANELS & CONTAINERS
+========================================================== */
 .super-topbar, .super-panel {
-        -fx-background-color: linear-gradient(to bottom right, #1A212D 0%, #0B0E14 70%);
-        -fx-background-radius: 12px; -fx-border-radius: 12px; -fx-border-width: 1px; -fx-border-color: #1F2633;
-        -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 5); -fx-padding: 24px 26px;
+    -fx-background-color: linear-gradient(to bottom right, #1A212D 0%, #0B0E14 70%);
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-border-width: 1px; -fx-border-color: #1F2633;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 5);
+    -fx-padding: 20px 25px;
 }
 
+/* 📝 TYPOGRAPHY */
 .super-page-title { -fx-text-fill: #FFFFFF; -fx-font-size: 26px; -fx-font-weight: bold; }
+.super-section-title { -fx-text-fill: #FFFFFF; -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 0 0 5 0; }
+.super-section-subtitle, .super-page-subtitle { -fx-text-fill: #A0ABBD !important; -fx-font-size: 13px; }
 
-/* 🌟 စာသားများ မှိန်မနေဘဲ ကြည်လင်စွာပေါ်စေရန် အရောင်သတ်မှတ်ပေးခြင်း 🌟 */
-.super-section-subtitle, .super-side-copy, .super-page-subtitle {
-        -fx-text-fill: #A0ABBD !important;
-        -fx-font-size: 13px;
-}
-
-.super-section-title { -fx-text-fill: #FFFFFF; -fx-font-size: 18px; -fx-font-weight: bold; }
-
+/* ==========================================================
+   🔍 FILTER & BUTTONS
+========================================================== */
 /* DATE PICKER */
 .super-date-picker {
-        -fx-background-color: #0B0E14; -fx-border-color: #1F2633;
-        -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-border-width: 1px; -fx-opacity: 1.0;
-        -fx-pref-height: 38px;
+    -fx-background-color: #0B0E14; -fx-border-color: #1F2633;
+    -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-border-width: 1.5px;
+    -fx-pref-height: 38px;
 }
 .super-date-picker > .text-field {
-        -fx-background-color: transparent;
-        -fx-border-width: 0;
-        -fx-padding: 8px 12px;
-        -fx-text-fill: #FFFFFF;
-        -fx-prompt-text-fill: #8B95A5;
+    -fx-background-color: transparent; -fx-border-width: 0;
+    -fx-padding: 8px 12px; -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #8B95A5;
 }
-.super-date-picker > .arrow-button {
-        -fx-background-color: transparent;
-        -fx-padding: 0 10px;
-}
-.super-date-picker > .arrow-button > .graphic {
-        -fx-background-color: #8B95A5;
-}
-.super-date-picker:focused {
-        -fx-border-color: #31C4B4;
-}
+.super-date-picker > .arrow-button { -fx-background-color: transparent; -fx-padding: 0 10px; }
+.super-date-picker > .arrow-button > .graphic { -fx-background-color: #8B95A5; }
+.super-date-picker:focused { -fx-border-color: #31C4B4; -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.2), 8, 0, 0, 0); }
 
-.date-picker-popup { -fx-background-color: #161B24; -fx-border-color: #1F2633; -fx-background-radius: 8px; -fx-border-radius: 8px; }
+.date-picker-popup { -fx-background-color: #161B24; -fx-border-color: #1F2633; -fx-border-radius: 8px; -fx-background-radius: 8px; }
 .date-picker-popup .month-year-pane { -fx-background-color: #0B0E14; }
 .date-picker-popup .month-year-pane .label { -fx-text-fill: #FFFFFF; -fx-font-weight: bold; }
 .date-picker-popup .day-name-cell { -fx-text-fill: #31C4B4; -fx-font-weight: bold; }
@@ -57,138 +50,165 @@
 
 /* ADD FLIGHT BUTTON */
 .btn-primary {
-        -fx-background-color: linear-gradient(to right, #4FD1C5, #3BBAB1); -fx-text-fill: #06080D;
-        -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-border-radius: 8px;
-        -fx-padding: 10px 24px; -fx-cursor: hand;
+    -fx-background-color: linear-gradient(to right, #4FD1C5, #3BBAB1); -fx-text-fill: #06080D;
+    -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-border-radius: 8px;
+    -fx-padding: 10px 20px; -fx-cursor: hand;
 }
-.btn-primary:hover { -fx-background-color: linear-gradient(to right, #3BBAB1, #2EA39B); }
+.btn-primary:hover { -fx-background-color: linear-gradient(to right, #3BBAB1, #2EA39B); -fx-scale-x: 1.02; -fx-scale-y: 1.02; }
 
-/* =========================================================================
-   🌟 TABLE VIEW & ULTIMATE BLACK-ROW FIX
-   ========================================================================= */
+/* ==========================================================
+   📊 TABLE VIEW (RADIAL GRADIENT & BORDERLESS)
+========================================================== */
 .super-table, .table-view {
-        -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #1A212D 0%, #0B0E14 100%);
-        -fx-border-color: #1F2633; -fx-background-radius: 12px; -fx-border-radius: 12px; -fx-padding: 5px;
-
-        /* 🌟 JavaFX Default Selection အရောင်များကို Root Level ကနေ အမြစ်ဖြတ်ခြင်း 🌟 */
-        -fx-selection-bar: rgba(49, 196, 180, 0.15);
-        -fx-selection-bar-non-focused: rgba(49, 196, 180, 0.15);
-        -fx-selection-bar-text: #31C4B4;
+    -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #1A212D 0%, #0B0E14 100%);
+    -fx-border-color: #1F2633; -fx-background-radius: 12px; -fx-border-radius: 12px; -fx-padding: 5px;
+    -fx-selection-bar: rgba(49, 196, 180, 0.15);
+    -fx-selection-bar-non-focused: rgba(49, 196, 180, 0.15);
+    -fx-selection-bar-text: #31C4B4;
 }
 
 .super-table .column-header-background { -fx-background-color: transparent; -fx-border-color: transparent transparent #1F2633 transparent; -fx-border-width: 0 0 1px 0; }
 .super-table .column-header { -fx-background-color: transparent; -fx-border-width: 0; -fx-alignment: CENTER; -fx-size: 45px; }
-.super-table .column-header .label { -fx-text-fill: #8B95A5 !important; -fx-font-weight: bold; -fx-font-size: 13px; -fx-alignment: CENTER; }
+.super-table .column-header .label { -fx-text-fill: #8B95A5 !important; -fx-font-weight: bold; -fx-font-size: 12px; -fx-alignment: CENTER; }
 
-.super-table .table-row-cell {
-        -fx-background-color: transparent;
-        -fx-border-width: 0;
-        -fx-cell-size: 55px;
-}
+.super-table .table-row-cell { -fx-background-color: transparent; -fx-border-width: 0; -fx-cell-size: 55px; }
 .super-table .table-row-cell:filled:hover { -fx-background-color: rgba(255, 255, 255, 0.04); -fx-background-radius: 8px; }
 
-/* 🌟 Focus လွတ်သွားချိန် အမည်းရောင် ပြန်ဖြစ်ခြင်းကို လုံးဝ (လုံးဝ) တားဆီးထားသော Code 🌟 */
 .super-table .table-row-cell:filled:selected,
 .super-table .table-row-cell:filled:selected:focused,
-.super-table .table-row-cell:filled:selected:hover,
-.table-view .table-row-cell:filled:selected,
-.table-view .table-row-cell:filled:selected:focused,
-.table-view .table-row-cell:filled:selected:hover {
-        -fx-background: rgba(49, 196, 180, 0.15) !important;
-        -fx-background-color: rgba(49, 196, 180, 0.15) !important;
-        -fx-background-insets: 0 !important;
-        -fx-background-radius: 8px !important;
+.super-table .table-row-cell:filled:selected:hover {
+    -fx-background: rgba(49, 196, 180, 0.15) !important;
+    -fx-background-color: rgba(49, 196, 180, 0.15) !important;
+    -fx-background-insets: 0 !important;
+    -fx-background-radius: 8px !important;
 }
 
-/* ရွေးချယ်ထားသော Row ထဲရှိ စာသားများကို အမြဲတမ်း စိမ်းပြာရောင် ထားရှိရန် */
 .super-table .table-row-cell:filled:selected .table-cell,
 .super-table .table-row-cell:filled:selected:focused .table-cell,
-.super-table .table-row-cell:filled:selected:hover .table-cell,
-.table-view .table-row-cell:filled:selected .table-cell,
-.table-view .table-row-cell:filled:selected:focused .table-cell,
-.table-view .table-row-cell:filled:selected:hover .table-cell {
-        -fx-text-fill: #31C4B4 !important;
-        -fx-font-weight: bold !important;
+.super-table .table-row-cell:filled:selected:hover .table-cell {
+    -fx-text-fill: #31C4B4 !important;
+    -fx-font-weight: bold !important;
 }
 
-/* Cell တစ်ခုချင်းစီ Focus ရချိန် အမည်းရောင်ဖြစ်ခြင်းမှ ကာကွယ်ခြင်း */
-.super-table .table-cell:selected,
-.super-table .table-cell:selected:focused {
-        -fx-background-color: transparent !important;
-}
-
-.super-table .table-cell { -fx-text-fill: #FFFFFF !important; -fx-font-size: 13px; -fx-padding: 0 14px; -fx-border-width: 0; -fx-alignment: CENTER; }
+.super-table .table-cell:selected, .super-table .table-cell:selected:focused { -fx-background-color: transparent !important; }
+.super-table .table-cell { -fx-text-fill: #FFFFFF !important; -fx-font-size: 13px; -fx-padding: 0 10px; -fx-border-width: 0; -fx-alignment: CENTER; }
 .super-table .placeholder .label { -fx-text-fill: #8B95A5 !important; -fx-font-style: italic; -fx-alignment: CENTER; }
 
-/* TABLE ACTION BUTTONS */
-.action-box { -fx-alignment: CENTER; -fx-spacing: 12px; }
+/* ==========================================================
+   🔘 TABLE ACTION BUTTONS (FIX FOR TEXT CLIPPING)
+========================================================== */
+.action-column { -fx-alignment: CENTER !important; }
+.action-box { -fx-alignment: CENTER; -fx-spacing: 8px; }
 
 .btn-edit-table {
-        -fx-background-color: transparent !important; -fx-border-color: #31C4B4 !important; -fx-border-width: 1.5px !important;
-        -fx-text-fill: #31C4B4 !important; -fx-font-weight: bold !important; -fx-font-size: 12px !important;
-        -fx-background-radius: 6px !important; -fx-border-radius: 6px !important; -fx-padding: 6px 16px !important; -fx-cursor: hand !important;
+    -fx-background-color: transparent !important; -fx-border-color: #31C4B4 !important; -fx-border-width: 1.5px !important;
+    -fx-text-fill: #31C4B4 !important; -fx-font-weight: bold !important;
+    -fx-font-size: 11px !important;
+    -fx-background-radius: 6px !important; -fx-border-radius: 6px !important;
+    -fx-padding: 4px 10px !important;
+    -fx-cursor: hand !important;
 }
 .btn-edit-table:hover { -fx-background-color: rgba(49, 196, 180, 0.15) !important; -fx-text-fill: #FFFFFF !important; }
 
 .btn-delete-table {
-        -fx-background-color: transparent !important; -fx-border-color: #FF4B72 !important; -fx-border-width: 1.5px !important;
-        -fx-text-fill: #FF4B72 !important; -fx-font-weight: bold !important; -fx-font-size: 12px !important;
-        -fx-background-radius: 6px !important; -fx-border-radius: 6px !important; -fx-padding: 6px 16px !important; -fx-cursor: hand !important;
+    -fx-background-color: transparent !important; -fx-border-color: #FF4B72 !important; -fx-border-width: 1.5px !important;
+    -fx-text-fill: #FF4B72 !important; -fx-font-weight: bold !important;
+    -fx-font-size: 11px !important;
+    -fx-background-radius: 6px !important; -fx-border-radius: 6px !important;
+    -fx-padding: 4px 10px !important;
+    -fx-cursor: hand !important;
 }
 .btn-delete-table:hover { -fx-background-color: rgba(255, 75, 114, 0.15) !important; -fx-text-fill: #FFFFFF !important; }
 
+/* ==========================================================
+   🌟 STATUS PILLS FOR TABLE
+========================================================== */
+.table-status-pill {
+    -fx-padding: 4px 10px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-width: 1px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+.pill-scheduled { -fx-background-color: rgba(2, 132, 199, 0.15); -fx-border-color: rgba(2, 132, 199, 0.3); -fx-text-fill: #7DD3FC; }
+.pill-departed { -fx-background-color: rgba(16, 185, 129, 0.15); -fx-border-color: rgba(16, 185, 129, 0.3); -fx-text-fill: #6EE7B7; }
+.pill-delayed { -fx-background-color: rgba(217, 119, 6, 0.15); -fx-border-color: rgba(217, 119, 6, 0.3); -fx-text-fill: #FDBA74; }
+.pill-cancelled { -fx-background-color: rgba(244, 63, 94, 0.15); -fx-border-color: rgba(244, 63, 94, 0.3); -fx-text-fill: #FDA4AF; }
+
+/* ==========================================================
+   🔧 CUSTOM SCROLLBAR
+========================================================== */
+.super-table .scroll-bar:horizontal, .super-table .scroll-bar:vertical { -fx-background-color: transparent; }
+.super-table .scroll-bar:vertical { -fx-pref-width: 8px; }
+.super-table .scroll-bar:vertical .track, .super-table .scroll-bar:vertical .track-background { -fx-background-color: transparent; -fx-border-color: transparent; }
+.super-table .scroll-bar:vertical .thumb { -fx-background-color: #2A3441; -fx-background-radius: 4px; }
+.super-table .scroll-bar:vertical .thumb:hover { -fx-background-color: #31C4B4; }
+.super-table .scroll-bar:horizontal { -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0; }
+.super-table .scroll-bar .increment-button, .super-table .scroll-bar .decrement-button { -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0; -fx-padding: 0; }
+.super-table .corner { -fx-background-color: transparent; }
+
 /* =========================================================================
-   🌟 CUSTOM TOAST NOTIFICATION
+   🌟 CUSTOM TOAST NOTIFICATION (DARK THEME)
    ========================================================================= */
 .custom-toast-container {
-        -fx-background-color: #11151E;
-        -fx-border-color: #22C55E !important;
-        -fx-border-width: 1.5px;
-        -fx-border-radius: 12px;
-        -fx-background-radius: 12px;
-        -fx-padding: 16px 20px;
-        -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 20, 0, 0, 10);
+    -fx-background-color: #11151E;
+    -fx-border-color: #22C55E;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 16px 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 20, 0, 0, 10);
 }
 
 .toast-icon-box {
-        -fx-background-color: rgba(34, 197, 94, 0.1) !important;
-        -fx-background-radius: 50%;
-        -fx-min-width: 40px; -fx-min-height: 40px;
-        -fx-max-width: 40px; -fx-max-height: 40px;
-        -fx-alignment: center;
+    -fx-background-color: rgba(34, 197, 94, 0.15);
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px; -fx-min-height: 40px;
+    -fx-max-width: 40px; -fx-max-height: 40px;
+    -fx-alignment: center;
 }
 
 .toast-icon {
-        -fx-fill: #22C55E !important;
-        -fx-scale-x: 1.2;
-        -fx-scale-y: 1.2;
+    -fx-fill: #22C55E;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
 }
 
 .toast-text-box {
-        -fx-spacing: 4px;
-        -fx-alignment: center-left;
+    -fx-spacing: 4px;
+    -fx-alignment: center-left;
 }
 
 .toast-title {
-        -fx-text-fill: #FFFFFF;
-        -fx-font-size: 16px;
-        -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
 }
 
 .toast-message {
-        -fx-text-fill: #8B95A5;
-        -fx-font-size: 13px;
+    -fx-text-fill: #A0ABBD;
+    -fx-font-size: 13px;
 }
 
 .toast-close-btn {
-        -fx-background-color: transparent;
-        -fx-cursor: hand;
-        -fx-padding: 5px;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 5px;
+    -fx-background-radius: 50%;
+}
+
+.toast-close-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
 }
 
 .toast-close-icon {
-        -fx-fill: #8B95A5;
+    -fx-fill: #8B95A5;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
 }
+
 .toast-close-btn:hover .toast-close-icon {
-        -fx-fill: #FFFFFF;
+    -fx-fill: #FFFFFF;
 }
