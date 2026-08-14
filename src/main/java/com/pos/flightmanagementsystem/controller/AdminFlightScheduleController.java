@@ -7,6 +7,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -55,12 +56,16 @@ public class AdminFlightScheduleController implements Initializable {
     @FXML private DatePicker dpFilterDate;
 
     @FXML private TableView<Flight> tblFlights;
+    @FXML private TableColumn<Flight, Integer> colFlightId;
     @FXML private TableColumn<Flight, String> colFlightNo;
     @FXML private TableColumn<Flight, String> colAirline;
     @FXML private TableColumn<Flight, String> colFrom;
     @FXML private TableColumn<Flight, String> colTo;
     @FXML private TableColumn<Flight, String> colDeparture;
     @FXML private TableColumn<Flight, String> colArrival;
+    @FXML private TableColumn<Flight, Integer> colTotalSeats;
+    @FXML private TableColumn<Flight, Double> colBasePrice;
+    @FXML private TableColumn<Flight, String> colStatus;
     @FXML private TableColumn<Flight, Void> colActions;
 
     private ObservableList<Flight> flightList = FXCollections.observableArrayList();
@@ -101,12 +106,50 @@ public class AdminFlightScheduleController implements Initializable {
     }
 
     private void setupTableColumns() {
+        // 🌟 Full Columns Mapping 🌟
+        colFlightId.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getFlightId()));
         colFlightNo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFlightNumber()));
         colAirline.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAirline()));
         colFrom.setCellValueFactory(cellData -> new SimpleStringProperty(getCityName(cellData.getValue().getDepartureCityId())));
         colTo.setCellValueFactory(cellData -> new SimpleStringProperty(getCityName(cellData.getValue().getArrivalCityId())));
         colDeparture.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDepartureTime().format(formatter)));
         colArrival.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getArrivalTime().format(formatter)));
+        colTotalSeats.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getTotalSeats()));
+        colBasePrice.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBasePrice()));
+        colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
+
+        // 🌟 Custom Cell Factory for Status Pill 🌟
+        colStatus.setCellFactory(column -> new TableCell<Flight, String>() {
+            private final Label statusLabel = new Label();
+            {
+                statusLabel.getStyleClass().add("table-status-pill");
+            }
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    statusLabel.setText(item);
+                    statusLabel.getStyleClass().removeAll("pill-scheduled", "pill-departed", "pill-delayed", "pill-cancelled");
+
+                    String lowerItem = item.toLowerCase();
+                    if (lowerItem.contains("schedule")) {
+                        statusLabel.getStyleClass().add("pill-scheduled");
+                    } else if (lowerItem.contains("depart")) {
+                        statusLabel.getStyleClass().add("pill-departed");
+                    } else if (lowerItem.contains("delay")) {
+                        statusLabel.getStyleClass().add("pill-delayed");
+                    } else {
+                        statusLabel.getStyleClass().add("pill-cancelled");
+                    }
+
+                    setGraphic(statusLabel);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
 
         setupActionColumn();
     }
@@ -126,28 +169,22 @@ public class AdminFlightScheduleController implements Initializable {
                 }
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
-                        // 🌟 Data Type Error မဖြစ်စေရန် Setter များဖြင့် အစားထိုး အသုံးပြုထားပါသည် 🌟
                         Flight flight = new Flight();
                         flight.setFlightId(rs.getInt("flight_id"));
                         flight.setFlightNumber(rs.getString("flight_number"));
                         flight.setAirline(rs.getString("airline"));
                         flight.setDepartureCityId(rs.getInt("departure_city_id"));
                         flight.setArrivalCityId(rs.getInt("arrival_city_id"));
-
-                        // Map မှတဆင့် မြို့နာမည်များကိုပါ တခါတည်း ဆွဲထည့်ပေးထားပါသည်
                         flight.setDepartureCityName(getCityName(rs.getInt("departure_city_id")));
                         flight.setArrivalCityName(getCityName(rs.getInt("arrival_city_id")));
-
                         flight.setDepartureTime(rs.getTimestamp("departure_time").toLocalDateTime());
                         flight.setArrivalTime(rs.getTimestamp("arrival_time").toLocalDateTime());
                         flight.setTotalSeats(rs.getInt("total_seats"));
                         flight.setBasePrice(rs.getDouble("base_price"));
                         flight.setStatus(rs.getString("status"));
 
-                        // Table List ထဲသို့ ထည့်ခြင်း
                         flightList.add(flight);
                     }
-                    // Loop ပြီးသွားမှသာ Table ထဲသို့ Data များ ထည့်သွင်းပါမည်
                     tblFlights.setItems(flightList);
                 }
             }
@@ -164,7 +201,7 @@ public class AdminFlightScheduleController implements Initializable {
         colActions.setCellFactory(param -> new TableCell<>() {
             private final Button editBtn = new Button("Edit");
             private final Button deleteBtn = new Button("Delete");
-            private final HBox pane = new HBox(15, editBtn, deleteBtn);
+            private final HBox pane = new HBox(10, editBtn, deleteBtn);
 
             {
                 editBtn.getStyleClass().add("btn-edit-table");
@@ -244,12 +281,9 @@ public class AdminFlightScheduleController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/AdminAddFlight.fxml"));
             Parent modalView = loader.load();
 
-            // =========================================================================
-            // 🌟 Theme စစ်ဆေးပြီး သက်ဆိုင်ရာ Popup CSS ကို ဒိုင်းနမစ် (Dynamic) ချိတ်ဆက်ပေးခြင်း 🌟
-            // =========================================================================
             if (rootStackPane != null && !rootStackPane.getStylesheets().isEmpty()) {
                 String currentMainStyle = rootStackPane.getStylesheets().get(0);
-                modalView.getStylesheets().clear(); // CSS အဟောင်းများကို ရှင်းလင်းခြင်း
+                modalView.getStylesheets().clear();
 
                 if (currentMainStyle.contains("Light")) {
                     modalView.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/AdminAddFlightLight.css").toExternalForm());
@@ -257,7 +291,6 @@ public class AdminFlightScheduleController implements Initializable {
                     modalView.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/AdminAddFlightDark.css").toExternalForm());
                 }
             }
-            // =========================================================================
 
             modalView.setStyle("-fx-background-color: transparent; -fx-max-width: USE_PREF_SIZE; -fx-max-height: USE_PREF_SIZE;");
 
@@ -323,7 +356,6 @@ public class AdminFlightScheduleController implements Initializable {
 
             TranslateTransition moveCenter = new TranslateTransition(Duration.millis(300), modalView);
             moveCenter.setToX(0);
-            // 🌟 ကတ်ကို အောက်ရောက်မသွားစေရန် အပေါ်သို့ 45 Pixels တိုးတင်ပေးထားပါသည် 🌟
             moveCenter.setToY(-110);
             moveCenter.setInterpolator(Interpolator.EASE_OUT);
 
@@ -363,9 +395,6 @@ public class AdminFlightScheduleController implements Initializable {
         pt.play();
     }
 
-    // =========================================================================
-    // 🌟 CUSTOM TOAST NOTIFICATION
-    // =========================================================================
     private void showSuccessNotification(String title, String message) {
         rootStackPane.getChildren().removeIf(node -> "custom-toast".equals(node.getId()));
 
@@ -408,7 +437,6 @@ public class AdminFlightScheduleController implements Initializable {
         StackPane.setMargin(toast, new Insets(0, 30, 30, 0));
 
         rootStackPane.getChildren().add(toast);
-
         toast.setTranslateY(100);
         toast.setOpacity(0);
 
@@ -435,12 +463,7 @@ public class AdminFlightScheduleController implements Initializable {
         pause.setOnFinished(e -> ptOut.play());
 
         ptIn.setOnFinished(e -> pause.play());
-
-        closeBtn.setOnMouseClicked(e -> {
-            pause.stop();
-            ptOut.play();
-        });
-
+        closeBtn.setOnMouseClicked(e -> { pause.stop(); ptOut.play(); });
         ptIn.play();
     }
 }

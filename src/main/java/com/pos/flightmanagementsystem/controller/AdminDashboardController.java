@@ -4,169 +4,191 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.application.Platform;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
-
-// 🔴 သင့် Database Connection Class အမည်ကို အောက်တွင် ပြင်သုံးပါ။ (ဥပမာ DBConnection)
-// import com.pos.flightmanagementsystem.utils.DBConnection;
 
 public class AdminDashboardController implements Initializable {
 
-    // 🌟 Top Metric Cards Labels
-    @FXML private Label lblTotalRevenue;
-    @FXML private Label lblTotalStaff;
-    @FXML private Label lblActiveFlights;
+    // Metric Labels
+    @FXML private Label lblPendingRequests;
+    @FXML private Label lblTodayFlights;
     @FXML private Label lblTotalBookings;
+    @FXML private Label lblTotalRevenue;
 
-    // 🌟 Active Flights Table & Columns
-    @FXML private TableView<ActiveFlight> tblActiveFlights;
-    @FXML private TableColumn<ActiveFlight, String> colFlightNo;
-    @FXML private TableColumn<ActiveFlight, String> colAirline;
-    @FXML private TableColumn<ActiveFlight, String> colRoute;
-    @FXML private TableColumn<ActiveFlight, String> colDepTime;
-    @FXML private TableColumn<ActiveFlight, String> colArrTime;
-    @FXML private TableColumn<ActiveFlight, String> colStatus;
+    // Flight Status Labels
+    @FXML private Label lblScheduled;
+    @FXML private Label lblDeparted;
+    @FXML private Label lblDelayed;
 
-    // Sidebar Buttons
-    @FXML private Button btnDashboard;
-    @FXML private Button btnFlightSchedule;
-    @FXML private Button btnBookingManagement;
-    @FXML private Button btnReport;
-    @FXML private Button btnLogout;
+    // Table elements
+    @FXML private TableView<RequestData> tvPendingRequests;
+    @FXML private TableColumn<RequestData, Integer> colReqId;
+    @FXML private TableColumn<RequestData, String> colPnr;
+    @FXML private TableColumn<RequestData, String> colPassenger;
+    @FXML private TableColumn<RequestData, String> colReason;
+    @FXML private TableColumn<RequestData, String> colStatus;
+
+    private ObservableList<RequestData> requestList = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        // ဇယား (Table) ကော်လံများကို Model နှင့် ချိတ်ဆက်ခြင်း
-        colFlightNo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFlightNo()));
-        colAirline.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getAirline()));
-        colRoute.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getRoute()));
-        colDepTime.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDepTime()));
-        colArrTime.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getArrTime()));
-        colStatus.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getStatus()));
-
-        // UI အရင်ပွင့်လာစေရန် Platform.runLater ဖြင့် Database Data ကို နောက်မှဆွဲမည်
-        Platform.runLater(() -> loadDashboardData());
+        setupTableColumns();
+        loadDashboardMetrics();
+        loadRecentRequests();
     }
 
-    private void loadDashboardData() {
-        // 🔴 ဤနေရာရှိ DatabaseConnection ကို မိမိ DB Class အမည်ပြောင်းပါ
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            if (conn == null) {
-                System.err.println("Database connection is null!");
-                return;
+    private void setupTableColumns() {
+        colReqId.setCellValueFactory(new PropertyValueFactory<>("requestId"));
+        colPnr.setCellValueFactory(new PropertyValueFactory<>("pnrCode"));
+        colPassenger.setCellValueFactory(new PropertyValueFactory<>("passengerName"));
+        colReason.setCellValueFactory(new PropertyValueFactory<>("reason"));
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        // 🌟 Status များကို အရောင်လေးများနှင့် Pill ပုံစံပြရန် Custom Cell Factory သုံးခြင်း 🌟
+        colStatus.setCellFactory(column -> new TableCell<RequestData, String>() {
+            private final Label statusLabel = new Label();
+            {
+                statusLabel.getStyleClass().add("table-status-pill");
             }
 
-            loadMetrics(conn);
-            loadActiveFlightsTable(conn);
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    statusLabel.setText(item);
+                    // ရှိပြီးသား အရောင် Class များကို အရင်ဖျက်ပါမည်
+                    statusLabel.getStyleClass().removeAll("pill-pending", "pill-approved", "pill-cancelled");
 
-        } catch (Exception e) {
-            System.err.println("Database Error: " + e.getMessage());
+                    // စာသားပေါ်မူတည်၍ သက်ဆိုင်ရာ အရောင် Class ကို ထည့်ပါမည်
+                    if (item.toLowerCase().contains("pending")) {
+                        statusLabel.getStyleClass().add("pill-pending");
+                    } else if (item.toLowerCase().contains("approve")) {
+                        statusLabel.getStyleClass().add("pill-approved");
+                    } else { // Cancelled
+                        statusLabel.getStyleClass().add("pill-cancelled");
+                    }
+
+                    setGraphic(statusLabel);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+    }
+
+    private void loadDashboardMetrics() {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+
+            // 1. Pending Approvals
+            String pendingSql = "SELECT COUNT(*) FROM requests WHERE status = 'Pending'";
+            try (PreparedStatement ps = conn.prepareStatement(pendingSql); ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) lblPendingRequests.setText(String.valueOf(rs.getInt(1)));
+            }
+
+            // 2. Today's Flights (Using DATE function)
+            String flightsSql = "SELECT COUNT(*) FROM flights WHERE DATE(departure_time) = CURDATE()";
+            try (PreparedStatement ps = conn.prepareStatement(flightsSql); ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) lblTodayFlights.setText(String.valueOf(rs.getInt(1)));
+            }
+
+            // 3. Monthly Bookings (Current Month & Year)
+            String bookingsSql = "SELECT COUNT(*) FROM bookings WHERE MONTH(booking_date) = MONTH(CURDATE()) AND YEAR(booking_date) = YEAR(CURDATE())";
+            try (PreparedStatement ps = conn.prepareStatement(bookingsSql); ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) lblTotalBookings.setText(String.valueOf(rs.getInt(1)));
+            }
+
+            // 4. Monthly Revenue
+            String revenueSql = "SELECT SUM(total_price) FROM bookings WHERE status = 'Confirmed' AND MONTH(booking_date) = MONTH(CURDATE()) AND YEAR(booking_date) = YEAR(CURDATE())";
+            try (PreparedStatement ps = conn.prepareStatement(revenueSql); ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    double rev = rs.getDouble(1);
+                    lblTotalRevenue.setText(String.format("%,.0f MMK", rev));
+                }
+            }
+
+            // 5. Today's Flight Status Breakdowns
+            String statusSql = "SELECT status, COUNT(*) FROM flights WHERE DATE(departure_time) = CURDATE() GROUP BY status";
+            try (PreparedStatement ps = conn.prepareStatement(statusSql); ResultSet rs = ps.executeQuery()) {
+                int sch = 0, dep = 0, del = 0;
+                while (rs.next()) {
+                    String status = rs.getString(1);
+                    int count = rs.getInt(2);
+                    if ("Scheduled".equalsIgnoreCase(status)) sch = count;
+                    else if ("Departed".equalsIgnoreCase(status)) dep = count;
+                    else if ("Delayed".equalsIgnoreCase(status)) del = count;
+                }
+                lblScheduled.setText("Scheduled Flights: " + sch);
+                lblDeparted.setText("Departed Flights: " + dep);
+                lblDelayed.setText("Delayed Flights: " + del);
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void loadMetrics(Connection conn) {
-        // 1. Total Revenue
-        try (PreparedStatement ps = conn.prepareStatement("SELECT SUM(total_price) FROM bookings WHERE status = 'Confirmed'");
+    private void loadRecentRequests() {
+        requestList.clear();
+        // ER Diagram အရ Bookings နှင့် Passengers Table ကို JOIN လုပ်၍ အချက်အလက်ဆွဲထုတ်ခြင်း
+        String sql = "SELECT r.request_id, b.pnr_code, p.full_name, r.reason, r.status " +
+                "FROM requests r " +
+                "JOIN bookings b ON r.booking_id = b.booking_id " +
+                "JOIN passengers p ON b.passenger_id = p.passenger_id " +
+                "ORDER BY r.created_at DESC LIMIT 10";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                lblTotalRevenue.setText(String.format("%,.0f MMK", rs.getDouble(1)));
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-
-        // 2. Total Staff
-        try (PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM users WHERE role = 'Staff' OR role = 'staff'");
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                lblTotalStaff.setText(String.valueOf(rs.getInt(1)));
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-
-        // 3. Active Flights
-        try (PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM flights WHERE status != 'Cancelled'");
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                lblActiveFlights.setText(String.valueOf(rs.getInt(1)));
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-
-        // 4. Total Bookings
-        try (PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) FROM bookings");
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                lblTotalBookings.setText(String.valueOf(rs.getInt(1)));
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-
-    private void loadActiveFlightsTable(Connection conn) {
-        ObservableList<ActiveFlight> flightList = FXCollections.observableArrayList();
-
-        // Flights နှင့် Cities များကို Join ၍ ခရီးစဉ် (Route) ကို ဆွဲထုတ်ခြင်း
-        String query = "SELECT f.flight_number, f.airline, CONCAT(dc.city_code, ' - ', ac.city_code) AS route, " +
-                "f.departure_time, f.arrival_time, f.status " +
-                "FROM flights f " +
-                "JOIN cities dc ON f.departure_city_id = dc.city_id " +
-                "JOIN cities ac ON f.arrival_city_id = ac.city_id " +
-                "WHERE f.status != 'Cancelled' ORDER BY f.departure_time ASC LIMIT 30";
-
-        try (PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                flightList.add(new ActiveFlight(
-                        rs.getString("flight_number"),
-                        rs.getString("airline"),
-                        rs.getString("route"),
-                        rs.getString("departure_time"),
-                        rs.getString("arrival_time"),
+                requestList.add(new RequestData(
+                        rs.getInt("request_id"),
+                        rs.getString("pnr_code"),
+                        rs.getString("full_name"),
+                        rs.getString("reason"),
                         rs.getString("status")
                 ));
             }
-            tblActiveFlights.setItems(flightList);
+            tvPendingRequests.setItems(requestList);
 
-        } catch (Exception e) {
-            System.err.println("Table Data Load Error: " + e.getMessage());
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // ==========================================
-    // TableView တွင် ပြသရန်အတွက် Model Class
-    // ==========================================
-    public static class ActiveFlight {
-        private final String flightNo;
-        private final String airline;
-        private final String route;
-        private final String depTime;
-        private final String arrTime;
-        private final String status;
+    // 🌟 TableView အတွက် Inner Data Model Class 🌟
+    public static class RequestData {
+        private int requestId;
+        private String pnrCode;
+        private String passengerName;
+        private String reason;
+        private String status;
 
-        public ActiveFlight(String flightNo, String airline, String route, String depTime, String arrTime, String status) {
-            this.flightNo = flightNo;
-            this.airline = airline;
-            this.route = route;
-            this.depTime = depTime;
-            this.arrTime = arrTime;
+        public RequestData(int requestId, String pnrCode, String passengerName, String reason, String status) {
+            this.requestId = requestId;
+            this.pnrCode = pnrCode;
+            this.passengerName = passengerName;
+            this.reason = reason;
             this.status = status;
         }
 
-        public String getFlightNo() { return flightNo; }
-        public String getAirline() { return airline; }
-        public String getRoute() { return route; }
-        public String getDepTime() { return depTime; }
-        public String getArrTime() { return arrTime; }
+        public int getRequestId() { return requestId; }
+        public String getPnrCode() { return pnrCode; }
+        public String getPassengerName() { return passengerName; }
+        public String getReason() { return reason; }
         public String getStatus() { return status; }
     }
 }

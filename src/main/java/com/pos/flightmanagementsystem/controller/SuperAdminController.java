@@ -73,6 +73,21 @@ public class SuperAdminController implements Initializable {
         navButtons = new Button[]{btnDashboard, btnProfile, btnACManage, btnSystemLogs, btnSystemTools};
         setActiveButton(btnDashboard);
 
+        this.isDarkMode = !LoginController.isLightMode;
+
+        Platform.runLater(() -> {
+            if (isDarkMode) {
+                themeThumb.setTranslateX(0);
+                themeIcon.setContent(MOON_SVG);
+                themeThumb.setStyle("-fx-background-color: #00D4FF; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
+            } else {
+                themeThumb.setTranslateX(24);
+                themeIcon.setContent(SUN_SVG);
+                themeThumb.setStyle("-fx-background-color: #F59E0B; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
+            }
+            updateTheme();
+        });
+
         Platform.runLater(() -> loadPage("/com/pos/flightmanagementsystem/view/SuperAdminDashboard.fxml", false));
 
         startIconAnimations();
@@ -109,7 +124,8 @@ public class SuperAdminController implements Initializable {
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
 
-            updateStylesheets(profileRoot.getStylesheets());
+            applyThemeRecursively(profileRoot);
+
             profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
 
             profilePopupContainer.getChildren().setAll(profileRoot);
@@ -179,25 +195,49 @@ public class SuperAdminController implements Initializable {
     @FXML
     public void toggleTheme(MouseEvent event) {
         isDarkMode = !isDarkMode;
+
+        LoginController.isLightMode = !isDarkMode;
+
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb); tt.setToX(isDarkMode ? 0 : 24); tt.setInterpolator(Interpolator.EASE_BOTH); tt.play();
         if (isDarkMode) { themeIcon.setContent(MOON_SVG); themeThumb.setStyle("-fx-background-color: #00D4FF; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;"); }
         else { themeIcon.setContent(SUN_SVG); themeThumb.setStyle("-fx-background-color: #F59E0B; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;"); }
+
         updateTheme();
     }
 
-    private void updateTheme() {
-        updateStylesheets(rootPane.getStylesheets());
-        if (mainContentArea != null && !mainContentArea.getChildren().isEmpty()) { Node rightPage = mainContentArea.getChildren().get(0); if (rightPage instanceof Parent) updateStylesheets(((Parent) rightPage).getStylesheets()); }
-        if (profilePopupContainer != null && !profilePopupContainer.getChildren().isEmpty()) { Node profilePage = profilePopupContainer.getChildren().get(0); if (profilePage instanceof Parent) updateStylesheets(((Parent) profilePage).getStylesheets()); }
-        Scene scene = rootPane.getScene(); if (scene != null) updateStylesheets(scene.getStylesheets());
+    // 🌟 File တကယ်ရှိမှသာ Theme ပြောင်းပေးမည့် Safe Logic 🌟
+    private void applyThemeRecursively(Parent node) {
+        if (node == null) return;
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
+            ObservableList<String> styles = node.getStylesheets();
+            for (int i = 0; i < styles.size(); i++) {
+                String cssPath = styles.get(i);
+                String newCssPath = null;
+                if (isDarkMode && cssPath.contains("Light")) {
+                    newCssPath = cssPath.replace("Light", "Dark");
+                } else if (!isDarkMode && cssPath.contains("Dark")) {
+                    newCssPath = cssPath.replace("Dark", "Light");
+                }
+
+                if (newCssPath != null) {
+                    try {
+                        String resourceName = newCssPath.substring(newCssPath.indexOf("/com/pos/"));
+                        if (getClass().getResource(resourceName) != null) {
+                            styles.set(i, newCssPath);
+                        }
+                    } catch (Exception e) {}
+                }
+            }
+        }
+        for (Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) {
+                applyThemeRecursively((Parent) child);
+            }
+        }
     }
 
-    private void updateStylesheets(ObservableList<String> stylesheets) {
-        for (int i = 0; i < stylesheets.size(); i++) {
-            String cssPath = stylesheets.get(i);
-            if (isDarkMode && cssPath.contains("Light")) stylesheets.set(i, cssPath.replace("Light", "Dark"));
-            else if (!isDarkMode && cssPath.contains("Dark")) stylesheets.set(i, cssPath.replace("Dark", "Light"));
-        }
+    private void updateTheme() {
+        applyThemeRecursively(rootPane);
     }
 
     private void setActiveButton(Button clickedButton) {
@@ -214,8 +254,11 @@ public class SuperAdminController implements Initializable {
 
     private void showNewPage(String fxmlPath, double durationMillis, boolean animate) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath)); Parent newPage = loader.load();
-            updateStylesheets(newPage.getStylesheets());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent newPage = loader.load();
+
+            applyThemeRecursively(newPage);
+
             mainContentArea.getChildren().clear(); mainContentArea.getChildren().add(newPage);
             if (animate) {
                 newPage.setTranslateX(1200);
@@ -251,8 +294,8 @@ public class SuperAdminController implements Initializable {
         }
         if (mainContentArea != null) {
             TranslateTransition st = new TranslateTransition(Duration.millis(700), mainContentArea); st.setToX(0); st.setInterpolator(Interpolator.EASE_BOTH);
-            FadeTransition ft = new FadeTransition(Duration.millis(700), mainContentArea); ft.setToValue(1);
-            dashAnimIn.getChildren().addAll(st, ft);
+            FadeTransition Fade = new FadeTransition(Duration.millis(700), mainContentArea); Fade.setToValue(1);
+            dashAnimIn.getChildren().addAll(st, Fade);
         }
         dashAnimIn.play();
     }
@@ -265,6 +308,8 @@ public class SuperAdminController implements Initializable {
 
         try {
             LoginController.isFromLogout = true;
+            LoginController.isLightMode = !this.isDarkMode;
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
             Parent loginRoot = loader.load();
             LoginController loginCtrl = loader.getController();
@@ -273,7 +318,8 @@ public class SuperAdminController implements Initializable {
             Parent currentDashboardRoot = scene.getRoot();
 
             StackPane transitionWrapper = new StackPane();
-            transitionWrapper.setStyle("-fx-background-color: #06080D;");
+
+            transitionWrapper.setStyle("-fx-background-color: " + (!LoginController.isLightMode ? "#06080D" : "#f4f9f9") + ";");
             transitionWrapper.getChildren().addAll(loginRoot, currentDashboardRoot);
 
             scene.setRoot(transitionWrapper);
@@ -298,7 +344,6 @@ public class SuperAdminController implements Initializable {
             }
 
             dashOut.setOnFinished(e -> {
-                // 🌟 Error ပြဿနာကို ဖြေရှင်းထားသော စာကြောင်း 🌟
                 transitionWrapper.getChildren().remove(loginRoot);
                 scene.setRoot(loginRoot);
                 if (loginCtrl != null) {

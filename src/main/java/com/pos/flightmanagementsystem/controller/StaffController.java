@@ -87,6 +87,23 @@ public class StaffController implements Initializable {
         navButtons = new Button[]{btnDashboard, btnCreateBooking, btnManageBooking, btnViewSchedule};
         setActiveButton(btnDashboard);
 
+        // 🌟 1. Login Controller မှ Theme ကို လှမ်းယူပြီး Sync လုပ်ခြင်း 🌟
+        this.isDarkMode = !LoginController.isLightMode;
+
+        // 🌟 2. ယူလိုက်သော Theme အတိုင်း Toggle ခလုတ် UI ချက်ချင်း ပြောင်းပေးခြင်း 🌟
+        Platform.runLater(() -> {
+            if (isDarkMode) {
+                themeThumb.setTranslateX(0);
+                themeIcon.setContent(MOON_SVG);
+                themeThumb.setStyle("-fx-background-color: #00D4FF; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
+            } else {
+                themeThumb.setTranslateX(24);
+                themeIcon.setContent(SUN_SVG);
+                themeThumb.setStyle("-fx-background-color: #F59E0B; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
+            }
+            updateTheme();
+        });
+
         Platform.runLater(() -> loadCenterView("/com/pos/flightmanagementsystem/view/StaffDashboard.fxml", false));
 
         setupIconHoverAnimation(btnDashboard, iconDashboard);
@@ -281,7 +298,8 @@ public class StaffController implements Initializable {
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
 
-            updateStylesheets(profileRoot.getStylesheets());
+            // 🌟 Profile ကိုလည်း Theme အတိုင်း အတိအကျ ပြောင်းပေးမည် 🌟
+            applyThemeRecursively(profileRoot);
             profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
 
             profilePopupContainer.getChildren().setAll(profileRoot);
@@ -345,33 +363,56 @@ public class StaffController implements Initializable {
         pt.play();
     }
 
+    // ==========================================
+    // 🌟 THEME & NAVIGATION 🌟
+    // ==========================================
     @FXML
     public void toggleTheme(MouseEvent event) {
         isDarkMode = !isDarkMode;
+
+        // 🌟 Theme ပြောင်းတိုင်း Global State (LoginController) ကိုပါ အသိပေးမည် 🌟
+        LoginController.isLightMode = !isDarkMode;
+
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb);
         tt.setToX(isDarkMode ? 0 : 24); tt.setInterpolator(Interpolator.EASE_BOTH); tt.play();
-        if (isDarkMode) { themeIcon.setContent(MOON_SVG); themeThumb.setStyle("-fx-background-color: #31C4B4; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;"); }
+        if (isDarkMode) { themeIcon.setContent(MOON_SVG); themeThumb.setStyle("-fx-background-color: #00D4FF; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;"); }
         else { themeIcon.setContent(SUN_SVG); themeThumb.setStyle("-fx-background-color: #F59E0B; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;"); }
         updateTheme();
     }
 
-    private void updateTheme() {
-        updateStylesheets(rootPane.getStylesheets());
-        Node rightPage = mainContentArea.getChildren().isEmpty() ? null : mainContentArea.getChildren().get(0);
-        if (rightPage instanceof Parent) updateStylesheets(((Parent) rightPage).getStylesheets());
-        if (profilePopupContainer != null && !profilePopupContainer.getChildren().isEmpty()) {
-            Node profilePage = profilePopupContainer.getChildren().get(0);
-            if (profilePage instanceof Parent) updateStylesheets(((Parent) profilePage).getStylesheets());
+    // 🌟 File တကယ်ရှိမှသာ Theme ပြောင်းပေးမည့် Safe Logic 🌟
+    private void applyThemeRecursively(Parent node) {
+        if (node == null) return;
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
+            ObservableList<String> styles = node.getStylesheets();
+            for (int i = 0; i < styles.size(); i++) {
+                String cssPath = styles.get(i);
+                String newCssPath = null;
+                if (isDarkMode && cssPath.contains("Light")) {
+                    newCssPath = cssPath.replace("Light", "Dark");
+                } else if (!isDarkMode && cssPath.contains("Dark")) {
+                    newCssPath = cssPath.replace("Dark", "Light");
+                }
+
+                if (newCssPath != null) {
+                    try {
+                        String resourceName = newCssPath.substring(newCssPath.indexOf("/com/pos/"));
+                        if (getClass().getResource(resourceName) != null) {
+                            styles.set(i, newCssPath);
+                        }
+                    } catch (Exception e) {}
+                }
+            }
         }
-        Scene scene = rootPane.getScene(); if (scene != null) updateStylesheets(scene.getStylesheets());
+        for (Node child : node.getChildrenUnmodifiable()) {
+            if (child instanceof Parent) {
+                applyThemeRecursively((Parent) child);
+            }
+        }
     }
 
-    private void updateStylesheets(ObservableList<String> stylesheets) {
-        for (int i = 0; i < stylesheets.size(); i++) {
-            String cssPath = stylesheets.get(i);
-            if (isDarkMode && cssPath.contains("Light")) stylesheets.set(i, cssPath.replace("Light", "Dark"));
-            else if (!isDarkMode && cssPath.contains("Dark")) stylesheets.set(i, cssPath.replace("Dark", "Light"));
-        }
+    private void updateTheme() {
+        applyThemeRecursively(rootPane);
     }
 
     private void setActiveButton(Button clickedButton) {
@@ -383,7 +424,9 @@ public class StaffController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent newView = loader.load();
-            updateStylesheets(newView.getStylesheets());
+
+            // 🌟 Load သွင်းလိုက်သော အလယ်စာမျက်နှာ (Center FXML) ကိုပါ Theme အတိအကျ သွင်းပေးမည် 🌟
+            applyThemeRecursively(newView);
 
             if (animate) {
                 newView.setTranslateX(1200);
@@ -456,6 +499,10 @@ public class StaffController implements Initializable {
 
         try {
             LoginController.isFromLogout = true;
+
+            // 🌟 Logout ထွက်ချိန်တွင် Global Theme ကို သေချာ Update ပြန်လုပ်ပေးမည် 🌟
+            LoginController.isLightMode = !this.isDarkMode;
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
             Parent loginRoot = loader.load();
             LoginController loginCtrl = loader.getController();
@@ -464,7 +511,9 @@ public class StaffController implements Initializable {
             Parent currentDashboardRoot = scene.getRoot();
 
             StackPane transitionWrapper = new StackPane();
-            transitionWrapper.setStyle("-fx-background-color: #06080D;");
+
+            // 🌟 Theme အလိုက် Logout အထွက် Background အရောင်ကို အတိအကျပြောင်းပေးမည် 🌟
+            transitionWrapper.setStyle("-fx-background-color: " + (!LoginController.isLightMode ? "#06080D" : "#f4f9f9") + ";");
             transitionWrapper.getChildren().addAll(loginRoot, currentDashboardRoot);
 
             scene.setRoot(transitionWrapper);

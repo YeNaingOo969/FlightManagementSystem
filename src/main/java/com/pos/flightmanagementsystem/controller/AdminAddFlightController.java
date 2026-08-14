@@ -1,13 +1,28 @@
 package com.pos.flightmanagementsystem.controller;
 
 import com.pos.flightmanagementsystem.model.Flight;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.sql.*;
@@ -40,7 +55,7 @@ public class AdminAddFlightController implements Initializable {
     @FXML private ComboBox<String> cmbArrivalHour;
     @FXML private ComboBox<String> cmbArrivalMinute;
 
-    @FXML private TextField txtTotalSeats;
+    @FXML private ComboBox<String> cmbTotalSeats;
     @FXML private TextField txtBasePrice;
     @FXML private ComboBox<String> cmbStatus;
 
@@ -72,10 +87,12 @@ public class AdminAddFlightController implements Initializable {
         setupCityComboBoxes();
         setupStatusComboBox();
         setupDateValidations();
+
+        cmbTotalSeats.getItems().addAll("70", "120", "160", "180");
+        cmbTotalSeats.setValue("70");
     }
 
     public void setFlightData(Flight flight) {
-        // 🌟 Flight တစ်ခုချင်းစီကို Update လုပ်တဲ့အခါ 🌟
         this.currentFlightId = flight.getFlightId();
 
         txtFlightNumber.setText(flight.getFlightNumber());
@@ -86,7 +103,7 @@ public class AdminAddFlightController implements Initializable {
 
         dpStartDate.setValue(flight.getDepartureTime().toLocalDate());
         dpEndDate.setValue(flight.getDepartureTime().toLocalDate());
-        dpEndDate.setDisable(true); // Update လုပ်ရာတွင် ရက်စွဲအပိုင်းအခြား ပြောင်းခွင့်မပြုပါ
+        dpEndDate.setDisable(true);
 
         cmbDepartureHour.setValue(String.format("%02d", flight.getDepartureTime().getHour()));
         cmbDepartureMinute.setValue(String.format("%02d", flight.getDepartureTime().getMinute()));
@@ -94,8 +111,8 @@ public class AdminAddFlightController implements Initializable {
         cmbArrivalHour.setValue(String.format("%02d", flight.getArrivalTime().getHour()));
         cmbArrivalMinute.setValue(String.format("%02d", flight.getArrivalTime().getMinute()));
 
-        txtTotalSeats.setText(String.valueOf(flight.getTotalSeats()));
-        txtTotalSeats.setDisable(true); // ခုံအရေအတွက်ကို Update လုပ်ခွင့်မပြုပါ (Seats table နှင့် ချိတ်ဆက်ထားသောကြောင့်)
+        cmbTotalSeats.setValue(String.valueOf(flight.getTotalSeats()));
+        cmbTotalSeats.setDisable(true);
 
         txtBasePrice.setText(String.valueOf(flight.getBasePrice()));
         cmbStatus.setValue(flight.getStatus());
@@ -216,15 +233,14 @@ public class AdminAddFlightController implements Initializable {
 
     @FXML
     void clickSave(ActionEvent event) {
-        // Validation Checks
         if (txtFlightNumber.getText().isEmpty() || txtAirline.getText().isEmpty() ||
                 cmbDepartureCity.getValue() == null || cmbArrivalCity.getValue() == null ||
                 dpStartDate.getValue() == null || dpEndDate.getValue() == null ||
                 cmbDepartureHour.getValue() == null || cmbDepartureMinute.getValue() == null ||
                 cmbArrivalHour.getValue() == null || cmbArrivalMinute.getValue() == null ||
-                txtTotalSeats.getText().isEmpty() || txtBasePrice.getText().isEmpty() || cmbStatus.getValue() == null) {
+                cmbTotalSeats.getValue() == null || txtBasePrice.getText().isEmpty() || cmbStatus.getValue() == null) {
 
-            showAlert(Alert.AlertType.WARNING, "Missing Information", "Please fill in all fields.");
+            showWarningModal("Incomplete Data", "Please fill in all the flight details completely before saving.", false);
             return;
         }
 
@@ -232,7 +248,7 @@ public class AdminAddFlightController implements Initializable {
                 chkThu.isSelected() || chkFri.isSelected() || chkSat.isSelected() || chkSun.isSelected();
 
         if (currentFlightId == null && !hasOperatingDay) {
-            showAlert(Alert.AlertType.WARNING, "Select Days", "Please select at least one operating day.");
+            showWarningModal("Select Operating Days", "Please select at least one operating day for the flight schedule.", false);
             return;
         }
 
@@ -245,16 +261,15 @@ public class AdminAddFlightController implements Initializable {
             LocalTime depTime = LocalTime.of(Integer.parseInt(cmbDepartureHour.getValue()), Integer.parseInt(cmbDepartureMinute.getValue()));
             LocalTime arrTime = LocalTime.of(Integer.parseInt(cmbArrivalHour.getValue()), Integer.parseInt(cmbArrivalMinute.getValue()));
 
-            int totalSeats = Integer.parseInt(txtTotalSeats.getText());
+            int totalSeats = Integer.parseInt(cmbTotalSeats.getValue());
             double basePrice = Double.parseDouble(txtBasePrice.getText());
             String status = cmbStatus.getValue();
 
             try (Connection conn = DatabaseConnection.getConnection()) {
-                conn.setAutoCommit(false); // Transaction စတင်မည် (အမှားပါက နောက်ပြန်ဆုတ်ရန်)
+                conn.setAutoCommit(false);
 
                 try {
                     if (currentFlightId == null) {
-                        // 🌟 MULTIPLE FLIGHTS GENERATION (The Magic Loop) 🌟
                         String insertFlightSQL = "INSERT INTO flights (flight_number, airline, departure_city_id, arrival_city_id, departure_time, arrival_time, total_seats, base_price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         String insertSeatSQL = "INSERT INTO seats (flight_id, seat_number, seat_class, is_available) VALUES (?, ?, ?, true)";
 
@@ -268,7 +283,6 @@ public class AdminAddFlightController implements Initializable {
                             while (!currentDate.isAfter(endDate)) {
                                 if (isDaySelected(currentDate)) {
 
-                                    // ညဘက်ဖြတ်ပျံသော လေယာဉ်များအတွက် Arrival Date ကို နောက်တစ်ရက်အဖြစ် အလိုအလျောက် သတ်မှတ်ခြင်း
                                     LocalDate arrivalDate = currentDate;
                                     if (arrTime.isBefore(depTime)) {
                                         arrivalDate = currentDate.plusDays(1);
@@ -277,7 +291,6 @@ public class AdminAddFlightController implements Initializable {
                                     Timestamp depTimestamp = Timestamp.valueOf(currentDate.atTime(depTime));
                                     Timestamp arrTimestamp = Timestamp.valueOf(arrivalDate.atTime(arrTime));
 
-                                    // Flight ထည့်သွင်းခြင်း
                                     pstmtFlight.setString(1, flightNumber);
                                     pstmtFlight.setString(2, airline);
                                     pstmtFlight.setInt(3, departureCityId);
@@ -291,10 +304,10 @@ public class AdminAddFlightController implements Initializable {
                                     pstmtFlight.executeUpdate();
                                     generatedCount++;
 
-                                    // 🌟 Generated 'flight_id' ကို ယူ၍ 'seats' ထဲသို့ ထည့်သွင်းခြင်း 🌟
                                     try (ResultSet generatedKeys = pstmtFlight.getGeneratedKeys()) {
                                         if (generatedKeys.next()) {
                                             int newFlightId = generatedKeys.getInt(1);
+                                            // 🌟 Database ထဲသို့ ထိုင်ခုံများ ပွားထည့်မည် 🌟
                                             generateSeatsForFlight(pstmtSeat, newFlightId, totalSeats);
                                         }
                                     }
@@ -303,17 +316,16 @@ public class AdminAddFlightController implements Initializable {
                             }
 
                             if (generatedCount == 0) {
-                                showAlert(Alert.AlertType.WARNING, "No Flights Generated", "The selected date range does not contain any of the selected operating days.");
+                                showWarningModal("No Flights Generated", "The selected date range does not contain any of the selected operating days.", false);
                                 conn.rollback();
                                 return;
                             }
                         }
 
-                        conn.commit(); // အားလုံး အောင်မြင်မှသာ Database ထဲ အတည်ပြုသိမ်းဆည်းမည်
+                        conn.commit();
                         if (saveCallback != null) saveCallback.accept("Successfully generated flights for the selected period.");
 
                     } else {
-                        // 🌟 SINGLE FLIGHT UPDATE 🌟
                         LocalDate depDate = dpStartDate.getValue();
                         LocalDate arrDate = depDate;
                         if (arrTime.isBefore(depTime)) {
@@ -339,7 +351,7 @@ public class AdminAddFlightController implements Initializable {
                     }
 
                 } catch (SQLException ex) {
-                    conn.rollback(); // Error တက်ပါက Transaction ကို နောက်ပြန်ဆုတ်မည်
+                    conn.rollback();
                     throw ex;
                 } finally {
                     conn.setAutoCommit(true);
@@ -347,13 +359,16 @@ public class AdminAddFlightController implements Initializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Action failed: " + e.getMessage());
+            showWarningModal("Database Error", "Action failed: " + e.getMessage(), true);
         }
     }
 
-    // 🌟 Flight အသစ်အတွက် Seat များကို အလိုအလျောက် ပွားပေးမည့် Method 🌟
+    // =========================================================================
+    // 🌟 SEAT GENERATION LOGIC (4 Columns, 3 Classes) သေချာအောင် ပြန်ပြင်ထားသည် 🌟
+    // =========================================================================
     private void generateSeatsForFlight(PreparedStatement pstmtSeat, int flightId, int totalSeats) throws SQLException {
-        String[] columns = {"A", "B", "C", "D", "E", "F"}; // ခုံတန်းတစ်ခုတွင် ခုံ (၆) ခုံ ရှိသည်ဟု ယူဆပါသည်
+        // 🌟 E နှင့် F ကို ဖြုတ်ပြီး A, B, C, D လေးတန်းတည်းသာ သတ်မှတ်ထားပါသည် 🌟
+        String[] columns = {"A", "B", "C", "D"};
         int seatCount = 0;
         int rowNumber = 1;
 
@@ -361,19 +376,26 @@ public class AdminAddFlightController implements Initializable {
             for (String col : columns) {
                 if (seatCount >= totalSeats) break;
 
-                String seatNumber = rowNumber + col; // ဥပမာ - 1A, 1B, 1C
-                String seatClass = (rowNumber <= 5) ? "Business" : "Economy"; // ရှေ့ (၅) တန်းကို Business Class အဖြစ် သတ်မှတ်ခြင်း
+                String seatNumber = rowNumber + col;
+
+                // 🌟 အလိုအလျောက် Class ခွဲခြားသတ်မှတ်ခြင်း 🌟
+                String seatClass = "Economic"; // Default
+                if (rowNumber <= 3) {
+                    seatClass = "Business"; // ရှေ့ ၃ တန်း (၁၂ ခုံ)
+                } else if (rowNumber <= 8) {
+                    seatClass = "Premium Economic"; // နောက် ၅ တန်း (၂၀ ခုံ)
+                }
 
                 pstmtSeat.setInt(1, flightId);
                 pstmtSeat.setString(2, seatNumber);
                 pstmtSeat.setString(3, seatClass);
-                pstmtSeat.addBatch(); // Batch ထဲသို့ စုထည့်သည် (Performance ပိုမြန်စေရန်)
+                pstmtSeat.addBatch();
 
                 seatCount++;
             }
-            rowNumber++;
+            rowNumber++; // နောက်တစ်တန်းသို့ ဆင်းမည်
         }
-        pstmtSeat.executeBatch(); // Batch တစ်ခုလုံးကို Database ထဲသို့ တစ်ပြိုင်နက် သွင်းသည်
+        pstmtSeat.executeBatch();
     }
 
     @FXML
@@ -381,11 +403,120 @@ public class AdminAddFlightController implements Initializable {
         if (cancelCallback != null) cancelCallback.run();
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private void showWarningModal(String title, String message, boolean isError) {
+        StackPane windowRoot = null;
+        if (rootPane.getScene() != null && rootPane.getScene().getRoot() instanceof StackPane) {
+            windowRoot = (StackPane) rootPane.getScene().getRoot();
+        } else if (rootPane.getParent() instanceof StackPane) {
+            windowRoot = (StackPane) rootPane.getParent();
+        }
+
+        if (windowRoot == null) return;
+
+        StackPane overlay = new StackPane();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
+
+        BoxBlur blur = new BoxBlur(8, 8, 3);
+        rootPane.setEffect(blur);
+
+        String themeColor = isError ? "#EF4444" : "#F59E0B";
+        String hoverBgColor = isError ? "rgba(239, 68, 68, 0.15)" : "rgba(245, 158, 11, 0.15)";
+
+        String svgIconPath = isError
+                ? "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                : "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z";
+
+        VBox modalCard = new VBox(20);
+        modalCard.setMaxSize(420, Region.USE_PREF_SIZE);
+        modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: " + themeColor + "; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
+
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle("-fx-text-fill: " + themeColor + "; -fx-font-size: 16px; -fx-font-weight: bold;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        StackPane closeBtn = new StackPane();
+        SVGPath closeIcon = new SVGPath();
+        closeIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
+        closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;");
+        closeBtn.getChildren().add(closeIcon);
+        closeBtn.setCursor(Cursor.HAND);
+        closeBtn.setOnMouseEntered(e -> closeIcon.setStyle("-fx-fill: #FFFFFF; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"));
+        closeBtn.setOnMouseExited(e -> closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"));
+
+        header.getChildren().addAll(titleLabel, spacer, closeBtn);
+
+        HBox body = new HBox(15);
+        body.setAlignment(Pos.CENTER_LEFT);
+        SVGPath warningIcon = new SVGPath();
+        warningIcon.setContent(svgIconPath);
+        warningIcon.setStyle("-fx-fill: " + themeColor + "; -fx-scale-x: 1.5; -fx-scale-y: 1.5;");
+        StackPane iconPane = new StackPane(warningIcon);
+        iconPane.setPadding(new Insets(0, 10, 0, 10));
+
+        Label messageLabel = new Label(message);
+        messageLabel.setStyle("-fx-text-fill: #E2E8F0; -fx-font-size: 14px;");
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(300);
+
+        body.getChildren().addAll(iconPane, messageLabel);
+
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER_RIGHT);
+        Button okBtn = new Button("OK");
+        okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + themeColor + "; -fx-text-fill: " + themeColor + "; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;");
+        okBtn.setOnMouseEntered(e -> okBtn.setStyle("-fx-background-color: " + hoverBgColor + "; -fx-border-color: " + themeColor + "; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;"));
+        okBtn.setOnMouseExited(e -> okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + themeColor + "; -fx-text-fill: " + themeColor + "; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;"));
+
+        footer.getChildren().add(okBtn);
+
+        modalCard.getChildren().addAll(header, body, footer);
+        overlay.getChildren().add(modalCard);
+        windowRoot.getChildren().add(overlay);
+
+        modalCard.setScaleX(0.5);
+        modalCard.setScaleY(0.5);
+        modalCard.setOpacity(0);
+        overlay.setOpacity(0);
+
+        ScaleTransition stIn = new ScaleTransition(Duration.millis(300), modalCard);
+        stIn.setToX(1); stIn.setToY(1); stIn.setInterpolator(Interpolator.EASE_OUT);
+
+        FadeTransition ftIn = new FadeTransition(Duration.millis(300), modalCard);
+        ftIn.setToValue(1);
+
+        FadeTransition bgFtIn = new FadeTransition(Duration.millis(300), overlay);
+        bgFtIn.setToValue(1);
+
+        ParallelTransition ptIn = new ParallelTransition(stIn, ftIn, bgFtIn);
+        ptIn.play();
+
+        // 🌟 Error ရှင်းသွားစေရန် ဤအပိုင်းကို အစားထိုးပါ 🌟
+        StackPane finalWindowRoot = windowRoot;
+        Runnable closeAction = () -> {
+            ScaleTransition stOut = new ScaleTransition(Duration.millis(200), modalCard);
+            stOut.setToX(0.5);
+            stOut.setToY(0.5);
+            stOut.setInterpolator(Interpolator.EASE_IN);
+
+            FadeTransition ftOut = new FadeTransition(Duration.millis(200), modalCard);
+            ftOut.setToValue(0);
+
+            FadeTransition bgFtOut = new FadeTransition(Duration.millis(200), overlay);
+            bgFtOut.setToValue(0);
+
+            ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
+            ptOut.setOnFinished(ev -> {
+                // 🌟 windowRoot အစား finalWindowRoot ကို ပြောင်းသုံးထားပါသည် 🌟
+                finalWindowRoot.getChildren().remove(overlay);
+                rootPane.setEffect(null);
+            });
+            ptOut.play();
+        };
+
+        closeBtn.setOnMouseClicked(e -> closeAction.run());
+        okBtn.setOnAction(e -> closeAction.run());
     }
 }

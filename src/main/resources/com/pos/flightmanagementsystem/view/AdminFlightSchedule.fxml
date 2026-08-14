@@ -13,7 +13,7 @@
 
 <StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/AdminFlightScheduleDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminFlightScheduleController">
     <children>
-        <AnchorPane prefHeight="731.0" prefWidth="1031.0" styleClass="super-content">
+        <AnchorPane prefHeight="731.0" prefWidth="1100.0" styleClass="super-content">
             <children>
                 <VBox spacing="25.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
                     <children>
@@ -24,14 +24,12 @@
                                 <VBox alignment="CENTER_LEFT" spacing="4.0">
                                     <children>
                                         <Label styleClass="super-page-title" text="Flight Operations &amp; Schedules" />
-                                        <!-- 🌟 Dark Theme အတွက် အသုံးပြုသော super-section-subtitle သို့ ပြန်ပြောင်းထားပါသည် 🌟 -->
                                         <Label styleClass="super-section-subtitle" text="Live monitoring of departures, arrivals, and operational schedule updates." />
                                     </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS" />
 
                                 <!-- DatePicker -->
-                                <!-- 🌟 Dark Theme အတွက် သုံးသော super-date-picker သို့ ပြန်ပြောင်းထားပါသည် 🌟 -->
                                 <DatePicker fx:id="dpFilterDate" promptText="Filter by Date" styleClass="super-date-picker" />
 
                                 <!-- Add Flight Button -->
@@ -53,20 +51,27 @@
                                     </children>
                                 </HBox>
 
-                                <!-- TableView -->
+                                <!-- 🌟 Full Data TableView 🌟 -->
                                 <TableView fx:id="tblFlights" styleClass="super-table" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colFlightNo" prefWidth="75.0" text="Flight No." />
-                                        <TableColumn fx:id="colAirline" prefWidth="110.0" text="Airline" />
-                                        <TableColumn fx:id="colFrom" prefWidth="120.0" text="From" />
-                                        <TableColumn fx:id="colTo" prefWidth="120.0" text="To" />
+                                        <TableColumn fx:id="colFlightId" prefWidth="50.0" text="ID" />
+                                        <TableColumn fx:id="colFlightNo" prefWidth="80.0" text="Flight No." />
+                                        <TableColumn fx:id="colAirline" prefWidth="100.0" text="Airline" />
+                                        <TableColumn fx:id="colFrom" prefWidth="110.0" text="From" />
+                                        <TableColumn fx:id="colTo" prefWidth="110.0" text="To" />
                                         <TableColumn fx:id="colDeparture" prefWidth="120.0" text="Departure" />
                                         <TableColumn fx:id="colArrival" prefWidth="120.0" text="Arrival" />
+                                        <TableColumn fx:id="colTotalSeats" prefWidth="60.0" text="Seats" />
+                                        <TableColumn fx:id="colBasePrice" prefWidth="90.0" text="Price" />
+                                        <TableColumn fx:id="colStatus" prefWidth="90.0" text="Status" />
                                         <TableColumn fx:id="colActions" prefWidth="150.0" styleClass="action-column" text="Actions" />
                                     </columns>
                                     <columnResizePolicy>
                                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                     </columnResizePolicy>
+                                    <placeholder>
+                                        <Label text="No flight schedules available." />
+                                    </placeholder>
                                 </TableView>
                             </children>
                         </VBox>

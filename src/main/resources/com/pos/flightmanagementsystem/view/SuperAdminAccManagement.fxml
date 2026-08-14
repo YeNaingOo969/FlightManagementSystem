@@ -15,12 +15,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<AnchorPane fx:id="acRootPane" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminAccManagementDark.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminAccManagementController">
+<AnchorPane fx:id="acRootPane" styleClass="super-content" stylesheets="@/com/pos/flightmanagementsystem/Style/SuperAdminAccManagementDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.SuperAdminAccManagementController">
    <children>
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="25.0">
          <content>
             <VBox spacing="10.0">
                <children>
+                  <!-- 🌟 TOP BAR (Search, Status, Role, Button တို့ကို အစီအစဉ်ကျ ထားရှိသည်) 🌟 -->
                   <HBox maxWidth="1.7976931348623157E308" prefHeight="100.0" spacing="12.0" styleClass="super-topbar" VBox.vgrow="ALWAYS">
                      <children>
                         <VBox prefHeight="84.0" prefWidth="293.0">
@@ -29,13 +30,22 @@
                               <Label styleClass="page-subtitle" text="Manage FlyPlan Airline Staff Accounts" />
                            </children>
                         </VBox>
-                        <Region prefHeight="100.0" prefWidth="316.0" />
+                        <Region prefHeight="100.0" HBox.hgrow="ALWAYS" />
+
+                        <!-- 🔍 Search Bar -->
                         <TextField fx:id="txtSearch" promptText="search here......" styleClass="search-field" />
-                        <ComboBox fx:id="comboFilterRole" prefWidth="150.0" promptText="Select Role" styleClass="combo-box" />
+
+                        <!-- 🟢 Status ComboBox (Search နှင့် Role ကြားသို့ ရွှေ့ထားသည်) -->
+                        <ComboBox fx:id="comboFilterStatus" prefWidth="120.0" promptText="Status" styleClass="combo-box" />
+
+                        <!-- 👤 Role ComboBox -->
+                        <ComboBox fx:id="comboFilterRole" prefWidth="120.0" promptText="Role" styleClass="combo-box" />
+
                         <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#openCreateUser" styleClass="primary-button" text="+ Create User" />
                      </children>
                   </HBox>
 
+                  <!-- 🌟 STAT CARDS 🌟 -->
                   <HBox prefHeight="100.0" prefWidth="200.0" styleClass="stat-cards-container" VBox.vgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS">
@@ -113,19 +123,21 @@
 
                   <VBox maxWidth="1.7976931348623157E308" prefHeight="200.0" styleClass="table-card" VBox.vgrow="ALWAYS">
                      <children>
-                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="12.0" VBox.vgrow="ALWAYS">
+                        <!-- 🌟 TABLE HEADER (Status ComboBox ကို အပေါ်ရွှေ့လိုက်ပြီဖြစ်၍ Label သာ ကျန်ပါမည်) 🌟 -->
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="12.0" VBox.vgrow="NEVER">
                            <children>
                               <Label styleClass="super-section-title" text="Users" />
-                              <Region prefHeight="50.0" prefWidth="706.0" />
+                              <Region HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
+
                         <TableView fx:id="usersTable" minHeight="400.0" prefHeight="450.0" prefWidth="200.0" styleClass="super-table" VBox.vgrow="ALWAYS">
                            <columns>
-                              <TableColumn fx:id="colUsername" prefWidth="75.0" text="Username" />
-                              <TableColumn fx:id="colPassword" prefWidth="75.0" text="Password" />
-                              <TableColumn fx:id="colRole" prefWidth="75.0" text="Role" />
-                              <TableColumn fx:id="colEmail" prefWidth="75.0" text="Email" />
-                              <TableColumn fx:id="colImagePath" prefWidth="75.0" text="Image Path" />
+                              <TableColumn fx:id="colUsername" prefWidth="100.0" text="Username" />
+                              <TableColumn fx:id="colPassword" prefWidth="100.0" text="Password" />
+                              <TableColumn fx:id="colRole" prefWidth="80.0" text="Role" />
+                              <TableColumn fx:id="colEmail" prefWidth="150.0" text="Email" />
+                              <TableColumn fx:id="colStatus" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Status" />
                            </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -141,25 +153,20 @@
          </content>
       </ScrollPane>
 
-      <!-- 🌟 ပြင်ဆင်ထားသော TIKTOK STYLE TOAST NOTIFICATION 🌟 -->
+      <!-- 🌟 TOAST NOTIFICATION 🌟 -->
       <HBox fx:id="notificationToast" alignment="CENTER_LEFT" prefWidth="380.0" styleClass="toast-notification" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
          <children>
-            <!-- အစိမ်းရောင် အဝိုင်းလေးနှင့် အမှန်ခြစ် -->
             <StackPane styleClass="toast-icon-bg">
                <children>
                   <SVGPath content="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" styleClass="toast-icon-glyph" />
                </children>
             </StackPane>
-
-            <!-- စာသားများ -->
             <VBox alignment="CENTER_LEFT" styleClass="toast-text-box" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="lblToastTitle" styleClass="toast-title" text="Success!" />
                   <Label fx:id="lblToastMessage" styleClass="toast-message" text="User account created successfully." wrapText="true" />
                </children>
             </VBox>
-
-            <!-- ညာဘက်ထောင့်က ကြက်ခြေခတ် ခလုတ် -->
             <VBox alignment="TOP_RIGHT">
                <children>
                   <Button mnemonicParsing="false" onAction="#closeToast" styleClass="toast-close-btn">
@@ -171,6 +178,5 @@
             </VBox>
          </children>
       </HBox>
-
    </children>
 </AnchorPane>

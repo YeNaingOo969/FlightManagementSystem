@@ -8,7 +8,6 @@
 
 /* ==========================================================
    🌟 CARDS (Top Bar & Main Panel) 🌟
-   (ဒီနေရာမှာ .super-panel ကိုပါ တွဲထည့်လိုက်လို့ အောက်ခံ Card အဖြူရောင် ပြန်ပေါ်လာပါမည်)
 ========================================================== */
 .super-topbar, .super-panel {
     -fx-background-color: rgba(255, 255, 255, 0.92);
@@ -78,7 +77,6 @@
     -fx-border-width: 1.5px;
     -fx-pref-height: 38px;
 }
-/* အတွင်းက စာရိုက်တဲ့အကွက်ကို Background ဖျောက်ပေးရပါမည် */
 .date-picker > .text-field {
     -fx-background-color: transparent;
     -fx-text-fill: #10243f;
@@ -146,7 +144,7 @@
     -fx-text-fill: #1E293B;
     -fx-font-size: 13px;
     -fx-alignment: CENTER;
-    -fx-padding: 0 15px;
+    -fx-padding: 0 10px;
 }
 
 .table-row-cell:filled:hover {
@@ -160,7 +158,6 @@
     -fx-font-weight: bold;
 }
 
-/* ScrollBar များကို သန့်ရှင်းစေရန် */
 .table-view .filler, .table-view .corner {
     -fx-background-color: transparent;
 }
@@ -168,43 +165,61 @@
     -fx-background-color: transparent;
 }
 
-
 /* ==========================================================
-   🌟 TABLE ACTION BUTTONS (Edit & Delete)
+   🌟 TABLE ACTION BUTTONS (Edit & Delete - Resized)
 ========================================================== */
+.action-column { -fx-alignment: CENTER !important; }
+
 .btn-edit-table {
-    -fx-background-color: transparent;
-    -fx-border-color: #0EA5E9;
-    -fx-border-width: 1px;
-    -fx-text-fill: #0EA5E9;
-    -fx-font-weight: bold;
-    -fx-font-size: 12px;
-    -fx-background-radius: 6px;
-    -fx-border-radius: 6px;
-    -fx-padding: 6px 14px;
-    -fx-cursor: hand;
+    -fx-background-color: transparent !important;
+    -fx-border-color: #0EA5E9 !important;
+    -fx-border-width: 1.5px !important;
+    -fx-text-fill: #0EA5E9 !important;
+    -fx-font-weight: bold !important;
+    -fx-font-size: 11px !important; /* 🌟 Font Size သေးလိုက်သည် 🌟 */
+    -fx-background-radius: 6px !important;
+    -fx-border-radius: 6px !important;
+    -fx-padding: 4px 10px !important; /* 🌟 Padding လျှော့လိုက်သည် 🌟 */
+    -fx-cursor: hand !important;
 }
 .btn-edit-table:hover {
-    -fx-background-color: #E0F2FE;
-    -fx-text-fill: #0284C7;
+    -fx-background-color: #E0F2FE !important;
+    -fx-text-fill: #0284C7 !important;
 }
 
 .btn-delete-table {
-    -fx-background-color: transparent;
-    -fx-border-color: #EF4444;
-    -fx-border-width: 1px;
-    -fx-text-fill: #EF4444;
-    -fx-font-weight: bold;
-    -fx-font-size: 12px;
-    -fx-background-radius: 6px;
-    -fx-border-radius: 6px;
-    -fx-padding: 6px 14px;
-    -fx-cursor: hand;
+    -fx-background-color: transparent !important;
+    -fx-border-color: #EF4444 !important;
+    -fx-border-width: 1.5px !important;
+    -fx-text-fill: #EF4444 !important;
+    -fx-font-weight: bold !important;
+    -fx-font-size: 11px !important; /* 🌟 Font Size သေးလိုက်သည် 🌟 */
+    -fx-background-radius: 6px !important;
+    -fx-border-radius: 6px !important;
+    -fx-padding: 4px 10px !important; /* 🌟 Padding လျှော့လိုက်သည် 🌟 */
+    -fx-cursor: hand !important;
 }
 .btn-delete-table:hover {
-    -fx-background-color: #FEE2E2;
-    -fx-text-fill: #B91C1C;
+    -fx-background-color: #FEE2E2 !important;
+    -fx-text-fill: #B91C1C !important;
 }
+
+/* ==========================================================
+   🌟 STATUS PILLS FOR TABLE (LIGHT)
+========================================================== */
+.table-status-pill {
+    -fx-padding: 4px 10px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-border-width: 1px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+.pill-scheduled { -fx-background-color: #E0F2FE; -fx-border-color: #BAE6FD; -fx-text-fill: #0284C7; }
+.pill-departed { -fx-background-color: #D1FAE5; -fx-border-color: #A7F3D0; -fx-text-fill: #059669; }
+.pill-delayed { -fx-background-color: #FFEDD5; -fx-border-color: #FED7AA; -fx-text-fill: #D97706; }
+.pill-cancelled { -fx-background-color: #FFE4E6; -fx-border-color: #FECDD3; -fx-text-fill: #E11D48; }
 
 /* ==========================================================
    🌟 TOAST NOTIFICATION (SUCCESS ALERT)
@@ -218,64 +233,17 @@
     -fx-padding: 16px 18px 16px 18px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 8);
 }
-
-/* Green Circle Background for Checkmark */
 .toast-icon-box {
     -fx-background-color: #10B981;
     -fx-background-radius: 50%;
-    -fx-min-width: 38px;
-    -fx-min-height: 38px;
-    -fx-max-width: 38px;
-    -fx-max-height: 38px;
+    -fx-min-width: 38px; -fx-min-height: 38px;
+    -fx-max-width: 38px; -fx-max-height: 38px;
 }
-
-/* Checkmark Icon (White) */
-.toast-icon {
-    -fx-fill: #FFFFFF;
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
-}
-
-/* Text Box Container */
-.toast-text-box {
-    -fx-spacing: 4px;
-    -fx-alignment: CENTER_LEFT;
-}
-
-/* Title Font */
-.toast-title {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1F2937;
-}
-
-/* Subtitle Font */
-.toast-message {
-    -fx-font-size: 13px;
-    -fx-text-fill: #6B7280;
-}
-
-/* Close (X) Button */
-.toast-close-btn {
-    -fx-background-color: transparent;
-    -fx-cursor: hand;
-    -fx-padding: 8px;
-    -fx-background-radius: 50%;
-}
-
-/* Close Button Hover Effect */
-.toast-close-btn:hover {
-    -fx-background-color: #F1F5F9;
-}
-
-/* Close (X) Icon */
-.toast-close-icon {
-    -fx-fill: #9CA3AF;
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
-}
-
-/* Close Icon Hover Effect (Turns Red) */
-.toast-close-btn:hover .toast-close-icon {
-    -fx-fill: #EF4444;
-}
+.toast-icon { -fx-fill: #FFFFFF; -fx-scale-x: 1.2; -fx-scale-y: 1.2; }
+.toast-text-box { -fx-spacing: 4px; -fx-alignment: CENTER_LEFT; }
+.toast-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1F2937; }
+.toast-message { -fx-font-size: 13px; -fx-text-fill: #6B7280; }
+.toast-close-btn { -fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 8px; -fx-background-radius: 50%; }
+.toast-close-btn:hover { -fx-background-color: #F1F5F9; }
+.toast-close-icon { -fx-fill: #9CA3AF; -fx-scale-x: 1.2; -fx-scale-y: 1.2; }
+.toast-close-btn:hover .toast-close-icon { -fx-fill: #EF4444; }

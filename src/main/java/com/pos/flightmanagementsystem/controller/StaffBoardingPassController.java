@@ -10,13 +10,16 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -24,15 +27,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class StaffBoardingPassController {
 
     @FXML private StackPane modalRoot;
+    @FXML private Node boardingPassCard;
 
     @FXML private Label lblClass;
     @FXML private Label lblPassengerName;
@@ -42,7 +49,6 @@ public class StaffBoardingPassController {
     @FXML private Label lblTime;
     @FXML private Label lblFlight;
     @FXML private Label lblSeat;
-
     @FXML private Label lblPaymentMethod;
 
     private int flightId;
@@ -87,9 +93,6 @@ public class StaffBoardingPassController {
         return city.substring(0, 3).toUpperCase();
     }
 
-    // =========================================================================
-    // 🌟 ဤနေရာတွင် Toast Notification အား Light Mode ပုံစံသို့ ပြောင်းလဲထားပါသည် 🌟
-    // =========================================================================
     private void showToastNotification(String title, String message, boolean isError) {
         StackPane parentRoot = (StackPane) modalRoot.getParent();
         if (parentRoot == null) return;
@@ -102,10 +105,8 @@ public class StaffBoardingPassController {
 
         String borderColor = isError ? "#EF4444" : "#10B981";
 
-        // အဖြူရောင် Card အောက်ခံ
         toast.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: " + borderColor + "; -fx-border-width: 1.5px; -fx-background-radius: 14px; -fx-border-radius: 14px; -fx-padding: 16px 18px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 15, 0, 0, 8);");
 
-        // အဝိုင်းလေး နောက်ခံ (အစိမ်း သို့မဟုတ် အနီ)
         StackPane iconBox = new StackPane();
         iconBox.setStyle("-fx-background-color: " + borderColor + "; -fx-background-radius: 50%; -fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px;");
 
@@ -115,7 +116,7 @@ public class StaffBoardingPassController {
         } else {
             icon.setContent("M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z");
         }
-        icon.setFill(Color.WHITE); // အဝိုင်းထဲမှ အမှန်ခြစ်ကို အဖြူရောင်ပေးခြင်း
+        icon.setFill(Color.WHITE);
         icon.setScaleX(1.2);
         icon.setScaleY(1.2);
         iconBox.getChildren().add(icon);
@@ -123,11 +124,9 @@ public class StaffBoardingPassController {
         VBox textContainer = new VBox(4);
         textContainer.setAlignment(Pos.CENTER_LEFT);
 
-        // ခေါင်းစဉ် စာလုံးအရောင် အမည်းရောင်
         Label lblTitle = new Label(title);
         lblTitle.setStyle("-fx-text-fill: #1F2937; -fx-font-weight: bold; -fx-font-size: 16px; -fx-font-family: 'Segoe UI';");
 
-        // စာသား အရောင် ခဲရောင်
         Label lblMessage = new Label(message);
         lblMessage.setStyle("-fx-text-fill: #6B7280; -fx-font-size: 13px; -fx-font-family: 'Segoe UI';");
         lblMessage.setWrapText(true);
@@ -177,17 +176,41 @@ public class StaffBoardingPassController {
         closeModal();
     }
 
-    @FXML
-    void clickDownload(ActionEvent event) {
-        System.out.println("Downloading Boarding Pass...");
-        showToastNotification("Download Started", "Your boarding pass is downloading as PDF.", false);
+    private WritableImage captureBoardingPass() {
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        return boardingPassCard.snapshot(params, null);
     }
 
     @FXML
     void clickPrint(ActionEvent event) {
         if (saveBookingToDatabase()) {
-            showToastNotification("Booking Successful", "Booking has been saved successfully. Printing Boarding Pass...", false);
+            saveToResourcesFolder();
+            showToastNotification("Booking Successful", "Booking saved and Boarding Pass printed to resources.", false);
             closeModal();
+        }
+    }
+
+    private void saveToResourcesFolder() {
+        try {
+            WritableImage image = captureBoardingPass();
+
+            String dirPath = "src/main/resources/com/pos/flightmanagementsystem/BoardingPass";
+            File dir = new File(dirPath);
+
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = "BoardingPass_" + timestamp + ".png";
+            File file = new File(dir, fileName);
+
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            System.out.println("✅ Boarding Pass automatically saved to: " + file.getAbsolutePath());
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -214,36 +237,25 @@ public class StaffBoardingPassController {
                     }
                 }
 
-                if (exists && !isAvailable) {
-                    showToastNotification("Seat Unavailable", "Sorry, this seat was just purchased by someone else. Please close and select another seat.", true);
+                if (!exists) {
+                    showToastNotification("Error", "Seat not found in the database.", true);
+                    return false;
+                }
+
+                if (!isAvailable) {
+                    showToastNotification("Seat Unavailable", "Sorry, this seat was just purchased by someone else.", true);
                     closeModal();
                     return false;
                 }
 
-                if (exists) {
-                    String updateQuery = "UPDATE seats SET is_available = false, seat_class = ? WHERE flight_id = ? AND seat_number = ?";
-                    try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
-                        updateStmt.setString(1, this.seatClass);
-                        updateStmt.setInt(2, this.flightId);
-                        updateStmt.setString(3, this.seatNumber);
-                        updateStmt.executeUpdate();
-                    }
-                } else {
-                    String insertQuery = "INSERT INTO seats (flight_id, seat_number, seat_class, is_available) VALUES (?, ?, ?, false)";
-                    try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
-                        insertStmt.setInt(1, this.flightId);
-                        insertStmt.setString(2, this.seatNumber);
-                        insertStmt.setString(3, this.seatClass);
-                        insertStmt.executeUpdate();
-
-                        try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
-                            if (generatedKeys.next()) {
-                                currentSeatId = generatedKeys.getInt(1);
-                            }
-                        }
-                    }
+                // 🌟 Admin ဖန်တီးထားသော Seat ၏ is_available ကိုသာ false (0) ပြောင်းလဲပေးမည် 🌟
+                String updateQuery = "UPDATE seats SET is_available = false WHERE seat_id = ?";
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                    updateStmt.setInt(1, currentSeatId);
+                    updateStmt.executeUpdate();
                 }
 
+                // Booking Table ထဲသို့ မှတ်တမ်းသွင်းမည်
                 String pnrCode = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
                 String bookingQuery = "INSERT INTO bookings (pnr_code, flight_id, passenger_id, seat_id, staff_id, total_price, payment_method, status, booking_date) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
