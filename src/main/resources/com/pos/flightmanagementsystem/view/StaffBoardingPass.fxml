@@ -67,7 +67,6 @@
                                                 <Label styleClass="detail-label" text="Payment" />
                                                 <Label fx:id="lblPaymentMethod" styleClass="detail-value" text="CASH" />
                                             </VBox>
-
                                         </GridPane>
                                     </children>
                                 </VBox>
@@ -79,7 +78,15 @@
                                         <StackPane styleClass="qr-box">
                                             <SVGPath content="M2 2h8v8H2V2zm2 2v4h4V4H4zm-2 10h8v8H2v-8zm2 2v4h4v-4H4zM14 2h8v8h-8V2zm2 2v4h4V4h-4zm-2 10h2v2h-2v-2zm4 0h4v2h-4v-2zm-4 4h4v4h-4v-4zm6-2h2v6h-2v-6z" scaleX="3.0" scaleY="3.0" styleClass="qr-glyph" />
                                         </StackPane>
-                                        <SVGPath content="M0,0 h3 v40 h-3 z M5,0 h5 v40 h-5 z M12,0 h2 v40 h-2 z M16,0 h6 v40 h-6 z M24,0 h3 v40 h-3 z M29,0 h5 v40 h-5 z M36,0 h2 v40 h-2 z M40,0 h6 v40 h-6 z M48,0 h3 v40 h-3 z M53,0 h4 v40 h-4 z M59,0 h2 v40 h-2 z M63,0 h5 v40 h-5 z" scaleX="1.5" styleClass="barcode-glyph" />
+
+                                        <!-- 🌟 Barcode နှင့် Barcode ID ကို တွဲထားရန် VBox အသစ် 🌟 -->
+                                        <VBox alignment="CENTER" spacing="5.0">
+                                            <children>
+                                                <SVGPath content="M0,0 h3 v40 h-3 z M5,0 h5 v40 h-5 z M12,0 h2 v40 h-2 z M16,0 h6 v40 h-6 z M24,0 h3 v40 h-3 z M29,0 h5 v40 h-5 z M36,0 h2 v40 h-2 z M40,0 h6 v40 h-6 z M48,0 h3 v40 h-3 z M53,0 h4 v40 h-4 z M59,0 h2 v40 h-2 z M63,0 h5 v40 h-5 z" scaleX="1.5" styleClass="barcode-glyph" />
+                                                <Label fx:id="lblBarcodeId" style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 11px; -fx-text-fill: #64748B; -fx-letter-spacing: 2px;" text="1234567890" />
+                                            </children>
+                                        </VBox>
+
                                     </children>
                                 </VBox>
                             </children>
@@ -88,10 +95,21 @@
                 </VBox>
 
                 <!-- BUTTONS -->
-                <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                <HBox alignment="CENTER" spacing="15.0">
                     <children>
+                        <!-- Navigation Buttons (Left) -->
+                        <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="15.0" visible="false" managed="false">
+                            <children>
+                                <Button fx:id="btnPrevPass" onAction="#clickPrevPass" styleClass="secondary-button" text="&lt; Prev Pass" />
+                                <Label fx:id="lblPassCount" style="-fx-text-fill: #F59E0B; -fx-font-weight: bold; -fx-font-size: 15px;" text="Pass 1 of 1" />
+                                <Button fx:id="btnNextPass" onAction="#clickNextPass" styleClass="secondary-button" text="Next Pass &gt;" />
+                            </children>
+                        </HBox>
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <!-- Action Buttons (Right) -->
                         <Button onAction="#clickClose" prefWidth="120.0" styleClass="secondary-button" text="Close" />
-                        <!-- 🌟 Download Button ကို ဖြုတ်လိုက်ပါပြီ 🌟 -->
                         <Button onAction="#clickPrint" prefWidth="150.0" styleClass="primary-button" text="Print" />
                     </children>
                 </HBox>

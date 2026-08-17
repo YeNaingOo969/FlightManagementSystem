@@ -28,6 +28,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class AdminBookingManagementController implements Initializable {
@@ -48,8 +49,43 @@ public class AdminBookingManagementController implements Initializable {
         colCustomer.setCellValueFactory(new PropertyValueFactory<>("passenger"));
         colFlight.setCellValueFactory(new PropertyValueFactory<>("route"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
+        // 🌟 Status Column ကို Badge Style ဖြင့် အရောင်ခွဲခြားပြသခြင်း 🌟
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        colStatus.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    Label lblStatus = new Label(status);
+                    String lowerStatus = status.toLowerCase();
+
+                    // Base CSS Style
+                    String baseStyle = "-fx-font-weight: bold; -fx-padding: 6px 12px; -fx-background-radius: 8px; -fx-font-size: 12px;";
+
+                    // Keyword ပေါ်မူတည်၍ အရောင်သတ်မှတ်ခြင်း
+                    if (lowerStatus.contains("confirm") || lowerStatus.contains("success")) {
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #31C4B4; -fx-background-color: rgba(49, 196, 180, 0.15);"); // Green/Teal
+                    } else if (lowerStatus.contains("cancel")) {
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #FF4B72; -fx-background-color: rgba(255, 75, 114, 0.15);"); // Red
+                    } else if (lowerStatus.contains("reschedule")) {
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #3B82F6; -fx-background-color: rgba(59, 130, 246, 0.15);"); // Blue
+                    } else if (lowerStatus.contains("pending")) {
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #F59E0B; -fx-background-color: rgba(245, 158, 11, 0.15);"); // Orange
+                    } else {
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #E2E8F0; -fx-background-color: rgba(226, 232, 240, 0.1);"); // Gray Default
+                    }
+
+                    setGraphic(lblStatus);
+                    setAlignment(Pos.CENTER); // 🌟 အလယ်တည့်တည့်နှင့် စာသားရှိသလောက်သာ Background ယူရန် 🌟
+                }
+            }
+        });
+
+        // 🌟 Action Column အတွက် Cancel ခလုတ် 🌟
         Callback<TableColumn<BookingData, Void>, TableCell<BookingData, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<BookingData, Void> call(final TableColumn<BookingData, Void> param) {
@@ -74,15 +110,10 @@ public class AdminBookingManagementController implements Initializable {
                         } else {
                             BookingData data = getTableView().getItems().get(getIndex());
                             if (data != null) {
-                                // 🌟 Cancel ဖြစ်ပြီးသားဆိုလျှင် ခလုတ်အစား စာသားပြမည် 🌟
-                                if (data.getStatus().equalsIgnoreCase("Cancelled")) {
-                                    Label lblCancelled = new Label("Cancelled");
-                                    lblCancelled.setStyle("-fx-text-fill: #EF4444; -fx-font-weight: bold;");
-                                    setGraphic(lblCancelled);
-                                } else if (data.getStatus().equalsIgnoreCase("Cancel Pending")) {
-                                    Label lblPending = new Label("Pending Cancel");
-                                    lblPending.setStyle("-fx-text-fill: #F59E0B; -fx-font-weight: bold;");
-                                    setGraphic(lblPending);
+                                if (data.getStatus().toLowerCase().contains("cancel")) {
+                                    Label lblActionStatus = new Label("-");
+                                    lblActionStatus.setStyle("-fx-text-fill: #8B95A5; -fx-font-weight: bold;");
+                                    setGraphic(lblActionStatus);
                                 } else {
                                     setGraphic(btn);
                                 }
@@ -142,7 +173,6 @@ public class AdminBookingManagementController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/AdminCancelBookingReason.fxml"));
             Parent modalView = loader.load();
 
-            // Dynamic Theme လိုက်ပြောင်းရန်
             if (rootStackPane.getStylesheets() != null && !rootStackPane.getStylesheets().isEmpty()) {
                 String currentMainStyle = rootStackPane.getStylesheets().get(0);
                 modalView.getStylesheets().clear();
@@ -163,11 +193,10 @@ public class AdminBookingManagementController implements Initializable {
 
             AdminCancelBookingReasonController controller = loader.getController();
 
-            // 🌟 Callbacks သတ်မှတ်ခြင်း 🌟
             controller.setCallbacks(
                     (reason) -> {
-                        processAdminCancellation(data, reason); // DB Update လုပ်မည်
-                        closeModal(overlay, mainContent);       // Modal ပိတ်မည်
+                        processAdminCancellation(data, reason);
+                        closeModal(overlay, mainContent);
                     },
                     () -> closeModal(overlay, mainContent)
             );
@@ -206,7 +235,6 @@ public class AdminBookingManagementController implements Initializable {
     private void processAdminCancellation(BookingData data, String reason) {
         int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
 
-        // Admin Cancel ဖြစ်သောကြောင့် Status ကို 'Cancelled by Admin' ဟု သိမ်းပါမည်
         String insertRequestQuery = "INSERT INTO requests (booking_id, admin_id, reason, status) VALUES (?, ?, ?, 'Cancelled by Admin')";
         String updateBookingQuery = "UPDATE bookings SET status = 'Cancelled' WHERE booking_id = ?";
 
@@ -215,13 +243,11 @@ public class AdminBookingManagementController implements Initializable {
             try (PreparedStatement insertStmt = conn.prepareStatement(insertRequestQuery);
                  PreparedStatement updateStmt = conn.prepareStatement(updateBookingQuery)) {
 
-                // 1. Insert into requests table
                 insertStmt.setInt(1, data.getDbId());
                 insertStmt.setInt(2, adminId);
                 insertStmt.setString(3, reason);
                 insertStmt.executeUpdate();
 
-                // 2. Update bookings table
                 updateStmt.setInt(1, data.getDbId());
                 updateStmt.executeUpdate();
 
@@ -233,11 +259,25 @@ public class AdminBookingManagementController implements Initializable {
                 conn.setAutoCommit(true);
             }
 
-            // Table တွင် ချက်ချင်း Update ပြရန်
+            insertLog(adminId, "Cancelled booking PNR: " + data.getPnrCode() + " (Reason: " + reason + ")");
+
             data.setStatus("Cancelled");
             bookingTable.refresh();
 
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            if (userId > 0) pstmt.setInt(1, userId);
+            else pstmt.setNull(1, java.sql.Types.INTEGER);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -262,7 +302,7 @@ public class AdminBookingManagementController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 Booking Data Model
+    // 🌟 Booking Data Model 🌟
     // ==========================================
     public static class BookingData {
         private int dbId;

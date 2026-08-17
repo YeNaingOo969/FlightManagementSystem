@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<!-- 🌟 Stylesheet နာမည်တွင် Dark.css ဟု သေချာချိတ်ဆက်ထားပါသည် 🌟 -->
 <StackPane fx:id="rootStackPane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffPassengerDetailsDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffPassengerDetailsController">
     <children>
         <VBox fx:id="mainContainer" prefHeight="680.0" prefWidth="980.0" spacing="25.0" styleClass="main-content-vbox">
@@ -33,7 +32,7 @@
                         <VBox alignment="CENTER_LEFT" spacing="4.0">
                             <children>
                                 <Label styleClass="header-title-label" text="Passenger Details" />
-                                <Label styleClass="header-subtitle-label" text="Enter the primary passenger's contact and personal information" />
+                                <Label styleClass="header-subtitle-label" text="Enter contact and personal information" />
                             </children>
                         </VBox>
                     </children>
@@ -46,9 +45,13 @@
                         <!-- LEFT Column: Passenger Information Form Card -->
                         <VBox spacing="25.0" styleClass="layout-card, form-card" HBox.hgrow="ALWAYS">
                             <children>
-                                <Label styleClass="section-title" text="Passenger Information" />
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="section-title" text="Passenger Information" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <!-- 🌟 "Passenger 1 of 3" ဆိုပြီး ပြမည့်နေရာ 🌟 -->
+                                    <Label fx:id="lblPassengerIndex" style="-fx-text-fill: #F59E0B; -fx-font-size: 16px; -fx-font-weight: bold;" text="Passenger 1 of 1" />
+                                </HBox>
 
-                                <!-- Row 1 -->
                                 <HBox spacing="20.0">
                                     <children>
                                         <VBox prefWidth="150.0" spacing="8.0">
@@ -66,13 +69,12 @@
                                     </children>
                                 </HBox>
 
-                                <!-- Row 2 -->
                                 <HBox spacing="20.0">
                                     <children>
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Label styleClass="input-label" text="NRC / Passport No." />
-                                                <TextField fx:id="txtNrcPassport" promptText="Enter NRC or Passport" styleClass="custom-input" />
+                                                <Label styleClass="input-label" text="Nationality" />
+                                                <ComboBox fx:id="cmbNationality" maxWidth="Infinity" promptText="Select Nationality" styleClass="custom-input" />
                                             </children>
                                         </VBox>
                                         <VBox prefWidth="250.0" spacing="8.0">
@@ -84,13 +86,20 @@
                                     </children>
                                 </HBox>
 
-                                <!-- Row 3 -->
                                 <HBox spacing="20.0">
                                     <children>
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Label styleClass="input-label" text="Nationality" />
-                                                <ComboBox fx:id="cmbNationality" maxWidth="Infinity" promptText="e.g. Myanmar" styleClass="custom-input" />
+                                                <Label fx:id="lblNrcPassport" styleClass="input-label" text="NRC Number" />
+                                                <StackPane alignment="CENTER_LEFT">
+                                                    <HBox fx:id="nrcContainer" spacing="8.0">
+                                                        <ComboBox fx:id="cmbNrcState" prefWidth="80.0" promptText="12/" styleClass="custom-input" />
+                                                        <ComboBox fx:id="cmbNrcTownship" prefWidth="110.0" promptText="MGD" styleClass="custom-input" />
+                                                        <ComboBox fx:id="cmbNrcType" prefWidth="80.0" promptText="(N)" styleClass="custom-input" />
+                                                        <TextField fx:id="txtNrcNumber" promptText="123456" styleClass="custom-input" HBox.hgrow="ALWAYS" />
+                                                    </HBox>
+                                                    <TextField fx:id="txtPassportNo" promptText="Enter Passport Number" styleClass="custom-input" visible="false" />
+                                                </StackPane>
                                             </children>
                                         </VBox>
                                         <VBox prefWidth="250.0" spacing="8.0">
@@ -102,7 +111,6 @@
                                     </children>
                                 </HBox>
 
-                                <!-- Row 4 -->
                                 <HBox spacing="20.0">
                                     <children>
                                         <VBox spacing="8.0" HBox.hgrow="ALWAYS">
@@ -120,7 +128,6 @@
                         <!-- RIGHT Column: Booking Summary & Buttons -->
                         <VBox prefWidth="320.0" spacing="20.0">
                             <children>
-
                                 <VBox spacing="15.0" styleClass="layout-card, summary-card" VBox.vgrow="ALWAYS">
                                     <children>
                                         <Label styleClass="section-title" text="Booking Summary" />
@@ -148,6 +155,12 @@
                                                     <Region HBox.hgrow="ALWAYS" />
                                                     <Label fx:id="lblDeparture" styleClass="summary-value" text="--" />
                                                 </HBox>
+                                                <!-- 🌟 လက်ရှိလူအတွက် Assigned Seat ပြမည့်နေရာ 🌟 -->
+                                                <HBox alignment="CENTER_LEFT">
+                                                    <Label styleClass="summary-label" text="Assigned Seat" />
+                                                    <Region HBox.hgrow="ALWAYS" />
+                                                    <Label fx:id="lblCurrentSeat" styleClass="summary-value" style="-fx-text-fill: #F59E0B;" text="--" />
+                                                </HBox>
                                             </children>
                                         </VBox>
 
@@ -159,14 +172,19 @@
                                             <Region HBox.hgrow="ALWAYS" />
                                             <Label fx:id="lblTotalPrice" styleClass="summary-total-value" text="\$0.00" />
                                         </HBox>
+
+                                        <!-- 🌟 Payment Method Box (နောက်ဆုံးလူမှ ပေါ်မည်) 🌟 -->
+                                        <VBox fx:id="paymentContainer" spacing="8.0" visible="false" managed="false">
+                                            <Label styleClass="summary-label" text="Payment Method" />
+                                            <ComboBox fx:id="cmbPaymentMethod" maxWidth="Infinity" promptText="Select Payment" styleClass="custom-combo-box" />
+                                        </VBox>
                                     </children>
                                 </VBox>
 
-                                <!-- Action Buttons -->
                                 <HBox alignment="CENTER_RIGHT" spacing="15.0">
                                     <children>
-                                        <Button fx:id="btnBack" onAction="#clickBack" prefWidth="120.0" styleClass="secondary-button" text="Back" />
-                                        <Button fx:id="btnContinue" onAction="#clickContinue" prefWidth="180.0" styleClass="gradient-button" text="Continue" />
+                                        <Button fx:id="btnBack" onAction="#clickBack" prefWidth="100.0" styleClass="secondary-button" text="Back" />
+                                        <Button fx:id="btnNext" onAction="#clickNext" prefWidth="180.0" styleClass="gradient-button" text="Next Passenger" />
                                     </children>
                                 </HBox>
 

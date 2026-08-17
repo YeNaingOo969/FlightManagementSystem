@@ -265,6 +265,8 @@ public class AdminAddFlightController implements Initializable {
             double basePrice = Double.parseDouble(txtBasePrice.getText());
             String status = cmbStatus.getValue();
 
+            int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
+
             try (Connection conn = DatabaseConnection.getConnection()) {
                 conn.setAutoCommit(false);
 
@@ -307,7 +309,6 @@ public class AdminAddFlightController implements Initializable {
                                     try (ResultSet generatedKeys = pstmtFlight.getGeneratedKeys()) {
                                         if (generatedKeys.next()) {
                                             int newFlightId = generatedKeys.getInt(1);
-                                            // 🌟 Database ထဲသို့ ထိုင်ခုံများ ပွားထည့်မည် 🌟
                                             generateSeatsForFlight(pstmtSeat, newFlightId, totalSeats);
                                         }
                                     }
@@ -320,6 +321,9 @@ public class AdminAddFlightController implements Initializable {
                                 conn.rollback();
                                 return;
                             }
+
+                            // 🌟 Flight အသစ်များ ထည့်သွင်းကြောင်း Log မှတ်ခြင်း 🌟
+                            insertLog(adminId, "Added new flight schedule: " + flightNumber + " (" + generatedCount + " flights generated)");
                         }
 
                         conn.commit();
@@ -346,6 +350,10 @@ public class AdminAddFlightController implements Initializable {
 
                             pstmt.executeUpdate();
                         }
+
+                        // 🌟 Flight Data Update လုပ်ကြောင်း Log မှတ်ခြင်း 🌟
+                        insertLog(adminId, "Updated flight ID: " + currentFlightId + " (Flight Number: " + flightNumber + ")");
+
                         conn.commit();
                         if (saveCallback != null) saveCallback.accept("Flight updated successfully.");
                     }
@@ -363,11 +371,22 @@ public class AdminAddFlightController implements Initializable {
         }
     }
 
+    // 🌟 System Log ထဲသို့ သိမ်းဆည်းမည့် Method 🌟
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            if (userId > 0) pstmt.setInt(1, userId);
+            else pstmt.setNull(1, java.sql.Types.INTEGER);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
     // =========================================================================
-    // 🌟 SEAT GENERATION LOGIC (4 Columns, 3 Classes) သေချာအောင် ပြန်ပြင်ထားသည် 🌟
+    // 🌟 SEAT GENERATION LOGIC 🌟
     // =========================================================================
     private void generateSeatsForFlight(PreparedStatement pstmtSeat, int flightId, int totalSeats) throws SQLException {
-        // 🌟 E နှင့် F ကို ဖြုတ်ပြီး A, B, C, D လေးတန်းတည်းသာ သတ်မှတ်ထားပါသည် 🌟
         String[] columns = {"A", "B", "C", "D"};
         int seatCount = 0;
         int rowNumber = 1;
@@ -378,12 +397,11 @@ public class AdminAddFlightController implements Initializable {
 
                 String seatNumber = rowNumber + col;
 
-                // 🌟 အလိုအလျောက် Class ခွဲခြားသတ်မှတ်ခြင်း 🌟
-                String seatClass = "Economic"; // Default
+                String seatClass = "Economic";
                 if (rowNumber <= 3) {
-                    seatClass = "Business"; // ရှေ့ ၃ တန်း (၁၂ ခုံ)
+                    seatClass = "Business";
                 } else if (rowNumber <= 8) {
-                    seatClass = "Premium Economic"; // နောက် ၅ တန်း (၂၀ ခုံ)
+                    seatClass = "Premium Economic";
                 }
 
                 pstmtSeat.setInt(1, flightId);
@@ -393,7 +411,7 @@ public class AdminAddFlightController implements Initializable {
 
                 seatCount++;
             }
-            rowNumber++; // နောက်တစ်တန်းသို့ ဆင်းမည်
+            rowNumber++;
         }
         pstmtSeat.executeBatch();
     }
@@ -493,13 +511,10 @@ public class AdminAddFlightController implements Initializable {
         ParallelTransition ptIn = new ParallelTransition(stIn, ftIn, bgFtIn);
         ptIn.play();
 
-        // 🌟 Error ရှင်းသွားစေရန် ဤအပိုင်းကို အစားထိုးပါ 🌟
         StackPane finalWindowRoot = windowRoot;
         Runnable closeAction = () -> {
             ScaleTransition stOut = new ScaleTransition(Duration.millis(200), modalCard);
-            stOut.setToX(0.5);
-            stOut.setToY(0.5);
-            stOut.setInterpolator(Interpolator.EASE_IN);
+            stOut.setToX(0.5); stOut.setToY(0.5); stOut.setInterpolator(Interpolator.EASE_IN);
 
             FadeTransition ftOut = new FadeTransition(Duration.millis(200), modalCard);
             ftOut.setToValue(0);
@@ -509,7 +524,6 @@ public class AdminAddFlightController implements Initializable {
 
             ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
             ptOut.setOnFinished(ev -> {
-                // 🌟 windowRoot အစား finalWindowRoot ကို ပြောင်းသုံးထားပါသည် 🌟
                 finalWindowRoot.getChildren().remove(overlay);
                 rootPane.setEffect(null);
             });

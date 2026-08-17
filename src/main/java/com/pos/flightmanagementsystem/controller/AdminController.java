@@ -61,7 +61,6 @@ public class AdminController implements Initializable {
     @FXML private StackPane themeThumb;
     @FXML private SVGPath themeIcon;
 
-    // 🌟 Notification UI Variables 🌟
     @FXML private Label notificationBadge;
     @FXML private StackPane navNotificationBtn;
     @FXML private StackPane notificationOverlayBg;
@@ -76,7 +75,6 @@ public class AdminController implements Initializable {
     private String loggedInRole = "";
     private String loggedInImagePath = "";
 
-    // 🌟 Noti တစ်ခါကြည့်ပြီးသည်နှင့် Badge ဖျောက်ရန်အတွက် နောက်ဆုံးကြည့်ခဲ့သောအချိန်ကို မှတ်ထားမည့် Variable 🌟
     private LocalDateTime lastViewedTime = null;
 
     private final String MOON_SVG = "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z";
@@ -89,10 +87,8 @@ public class AdminController implements Initializable {
         navButtons = new Button[]{btnDashboard, btnProfile, btnFlightSchedule, btnViewCity, btnBookingManagement, btnViewSaleDetails};
         setActiveButton(btnDashboard);
 
-        // 🌟 1. Login Controller မှ Theme ကို လှမ်းယူပြီး Sync လုပ်ခြင်း 🌟
         this.isDarkMode = !LoginController.isLightMode;
 
-        // 🌟 2. ယူလိုက်သော Theme အတိုင်း Toggle ခလုတ် UI ချက်ချင်း ပြောင်းပေးခြင်း 🌟
         Platform.runLater(() -> {
             if (isDarkMode) {
                 themeThumb.setTranslateX(0);
@@ -108,7 +104,6 @@ public class AdminController implements Initializable {
 
         Platform.runLater(() -> loadPage("AdminDashboard.fxml", false));
 
-        // 🌟 App စဖွင့်ချိန် Notification များကို စစ်ဆေးပါမည်
         fetchNotifications();
     }
 
@@ -134,21 +129,26 @@ public class AdminController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 NOTIFICATION SYSTEM 🌟
+    // 🌟 GROUP NOTIFICATION SYSTEM 🌟
     // ==========================================
     private void fetchNotifications() {
         notificationListContainer.getChildren().clear();
         int unreadCount = 0;
         int totalCount = 0;
 
-        String query = "SELECT r.request_id, r.booking_id, r.reason, r.created_at, b.pnr_code, p.full_name, " +
-                "(SELECT username FROM users WHERE user_id = r.staff_id) AS staff_name " +
+        String query = "SELECT b.pnr_code, r.reason, " +
+                "GROUP_CONCAT(r.request_id) AS request_ids, " +
+                "GROUP_CONCAT(b.booking_id) AS booking_ids, " +
+                "GROUP_CONCAT(p.full_name SEPARATOR ', ') AS passenger_names, " +
+                "MAX(r.created_at) AS max_created_at, " +
+                "(SELECT username FROM users WHERE user_id = MAX(r.staff_id)) AS staff_name " +
                 "FROM requests r " +
                 "JOIN bookings b ON r.booking_id = b.booking_id " +
                 "JOIN passengers p ON b.passenger_id = p.passenger_id " +
                 "WHERE r.status = 'Pending' " +
                 "AND r.created_at >= NOW() - INTERVAL 1 DAY " +
-                "ORDER BY r.created_at DESC";
+                "GROUP BY b.pnr_code, r.reason " +
+                "ORDER BY max_created_at DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
@@ -156,13 +156,13 @@ public class AdminController implements Initializable {
 
             while (rs.next()) {
                 totalCount++;
-                int requestId = rs.getInt("request_id");
-                int bookingId = rs.getInt("booking_id");
+                String requestIds = rs.getString("request_ids");
+                String bookingIds = rs.getString("booking_ids");
                 String pnrCode = rs.getString("pnr_code");
-                String passengerName = rs.getString("full_name");
+                String passengerNames = rs.getString("passenger_names");
                 String reason = rs.getString("reason");
                 String staffName = rs.getString("staff_name");
-                java.sql.Timestamp createdAt = rs.getTimestamp("created_at");
+                java.sql.Timestamp createdAt = rs.getTimestamp("max_created_at");
 
                 if (staffName == null) staffName = "Unknown Staff";
 
@@ -170,7 +170,7 @@ public class AdminController implements Initializable {
                     unreadCount++;
                 }
 
-                VBox requestCard = createNotificationCard(requestId, bookingId, pnrCode, passengerName, reason, staffName);
+                VBox requestCard = createNotificationCard(requestIds, bookingIds, pnrCode, passengerNames, reason, staffName);
                 notificationListContainer.getChildren().add(requestCard);
             }
 
@@ -192,14 +192,17 @@ public class AdminController implements Initializable {
         }
     }
 
-    private VBox createNotificationCard(int requestId, int bookingId, String pnrCode, String passengerName, String reason, String staffName) {
+    private VBox createNotificationCard(String requestIds, String bookingIds, String pnrCode, String passengerNames, String reason, String staffName) {
         VBox card = new VBox(8);
         card.getStyleClass().add("noti-request-card");
 
-        Label lblTitle = new Label("Cancellation Request: " + pnrCode);
+        int paxCount = requestIds.split(",").length;
+        String paxBadge = (paxCount > 1) ? " (" + paxCount + " Pax)" : " (1 Pax)";
+
+        Label lblTitle = new Label("Cancellation Request: " + pnrCode + paxBadge);
         lblTitle.getStyleClass().add("noti-request-title");
 
-        Label lblPassenger = new Label("Passenger: " + passengerName + "   •   Staff: " + staffName);
+        Label lblPassenger = new Label("Passengers: " + passengerNames + "\nStaff: " + staffName);
         lblPassenger.getStyleClass().add("noti-request-subtitle");
 
         Label lblReason = new Label("Reason: " + reason);
@@ -209,11 +212,11 @@ public class AdminController implements Initializable {
         HBox actionBox = new HBox(10);
         Button btnApprove = new Button("Approve");
         btnApprove.getStyleClass().add("noti-btn-approve");
-        btnApprove.setOnAction(e -> handleRequestAction(requestId, bookingId, true));
+        btnApprove.setOnAction(e -> handleRequestAction(requestIds, bookingIds, true, pnrCode));
 
         Button btnReject = new Button("Cancel");
         btnReject.getStyleClass().add("noti-btn-reject");
-        btnReject.setOnAction(e -> handleRequestAction(requestId, bookingId, false));
+        btnReject.setOnAction(e -> handleRequestAction(requestIds, bookingIds, false, pnrCode));
 
         actionBox.getChildren().addAll(btnApprove, btnReject);
         card.getChildren().addAll(lblTitle, lblPassenger, lblReason, actionBox);
@@ -221,7 +224,7 @@ public class AdminController implements Initializable {
         return card;
     }
 
-    private void handleRequestAction(int requestId, int bookingId, boolean isApprove) {
+    private void handleRequestAction(String requestIds, String bookingIds, boolean isApprove, String pnrCode) {
         int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
 
         String reqStatus = isApprove ? "Approved" : "Cancelled";
@@ -230,21 +233,33 @@ public class AdminController implements Initializable {
         String updateReq = "UPDATE requests SET status = ?, admin_id = ? WHERE request_id = ?";
         String updateBooking = "UPDATE bookings SET status = ? WHERE booking_id = ?";
 
+        String[] reqIdArray = requestIds.split(",");
+        String[] bookIdArray = bookingIds.split(",");
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try (PreparedStatement reqStmt = conn.prepareStatement(updateReq);
                  PreparedStatement bookStmt = conn.prepareStatement(updateBooking)) {
 
-                reqStmt.setString(1, reqStatus);
-                reqStmt.setInt(2, adminId);
-                reqStmt.setInt(3, requestId);
-                reqStmt.executeUpdate();
+                for (String rIdStr : reqIdArray) {
+                    reqStmt.setString(1, reqStatus);
+                    reqStmt.setInt(2, adminId);
+                    reqStmt.setInt(3, Integer.parseInt(rIdStr.trim()));
+                    reqStmt.executeUpdate();
+                }
 
-                bookStmt.setString(1, bookingStatus);
-                bookStmt.setInt(2, bookingId);
-                bookStmt.executeUpdate();
+                for (String bIdStr : bookIdArray) {
+                    bookStmt.setString(1, bookingStatus);
+                    bookStmt.setInt(2, Integer.parseInt(bIdStr.trim()));
+                    bookStmt.executeUpdate();
+                }
 
                 conn.commit();
+
+                // 🌟 Admin မှ Request အား အကြောင်းပြန်ကြောင်း System Log သို့ မှတ်တမ်းတင်မည် 🌟
+                String actionStr = isApprove ? "Approved" : "Rejected";
+                insertLog(adminId, actionStr + " cancellation request for PNR: " + pnrCode);
+
             } catch (Exception ex) {
                 conn.rollback();
                 throw ex;
@@ -326,7 +341,6 @@ public class AdminController implements Initializable {
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
 
-            // 🌟 Profile ကိုလည်း Theme အတိုင်း အတိအကျ ပြောင်းပေးမည် 🌟
             applyThemeRecursively(profileRoot);
             profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
 
@@ -408,7 +422,6 @@ public class AdminController implements Initializable {
     public void toggleTheme(MouseEvent event) {
         isDarkMode = !isDarkMode;
 
-        // 🌟 Theme ပြောင်းတိုင်း Global State (LoginController) ကိုပါ အသိပေးမည် 🌟
         LoginController.isLightMode = !isDarkMode;
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb);
@@ -426,7 +439,6 @@ public class AdminController implements Initializable {
         updateTheme();
     }
 
-    // 🌟 File တကယ်ရှိမှသာ Theme ပြောင်းပေးမည့် Safe Logic 🌟
     private void applyThemeRecursively(Parent node) {
         if (node == null) return;
         if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
@@ -473,7 +485,6 @@ public class AdminController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/" + fxmlFileName));
             Parent newView = loader.load();
 
-            // 🌟 Load သွင်းလိုက်သော အလယ်စာမျက်နှာ (Center FXML) ကိုပါ Theme အတိအကျ သွင်းပေးမည် 🌟
             applyThemeRecursively(newView);
 
             if (animate) {
@@ -544,7 +555,6 @@ public class AdminController implements Initializable {
         try {
             LoginController.isFromLogout = true;
 
-            // 🌟 Logout ထွက်ချိန်တွင် Global Theme ကို သေချာ Update ပြန်လုပ်ပေးမည် 🌟
             LoginController.isLightMode = !this.isDarkMode;
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
@@ -556,7 +566,6 @@ public class AdminController implements Initializable {
 
             StackPane transitionWrapper = new StackPane();
 
-            // 🌟 Theme အလိုက် Logout အထွက် Background အရောင်ကို အတိအကျပြောင်းပေးမည် 🌟
             transitionWrapper.setStyle("-fx-background-color: " + (!LoginController.isLightMode ? "#06080D" : "#f4f9f9") + ";");
             transitionWrapper.getChildren().addAll(loginRoot, currentDashboardRoot);
 
