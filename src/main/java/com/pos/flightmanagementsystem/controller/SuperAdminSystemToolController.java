@@ -178,6 +178,22 @@ public class SuperAdminSystemToolController implements Initializable {
     }
 
     // ==========================================
+    // 🌟 SYSTEM LOG LOGIC 🌟
+    // ==========================================
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            if (userId > 0) pstmt.setInt(1, userId);
+            else pstmt.setNull(1, java.sql.Types.INTEGER);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ==========================================
     // CORE EXPORT LOGIC
     // ==========================================
     private void processDatabaseExport(String outputPath, String fileName, String actionType) {
@@ -243,6 +259,20 @@ public class SuperAdminSystemToolController implements Initializable {
                     saveBackupHistory(fileName, fileSize, actionType);
                     loadBackupHistory();
 
+                    // 🌟 ဤနေရာတွင် System Log သို့ မှတ်တမ်းတင်ပါမည် 🌟
+                    int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
+                    String logMessage;
+
+                    if (actionType.equals("Export SQL")) {
+                        logMessage = "Exported database SQL manually: " + fileName;
+                    } else if (actionType.equals("Auto Backup")) {
+                        logMessage = "Triggered manual database backup: " + fileName;
+                    } else {
+                        logMessage = "System performed scheduled backup: " + fileName;
+                    }
+
+                    insertLog(adminId, logMessage);
+
                     showToast("Backup Successful!", "Saved securely at:\n" + outputPath, true);
                 } else {
                     showToast("Backup Failed!", "An error occurred while saving the backup. Check console.", false);
@@ -252,23 +282,21 @@ public class SuperAdminSystemToolController implements Initializable {
     }
 
     // ==========================================
-    // TOAST NOTIFICATION (🌟 ပြင်ဆင်ပြီး)
+    // TOAST NOTIFICATION
     // ==========================================
     private void showToast(String title, String message, boolean isSuccess) {
         lblToastTitle.setText(title);
         lblToastMessage.setText(message);
 
         if (isSuccess) {
-            // အစိမ်းရောင် နောက်ခံ၊ အဖြူရောင် အမှန်ခြစ်
             toastIconBg.setStyle("-fx-background-color: #10B981; -fx-background-radius: 50%; -fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px;");
             toastIconPath.setContent("M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z");
-            toastIconPath.setStyle("-fx-fill: #FFFFFF;"); // 🌟 အဖြူရောင်ပြောင်းပေးခြင်း 🌟
+            toastIconPath.setStyle("-fx-fill: #FFFFFF;");
             notificationToast.setStyle("-fx-border-color: #10B981;");
         } else {
-            // အနီရောင် နောက်ခံ၊ အဖြူရောင် ကြက်ခြေခတ်
             toastIconBg.setStyle("-fx-background-color: #EF4444; -fx-background-radius: 50%; -fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px;");
             toastIconPath.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
-            toastIconPath.setStyle("-fx-fill: #FFFFFF;"); // 🌟 အဖြူရောင်ပြောင်းပေးခြင်း 🌟
+            toastIconPath.setStyle("-fx-fill: #FFFFFF;");
             notificationToast.setStyle("-fx-border-color: #EF4444;");
         }
 

@@ -87,10 +87,8 @@ public class StaffController implements Initializable {
         navButtons = new Button[]{btnDashboard, btnCreateBooking, btnManageBooking, btnViewSchedule};
         setActiveButton(btnDashboard);
 
-        // 🌟 1. Login Controller မှ Theme ကို လှမ်းယူပြီး Sync လုပ်ခြင်း 🌟
         this.isDarkMode = !LoginController.isLightMode;
 
-        // 🌟 2. ယူလိုက်သော Theme အတိုင်း Toggle ခလုတ် UI ချက်ချင်း ပြောင်းပေးခြင်း 🌟
         Platform.runLater(() -> {
             if (isDarkMode) {
                 themeThumb.setTranslateX(0);
@@ -136,7 +134,7 @@ public class StaffController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 NOTIFICATION SYSTEM FOR STAFF 🌟
+    // 🌟 GROUP NOTIFICATION SYSTEM FOR STAFF 🌟
     // ==========================================
     private void fetchNotifications() {
         notificationListContainer.getChildren().clear();
@@ -144,16 +142,20 @@ public class StaffController implements Initializable {
         int totalCount = 0;
         int currentStaffId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
 
-        // 🌟 လွန်ခဲ့သော ၂၄ နာရီအတွင်းက Data များကိုသာ ဆွဲထုတ်မည် (1 Day Refresh) 🌟
-        String query = "SELECT r.status, r.reason, b.pnr_code, p.full_name, r.created_at, " +
-                "(SELECT username FROM users WHERE user_id = r.admin_id) AS admin_name " +
+        // 🌟 PNR Code တူညီသော Record များကို ပေါင်းပြမည့် Query 🌟
+        String query = "SELECT r.status, r.reason, b.pnr_code, " +
+                "GROUP_CONCAT(p.full_name SEPARATOR ', ') AS passenger_names, " +
+                "COUNT(r.request_id) AS pax_count, " +
+                "MAX(r.created_at) AS max_created_at, " +
+                "(SELECT username FROM users WHERE user_id = MAX(r.admin_id)) AS admin_name " +
                 "FROM requests r " +
                 "JOIN bookings b ON r.booking_id = b.booking_id " +
                 "JOIN passengers p ON b.passenger_id = p.passenger_id " +
                 "WHERE (r.staff_id = ? OR b.staff_id = ?) " +
                 "AND r.status IN ('Approved', 'Cancelled', 'Cancelled by Admin') " +
                 "AND r.created_at >= NOW() - INTERVAL 1 DAY " +
-                "ORDER BY r.created_at DESC LIMIT 15";
+                "GROUP BY b.pnr_code, r.status, r.reason " +
+                "ORDER BY max_created_at DESC LIMIT 15";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -167,22 +169,21 @@ public class StaffController implements Initializable {
                 String status = rs.getString("status");
                 String reason = rs.getString("reason");
                 String pnrCode = rs.getString("pnr_code");
-                String passengerName = rs.getString("full_name");
+                String passengerNames = rs.getString("passenger_names");
+                int paxCount = rs.getInt("pax_count");
                 String adminName = rs.getString("admin_name");
-                java.sql.Timestamp createdAt = rs.getTimestamp("created_at");
+                java.sql.Timestamp createdAt = rs.getTimestamp("max_created_at");
 
                 if(adminName == null) adminName = "Admin";
 
-                // 🌟 နောက်ဆုံးကြည့်ခဲ့သည့် အချိန်ထက် နောက်ကျမှ ဝင်လာသော Noti အသစ်များကိုသာ အရေအတွက် (Badge) တွင် ရေတွက်မည် 🌟
                 if (lastViewedTime == null || (createdAt != null && createdAt.toLocalDateTime().isAfter(lastViewedTime))) {
                     unreadCount++;
                 }
 
-                VBox card = createNotificationCard(status, pnrCode, passengerName, reason, adminName);
+                VBox card = createNotificationCard(status, pnrCode, passengerNames, paxCount, reason, adminName);
                 notificationListContainer.getChildren().add(card);
             }
 
-            // Update Badge Count (Unread အသစ်ရှိမှသာ ပြမည်)
             if (unreadCount > 0) {
                 notificationBadge.setText(String.valueOf(unreadCount));
                 notificationBadge.setVisible(true);
@@ -190,7 +191,6 @@ public class StaffController implements Initializable {
                 notificationBadge.setVisible(false);
             }
 
-            // Noti လုံးဝမရှိလျှင် ပြသမည့်စာ
             if (totalCount == 0) {
                 Label emptyLabel = new Label("No recent notifications in the last 24 hours.");
                 emptyLabel.setStyle("-fx-text-fill: #94A3B8; -fx-padding: 20; -fx-font-style: italic;");
@@ -202,32 +202,36 @@ public class StaffController implements Initializable {
         }
     }
 
-    private VBox createNotificationCard(String status, String pnrCode, String passengerName, String reason, String adminName) {
+    private VBox createNotificationCard(String status, String pnrCode, String passengerNames, int paxCount, String reason, String adminName) {
         VBox card = new VBox(8);
         card.getStyleClass().add("noti-request-card");
 
         Label lblTitle = new Label();
         lblTitle.getStyleClass().add("noti-request-title");
 
-        Label lblSubtitle = new Label("Passenger: " + passengerName);
+        Label lblSubtitle = new Label("Passengers: " + passengerNames);
         lblSubtitle.getStyleClass().add("noti-request-subtitle");
+        lblSubtitle.setWrapText(true);
 
         Label lblMessage = new Label();
         lblMessage.getStyleClass().add("noti-request-reason");
         lblMessage.setWrapText(true);
 
+        // 🌟 ခရီးသည် အရေအတွက်ကို တွက်ချက်ပြသမည် 🌟
+        String paxBadge = (paxCount > 1) ? " (" + paxCount + " Pax)" : " (1 Pax)";
+
         if (status.equals("Approved")) {
-            lblTitle.setText("Cancellation Approved");
+            lblTitle.setText("Cancellation Approved" + paxBadge);
             lblTitle.setStyle("-fx-text-fill: #10B981;");
             lblMessage.setText(adminName + " approved your cancellation request for " + pnrCode + ".");
             lblMessage.setStyle("-fx-text-fill: #9CA3AF;");
         } else if (status.equals("Cancelled")) {
-            lblTitle.setText("Cancellation Rejected");
+            lblTitle.setText("Cancellation Rejected" + paxBadge);
             lblTitle.setStyle("-fx-text-fill: #EF4444;");
             lblMessage.setText(adminName + " rejected your cancellation request for " + pnrCode + ". Booking remains active.");
             lblMessage.setStyle("-fx-text-fill: #9CA3AF;");
         } else if (status.equals("Cancelled by Admin")) {
-            lblTitle.setText("Booking Cancelled by Admin");
+            lblTitle.setText("Booking Cancelled by Admin" + paxBadge);
             lblTitle.setStyle("-fx-text-fill: #F59E0B;");
             lblMessage.setText(adminName + " directly cancelled " + pnrCode + ".\nReason: " + (reason != null ? reason : "No reason provided"));
             lblMessage.setStyle("-fx-text-fill: #F59E0B;");
@@ -241,7 +245,6 @@ public class StaffController implements Initializable {
     void openNotificationPopup(MouseEvent event) {
         if (isNotificationOpen) return;
 
-        // 🌟 ဖွင့်ကြည့်လိုက်ပြီ ဖြစ်သောကြောင့် လက်ရှိအချိန်ကို မှတ်ထားပြီး Badge ကို ဖျောက်ပါမည် 🌟
         lastViewedTime = LocalDateTime.now();
         notificationBadge.setVisible(false);
 
@@ -298,7 +301,6 @@ public class StaffController implements Initializable {
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
 
-            // 🌟 Profile ကိုလည်း Theme အတိုင်း အတိအကျ ပြောင်းပေးမည် 🌟
             applyThemeRecursively(profileRoot);
             profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
 
@@ -370,7 +372,6 @@ public class StaffController implements Initializable {
     public void toggleTheme(MouseEvent event) {
         isDarkMode = !isDarkMode;
 
-        // 🌟 Theme ပြောင်းတိုင်း Global State (LoginController) ကိုပါ အသိပေးမည် 🌟
         LoginController.isLightMode = !isDarkMode;
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb);
@@ -380,7 +381,6 @@ public class StaffController implements Initializable {
         updateTheme();
     }
 
-    // 🌟 File တကယ်ရှိမှသာ Theme ပြောင်းပေးမည့် Safe Logic 🌟
     private void applyThemeRecursively(Parent node) {
         if (node == null) return;
         if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
@@ -425,7 +425,6 @@ public class StaffController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent newView = loader.load();
 
-            // 🌟 Load သွင်းလိုက်သော အလယ်စာမျက်နှာ (Center FXML) ကိုပါ Theme အတိအကျ သွင်းပေးမည် 🌟
             applyThemeRecursively(newView);
 
             if (animate) {
@@ -499,8 +498,6 @@ public class StaffController implements Initializable {
 
         try {
             LoginController.isFromLogout = true;
-
-            // 🌟 Logout ထွက်ချိန်တွင် Global Theme ကို သေချာ Update ပြန်လုပ်ပေးမည် 🌟
             LoginController.isLightMode = !this.isDarkMode;
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));
@@ -511,8 +508,6 @@ public class StaffController implements Initializable {
             Parent currentDashboardRoot = scene.getRoot();
 
             StackPane transitionWrapper = new StackPane();
-
-            // 🌟 Theme အလိုက် Logout အထွက် Background အရောင်ကို အတိအကျပြောင်းပေးမည် 🌟
             transitionWrapper.setStyle("-fx-background-color: " + (!LoginController.isLightMode ? "#06080D" : "#f4f9f9") + ";");
             transitionWrapper.getChildren().addAll(loginRoot, currentDashboardRoot);
 

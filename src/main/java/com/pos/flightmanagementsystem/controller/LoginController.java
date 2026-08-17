@@ -37,6 +37,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Properties;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -47,6 +50,12 @@ public class LoginController implements Initializable {
     public static boolean isFromLogout = false;
 
     public static boolean isLightMode = false;
+
+    private final int MAX_ATTEMPTS = 3;
+
+    // 🌟 OTP Expiration နှင့် Rate Limiting အတွက် 🌟
+    private LocalDateTime otpGeneratedTime = null;
+    private LocalDateTime lastOtpRequestTime = null;
 
     @FXML private StackPane animationContainer;
     @FXML private Circle orbitPath;
@@ -175,6 +184,23 @@ public class LoginController implements Initializable {
                 createTwinklingStars();
                 createRadarPulse();
             }
+        }
+    }
+
+    // 🌟 Password Hashing Method 🌟
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to hash password", ex);
         }
     }
 
@@ -315,12 +341,12 @@ public class LoginController implements Initializable {
             return;
         }
 
-        String query = "SELECT user_id, role, image_path, status FROM users WHERE username = ? AND password = ?";
+        // 🌟 Username ကိုသာ အရင်ရှာပြီး Database Persistent Lock ကို စစ်ဆေးပါမည် 🌟
+        String query = "SELECT user_id, role, image_path, status, password, failed_attempts FROM users WHERE username = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, username);
-            pstmt.setString(2, password);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -328,43 +354,78 @@ public class LoginController implements Initializable {
                 String role = rs.getString("role");
                 String imagePath = rs.getString("image_path");
                 String status = rs.getString("status");
+                String dbPassword = rs.getString("password");
+                int dbFailedAttempts = rs.getInt("failed_attempts");
 
+                // Account Inactive စစ်ဆေးခြင်း
                 if (status == null || !status.equalsIgnoreCase("Active")) {
                     insertLog(userId, "Failed Login: Account Inactive");
                     showAlert(Alert.AlertType.ERROR, "Account Suspended", "Your account is currently inactive.\nPlease contact the administrator.");
                     return;
                 }
 
-                loggedInUser = new com.pos.flightmanagementsystem.model.User();
-                loggedInUser.setUserId(userId);
-                loggedInUser.setRole(role);
-                insertLog(userId, "Login Successful");
+                // 🌟 Persistent Database Lock Check 🌟
+                if (dbFailedAttempts >= MAX_ATTEMPTS) {
+                    showAlert(Alert.AlertType.ERROR, "Account Locked", "You have exceeded the maximum login attempts. Please click 'Forgot Password' to reset your password.");
+                    switchSection(emailRequestSection);
+                    return;
+                }
 
-                Stage stage = (Stage) txtUsername.getScene().getWindow();
+                // 🌟 Hashed Password တိုက်စစ်ခြင်း 🌟
+                String hashedInputPassword = hashPassword(password);
 
-                if (role.equalsIgnoreCase("Super Admin") || role.equalsIgnoreCase("superadmin")) {
-                    loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml", username, role, imagePath);
-                } else if (role.equalsIgnoreCase("Admin")) {
-                    loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/Admin.fxml", username, role, imagePath);
-                } else if (role.equalsIgnoreCase("Staff")) {
-                    loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/Staff.fxml", username, role, imagePath);
+                if (hashedInputPassword.equals(dbPassword)) {
+                    // Password မှန်သွားလျှင် Failed Attempts ကို Database တွင် Reset လုပ်မည်
+                    updateFailedAttempts(conn, username, 0);
+
+                    loggedInUser = new com.pos.flightmanagementsystem.model.User();
+                    loggedInUser.setUserId(userId);
+                    loggedInUser.setRole(role);
+                    insertLog(userId, "Login Successful");
+
+                    Stage stage = (Stage) txtUsername.getScene().getWindow();
+
+                    if (role.equalsIgnoreCase("Super Admin") || role.equalsIgnoreCase("superadmin")) {
+                        loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/SuperAdmin.fxml", username, role, imagePath);
+                    } else if (role.equalsIgnoreCase("Admin")) {
+                        loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/Admin.fxml", username, role, imagePath);
+                    } else if (role.equalsIgnoreCase("Staff")) {
+                        loadDashboardWithSmoothAnimation(stage, "/com/pos/flightmanagementsystem/view/Staff.fxml", username, role, imagePath);
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
+                    }
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
+                    // Password မှားသွားလျှင် Database ထဲ၌ Failed Attempts တိုးမည်
+                    int newAttempts = dbFailedAttempts + 1;
+                    updateFailedAttempts(conn, username, newAttempts);
+
+                    if (newAttempts >= MAX_ATTEMPTS) {
+                        insertLog(userId, "Failed to login 3 times. Account locked. SSPR required.");
+                        showAlert(Alert.AlertType.ERROR, "Account Locked", "You have entered the wrong password 3 times. For security reasons, please reset your password via email.");
+                        switchSection(emailRequestSection);
+                    } else {
+                        int attemptsLeft = MAX_ATTEMPTS - newAttempts;
+                        insertLog(userId, "Login Failed (" + newAttempts + "/3 attempts)");
+                        showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.\nYou have " + attemptsLeft + " attempt(s) left.");
+                    }
                 }
             } else {
-                int failedUserId = 0;
-                String checkUserQuery = "SELECT user_id FROM users WHERE username = ?";
-                try (PreparedStatement checkStmt = conn.prepareStatement(checkUserQuery)) {
-                    checkStmt.setString(1, username);
-                    ResultSet checkRs = checkStmt.executeQuery();
-                    if (checkRs.next()) failedUserId = checkRs.getInt("user_id");
-                }
-                insertLog(failedUserId, "Login Failed");
+                // Username မရှိလျှင် (Generic Message ပြမည်)
+                insertLog(0, "Login Failed: Unknown username attempt");
                 showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to connect to the database.");
+        }
+    }
+
+    private void updateFailedAttempts(Connection conn, String username, int attempts) throws SQLException {
+        String updateQuery = "UPDATE users SET failed_attempts = ? WHERE username = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+            pstmt.setInt(1, attempts);
+            pstmt.setString(2, username);
+            pstmt.executeUpdate();
         }
     }
 
@@ -379,7 +440,6 @@ public class LoginController implements Initializable {
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    // 🌟 CSS ဖိုင်များကို သေချာစစ်ဆေးပြီးမှသာ အစားထိုးပေးမည့် Safety Method 🌟
     private void applyThemeRecursively(Parent node, boolean lightMode) {
         if (node == null) return;
         if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
@@ -415,7 +475,6 @@ public class LoginController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent dashboardRoot = loader.load();
 
-            // Safety Check ဖြင့် Theme များကို ချိန်းပေးမည် (Dashboard မပျက်စီးစေရန်)
             applyThemeRecursively(dashboardRoot, isLightMode);
 
             Object controller = loader.getController();
@@ -488,17 +547,30 @@ public class LoginController implements Initializable {
         if (targetEmail.isEmpty() || !targetEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Please enter a valid email address."); return;
         }
+
+        // 🌟 OTP Rate Limiting Check (၁ မိနစ်အတွင်း တစ်ကြိမ်သာ) 🌟
+        if (lastOtpRequestTime != null && java.time.Duration.between(lastOtpRequestTime, LocalDateTime.now()).getSeconds() < 60) {
+            statusLabel.setTextFill(Color.web("#FF4B72"));
+            statusLabel.setText("Please wait 60 seconds before requesting another OTP.");
+            return;
+        }
+
         statusLabel.setTextFill(Color.web(isLightMode ? "#0097a7" : "#31C4B4")); statusLabel.setText("Sending OTP... Please wait.");
         sendButton.setDisable(true);
+
         generatedOTP = String.format("%06d", new Random().nextInt(999999));
+        lastOtpRequestTime = LocalDateTime.now();
+        otpGeneratedTime = LocalDateTime.now();
 
         new Thread(() -> {
             boolean isSent = sendEmail(targetEmail, generatedOTP);
             Platform.runLater(() -> {
                 sendButton.setDisable(false);
                 if (isSent) {
-                    statusLabel.setTextFill(Color.web("#10B981")); statusLabel.setText("OTP sent successfully to your email."); switchSection(otpSection);
+                    statusLabel.setTextFill(Color.web("#10B981")); statusLabel.setText("OTP sent successfully. Valid for 5 minutes."); switchSection(otpSection);
                 } else {
+                    // Failed to send, reset timer to allow immediate retry
+                    lastOtpRequestTime = null;
                     statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Failed to send OTP. Check your connection.");
                 }
             });
@@ -509,6 +581,13 @@ public class LoginController implements Initializable {
     void handleVerifyOTP(ActionEvent event) {
         String enteredOTP = otp1.getText() + otp2.getText() + otp3.getText() + otp4.getText() + otp5.getText() + otp6.getText();
         if (enteredOTP.length() < 6) { statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Please enter the complete 6-digit OTP."); return; }
+
+        // 🌟 OTP Expiration Check (၅ မိနစ် ကျော်လွန်သွားပါက Invalid ဖြစ်မည်) 🌟
+        if (otpGeneratedTime == null || java.time.Duration.between(otpGeneratedTime, LocalDateTime.now()).toMinutes() > 5) {
+            statusLabel.setTextFill(Color.web("#FF4B72"));
+            statusLabel.setText("Your OTP has expired. Please request a new one.");
+            return;
+        }
 
         if (enteredOTP.equals(generatedOTP)) {
             statusLabel.setTextFill(Color.web("#10B981")); statusLabel.setText("OTP Verified Successfully!");
@@ -527,9 +606,14 @@ public class LoginController implements Initializable {
         if (newPassword.isEmpty() || confirmPassword.isEmpty()) { showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in both password fields."); return; }
         if (!newPassword.equals(confirmPassword)) { showAlert(Alert.AlertType.ERROR, "Password Mismatch", "The new passwords do not match."); return; }
 
-        String updateQuery = "UPDATE users SET password = ? WHERE email = ?";
+        // 🌟 New Password ကို Encrypt ပြုလုပ်ပြီးမှ သိမ်းမည်၊ ထို့ပြင် Database Persistent Lock ကို ပြန်ဖွင့်ပေးမည် 🌟
+        String hashedNewPassword = hashPassword(newPassword);
+        String updateQuery = "UPDATE users SET password = ?, failed_attempts = 0, locked_until = NULL WHERE email = ?";
+
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
-            pstmt.setString(1, newPassword); pstmt.setString(2, targetEmail);
+            pstmt.setString(1, hashedNewPassword);
+            pstmt.setString(2, targetEmail);
+
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
                 txtNewPasswordHidden.clear(); txtNewPasswordVisible.clear(); txtConfirmPasswordHidden.clear(); txtConfirmPasswordVisible.clear(); emailField.clear();

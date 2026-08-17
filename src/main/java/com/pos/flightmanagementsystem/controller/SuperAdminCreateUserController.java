@@ -38,8 +38,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
@@ -56,7 +59,7 @@ public class SuperAdminCreateUserController implements Initializable {
     @FXML private Button btnCancel;
 
     private Runnable cancelAnimationAction;
-    private Runnable successAction; // 🌟 Toast ပြရန် Callback
+    private Runnable successAction;
     private File selectedImageFile;
 
     private boolean isPasswordVisible = false;
@@ -71,6 +74,23 @@ public class SuperAdminCreateUserController implements Initializable {
         profileImageView.setClip(clip);
 
         txtPasswordVisible.textProperty().bindBidirectional(txtPassword.textProperty());
+    }
+
+    // 🌟 Password Hashing Method (SHA-256) 🌟
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to hash password", ex);
+        }
     }
 
     @FXML
@@ -95,7 +115,6 @@ public class SuperAdminCreateUserController implements Initializable {
         this.cancelAnimationAction = cancelAnimationAction;
     }
 
-    // 🌟 Parent မှ Callback ချိတ်ဆက်ရန် Method
     public void setSuccessAction(Runnable successAction) {
         this.successAction = successAction;
     }
@@ -126,8 +145,8 @@ public class SuperAdminCreateUserController implements Initializable {
 
     @FXML
     void saveUser(ActionEvent event) {
-        String username = txtUsername.getText();
-        String email = txtEmail.getText();
+        String username = txtUsername.getText().trim();
+        String email = txtEmail.getText().trim();
         String password = txtPassword.getText();
         String role = comboRole.getValue();
 
@@ -139,7 +158,26 @@ public class SuperAdminCreateUserController implements Initializable {
         String dbRole = role.toLowerCase();
         String imageFileNameForDB = null;
 
-        try {
+        // 🌟 Encrypt Password 🌟
+        String hashedPassword = hashPassword(password);
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            if (conn == null) {
+                showWarningModal("Database Error", "Failed to connect to the database.", true);
+                return;
+            }
+
+            String checkQuery = "SELECT COUNT(*) FROM users WHERE username = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+                checkStmt.setString(1, username);
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        showWarningModal("Duplicate Username", "The username '" + username + "' is already taken. Please choose another.", false);
+                        return;
+                    }
+                }
+            }
+
             if (selectedImageFile != null) {
                 String destDirPath = "src/main/resources/com/pos/flightmanagementsystem/image/";
                 File destDir = new File(destDirPath);
@@ -158,30 +196,26 @@ public class SuperAdminCreateUserController implements Initializable {
                 imageFileNameForDB = newFileName;
             }
 
-            String sql = "INSERT INTO users (username, email, password, role, image_path) VALUES (?, ?, ?, ?, ?)";
-
-            Connection conn = DatabaseConnection.getConnection();
-            if (conn != null) {
-                PreparedStatement pstmt = conn.prepareStatement(sql);
+            String sql = "INSERT INTO users (username, email, password, role, image_path, failed_attempts) VALUES (?, ?, ?, ?, ?, 0)";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, username);
                 pstmt.setString(2, email.isEmpty() ? null : email);
-                pstmt.setString(3, password);
+                pstmt.setString(3, hashedPassword); // 🌟 Hashed Password သိမ်းမည် 🌟
                 pstmt.setString(4, dbRole);
                 pstmt.setString(5, imageFileNameForDB);
 
                 int rowsInserted = pstmt.executeUpdate();
                 if (rowsInserted > 0) {
-                    // 🌟 Default Alert အစား Custom Toast ကို Parent တွင် ပြသရန် Callback ကိုခေါ်ပါသည်
+                    // 🌟 Admin မှ User အသစ် Create လုပ်ကြောင်း Log မှတ်ခြင်း 🌟
+                    int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
+                    insertLog(adminId, "Created new user account: " + username + " (" + dbRole + ")");
+
                     if (successAction != null) {
                         successAction.run();
                     } else if (cancelAnimationAction != null) {
                         cancelAnimationAction.run();
                     }
                 }
-
-                pstmt.close();
-            } else {
-                showWarningModal("Database Error", "Failed to connect to the database.", true);
             }
 
         } catch (IOException e) {
@@ -193,13 +227,21 @@ public class SuperAdminCreateUserController implements Initializable {
         }
     }
 
-    // =========================================================================
-    // 🌟 CUSTOM WARNING/ERROR MODAL (ANIMATED & BLURRED BACKGROUND) 🌟
-    // =========================================================================
+    // 🌟 System Log ထဲသို့ သိမ်းဆည်းမည့် Method 🌟
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            if (userId > 0) pstmt.setInt(1, userId);
+            else pstmt.setNull(1, java.sql.Types.INTEGER);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
     private void showWarningModal(String title, String message, boolean isError) {
         StackPane windowRoot = null;
 
-        // Scene Root ကို ရှာဖွေခြင်း
         if (btnCancel.getScene() != null && btnCancel.getScene().getRoot() instanceof StackPane) {
             windowRoot = (StackPane) btnCancel.getScene().getRoot();
         } else {
@@ -217,7 +259,6 @@ public class SuperAdminCreateUserController implements Initializable {
         StackPane overlay = new StackPane();
         overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
 
-        // အနောက်ခံကို ဝါးသွားစေရန် Effect ထည့်ခြင်း
         Node mainContent = windowRoot.getChildren().get(0);
         BoxBlur blur = new BoxBlur(8, 8, 3);
         mainContent.setEffect(blur);
@@ -279,7 +320,6 @@ public class SuperAdminCreateUserController implements Initializable {
         overlay.getChildren().add(modalCard);
         windowRoot.getChildren().add(overlay);
 
-        // Animation (Pop-up Effect)
         modalCard.setScaleX(0.5);
         modalCard.setScaleY(0.5);
         modalCard.setOpacity(0);
@@ -311,7 +351,7 @@ public class SuperAdminCreateUserController implements Initializable {
             ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
             ptOut.setOnFinished(ev -> {
                 finalWindowRoot.getChildren().remove(overlay);
-                mainContent.setEffect(null); // ဝါးနေသော Background ကို ပြန်ရှင်းပါမည်
+                mainContent.setEffect(null);
             });
             ptOut.play();
         };
