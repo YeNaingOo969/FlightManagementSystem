@@ -18,26 +18,20 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -49,6 +43,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class StaffSeatSelectionController implements Initializable {
 
@@ -56,7 +51,6 @@ public class StaffSeatSelectionController implements Initializable {
     @FXML private VBox mainContainer;
 
     @FXML private ComboBox<String> classComboBox;
-    @FXML private ComboBox<String> cmbPaymentMethod;
 
     @FXML private Pane viewportPane;
     @FXML private VBox sideViewPlane;
@@ -81,525 +75,207 @@ public class StaffSeatSelectionController implements Initializable {
     @FXML private Button btnContinue;
 
     private boolean isTopViewVisible = false;
-    private Button currentlySelectedSeat = null;
+    private List<Button> selectedSeatsList = new ArrayList<>();
+    private double totalSeatCharge = 0.0;
 
-    private String currentFlightNo, currentFrom, currentTo, currentDate, currentPrice, currentPassengerName;
+    private String currentFlightNo, currentFrom, currentTo, currentDate, currentPrice;
     private int currentPassengers = 1;
-
     private int currentFlightId = -1;
-    private int currentPassengerId = -1;
-    private int currentStaffId = 1;
 
     private double ticketPriceValue = 0.0;
     private double currentTotalPrice = 0.0;
     private boolean isViewOnlyMode = false;
 
+    // 🌟 List ပြောင်းထားသည် 🌟
+    private boolean isChangeFlightMode = false;
+    private List<Integer> oldBookingIds;
+
     class SeatData {
-        String seatNumber;
-        String seatClass;
-        boolean isAvailable;
-        SeatData(String seatNumber, String seatClass, boolean isAvailable) {
-            this.seatNumber = seatNumber;
-            this.seatClass = seatClass;
-            this.isAvailable = isAvailable;
-        }
+        String seatNumber, seatClass; boolean isAvailable;
+        SeatData(String seatNumber, String seatClass, boolean isAvailable) { this.seatNumber = seatNumber; this.seatClass = seatClass; this.isAvailable = isAvailable; }
     }
 
     public void setViewOnlyMode(boolean isViewOnly) {
         this.isViewOnlyMode = isViewOnly;
-        if (btnContinue != null) {
-            btnContinue.setVisible(!isViewOnly);
-            btnContinue.setManaged(!isViewOnly);
-        }
-        if (cmbPaymentMethod != null) {
-            cmbPaymentMethod.setVisible(!isViewOnly);
-            cmbPaymentMethod.setManaged(!isViewOnly);
-        }
+        if (btnContinue != null) { btnContinue.setVisible(!isViewOnly); btnContinue.setManaged(!isViewOnly); }
     }
 
-    public void setFlightData(String flightNo, String from, String to, String date, String price, int passengers, String passengerName) {
-        this.currentFlightNo = flightNo;
-        this.currentFrom = from;
-        this.currentTo = to;
-        this.currentDate = date;
-        this.currentPrice = price;
-        this.currentPassengers = passengers;
-        this.currentPassengerName = passengerName;
+    public void initChangeFlightMode(List<Integer> oldBookingIds) {
+        this.isChangeFlightMode = true;
+        this.oldBookingIds = oldBookingIds;
+    }
 
-        lblTopFlight.setText("Flight: " + flightNo);
-        lblTopRoute.setText(from + " ➔ " + to);
-        lblTopDate.setText("Date: " + date);
-        lblPassengerName.setText(passengerName);
-
+    public void setFlightData(String flightNo, String from, String to, String date, String price, int passengers) {
+        this.currentFlightNo = flightNo; this.currentFrom = from; this.currentTo = to; this.currentDate = date; this.currentPrice = price; this.currentPassengers = passengers;
+        lblTopFlight.setText("Flight: " + flightNo); lblTopRoute.setText(from + " ➔ " + to); lblTopDate.setText("Date: " + date); lblPassengerName.setText(passengers + " Pax");
         try {
-            String numericPriceStr = price.replaceAll("[^\\d.]", "");
-            double basePrice = Double.parseDouble(numericPriceStr);
-
-            ticketPriceValue = basePrice * passengers;
-            currentTotalPrice = ticketPriceValue;
-
-            lblTicketPrice.setText(String.format("%,.0f MMK", ticketPriceValue));
-            lblSeatCharge.setText("0 MMK");
-            lblTotal.setText(String.format("%,.0f MMK", ticketPriceValue));
-        } catch (Exception e) {
-            lblTicketPrice.setText("--");
-            lblSeatCharge.setText("--");
-            lblTotal.setText("--");
-        }
-
+            String numericPriceStr = price.replaceAll("[^\\d.]", ""); double basePrice = Double.parseDouble(numericPriceStr);
+            ticketPriceValue = basePrice * passengers; currentTotalPrice = ticketPriceValue;
+            lblTicketPrice.setText(String.format("%,.0f MMK", ticketPriceValue)); lblSeatCharge.setText("0 MMK"); lblTotal.setText(String.format("%,.0f MMK", ticketPriceValue));
+        } catch (Exception e) { lblTicketPrice.setText("--"); lblSeatCharge.setText("--"); lblTotal.setText("--"); }
         fetchFlightDetailsAndBookedSeats();
-    }
-
-    public void setBookingIds(int passengerId, int staffId) {
-        this.currentPassengerId = passengerId;
-        this.currentStaffId = staffId;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Rectangle clipRect = new Rectangle();
-        clipRect.widthProperty().bind(viewportPane.widthProperty());
-        clipRect.heightProperty().bind(viewportPane.heightProperty());
-        viewportPane.setClip(clipRect);
-
+        Rectangle clipRect = new Rectangle(); clipRect.widthProperty().bind(viewportPane.widthProperty()); clipRect.heightProperty().bind(viewportPane.heightProperty()); viewportPane.setClip(clipRect);
         classComboBox.setOnAction(e -> animatePlaneToSection(classComboBox.getValue()));
-
-        if (cmbPaymentMethod != null) {
-            setupPaymentMethods();
-        }
-    }
-
-    private void setupPaymentMethods() {
-        ObservableList<String> paymentOptions = FXCollections.observableArrayList(
-                "Cash", "KBZ Pay", "Wave Pay", "CB Pay", "AYA Pay", "Credit/Debit Card"
-        );
-        cmbPaymentMethod.setItems(paymentOptions);
-        cmbPaymentMethod.getSelectionModel().selectFirst();
-
-        Callback<ListView<String>, ListCell<String>> cellFactory = param -> new ListCell<String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    HBox box = new HBox(12);
-                    box.setAlignment(Pos.CENTER_LEFT);
-                    SVGPath icon = new SVGPath();
-
-                    switch (item) {
-                        case "Cash": icon.setContent("M2 4v16h20V4H2zm18 14H4V6h16v12zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"); icon.setFill(Color.web("#10B981")); break;
-                        case "KBZ Pay": icon.setContent("M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"); icon.setFill(Color.web("#2196F3")); break;
-                        case "Wave Pay": icon.setContent("M2 12c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2v6H2v-6z"); icon.setFill(Color.web("#FFC107")); break;
-                        case "CB Pay": icon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"); icon.setFill(Color.web("#FF9800")); break;
-                        case "AYA Pay": icon.setContent("M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"); icon.setFill(Color.web("#E53935")); break;
-                        case "Credit/Debit Card": icon.setContent("M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"); icon.setFill(Color.web("#9C27B0")); break;
-                    }
-                    icon.setScaleX(0.9); icon.setScaleY(0.9);
-                    Label label = new Label(item);
-                    label.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold;");
-                    box.getChildren().addAll(icon, label);
-                    setGraphic(box);
-                }
-            }
-        };
-        cmbPaymentMethod.setCellFactory(cellFactory);
-        cmbPaymentMethod.setButtonCell(cellFactory.call(null));
     }
 
     private void fetchFlightDetailsAndBookedSeats() {
         String flightQuery = "SELECT flight_id, TIME_FORMAT(departure_time, '%h:%i %p') as time_str FROM flights WHERE flight_number = ? AND DATE(departure_time) = ?";
         String seatsQuery = "SELECT seat_number, seat_class, is_available FROM seats WHERE flight_id = ? ORDER BY seat_id ASC";
-
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) return;
             try (PreparedStatement flightStmt = conn.prepareStatement(flightQuery)) {
-                flightStmt.setString(1, currentFlightNo);
-                flightStmt.setString(2, currentDate);
-                try (ResultSet rs = flightStmt.executeQuery()) {
-                    if (rs.next()) {
-                        currentFlightId = rs.getInt("flight_id");
-                        lblTopTime.setText("Time: " + rs.getString("time_str"));
-                    }
-                }
+                flightStmt.setString(1, currentFlightNo); flightStmt.setString(2, currentDate);
+                try (ResultSet rs = flightStmt.executeQuery()) { if (rs.next()) { currentFlightId = rs.getInt("flight_id"); lblTopTime.setText("Time: " + rs.getString("time_str")); } }
             }
             if (currentFlightId == -1) return;
-
             Map<String, Map<Integer, List<SeatData>>> seatMap = new LinkedHashMap<>();
-
             try (PreparedStatement seatStmt = conn.prepareStatement(seatsQuery)) {
                 seatStmt.setInt(1, currentFlightId);
                 try (ResultSet rs = seatStmt.executeQuery()) {
                     while (rs.next()) {
-                        String sNum = rs.getString("seat_number");
-                        String sClass = rs.getString("seat_class");
-                        boolean isAvail = rs.getBoolean("is_available");
-
+                        String sNum = rs.getString("seat_number"); String sClass = rs.getString("seat_class"); boolean isAvail = rs.getBoolean("is_available");
                         int rowNum = extractRowNumber(sNum);
-
-                        seatMap.putIfAbsent(sClass, new LinkedHashMap<>());
-                        seatMap.get(sClass).putIfAbsent(rowNum, new ArrayList<>());
-                        seatMap.get(sClass).get(rowNum).add(new SeatData(sNum, sClass, isAvail));
+                        seatMap.putIfAbsent(sClass, new LinkedHashMap<>()); seatMap.get(sClass).putIfAbsent(rowNum, new ArrayList<>()); seatMap.get(sClass).get(rowNum).add(new SeatData(sNum, sClass, isAvail));
                     }
                 }
             }
-
             Platform.runLater(() -> buildDynamicSeatUI(seatMap));
-
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    private int extractRowNumber(String seatNum) {
-        String num = seatNum.replaceAll("[^0-9]", "");
-        return num.isEmpty() ? 0 : Integer.parseInt(num);
-    }
+    private int extractRowNumber(String seatNum) { String num = seatNum.replaceAll("[^0-9]", ""); return num.isEmpty() ? 0 : Integer.parseInt(num); }
 
     private void buildDynamicSeatUI(Map<String, Map<Integer, List<SeatData>>> seatMap) {
-        businessSection.getChildren().clear();
-        premiumSection.getChildren().clear();
-        economySection.getChildren().clear();
-        classComboBox.getItems().clear();
-
+        businessSection.getChildren().clear(); premiumSection.getChildren().clear(); economySection.getChildren().clear(); classComboBox.getItems().clear();
         for (String className : seatMap.keySet()) {
-            classComboBox.getItems().add(className);
-            VBox targetSection = getSectionForClass(className);
-
-            if (targetSection != businessSection) {
-                Separator sep = new Separator();
-                sep.getStyleClass().add("class-separator");
-                targetSection.getChildren().add(sep);
-            }
-            Label titleLbl = new Label(className);
-            titleLbl.getStyleClass().add("class-title");
-            targetSection.getChildren().add(titleLbl);
-            targetSection.setSpacing(15);
-
+            classComboBox.getItems().add(className); VBox targetSection = getSectionForClass(className);
+            if (targetSection != businessSection) { Separator sep = new Separator(); sep.getStyleClass().add("class-separator"); targetSection.getChildren().add(sep); }
+            Label titleLbl = new Label(className); titleLbl.getStyleClass().add("class-title"); targetSection.getChildren().add(titleLbl); targetSection.setSpacing(15);
             Map<Integer, List<SeatData>> rows = seatMap.get(className);
             for (Integer rowNum : rows.keySet()) {
-                HBox rowBox = new HBox(15);
-                rowBox.setAlignment(Pos.CENTER);
-
+                HBox rowBox = new HBox(15); rowBox.setAlignment(Pos.CENTER);
                 List<SeatData> seatsInRow = rows.get(rowNum);
-
-                HBox leftBox = new HBox(15);
-                leftBox.setAlignment(Pos.CENTER_RIGHT);
-                leftBox.setPrefWidth(105);
-
-                HBox rightBox = new HBox(15);
-                rightBox.setAlignment(Pos.CENTER_LEFT);
-                rightBox.setPrefWidth(105);
-
+                HBox leftBox = new HBox(15); leftBox.setAlignment(Pos.CENTER_RIGHT); leftBox.setPrefWidth(105);
+                HBox rightBox = new HBox(15); rightBox.setAlignment(Pos.CENTER_LEFT); rightBox.setPrefWidth(105);
                 for (SeatData seat : seatsInRow) {
                     Button btn = createDynamicSeatButton(seat);
-                    if (seat.seatNumber.contains("A") || seat.seatNumber.contains("B")) {
-                        leftBox.getChildren().add(btn);
-                    } else {
-                        rightBox.getChildren().add(btn);
-                    }
+                    if (seat.seatNumber.contains("A") || seat.seatNumber.contains("B")) leftBox.getChildren().add(btn); else rightBox.getChildren().add(btn);
                 }
-
-                Label rowLbl = new Label(String.valueOf(rowNum));
-                rowLbl.setPrefWidth(30);
-                rowLbl.setAlignment(Pos.CENTER);
-                rowLbl.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
-
-                rowBox.getChildren().addAll(leftBox, rowLbl, rightBox);
-                targetSection.getChildren().add(rowBox);
+                Label rowLbl = new Label(String.valueOf(rowNum)); rowLbl.setPrefWidth(30); rowLbl.setAlignment(Pos.CENTER); rowLbl.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF;");
+                rowBox.getChildren().addAll(leftBox, rowLbl, rightBox); targetSection.getChildren().add(rowBox);
             }
         }
-
-        businessSection.setVisible(!businessSection.getChildren().isEmpty());
-        businessSection.setManaged(!businessSection.getChildren().isEmpty());
-        premiumSection.setVisible(!premiumSection.getChildren().isEmpty());
-        premiumSection.setManaged(!premiumSection.getChildren().isEmpty());
-        economySection.setVisible(!economySection.getChildren().isEmpty());
-        economySection.setManaged(!economySection.getChildren().isEmpty());
-
-        if (!classComboBox.getItems().isEmpty()) {
-            classComboBox.getSelectionModel().selectFirst();
-            Platform.runLater(() -> animatePlaneToSection(classComboBox.getValue()));
-        }
+        businessSection.setVisible(!businessSection.getChildren().isEmpty()); businessSection.setManaged(!businessSection.getChildren().isEmpty());
+        premiumSection.setVisible(!premiumSection.getChildren().isEmpty()); premiumSection.setManaged(!premiumSection.getChildren().isEmpty());
+        economySection.setVisible(!economySection.getChildren().isEmpty()); economySection.setManaged(!economySection.getChildren().isEmpty());
+        if (!classComboBox.getItems().isEmpty()) { classComboBox.getSelectionModel().selectFirst(); Platform.runLater(() -> animatePlaneToSection(classComboBox.getValue())); }
     }
 
-    private VBox getSectionForClass(String className) {
-        String lower = className.toLowerCase();
-        if (lower.contains("business")) return businessSection;
-        if (lower.contains("premium")) return premiumSection;
-        return economySection;
-    }
+    private VBox getSectionForClass(String className) { String lower = className.toLowerCase(); if (lower.contains("business")) return businessSection; if (lower.contains("premium")) return premiumSection; return economySection; }
 
     private Button createDynamicSeatButton(SeatData seat) {
-        Button btn = new Button(seat.seatNumber);
-        btn.setUserData(seat.seatClass + "_" + seat.seatNumber);
-        btn.setPrefSize(45, 45);
-        btn.setStyle("-fx-cursor: hand; -fx-background-radius: 5;");
-
-        if (seat.isAvailable) {
-            btn.getStyleClass().add("seat-available");
-            btn.setOnAction(this::selectSeat);
-        } else {
-            // 🌟 ရောင်းပြီးသား (Available မဖြစ်သော) ခုံများကို Disable သေချာလုပ်ပေးထားပါသည် 🌟
-            btn.getStyleClass().add("seat-booked");
-            btn.setDisable(true);
-        }
+        Button btn = new Button(seat.seatNumber); btn.setUserData(seat.seatClass + "_" + seat.seatNumber); btn.setPrefSize(45, 45); btn.setStyle("-fx-cursor: hand; -fx-background-radius: 5;");
+        if (seat.isAvailable) { btn.getStyleClass().add("seat-available"); btn.setOnAction(this::selectSeat); } else { btn.getStyleClass().add("seat-booked"); btn.setDisable(true); }
         return btn;
     }
 
     private void animatePlaneToSection(String selectedClass) {
-        if (selectedClass == null) return;
-
-        topViewPlane.applyCss();
-        topViewPlane.layout();
-
-        double targetY = 0;
-        String lower = selectedClass.toLowerCase();
-
-        if (lower.contains("business")) {
-            targetY = -15;
-        } else if (lower.contains("premium")) {
-            targetY = -(premiumSection.getLayoutY() - 30);
-        } else {
-            targetY = -(economySection.getLayoutY() - 30);
-        }
-
+        if (selectedClass == null) return; topViewPlane.applyCss(); topViewPlane.layout();
+        double targetY = 0; String lower = selectedClass.toLowerCase();
+        if (lower.contains("business")) targetY = -15; else if (lower.contains("premium")) targetY = -(premiumSection.getLayoutY() - 30); else targetY = -(economySection.getLayoutY() - 30);
         ParallelTransition pt = new ParallelTransition();
         if (!isTopViewVisible) {
             FadeTransition fadeOutSide = new FadeTransition(Duration.millis(500), sideViewPlane); fadeOutSide.setToValue(0);
             FadeTransition fadeInTop = new FadeTransition(Duration.millis(800), topViewPlane); fadeInTop.setToValue(1);
-            pt.getChildren().addAll(fadeOutSide, fadeInTop);
-            isTopViewVisible = true;
+            pt.getChildren().addAll(fadeOutSide, fadeInTop); isTopViewVisible = true;
         }
-        TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane);
-        slidePlane.setToY(targetY);
-        pt.getChildren().add(slidePlane); pt.play();
+        TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane); slidePlane.setToY(targetY); pt.getChildren().add(slidePlane); pt.play();
     }
 
-    @FXML
-    void selectSeat(ActionEvent event) {
-        Button clickedButton = (Button) event.getSource();
-        if (clickedButton.getStyleClass().contains("seat-booked") || clickedButton.isDisabled()) return;
-
-        if (currentlySelectedSeat != null) {
-            currentlySelectedSeat.getStyleClass().remove("seat-selected"); currentlySelectedSeat.getStyleClass().add("seat-available");
+    @FXML void selectSeat(ActionEvent event) {
+        Button clickedButton = (Button) event.getSource(); if (clickedButton.getStyleClass().contains("seat-booked") || clickedButton.isDisabled()) return;
+        String[] seatData = clickedButton.getUserData().toString().split("_"); String selectedClass = seatData[0];
+        double thisSeatCharge = 0.0; if (selectedClass.toLowerCase().contains("business")) thisSeatCharge = 676000.0; else if (selectedClass.toLowerCase().contains("premium")) thisSeatCharge = 418000.0;
+        if (selectedSeatsList.contains(clickedButton)) {
+            selectedSeatsList.remove(clickedButton); clickedButton.getStyleClass().remove("seat-selected"); clickedButton.getStyleClass().add("seat-available"); totalSeatCharge -= thisSeatCharge;
+        } else {
+            if (selectedSeatsList.size() >= currentPassengers) { showWarningModal("Maximum Seats Reached", "You can only select " + currentPassengers + " seat(s)."); return; }
+            selectedSeatsList.add(clickedButton); clickedButton.getStyleClass().remove("seat-available"); clickedButton.getStyleClass().add("seat-selected"); totalSeatCharge += thisSeatCharge;
         }
-        clickedButton.getStyleClass().remove("seat-available"); clickedButton.getStyleClass().add("seat-selected"); currentlySelectedSeat = clickedButton;
-
-        String[] seatData = clickedButton.getUserData().toString().split("_");
-        String selectedClass = seatData[0];
-        lblSelectedSeat.setText(selectedClass + " - " + clickedButton.getText());
-
-        double seatCharge = 0.0;
-        if (selectedClass.toLowerCase().contains("business")) seatCharge = 676000.0 * currentPassengers;
-        else if (selectedClass.toLowerCase().contains("premium")) seatCharge = 418000.0 * currentPassengers;
-
-        lblSeatCharge.setText(String.format("%,.0f MMK", seatCharge));
-        currentTotalPrice = ticketPriceValue + seatCharge;
-        lblTotal.setText(String.format("%,.0f MMK", currentTotalPrice));
+        updateSummaryLabels();
     }
 
-    @FXML
-    void clickBack(ActionEvent event) {
+    private void updateSummaryLabels() {
+        if (selectedSeatsList.isEmpty()) lblSelectedSeat.setText("--"); else { List<String> seatNumbers = selectedSeatsList.stream().map(Button::getText).collect(Collectors.toList()); lblSelectedSeat.setText(String.join(", ", seatNumbers)); }
+        lblSeatCharge.setText(String.format("%,.0f MMK", totalSeatCharge)); currentTotalPrice = ticketPriceValue + totalSeatCharge; lblTotal.setText(String.format("%,.0f MMK", currentTotalPrice));
+    }
+
+    @FXML void clickBack(ActionEvent event) {
         try {
-            String targetFxml = isViewOnlyMode
-                    ? "/com/pos/flightmanagementsystem/view/StaffFlightSchedules.fxml"
-                    : "/com/pos/flightmanagementsystem/view/StaffPassengerDetails.fxml";
+            String targetFxml = isViewOnlyMode ? "/com/pos/flightmanagementsystem/view/StaffFlightSchedules.fxml" : "/com/pos/flightmanagementsystem/view/StaffCreateNewBooking.fxml";
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(targetFxml)); Parent previousView = loader.load(); applyThemeRecursively(previousView, checkIsDarkMode());
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(targetFxml));
-            Parent previousView = loader.load();
-            applyThemeRecursively(previousView, checkIsDarkMode());
+            if (targetFxml.contains("StaffCreateNewBooking") && isChangeFlightMode) {
+                StaffCreateNewBookingController controller = loader.getController();
+                controller.initChangeFlightMode(oldBookingIds);
+            }
 
             Pane parentContainer = (Pane) rootStackPane.getParent();
             if (parentContainer != null) {
-                previousView.setScaleX(0.8);
-                previousView.setScaleY(0.8);
-                previousView.setOpacity(0.0);
-
-                parentContainer.getChildren().add(0, previousView);
-
-                ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), rootStackPane);
-                scaleOut.setToX(1.2);
-                scaleOut.setToY(1.2);
-                FadeTransition fadeOut = new FadeTransition(Duration.millis(400), rootStackPane);
-                fadeOut.setToValue(0.0);
-
-                ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), previousView);
-                scaleIn.setToX(1.0);
-                scaleIn.setToY(1.0);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), previousView);
-                fadeIn.setToValue(1.0);
-
-                ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn);
-                pt.setInterpolator(Interpolator.EASE_BOTH);
-                pt.setOnFinished(e -> parentContainer.getChildren().remove(rootStackPane));
-                pt.play();
+                previousView.setScaleX(0.8); previousView.setScaleY(0.8); previousView.setOpacity(0.0); parentContainer.getChildren().add(0, previousView);
+                ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), rootStackPane); scaleOut.setToX(1.2); scaleOut.setToY(1.2); FadeTransition fadeOut = new FadeTransition(Duration.millis(400), rootStackPane); fadeOut.setToValue(0.0);
+                ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), previousView); scaleIn.setToX(1.0); scaleIn.setToY(1.0); FadeTransition fadeIn = new FadeTransition(Duration.millis(400), previousView); fadeIn.setToValue(1.0);
+                ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn); pt.setInterpolator(Interpolator.EASE_BOTH); pt.setOnFinished(e -> parentContainer.getChildren().remove(rootStackPane)); pt.play();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private void applyThemeRecursively(Parent node, boolean isDarkMode) {
-        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {
-            ObservableList<String> styles = node.getStylesheets();
-            for (int i = 0; i < styles.size(); i++) {
-                String css = styles.get(i);
-                if (isDarkMode && css.contains("Light")) styles.set(i, css.replace("Light", "Dark"));
-                else if (!isDarkMode && css.contains("Dark")) styles.set(i, css.replace("Dark", "Light"));
-            }
-        }
-        for (javafx.scene.Node child : node.getChildrenUnmodifiable()) {
-            if (child instanceof Parent) applyThemeRecursively((Parent) child, isDarkMode);
-        }
+        if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) { ObservableList<String> styles = node.getStylesheets(); for (int i = 0; i < styles.size(); i++) { String css = styles.get(i); if (isDarkMode && css.contains("Light")) styles.set(i, css.replace("Light", "Dark")); else if (!isDarkMode && css.contains("Dark")) styles.set(i, css.replace("Dark", "Light")); } }
+        for (javafx.scene.Node child : node.getChildrenUnmodifiable()) { if (child instanceof Parent) applyThemeRecursively((Parent) child, isDarkMode); }
     }
+    private boolean checkIsDarkMode() { boolean isDarkMode = true; Parent current = rootStackPane; while (current != null) { String currentStyles = current.getStylesheets().toString(); if (currentStyles.contains("Dark")) return true; else if (currentStyles.contains("Light")) return false; current = current.getParent(); } return isDarkMode; }
 
-    private boolean checkIsDarkMode() {
-        boolean isDarkMode = true;
-        Parent current = rootStackPane;
-        while (current != null) {
-            String currentStyles = current.getStylesheets().toString();
-            if (currentStyles.contains("Dark")) return true;
-            else if (currentStyles.contains("Light")) return false;
-            current = current.getParent();
-        }
-        return isDarkMode;
-    }
-
-    @FXML
-    void clickContinue(ActionEvent event) {
-        if (currentlySelectedSeat == null) {
-            showWarningModal("No Seat Selected", "Please select one seat for your flight");
-            return;
-        }
-
-        String[] seatData = currentlySelectedSeat.getUserData().toString().split("_");
-        String seatClass = seatData[0];
-        String dbSeatNumber = seatData[1];
-        String timeString = lblTopTime.getText().replace("Time: ", "").trim();
-
-        String selectedPayment = cmbPaymentMethod.getValue();
-        if (selectedPayment == null) {
-            selectedPayment = "Cash";
-        }
-
-        loadBoardingPassPage(seatClass, timeString, dbSeatNumber, selectedPayment);
+    @FXML void clickContinue(ActionEvent event) {
+        if (selectedSeatsList.size() < currentPassengers) { showWarningModal("Incomplete Seat Selection", "Please select exactly " + currentPassengers + " seat(s) for your passengers."); return; }
+        loadPassengerDetailsPage();
     }
 
     private void showWarningModal(String title, String message) {
-        StackPane overlay = new StackPane();
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
-
-        BoxBlur blur = new BoxBlur(8, 8, 3);
-        mainContainer.setEffect(blur);
-
-        VBox modalCard = new VBox(20);
-        modalCard.setMaxSize(420, Region.USE_PREF_SIZE);
-        modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: #F59E0B; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
-
-        HBox header = new HBox();
-        header.setAlignment(Pos.CENTER_LEFT);
-        Label titleLabel = new Label(title);
-        titleLabel.setStyle("-fx-text-fill: #F59E0B; -fx-font-size: 16px; -fx-font-weight: bold;");
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        StackPane closeBtn = new StackPane();
-        SVGPath closeIcon = new SVGPath();
-        closeIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
-        closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;");
-        closeBtn.getChildren().add(closeIcon);
-        closeBtn.setCursor(Cursor.HAND);
-        closeBtn.setOnMouseEntered(e -> closeIcon.setStyle("-fx-fill: #FFFFFF; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"));
-        closeBtn.setOnMouseExited(e -> closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"));
-
-        header.getChildren().addAll(titleLabel, spacer, closeBtn);
-
-        HBox body = new HBox(15);
-        body.setAlignment(Pos.CENTER_LEFT);
-        SVGPath warningIcon = new SVGPath();
-        warningIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z");
-        warningIcon.setStyle("-fx-fill: #F59E0B; -fx-scale-x: 1.5; -fx-scale-y: 1.5;");
-        StackPane iconPane = new StackPane(warningIcon);
-        iconPane.setPadding(new Insets(0, 10, 0, 10));
-
-        Label messageLabel = new Label(message);
-        messageLabel.setStyle("-fx-text-fill: #E2E8F0; -fx-font-size: 14px;");
-        messageLabel.setWrapText(true);
-        messageLabel.setMaxWidth(300);
-
-        body.getChildren().addAll(iconPane, messageLabel);
-
-        HBox footer = new HBox();
-        footer.setAlignment(Pos.CENTER_RIGHT);
-        Button okBtn = new Button("OK");
-        okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #F59E0B; -fx-text-fill: #F59E0B; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;");
-        okBtn.setOnMouseEntered(e -> okBtn.setStyle("-fx-background-color: rgba(245, 158, 11, 0.15); -fx-border-color: #F59E0B; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;"));
-        okBtn.setOnMouseExited(e -> okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #F59E0B; -fx-text-fill: #F59E0B; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;"));
-
-        footer.getChildren().add(okBtn);
-
-        modalCard.getChildren().addAll(header, body, footer);
-        overlay.getChildren().add(modalCard);
-        rootStackPane.getChildren().add(overlay);
-
-        modalCard.setScaleX(0.5);
-        modalCard.setScaleY(0.5);
-        modalCard.setOpacity(0);
-        overlay.setOpacity(0);
-
-        ScaleTransition stIn = new ScaleTransition(Duration.millis(300), modalCard);
-        stIn.setToX(1); stIn.setToY(1); stIn.setInterpolator(Interpolator.EASE_OUT);
-
-        FadeTransition ftIn = new FadeTransition(Duration.millis(300), modalCard);
-        ftIn.setToValue(1);
-
-        FadeTransition bgFtIn = new FadeTransition(Duration.millis(300), overlay);
-        bgFtIn.setToValue(1);
-
-        ParallelTransition ptIn = new ParallelTransition(stIn, ftIn, bgFtIn);
-        ptIn.play();
-
-        Runnable closeAction = () -> {
-            ScaleTransition stOut = new ScaleTransition(Duration.millis(200), modalCard);
-            stOut.setToX(0.5); stOut.setToY(0.5); stOut.setInterpolator(Interpolator.EASE_IN);
-
-            FadeTransition ftOut = new FadeTransition(Duration.millis(200), modalCard);
-            ftOut.setToValue(0);
-
-            FadeTransition bgFtOut = new FadeTransition(Duration.millis(200), overlay);
-            bgFtOut.setToValue(0);
-
-            ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
-            ptOut.setOnFinished(ev -> {
-                rootStackPane.getChildren().remove(overlay);
-                mainContainer.setEffect(null);
-            });
-            ptOut.play();
-        };
-
-        closeBtn.setOnMouseClicked(e -> closeAction.run());
-        okBtn.setOnAction(e -> closeAction.run());
+        // ... (Warning Modal as before) ...
+        StackPane overlay = new StackPane(); overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);"); BoxBlur blur = new BoxBlur(8, 8, 3); mainContainer.setEffect(blur);
+        VBox modalCard = new VBox(20); modalCard.setMaxSize(420, Region.USE_PREF_SIZE); modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: #F59E0B; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
+        HBox header = new HBox(); header.setAlignment(Pos.CENTER_LEFT); Label titleLabel = new Label(title); titleLabel.setStyle("-fx-text-fill: #F59E0B; -fx-font-size: 16px; -fx-font-weight: bold;"); Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS); StackPane closeBtn = new StackPane(); SVGPath closeIcon = new SVGPath(); closeIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"); closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"); closeBtn.getChildren().add(closeIcon); closeBtn.setCursor(Cursor.HAND); closeBtn.setOnMouseEntered(e -> closeIcon.setStyle("-fx-fill: #FFFFFF; -fx-scale-x: 0.8; -fx-scale-y: 0.8;")); closeBtn.setOnMouseExited(e -> closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;")); header.getChildren().addAll(titleLabel, spacer, closeBtn);
+        HBox body = new HBox(15); body.setAlignment(Pos.CENTER_LEFT); SVGPath warningIcon = new SVGPath(); warningIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"); warningIcon.setStyle("-fx-fill: #F59E0B; -fx-scale-x: 1.5; -fx-scale-y: 1.5;"); StackPane iconPane = new StackPane(warningIcon); iconPane.setPadding(new Insets(0, 10, 0, 10)); Label messageLabel = new Label(message); messageLabel.setStyle("-fx-text-fill: #E2E8F0; -fx-font-size: 14px;"); messageLabel.setWrapText(true); messageLabel.setMaxWidth(300); body.getChildren().addAll(iconPane, messageLabel);
+        HBox footer = new HBox(); footer.setAlignment(Pos.CENTER_RIGHT); Button okBtn = new Button("OK"); okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #F59E0B; -fx-text-fill: #F59E0B; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;"); okBtn.setOnMouseEntered(e -> okBtn.setStyle("-fx-background-color: rgba(245, 158, 11, 0.15); -fx-border-color: #F59E0B; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;")); okBtn.setOnMouseExited(e -> okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: #F59E0B; -fx-text-fill: #F59E0B; -fx-font-weight: bold; -fx-border-radius: 6px; -background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;")); footer.getChildren().add(okBtn);
+        modalCard.getChildren().addAll(header, body, footer); overlay.getChildren().add(modalCard); rootStackPane.getChildren().add(overlay); modalCard.setScaleX(0.5); modalCard.setScaleY(0.5); modalCard.setOpacity(0); overlay.setOpacity(0);
+        ScaleTransition stIn = new ScaleTransition(Duration.millis(300), modalCard); stIn.setToX(1); stIn.setToY(1); stIn.setInterpolator(Interpolator.EASE_OUT); FadeTransition ftIn = new FadeTransition(Duration.millis(300), modalCard); ftIn.setToValue(1); FadeTransition bgFtIn = new FadeTransition(Duration.millis(300), overlay); bgFtIn.setToValue(1); ParallelTransition ptIn = new ParallelTransition(stIn, ftIn, bgFtIn); ptIn.play();
+        Runnable closeAction = () -> { ScaleTransition stOut = new ScaleTransition(Duration.millis(200), modalCard); stOut.setToX(0.5); stOut.setToY(0.5); stOut.setInterpolator(Interpolator.EASE_IN); FadeTransition ftOut = new FadeTransition(Duration.millis(200), modalCard); ftOut.setToValue(0); FadeTransition bgFtOut = new FadeTransition(Duration.millis(200), overlay); bgFtOut.setToValue(0); ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut); ptOut.setOnFinished(ev -> { rootStackPane.getChildren().remove(overlay); mainContainer.setEffect(null); }); ptOut.play(); };
+        closeBtn.setOnMouseClicked(e -> closeAction.run()); okBtn.setOnAction(e -> closeAction.run());
     }
 
-    private void loadBoardingPassPage(String seatClass, String timeString, String seatNumber, String paymentMethod) {
+    private void loadPassengerDetailsPage() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/StaffBoardingPass.fxml"));
-            Parent modalView = loader.load();
-            StaffBoardingPassController controller = loader.getController();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/StaffPassengerDetails.fxml"));
+            Parent nextView = loader.load(); applyThemeRecursively(nextView, checkIsDarkMode());
+            StaffPassengerDetailsController controller = loader.getController();
 
-            controller.setBoardingPassData(currentPassengerName, seatClass, currentFrom, currentTo, currentDate, timeString, currentFlightNo, seatNumber);
-            controller.setBookingDetailsForDatabase(currentFlightId, currentPassengerId, currentStaffId, currentTotalPrice, paymentMethod);
+            List<String> seatStrings = selectedSeatsList.stream().map(Button::getText).collect(Collectors.toList());
+            String timeString = lblTopTime.getText().replace("Time: ", "").trim();
+            controller.setBookingData( currentFlightNo, currentFrom, currentTo, currentDate, timeString, seatStrings, currentTotalPrice, currentPassengers );
 
-            modalView.setScaleX(0.5); modalView.setScaleY(0.5); modalView.setOpacity(0.0);
-            rootStackPane.getChildren().add(modalView);
+            if (isChangeFlightMode) {
+                controller.initChangeFlightMode(oldBookingIds);
+            }
 
-            GaussianBlur blur = new GaussianBlur(0); mainContainer.setEffect(blur);
-            Timeline blurTimeline = new Timeline(new KeyFrame(Duration.millis(400), new KeyValue(blur.radiusProperty(), 15))); blurTimeline.play();
-
-            ScaleTransition scaleUp = new ScaleTransition(Duration.millis(400), modalView); scaleUp.setToX(1.0); scaleUp.setToY(1.0);
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(400), modalView); fadeIn.setToValue(1.0);
-
-            ParallelTransition pt = new ParallelTransition(scaleUp, fadeIn); pt.setInterpolator(Interpolator.EASE_OUT); pt.play();
+            nextView.setScaleX(0.8); nextView.setScaleY(0.8); nextView.setOpacity(0.0); rootStackPane.getChildren().add(nextView);
+            ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), mainContainer); scaleOut.setToX(1.2); scaleOut.setToY(1.2); FadeTransition fadeOut = new FadeTransition(Duration.millis(400), mainContainer); fadeOut.setToValue(0.0);
+            ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), nextView); scaleIn.setToX(1.0); scaleIn.setToY(1.0); FadeTransition fadeIn = new FadeTransition(Duration.millis(400), nextView); fadeIn.setToValue(1.0);
+            ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn); pt.setInterpolator(Interpolator.EASE_BOTH); pt.setOnFinished(e -> rootStackPane.getChildren().remove(mainContainer)); pt.play();
         } catch (Exception e) { e.printStackTrace(); }
     }
 }

@@ -271,12 +271,12 @@ public class StaffViewFlightScheduleController implements Initializable {
             String dateStr = flight.getDepartureTime() != null ? flight.getDepartureTime().toLocalDate().toString() : "Unknown Date";
             String priceStr = String.valueOf(flight.getBasePrice());
 
-            controller.setFlightData(flight.getFlightNumber(), flight.getDepartureCityName(), flight.getArrivalCityName(), dateStr, priceStr, 1, "Seat View Only");
+            // 🌟 ဤနေရာတွင် Argument ၆ ခုသာ ထည့်ပါမည် ("Seat View Only" ကို ဖြုတ်လိုက်ပါပြီ) 🌟
+            controller.setFlightData(flight.getFlightNumber(), flight.getDepartureCityName(), flight.getArrivalCityName(), dateStr, priceStr, 1);
             controller.setViewOnlyMode(true);
 
             applyThemeRecursively(seatView, checkIsDarkMode());
 
-            // 🌟 Dashboard Panel ထဲတွင် ချောမွေ့စွာ အရှေ့သို့ Zoom In ဝင်သွားမည့် Animation 🌟
             Pane parentContainer = (Pane) rootStackPane.getParent();
             if (parentContainer != null) {
                 seatView.setScaleX(1.2);

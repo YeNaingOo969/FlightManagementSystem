@@ -18,11 +18,10 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -46,7 +45,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AdminFlightScheduleController implements Initializable {
@@ -106,7 +104,6 @@ public class AdminFlightScheduleController implements Initializable {
     }
 
     private void setupTableColumns() {
-        // 🌟 Full Columns Mapping 🌟
         colFlightId.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getFlightId()));
         colFlightNo.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFlightNumber()));
         colAirline.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAirline()));
@@ -118,7 +115,6 @@ public class AdminFlightScheduleController implements Initializable {
         colBasePrice.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBasePrice()));
         colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
 
-        // 🌟 Custom Cell Factory for Status Pill 🌟
         colStatus.setCellFactory(column -> new TableCell<Flight, String>() {
             private final Label statusLabel = new Label();
             {
@@ -231,14 +227,33 @@ public class AdminFlightScheduleController implements Initializable {
         });
     }
 
+    // ==========================================
+    // 🌟 DELETE FLIGHT & VALIDATION LOGIC 🌟
+    // ==========================================
     private void deleteFlight(Flight flight) {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirm Deletion");
-        confirmAlert.setHeaderText("Delete Flight: " + flight.getFlightNumber());
-        confirmAlert.setContentText("Are you sure you want to delete this flight data?");
+        String checkBookingsQuery = "SELECT COUNT(*) FROM bookings WHERE flight_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(checkBookingsQuery)) {
 
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+            checkStmt.setInt(1, flight.getFlightId());
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // 🌟 မြန်မာစာအစား English လို Professional ကျကျ ပြောင်းထားပါသည် 🌟
+                    showWarningModal(
+                            "Action Denied",
+                            "This flight cannot be deleted because there are active bookings associated with it.\n\nIf the flight will no longer operate, please use the 'Edit' button to change its status to 'Cancelled'.",
+                            false
+                    );
+                    return;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // 🌟 လက်မှတ် ရောင်းချထားခြင်း မရှိပါက Custom Confirmation Modal ပြမည် 🌟
+        showConfirmationModal("Confirm Deletion", "Are you sure you want to delete flight " + flight.getFlightNumber() + "?", () -> {
             String sql = "DELETE FROM flights WHERE flight_id = ?";
             try (Connection conn = DatabaseConnection.getConnection()) {
                 if (conn == null) return;
@@ -248,15 +263,14 @@ public class AdminFlightScheduleController implements Initializable {
                         flightList.remove(flight);
                         showSuccessNotification("Success!", "Flight deleted successfully.");
 
-                        if (LoginController.loggedInUser != null) {
-                            insertLog(LoginController.loggedInUser.getUserId(), "Deleted Flight: " + flight.getFlightNumber());
-                        }
+                        int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
+                        insertLog(adminId, "Deleted flight schedule: " + flight.getFlightNumber() + " (Flight ID: " + flight.getFlightId() + ")");
                     }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
+        });
     }
 
     private void insertLog(int userId, String action) {
@@ -465,5 +479,225 @@ public class AdminFlightScheduleController implements Initializable {
         ptIn.setOnFinished(e -> pause.play());
         closeBtn.setOnMouseClicked(e -> { pause.stop(); ptOut.play(); });
         ptIn.play();
+    }
+
+    // =========================================================================
+    // 🌟 CUSTOM WARNING MODAL (ANIMATED & BLURRED) 🌟
+    // =========================================================================
+    private void showWarningModal(String title, String message, boolean isError) {
+        StackPane overlay = new StackPane();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
+
+        Node mainContent = rootStackPane.getChildren().get(0);
+        BoxBlur blur = new BoxBlur(8, 8, 3);
+        mainContent.setEffect(blur);
+
+        String themeColor = isError ? "#EF4444" : "#F59E0B";
+        String hoverBgColor = isError ? "rgba(239, 68, 68, 0.15)" : "rgba(245, 158, 11, 0.15)";
+        String svgIconPath = isError
+                ? "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                : "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z";
+
+        VBox modalCard = new VBox(20);
+        modalCard.setMaxSize(420, Region.USE_PREF_SIZE);
+        modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: " + themeColor + "; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
+
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle("-fx-text-fill: " + themeColor + "; -fx-font-size: 16px; -fx-font-weight: bold;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        StackPane closeBtn = new StackPane();
+        SVGPath closeIcon = new SVGPath();
+        closeIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
+        closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;");
+        closeBtn.getChildren().add(closeIcon);
+        closeBtn.setCursor(Cursor.HAND);
+        closeBtn.setOnMouseEntered(e -> closeIcon.setStyle("-fx-fill: #FFFFFF;"));
+        closeBtn.setOnMouseExited(e -> closeIcon.setStyle("-fx-fill: #8B95A5;"));
+
+        header.getChildren().addAll(titleLabel, spacer, closeBtn);
+
+        HBox body = new HBox(15);
+        body.setAlignment(Pos.CENTER_LEFT);
+        SVGPath warningIcon = new SVGPath();
+        warningIcon.setContent(svgIconPath);
+        warningIcon.setStyle("-fx-fill: " + themeColor + "; -fx-scale-x: 1.5; -fx-scale-y: 1.5;");
+        StackPane iconPane = new StackPane(warningIcon);
+        iconPane.setPadding(new Insets(0, 10, 0, 10));
+
+        Label messageLabel = new Label(message);
+        messageLabel.setStyle("-fx-text-fill: #E2E8F0; -fx-font-size: 14px;");
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(300);
+
+        body.getChildren().addAll(iconPane, messageLabel);
+
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER_RIGHT);
+        Button okBtn = new Button("OK");
+        okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + themeColor + "; -fx-text-fill: " + themeColor + "; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;");
+        okBtn.setOnMouseEntered(e -> okBtn.setStyle("-fx-background-color: " + hoverBgColor + "; -fx-border-color: " + themeColor + "; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px;"));
+        okBtn.setOnMouseExited(e -> okBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + themeColor + "; -fx-text-fill: " + themeColor + "; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px;"));
+
+        footer.getChildren().add(okBtn);
+
+        modalCard.getChildren().addAll(header, body, footer);
+        overlay.getChildren().add(modalCard);
+        rootStackPane.getChildren().add(overlay);
+
+        modalCard.setScaleX(0.5);
+        modalCard.setScaleY(0.5);
+        modalCard.setOpacity(0);
+        overlay.setOpacity(0);
+
+        ScaleTransition stIn = new ScaleTransition(Duration.millis(300), modalCard);
+        stIn.setToX(1); stIn.setToY(1); stIn.setInterpolator(Interpolator.EASE_OUT);
+
+        FadeTransition ftIn = new FadeTransition(Duration.millis(300), modalCard);
+        ftIn.setToValue(1);
+
+        FadeTransition bgFtIn = new FadeTransition(Duration.millis(300), overlay);
+        bgFtIn.setToValue(1);
+
+        ParallelTransition ptIn = new ParallelTransition(stIn, ftIn, bgFtIn);
+        ptIn.play();
+
+        Runnable closeAction = () -> {
+            ScaleTransition stOut = new ScaleTransition(Duration.millis(200), modalCard);
+            stOut.setToX(0.5); stOut.setToY(0.5); stOut.setInterpolator(Interpolator.EASE_IN);
+
+            FadeTransition ftOut = new FadeTransition(Duration.millis(200), modalCard);
+            ftOut.setToValue(0);
+
+            FadeTransition bgFtOut = new FadeTransition(Duration.millis(200), overlay);
+            bgFtOut.setToValue(0);
+
+            ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
+            ptOut.setOnFinished(ev -> {
+                rootStackPane.getChildren().remove(overlay);
+                mainContent.setEffect(null);
+            });
+            ptOut.play();
+        };
+
+        closeBtn.setOnMouseClicked(e -> closeAction.run());
+        okBtn.setOnAction(e -> closeAction.run());
+    }
+
+    // =========================================================================
+    // 🌟 CUSTOM CONFIRMATION MODAL (ANIMATED & BLURRED) 🌟
+    // =========================================================================
+    private void showConfirmationModal(String title, String message, Runnable onConfirm) {
+        StackPane overlay = new StackPane();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
+
+        Node mainContent = rootStackPane.getChildren().get(0);
+        BoxBlur blur = new BoxBlur(8, 8, 3);
+        mainContent.setEffect(blur);
+
+        String themeColor = "#EF4444"; // Red for Deletion Warning
+        String hoverBgColor = "rgba(239, 68, 68, 0.15)";
+
+        VBox modalCard = new VBox(20);
+        modalCard.setMaxSize(420, Region.USE_PREF_SIZE);
+        modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: " + themeColor + "; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
+
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle("-fx-text-fill: " + themeColor + "; -fx-font-size: 16px; -fx-font-weight: bold;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        StackPane closeBtn = new StackPane();
+        SVGPath closeIcon = new SVGPath();
+        closeIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z");
+        closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;");
+        closeBtn.getChildren().add(closeIcon);
+        closeBtn.setCursor(Cursor.HAND);
+        closeBtn.setOnMouseEntered(e -> closeIcon.setStyle("-fx-fill: #FFFFFF;"));
+        closeBtn.setOnMouseExited(e -> closeIcon.setStyle("-fx-fill: #8B95A5;"));
+
+        header.getChildren().addAll(titleLabel, spacer, closeBtn);
+
+        HBox body = new HBox(15);
+        body.setAlignment(Pos.CENTER_LEFT);
+        SVGPath warningIcon = new SVGPath();
+        warningIcon.setContent("M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"); // Warning Triangle
+        warningIcon.setStyle("-fx-fill: " + themeColor + "; -fx-scale-x: 1.5; -fx-scale-y: 1.5;");
+        StackPane iconPane = new StackPane(warningIcon);
+        iconPane.setPadding(new Insets(0, 10, 0, 10));
+
+        Label messageLabel = new Label(message);
+        messageLabel.setStyle("-fx-text-fill: #E2E8F0; -fx-font-size: 14px;");
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(300);
+
+        body.getChildren().addAll(iconPane, messageLabel);
+
+        HBox footer = new HBox(15);
+        footer.setAlignment(Pos.CENTER_RIGHT);
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #8B95A5; -fx-font-weight: bold; -fx-cursor: hand;");
+        cancelBtn.setOnMouseEntered(e -> cancelBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-cursor: hand;"));
+        cancelBtn.setOnMouseExited(e -> cancelBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #8B95A5; -fx-font-weight: bold; -fx-cursor: hand;"));
+
+        Button confirmBtn = new Button("Delete");
+        confirmBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + themeColor + "; -fx-text-fill: " + themeColor + "; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px; -fx-cursor: hand;");
+        confirmBtn.setOnMouseEntered(e -> confirmBtn.setStyle("-fx-background-color: " + hoverBgColor + "; -fx-border-color: " + themeColor + "; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px;"));
+        confirmBtn.setOnMouseExited(e -> confirmBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + themeColor + "; -fx-text-fill: " + themeColor + "; -fx-font-weight: bold; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-padding: 6px 24px;"));
+
+        footer.getChildren().addAll(cancelBtn, confirmBtn);
+
+        modalCard.getChildren().addAll(header, body, footer);
+        overlay.getChildren().add(modalCard);
+        rootStackPane.getChildren().add(overlay);
+
+        modalCard.setScaleX(0.5);
+        modalCard.setScaleY(0.5);
+        modalCard.setOpacity(0);
+        overlay.setOpacity(0);
+
+        ScaleTransition stIn = new ScaleTransition(Duration.millis(300), modalCard);
+        stIn.setToX(1); stIn.setToY(1); stIn.setInterpolator(Interpolator.EASE_OUT);
+
+        FadeTransition ftIn = new FadeTransition(Duration.millis(300), modalCard);
+        ftIn.setToValue(1);
+
+        FadeTransition bgFtIn = new FadeTransition(Duration.millis(300), overlay);
+        bgFtIn.setToValue(1);
+
+        ParallelTransition ptIn = new ParallelTransition(stIn, ftIn, bgFtIn);
+        ptIn.play();
+
+        Runnable closeAction = () -> {
+            ScaleTransition stOut = new ScaleTransition(Duration.millis(200), modalCard);
+            stOut.setToX(0.5); stOut.setToY(0.5); stOut.setInterpolator(Interpolator.EASE_IN);
+
+            FadeTransition ftOut = new FadeTransition(Duration.millis(200), modalCard);
+            ftOut.setToValue(0);
+
+            FadeTransition bgFtOut = new FadeTransition(Duration.millis(200), overlay);
+            bgFtOut.setToValue(0);
+
+            ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
+            ptOut.setOnFinished(ev -> {
+                rootStackPane.getChildren().remove(overlay);
+                mainContent.setEffect(null);
+            });
+            ptOut.play();
+        };
+
+        closeBtn.setOnMouseClicked(e -> closeAction.run());
+        cancelBtn.setOnAction(e -> closeAction.run());
+
+        confirmBtn.setOnAction(e -> {
+            closeAction.run();
+            onConfirm.run(); // 🌟 Confirm နှိပ်ပါက Database တွင် သွားဖျက်မည် 🌟
+        });
     }
 }

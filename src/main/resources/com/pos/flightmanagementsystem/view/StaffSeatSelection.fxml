@@ -5,7 +5,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
@@ -26,7 +25,7 @@
                         </StackPane>
                         <VBox alignment="CENTER_LEFT">
                             <Label styleClass="header-title-label" text="Seat Selection" />
-                            <Label styleClass="header-subtitle-label" text="Choose your preferred seat and flight class" />
+                            <Label styleClass="header-subtitle-label" text="Choose preferred seats for your passengers" />
                         </VBox>
                     </children>
                 </HBox>
@@ -49,7 +48,6 @@
                         <!-- Plane Fuselage Area -->
                         <VBox alignment="CENTER" prefWidth="780.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" styleClass="viewport-container">
                             <Pane fx:id="viewportPane" prefHeight="550.0" prefWidth="780.0" maxWidth="780.0" VBox.vgrow="ALWAYS">
-
                                 <VBox fx:id="sideViewPlane" alignment="CENTER" prefHeight="550.0" prefWidth="780.0" layoutY="0.0">
                                     <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" fill="#94a3b8" scaleX="8.0" scaleY="8.0" />
                                     <Label styleClass="placeholder-text" text="Select a class to view interior" />
@@ -73,7 +71,6 @@
                                             <Label prefWidth="45.0" alignment="CENTER" styleClass="seat-header-label" text="D" />
                                         </HBox>
 
-                                        <!-- 🌟 VBox များကို Dynamic Generation အတွက် နေရာချန်ထားပါသည် 🌟 -->
                                         <VBox fx:id="businessSection" alignment="CENTER" spacing="15.0">
                                             <Label styleClass="class-title" text="Business Class" />
                                         </VBox>
@@ -87,7 +84,6 @@
                                             <Separator styleClass="class-separator" />
                                             <Label styleClass="class-title" text="Economic" />
                                         </VBox>
-
                                     </VBox>
                                 </StackPane>
                             </Pane>
@@ -96,7 +92,7 @@
                         <!-- RIGHT SIDE: Summary Card -->
                         <VBox prefWidth="500.0" maxWidth="Infinity" HBox.hgrow="ALWAYS" spacing="15.0">
                             <VBox spacing="12.0" styleClass="layout-card, summary-card" VBox.vgrow="ALWAYS">
-                                <Label styleClass="section-title" text="Selected Seat" />
+                                <Label styleClass="section-title" text="Selected Seats" />
 
                                 <VBox alignment="CENTER" styleClass="selected-seat-box">
                                     <Label fx:id="lblSelectedSeat" styleClass="selected-seat-large" text="--" />
@@ -106,19 +102,19 @@
 
                                 <VBox spacing="8.0">
                                     <HBox alignment="CENTER_LEFT">
-                                        <Label styleClass="summary-label" text="Passenger" />
+                                        <Label styleClass="summary-label" text="Total Passengers" />
                                         <Region HBox.hgrow="ALWAYS" />
                                         <Label fx:id="lblPassengerName" styleClass="summary-value" text="--" />
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT">
-                                        <Label styleClass="summary-label" text="Ticket Price" />
+                                        <Label styleClass="summary-label" text="Base Ticket Price" />
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <Label fx:id="lblTicketPrice" styleClass="summary-value" text="\$0.00" />
+                                        <Label fx:id="lblTicketPrice" styleClass="summary-value" text="0 MMK" />
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT">
-                                        <Label styleClass="summary-label" text="Seat Charge" />
+                                        <Label styleClass="summary-label" text="Extra Seat Charge" />
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <Label fx:id="lblSeatCharge" styleClass="summary-value" text="\$0.00" />
+                                        <Label fx:id="lblSeatCharge" styleClass="summary-value" text="0 MMK" />
                                     </HBox>
                                 </VBox>
 
@@ -127,22 +123,15 @@
                                 <HBox alignment="CENTER_LEFT">
                                     <Label styleClass="summary-total-label" text="Total Price" />
                                     <Region HBox.hgrow="ALWAYS" />
-                                    <Label fx:id="lblTotal" styleClass="summary-total-value" text="\$0.00" />
+                                    <Label fx:id="lblTotal" styleClass="summary-total-value" text="0 MMK" />
                                 </HBox>
 
-                                <Separator styleClass="summary-separator" />
-
-                                <!-- 🌟 Payment Method Box 🌟 -->
-                                <VBox spacing="8.0">
-                                    <Label styleClass="summary-label" text="Payment Method" />
-                                    <ComboBox fx:id="cmbPaymentMethod" maxWidth="Infinity" promptText="Select Payment" styleClass="custom-combo-box" />
-                                </VBox>
                             </VBox>
 
                             <!-- ACTION BUTTONS -->
                             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                                 <Button fx:id="btnBack" onAction="#clickBack" prefWidth="120.0" styleClass="secondary-button" text="Back" />
-                                <Button fx:id="btnContinue" onAction="#clickContinue" prefWidth="150.0" styleClass="gradient-button" text="Continue" />
+                                <Button fx:id="btnContinue" onAction="#clickContinue" prefWidth="180.0" styleClass="gradient-button" text="Continue to Details" />
                             </HBox>
                         </VBox>
 

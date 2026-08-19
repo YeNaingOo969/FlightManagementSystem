@@ -8,9 +8,12 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class SystemLogsController implements Initializable {
+public class SuperAdminSystemLogsController implements Initializable {
 
     // --- UI Fields ---
     @FXML private ComboBox<String> cbRoleFilter;
@@ -34,7 +37,7 @@ public class SystemLogsController implements Initializable {
 
     // --- Table View Fields ---
     @FXML private TableView<Log> logsTable;
-    @FXML private TableColumn<Log, Integer> colLogId;
+
     @FXML private TableColumn<Log, LocalDateTime> colTimestamp;
     @FXML private TableColumn<Log, String> colUser;
     @FXML private TableColumn<Log, String> colRole;
@@ -58,7 +61,6 @@ public class SystemLogsController implements Initializable {
     // 🌟 SETUP TABLE COLUMNS
     // ==========================================
     private void setupTable() {
-        colLogId.setCellValueFactory(new PropertyValueFactory<>("logId"));
 
         colUser.setCellValueFactory(cellData -> {
             int logId = cellData.getValue().getLogId();
@@ -72,8 +74,44 @@ public class SystemLogsController implements Initializable {
             return new SimpleStringProperty(role);
         });
 
-        colAction.setCellValueFactory(new PropertyValueFactory<>("action"));
         colTimestamp.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
+
+        // 🌟 Action Column (Row အမြင့်မပျက်စေဘဲ အလယ်တည့်တည့်နှင့် Shrink-to-fit ပြုလုပ်ခြင်း) 🌟
+        colAction.setCellValueFactory(new PropertyValueFactory<>("action"));
+        colAction.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String action, boolean empty) {
+                super.updateItem(action, empty);
+                if (empty || action == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    Label lblAction = new Label(action);
+
+                    String lowerAction = action.toLowerCase();
+
+                    // Base CSS Style
+                    String baseStyle = "-fx-font-weight: bold; -fx-padding: 6px 12px; -fx-background-radius: 8px; -fx-font-size: 12px;";
+
+                    // Keyword ပေါ်မူတည်၍ အရောင်သတ်မှတ်ခြင်း
+                    if (lowerAction.contains("success") || lowerAction.contains("added") || lowerAction.contains("approve") || lowerAction.contains("created")) {
+                        lblAction.setStyle(baseStyle + "-fx-text-fill: #31C4B4; -fx-background-color: rgba(49, 196, 180, 0.15);");
+                    } else if (lowerAction.contains("fail") || lowerAction.contains("lock") || lowerAction.contains("reject") || lowerAction.contains("delete") || lowerAction.contains("cancel") || lowerAction.contains("inactive")) {
+                        lblAction.setStyle(baseStyle + "-fx-text-fill: #FF4B72; -fx-background-color: rgba(255, 75, 114, 0.15);");
+                    } else if (lowerAction.contains("update") || lowerAction.contains("edit") || lowerAction.contains("change") || lowerAction.contains("reschedule")) {
+                        lblAction.setStyle(baseStyle + "-fx-text-fill: #3B82F6; -fx-background-color: rgba(59, 130, 246, 0.15);");
+                    } else if (lowerAction.contains("log out") || lowerAction.contains("logout") || lowerAction.contains("pending")) {
+                        lblAction.setStyle(baseStyle + "-fx-text-fill: #F59E0B; -fx-background-color: rgba(245, 158, 11, 0.15);");
+                    } else {
+                        lblAction.setStyle(baseStyle + "-fx-text-fill: #E2E8F0; -fx-background-color: rgba(226, 232, 240, 0.1);");
+                    }
+
+                    setGraphic(lblAction);
+                    // 🌟 Cell တစ်ခုလုံးကို Center Alignment ပေးလိုက်ခြင်းဖြင့် Label သည် အလယ်သို့ ရောက်သွားမည် 🌟
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
     }
 
     // ==========================================
@@ -87,7 +125,7 @@ public class SystemLogsController implements Initializable {
         String query = "SELECT l.log_id, l.user_id, l.action, l.timestamp, u.username, u.role " +
                 "FROM logs l " +
                 "LEFT JOIN users u ON l.user_id = u.user_id " +
-                "ORDER BY l.log_id ASC";
+                "ORDER BY l.log_id DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
@@ -130,7 +168,7 @@ public class SystemLogsController implements Initializable {
     }
 
     // ==========================================
-    // 🌟 FILTERING LOGIC (Role & Date)
+    // 🌟 FILTERING LOGIC
     // ==========================================
     private void setupFilters() {
         if (cbRoleFilter != null) {
@@ -140,15 +178,12 @@ public class SystemLogsController implements Initializable {
 
         if (dpDateFilter != null) {
             dpDateFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyDataToTable());
-            // 🌟 ဖွင့်ဖွင့်ချင်း မှတ်တမ်းအကုန်မြင်ရစေရန် Date ကို null သတ်မှတ်ထားပါသည် 🌟
             dpDateFilter.setValue(null);
         }
     }
 
     private void applyDataToTable() {
         FilteredList<Log> filteredData = new FilteredList<>(masterLogList, log -> {
-
-            // 1. Role ကို စစ်ဆေးခြင်း
             boolean matchesRole = true;
             if (cbRoleFilter != null) {
                 String filterRole = cbRoleFilter.getValue();
@@ -158,7 +193,6 @@ public class SystemLogsController implements Initializable {
                 }
             }
 
-            // 2. Date ကို စစ်ဆေးခြင်း
             boolean matchesDate = true;
             if (dpDateFilter != null) {
                 LocalDate filterDate = dpDateFilter.getValue();
@@ -182,9 +216,6 @@ public class SystemLogsController implements Initializable {
         logsTable.setItems(sortedData);
     }
 
-    // ==========================================
-    // 🌟 ERROR ALERT DIALOG
-    // ==========================================
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

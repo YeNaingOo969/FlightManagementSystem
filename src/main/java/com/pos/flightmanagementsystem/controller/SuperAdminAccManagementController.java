@@ -40,6 +40,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
@@ -149,6 +150,10 @@ public class SuperAdminAccManagementController implements Initializable {
             pstmt.setInt(2, user.getUserId());
 
             if (pstmt.executeUpdate() > 0) {
+                // 🌟 Admin မှ User Status ကို ပြောင်းလဲကြောင်း Log မှတ်ခြင်း 🌟
+                int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
+                insertLog(adminId, "Changed status of user '" + user.getUsername() + "' to " + newStatus);
+
                 // Database ထဲ ပြန်မခေါ်ဘဲ လက်ရှိ Object ကိုသာ တိုက်ရိုက်ပြောင်းပေးမည် (Dynamic Update)
                 user.setStatus(newStatus);
                 usersTable.refresh();
@@ -160,6 +165,18 @@ public class SuperAdminAccManagementController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // 🌟 System Log ထဲသို့ သိမ်းဆည်းမည့် Method 🌟
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            if (userId > 0) pstmt.setInt(1, userId);
+            else pstmt.setNull(1, java.sql.Types.INTEGER);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
     private void updateDashboardStats() {

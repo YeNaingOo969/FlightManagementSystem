@@ -82,8 +82,11 @@ public class AdminAddCityController {
                     int rowsAffected = pstmt.executeUpdate();
 
                     if (rowsAffected > 0) {
+                        // 🌟 Admin ဘက်မှ City အသစ်ထည့်ကြောင်း Log မှတ်ခြင်း 🌟
+                        int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
+                        insertLog(adminId, "Added new city: " + cityName + " (" + cityCode + ")");
+
                         // If save is successful, trigger parent callback directly.
-                        // Parent will handle closing the modal and showing the success toast.
                         if (saveCallback != null) {
                             saveCallback.run();
                         }
@@ -101,6 +104,18 @@ public class AdminAddCityController {
             e.printStackTrace();
             showWarningModal("Database Error", "An error occurred:\n" + e.getMessage(), true);
         }
+    }
+
+    // 🌟 System Log ထဲသို့ သိမ်းဆည်းမည့် Method 🌟
+    private void insertLog(int userId, String action) {
+        String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
+            if (userId > 0) pstmt.setInt(1, userId);
+            else pstmt.setNull(1, java.sql.Types.INTEGER);
+            pstmt.setString(2, action);
+            pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
     // =========================================================================
