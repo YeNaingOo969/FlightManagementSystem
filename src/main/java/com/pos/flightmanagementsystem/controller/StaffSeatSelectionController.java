@@ -2,14 +2,10 @@ package com.pos.flightmanagementsystem.controller;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +20,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -86,9 +83,11 @@ public class StaffSeatSelectionController implements Initializable {
     private double currentTotalPrice = 0.0;
     private boolean isViewOnlyMode = false;
 
-    // 🌟 List ပြောင်းထားသည် 🌟
     private boolean isChangeFlightMode = false;
     private List<Integer> oldBookingIds;
+
+    // 🌟 ComboBox Error ကို ကာကွယ်ရန် သုံးသော Flag 🌟
+    private boolean isProgrammaticSelection = false;
 
     class SeatData {
         String seatNumber, seatClass; boolean isAvailable;
@@ -118,8 +117,87 @@ public class StaffSeatSelectionController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Rectangle clipRect = new Rectangle(); clipRect.widthProperty().bind(viewportPane.widthProperty()); clipRect.heightProperty().bind(viewportPane.heightProperty()); viewportPane.setClip(clipRect);
-        classComboBox.setOnAction(e -> animatePlaneToSection(classComboBox.getValue()));
+        // 🌟 လေယာဉ်ပုံကြီး အပြင်သို့ ကျော်မထွက်စေရန် သေချာစွာ ဖြတ်ထုတ်ခြင်း (Clipping) 🌟
+        Rectangle clipRect = new Rectangle();
+        clipRect.widthProperty().bind(viewportPane.widthProperty());
+        clipRect.heightProperty().bind(viewportPane.heightProperty());
+        clipRect.setX(0);
+        clipRect.setY(0);
+        viewportPane.setClip(clipRect);
+
+        classComboBox.setOnAction(e -> {
+            if (!isProgrammaticSelection) {
+                animatePlaneToSection(classComboBox.getValue());
+            }
+        });
+
+        setupScrollBehavior();
+    }
+
+    // =========================================================================
+    // 🌟 DYNAMIC SCROLL BEHAVIOR LOGIC 🌟
+    // =========================================================================
+    private void setupScrollBehavior() {
+        if (viewportPane == null || topViewPlane == null) return;
+
+        viewportPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (!isTopViewVisible) return;
+
+            // Scroll အတက်အဆင်း မြန်နှုန်း
+            double deltaY = event.getDeltaY() * 1.5;
+            double currentY = topViewPlane.getTranslateY();
+            double newY = currentY + deltaY;
+
+            // 🌟 လေယာဉ်၏ စုစုပေါင်းအရှည်နှင့် မြင်ကွင်းအရှည်ကို တွက်ချက်ခြင်း 🌟
+            double planeHeight = topViewPlane.getBoundsInLocal().getHeight();
+            double viewHeight = viewportPane.getHeight();
+
+            double maxScrollUp = 0; // ထိပ်ဆုံး
+            double maxScrollDown = viewHeight - planeHeight;
+
+            if (maxScrollDown > 0) {
+                maxScrollDown = 0; // လေယာဉ်က Viewport ထက်တိုနေလျှင်
+            } else {
+                maxScrollDown -= 120; // နောက်ဆုံးခုံအောက်တွင် နေရာလွတ် အနည်းငယ် ချန်ထားရန် (Padding)
+            }
+
+            // အပေါ် သို့မဟုတ် အောက် ကျော်မသွားစေရန် ထိန်းချုပ်ခြင်း (Clamping)
+            if (newY > maxScrollUp) newY = maxScrollUp;
+            if (newY < maxScrollDown) newY = maxScrollDown;
+
+            topViewPlane.setTranslateY(newY);
+
+            // 🌟 Scroll ရောက်နေသည့် နေရာပေါ်မူတည်၍ ComboBox ကို အလိုအလျောက် ပြောင်းပေးခြင်း 🌟
+            updateComboBoxBasedOnScroll(newY);
+
+            event.consume();
+        });
+    }
+
+    private void updateComboBoxBasedOnScroll(double currentY) {
+        if (classComboBox.getItems().isEmpty()) return;
+
+        String newClass = classComboBox.getValue();
+        double absY = Math.abs(currentY);
+
+        // 🌟 အခန်းတစ်ခုချင်းစီ၏ နေရာကို တိတိကျကျ ယူခြင်း 🌟
+        double premPos = premiumSection.getBoundsInParent().getMinY() - 150;
+        double ecoPos = economySection.getBoundsInParent().getMinY() - 150;
+
+        if (absY < premPos && classComboBox.getItems().contains("Business Class")) {
+            newClass = "Business Class";
+        } else if (absY >= premPos && absY < ecoPos && classComboBox.getItems().contains("Premium Economic")) {
+            newClass = "Premium Economic";
+        } else if (absY >= ecoPos && classComboBox.getItems().contains("Economic")) {
+            newClass = "Economic";
+        }
+
+        if (!newClass.equals(classComboBox.getValue())) {
+            // Error မဖြစ်စေရန် Flag သုံးပြီး Update လုပ်ခြင်း
+            isProgrammaticSelection = true;
+            classComboBox.setValue(newClass);
+            isProgrammaticSelection = false;
+        }
     }
 
     private void fetchFlightDetailsAndBookedSeats() {
@@ -172,7 +250,12 @@ public class StaffSeatSelectionController implements Initializable {
         businessSection.setVisible(!businessSection.getChildren().isEmpty()); businessSection.setManaged(!businessSection.getChildren().isEmpty());
         premiumSection.setVisible(!premiumSection.getChildren().isEmpty()); premiumSection.setManaged(!premiumSection.getChildren().isEmpty());
         economySection.setVisible(!economySection.getChildren().isEmpty()); economySection.setManaged(!economySection.getChildren().isEmpty());
-        if (!classComboBox.getItems().isEmpty()) { classComboBox.getSelectionModel().selectFirst(); Platform.runLater(() -> animatePlaneToSection(classComboBox.getValue())); }
+        if (!classComboBox.getItems().isEmpty()) {
+            isProgrammaticSelection = true;
+            classComboBox.getSelectionModel().selectFirst();
+            isProgrammaticSelection = false;
+            Platform.runLater(() -> animatePlaneToSection(classComboBox.getValue()));
+        }
     }
 
     private VBox getSectionForClass(String className) { String lower = className.toLowerCase(); if (lower.contains("business")) return businessSection; if (lower.contains("premium")) return premiumSection; return economySection; }
@@ -183,17 +266,51 @@ public class StaffSeatSelectionController implements Initializable {
         return btn;
     }
 
+    // =========================================================================
+    // 🌟 ANIMATE PLANE TO SELECTED SECTION LOGIC 🌟
+    // =========================================================================
     private void animatePlaneToSection(String selectedClass) {
-        if (selectedClass == null) return; topViewPlane.applyCss(); topViewPlane.layout();
-        double targetY = 0; String lower = selectedClass.toLowerCase();
-        if (lower.contains("business")) targetY = -15; else if (lower.contains("premium")) targetY = -(premiumSection.getLayoutY() - 30); else targetY = -(economySection.getLayoutY() - 30);
+        if (selectedClass == null) return;
+        topViewPlane.applyCss();
+        topViewPlane.layout();
+
+        double targetY = 0;
+        String lower = selectedClass.toLowerCase();
+
+        if (lower.contains("business")) {
+            targetY = 0;
+        } else if (lower.contains("premium")) {
+            targetY = -(premiumSection.getBoundsInParent().getMinY() - 20);
+        } else {
+            targetY = -(economySection.getBoundsInParent().getMinY() - 20);
+        }
+
+        // 🌟 အောက်သို့ ကျော်မဆင်းသွားရန် အလုံခြုံဆုံး Clamp လုပ်ခြင်း 🌟
+        double planeHeight = topViewPlane.getBoundsInLocal().getHeight();
+        double viewHeight = viewportPane.getHeight();
+        double maxScrollDown = viewHeight - planeHeight;
+
+        if (maxScrollDown > 0) {
+            maxScrollDown = 0;
+        } else {
+            maxScrollDown -= 120; // လေယာဉ်အောက်ဆုံး Padding
+        }
+
+        if (targetY < maxScrollDown) targetY = maxScrollDown;
+        if (targetY > 0) targetY = 0;
+
         ParallelTransition pt = new ParallelTransition();
         if (!isTopViewVisible) {
             FadeTransition fadeOutSide = new FadeTransition(Duration.millis(500), sideViewPlane); fadeOutSide.setToValue(0);
             FadeTransition fadeInTop = new FadeTransition(Duration.millis(800), topViewPlane); fadeInTop.setToValue(1);
             pt.getChildren().addAll(fadeOutSide, fadeInTop); isTopViewVisible = true;
         }
-        TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane); slidePlane.setToY(targetY); pt.getChildren().add(slidePlane); pt.play();
+
+        TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane);
+        slidePlane.setToY(targetY);
+        slidePlane.setInterpolator(Interpolator.EASE_OUT);
+        pt.getChildren().add(slidePlane);
+        pt.play();
     }
 
     @FXML void selectSeat(ActionEvent event) {
@@ -246,7 +363,6 @@ public class StaffSeatSelectionController implements Initializable {
     }
 
     private void showWarningModal(String title, String message) {
-        // ... (Warning Modal as before) ...
         StackPane overlay = new StackPane(); overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);"); BoxBlur blur = new BoxBlur(8, 8, 3); mainContainer.setEffect(blur);
         VBox modalCard = new VBox(20); modalCard.setMaxSize(420, Region.USE_PREF_SIZE); modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: #F59E0B; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
         HBox header = new HBox(); header.setAlignment(Pos.CENTER_LEFT); Label titleLabel = new Label(title); titleLabel.setStyle("-fx-text-fill: #F59E0B; -fx-font-size: 16px; -fx-font-weight: bold;"); Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS); StackPane closeBtn = new StackPane(); SVGPath closeIcon = new SVGPath(); closeIcon.setContent("M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"); closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;"); closeBtn.getChildren().add(closeIcon); closeBtn.setCursor(Cursor.HAND); closeBtn.setOnMouseEntered(e -> closeIcon.setStyle("-fx-fill: #FFFFFF; -fx-scale-x: 0.8; -fx-scale-y: 0.8;")); closeBtn.setOnMouseExited(e -> closeIcon.setStyle("-fx-fill: #8B95A5; -fx-scale-x: 0.8; -fx-scale-y: 0.8;")); header.getChildren().addAll(titleLabel, spacer, closeBtn);
