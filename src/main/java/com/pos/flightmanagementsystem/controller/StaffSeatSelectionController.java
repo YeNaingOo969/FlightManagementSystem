@@ -86,7 +86,6 @@ public class StaffSeatSelectionController implements Initializable {
     private boolean isChangeFlightMode = false;
     private List<Integer> oldBookingIds;
 
-    // 🌟 ComboBox Error ကို ကာကွယ်ရန် သုံးသော Flag 🌟
     private boolean isProgrammaticSelection = false;
 
     class SeatData {
@@ -117,107 +116,124 @@ public class StaffSeatSelectionController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 🌟 လေယာဉ်ပုံကြီး အပြင်သို့ ကျော်မထွက်စေရန် သေချာစွာ ဖြတ်ထုတ်ခြင်း (Clipping) 🌟
         Rectangle clipRect = new Rectangle();
         clipRect.widthProperty().bind(viewportPane.widthProperty());
         clipRect.heightProperty().bind(viewportPane.heightProperty());
-        clipRect.setX(0);
-        clipRect.setY(0);
+        clipRect.setX(0); clipRect.setY(0);
         viewportPane.setClip(clipRect);
 
         classComboBox.setOnAction(e -> {
-            if (!isProgrammaticSelection) {
-                animatePlaneToSection(classComboBox.getValue());
-            }
+            if (!isProgrammaticSelection) animatePlaneToSection(classComboBox.getValue());
         });
 
         setupScrollBehavior();
     }
 
-    // =========================================================================
-    // 🌟 DYNAMIC SCROLL BEHAVIOR LOGIC 🌟
-    // =========================================================================
     private void setupScrollBehavior() {
         if (viewportPane == null || topViewPlane == null) return;
-
         viewportPane.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (!isTopViewVisible) return;
-
-            // Scroll အတက်အဆင်း မြန်နှုန်း
             double deltaY = event.getDeltaY() * 1.5;
             double currentY = topViewPlane.getTranslateY();
             double newY = currentY + deltaY;
 
-            // 🌟 လေယာဉ်၏ စုစုပေါင်းအရှည်နှင့် မြင်ကွင်းအရှည်ကို တွက်ချက်ခြင်း 🌟
             double planeHeight = topViewPlane.getBoundsInLocal().getHeight();
             double viewHeight = viewportPane.getHeight();
 
-            double maxScrollUp = 0; // ထိပ်ဆုံး
+            double maxScrollUp = 0;
             double maxScrollDown = viewHeight - planeHeight;
 
-            if (maxScrollDown > 0) {
-                maxScrollDown = 0; // လေယာဉ်က Viewport ထက်တိုနေလျှင်
-            } else {
-                maxScrollDown -= 120; // နောက်ဆုံးခုံအောက်တွင် နေရာလွတ် အနည်းငယ် ချန်ထားရန် (Padding)
-            }
+            if (maxScrollDown > 0) maxScrollDown = 0;
+            else maxScrollDown -= 120;
 
-            // အပေါ် သို့မဟုတ် အောက် ကျော်မသွားစေရန် ထိန်းချုပ်ခြင်း (Clamping)
             if (newY > maxScrollUp) newY = maxScrollUp;
             if (newY < maxScrollDown) newY = maxScrollDown;
 
             topViewPlane.setTranslateY(newY);
-
-            // 🌟 Scroll ရောက်နေသည့် နေရာပေါ်မူတည်၍ ComboBox ကို အလိုအလျောက် ပြောင်းပေးခြင်း 🌟
             updateComboBoxBasedOnScroll(newY);
-
             event.consume();
         });
     }
 
     private void updateComboBoxBasedOnScroll(double currentY) {
         if (classComboBox.getItems().isEmpty()) return;
-
         String newClass = classComboBox.getValue();
         double absY = Math.abs(currentY);
-
-        // 🌟 အခန်းတစ်ခုချင်းစီ၏ နေရာကို တိတိကျကျ ယူခြင်း 🌟
         double premPos = premiumSection.getBoundsInParent().getMinY() - 150;
         double ecoPos = economySection.getBoundsInParent().getMinY() - 150;
 
-        if (absY < premPos && classComboBox.getItems().contains("Business Class")) {
-            newClass = "Business Class";
-        } else if (absY >= premPos && absY < ecoPos && classComboBox.getItems().contains("Premium Economic")) {
-            newClass = "Premium Economic";
-        } else if (absY >= ecoPos && classComboBox.getItems().contains("Economic")) {
-            newClass = "Economic";
-        }
+        if (absY < premPos && classComboBox.getItems().contains("Business")) newClass = "Business";
+        else if (absY >= premPos && absY < ecoPos && classComboBox.getItems().contains("Premium")) newClass = "Premium";
+        else if (absY >= ecoPos && classComboBox.getItems().contains("Economy")) newClass = "Economy";
 
         if (!newClass.equals(classComboBox.getValue())) {
-            // Error မဖြစ်စေရန် Flag သုံးပြီး Update လုပ်ခြင်း
             isProgrammaticSelection = true;
             classComboBox.setValue(newClass);
             isProgrammaticSelection = false;
         }
     }
 
+    // 🌟 FULL AIRPLANE BLUEPRINT ကို တည်ဆောက်ပေးမည့် Method 🌟
+    private void initSectionBlueprint(Map<String, Map<Integer, List<SeatData>>> map, String className, int startRow, int endRow) {
+        map.put(className, new LinkedHashMap<>());
+        for (int i = startRow; i <= endRow; i++) {
+            List<SeatData> row = new ArrayList<>();
+            // Database တွင် မရှိသော ခုံများကို Click နှိပ်၍မရသော (Booked) ခုံများအဖြစ် ကြိုတင်သတ်မှတ်ထားမည်
+            row.add(new SeatData(i + "A", className, false));
+            row.add(new SeatData(i + "B", className, false));
+            row.add(new SeatData(i + "C", className, false));
+            row.add(new SeatData(i + "D", className, false));
+            map.get(className).put(i, row);
+        }
+    }
+
     private void fetchFlightDetailsAndBookedSeats() {
         String flightQuery = "SELECT flight_id, TIME_FORMAT(departure_time, '%h:%i %p') as time_str FROM flights WHERE flight_number = ? AND DATE(departure_time) = ?";
         String seatsQuery = "SELECT seat_number, seat_class, is_available FROM seats WHERE flight_id = ? ORDER BY seat_id ASC";
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) return;
             try (PreparedStatement flightStmt = conn.prepareStatement(flightQuery)) {
                 flightStmt.setString(1, currentFlightNo); flightStmt.setString(2, currentDate);
-                try (ResultSet rs = flightStmt.executeQuery()) { if (rs.next()) { currentFlightId = rs.getInt("flight_id"); lblTopTime.setText("Time: " + rs.getString("time_str")); } }
+                try (ResultSet rs = flightStmt.executeQuery()) {
+                    if (rs.next()) {
+                        currentFlightId = rs.getInt("flight_id");
+                        lblTopTime.setText("Time: " + rs.getString("time_str"));
+                    }
+                }
             }
             if (currentFlightId == -1) return;
+
+            // 🌟 1. Blueprint အပြည့်အရင်တည်ဆောက်မည် (Database ထဲမှာ Data ရှိသည်ဖြစ်စေ၊ မရှိသည်ဖြစ်စေ လေယာဉ်အပြည့် ပေါ်နေစေရန်) 🌟
             Map<String, Map<Integer, List<SeatData>>> seatMap = new LinkedHashMap<>();
+            initSectionBlueprint(seatMap, "Business", 1, 3);
+            initSectionBlueprint(seatMap, "Premium", 4, 6);
+            initSectionBlueprint(seatMap, "Economy", 7, 20);
+
+            // 🌟 2. Database ထဲက Data များကို Blueprint ထဲသို့ ဝင်ရောက် Update လုပ်မည် 🌟
             try (PreparedStatement seatStmt = conn.prepareStatement(seatsQuery)) {
                 seatStmt.setInt(1, currentFlightId);
                 try (ResultSet rs = seatStmt.executeQuery()) {
                     while (rs.next()) {
-                        String sNum = rs.getString("seat_number"); String sClass = rs.getString("seat_class"); boolean isAvail = rs.getBoolean("is_available");
+                        String sNum = rs.getString("seat_number");
+                        String sClass = rs.getString("seat_class");
+                        boolean isAvail = rs.getBoolean("is_available");
                         int rowNum = extractRowNumber(sNum);
-                        seatMap.putIfAbsent(sClass, new LinkedHashMap<>()); seatMap.get(sClass).putIfAbsent(rowNum, new ArrayList<>()); seatMap.get(sClass).get(rowNum).add(new SeatData(sNum, sClass, isAvail));
+
+                        // Database ထဲက Class နာမည်များကို Blueprint နှင့် ကိုက်ညီအောင် ပြင်ဆင်ခြင်း
+                        String mappedClass = sClass;
+                        if (sClass.toLowerCase().contains("business")) mappedClass = "Business";
+                        else if (sClass.toLowerCase().contains("premium")) mappedClass = "Premium";
+                        else if (sClass.toLowerCase().contains("econom")) mappedClass = "Economy";
+
+                        if (seatMap.containsKey(mappedClass) && seatMap.get(mappedClass).containsKey(rowNum)) {
+                            for (SeatData sd : seatMap.get(mappedClass).get(rowNum)) {
+                                if (sd.seatNumber.equals(sNum)) {
+                                    sd.isAvailable = isAvail; // Database တွင် ရှိသောခုံများကို အခြေအနေမှန် အတိုင်းထားမည်
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -232,7 +248,14 @@ public class StaffSeatSelectionController implements Initializable {
         for (String className : seatMap.keySet()) {
             classComboBox.getItems().add(className); VBox targetSection = getSectionForClass(className);
             if (targetSection != businessSection) { Separator sep = new Separator(); sep.getStyleClass().add("class-separator"); targetSection.getChildren().add(sep); }
-            Label titleLbl = new Label(className); titleLbl.getStyleClass().add("class-title"); targetSection.getChildren().add(titleLbl); targetSection.setSpacing(15);
+
+            // Section Title (E.g. Business Class)
+            String displayTitle = className;
+            if (className.equals("Business")) displayTitle = "Business Class";
+            else if (className.equals("Premium")) displayTitle = "Premium Economic";
+
+            Label titleLbl = new Label(displayTitle); titleLbl.getStyleClass().add("class-title"); targetSection.getChildren().add(titleLbl); targetSection.setSpacing(15);
+
             Map<Integer, List<SeatData>> rows = seatMap.get(className);
             for (Integer rowNum : rows.keySet()) {
                 HBox rowBox = new HBox(15); rowBox.setAlignment(Pos.CENTER);
@@ -250,6 +273,7 @@ public class StaffSeatSelectionController implements Initializable {
         businessSection.setVisible(!businessSection.getChildren().isEmpty()); businessSection.setManaged(!businessSection.getChildren().isEmpty());
         premiumSection.setVisible(!premiumSection.getChildren().isEmpty()); premiumSection.setManaged(!premiumSection.getChildren().isEmpty());
         economySection.setVisible(!economySection.getChildren().isEmpty()); economySection.setManaged(!economySection.getChildren().isEmpty());
+
         if (!classComboBox.getItems().isEmpty()) {
             isProgrammaticSelection = true;
             classComboBox.getSelectionModel().selectFirst();
@@ -262,39 +286,26 @@ public class StaffSeatSelectionController implements Initializable {
 
     private Button createDynamicSeatButton(SeatData seat) {
         Button btn = new Button(seat.seatNumber); btn.setUserData(seat.seatClass + "_" + seat.seatNumber); btn.setPrefSize(45, 45); btn.setStyle("-fx-cursor: hand; -fx-background-radius: 5;");
-        if (seat.isAvailable) { btn.getStyleClass().add("seat-available"); btn.setOnAction(this::selectSeat); } else { btn.getStyleClass().add("seat-booked"); btn.setDisable(true); }
+        if (seat.isAvailable) { btn.getStyleClass().add("seat-available"); btn.setOnAction(this::selectSeat); }
+        else { btn.getStyleClass().add("seat-booked"); btn.setDisable(true); }
         return btn;
     }
 
-    // =========================================================================
-    // 🌟 ANIMATE PLANE TO SELECTED SECTION LOGIC 🌟
-    // =========================================================================
     private void animatePlaneToSection(String selectedClass) {
         if (selectedClass == null) return;
-        topViewPlane.applyCss();
-        topViewPlane.layout();
+        topViewPlane.applyCss(); topViewPlane.layout();
 
-        double targetY = 0;
-        String lower = selectedClass.toLowerCase();
+        double targetY = 0; String lower = selectedClass.toLowerCase();
+        if (lower.contains("business")) targetY = 0;
+        else if (lower.contains("premium")) targetY = -(premiumSection.getBoundsInParent().getMinY() - 20);
+        else targetY = -(economySection.getBoundsInParent().getMinY() - 20);
 
-        if (lower.contains("business")) {
-            targetY = 0;
-        } else if (lower.contains("premium")) {
-            targetY = -(premiumSection.getBoundsInParent().getMinY() - 20);
-        } else {
-            targetY = -(economySection.getBoundsInParent().getMinY() - 20);
-        }
-
-        // 🌟 အောက်သို့ ကျော်မဆင်းသွားရန် အလုံခြုံဆုံး Clamp လုပ်ခြင်း 🌟
         double planeHeight = topViewPlane.getBoundsInLocal().getHeight();
         double viewHeight = viewportPane.getHeight();
         double maxScrollDown = viewHeight - planeHeight;
 
-        if (maxScrollDown > 0) {
-            maxScrollDown = 0;
-        } else {
-            maxScrollDown -= 120; // လေယာဉ်အောက်ဆုံး Padding
-        }
+        if (maxScrollDown > 0) maxScrollDown = 0;
+        else maxScrollDown -= 120;
 
         if (targetY < maxScrollDown) targetY = maxScrollDown;
         if (targetY > 0) targetY = 0;
@@ -307,16 +318,15 @@ public class StaffSeatSelectionController implements Initializable {
         }
 
         TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane);
-        slidePlane.setToY(targetY);
-        slidePlane.setInterpolator(Interpolator.EASE_OUT);
-        pt.getChildren().add(slidePlane);
-        pt.play();
+        slidePlane.setToY(targetY); slidePlane.setInterpolator(Interpolator.EASE_OUT);
+        pt.getChildren().add(slidePlane); pt.play();
     }
 
     @FXML void selectSeat(ActionEvent event) {
         Button clickedButton = (Button) event.getSource(); if (clickedButton.getStyleClass().contains("seat-booked") || clickedButton.isDisabled()) return;
         String[] seatData = clickedButton.getUserData().toString().split("_"); String selectedClass = seatData[0];
         double thisSeatCharge = 0.0; if (selectedClass.toLowerCase().contains("business")) thisSeatCharge = 676000.0; else if (selectedClass.toLowerCase().contains("premium")) thisSeatCharge = 418000.0;
+
         if (selectedSeatsList.contains(clickedButton)) {
             selectedSeatsList.remove(clickedButton); clickedButton.getStyleClass().remove("seat-selected"); clickedButton.getStyleClass().add("seat-available"); totalSeatCharge -= thisSeatCharge;
         } else {
@@ -337,8 +347,7 @@ public class StaffSeatSelectionController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(targetFxml)); Parent previousView = loader.load(); applyThemeRecursively(previousView, checkIsDarkMode());
 
             if (targetFxml.contains("StaffCreateNewBooking") && isChangeFlightMode) {
-                StaffCreateNewBookingController controller = loader.getController();
-                controller.initChangeFlightMode(oldBookingIds);
+                StaffCreateNewBookingController controller = loader.getController(); controller.initChangeFlightMode(oldBookingIds);
             }
 
             Pane parentContainer = (Pane) rootStackPane.getParent();
@@ -384,9 +393,7 @@ public class StaffSeatSelectionController implements Initializable {
             String timeString = lblTopTime.getText().replace("Time: ", "").trim();
             controller.setBookingData( currentFlightNo, currentFrom, currentTo, currentDate, timeString, seatStrings, currentTotalPrice, currentPassengers );
 
-            if (isChangeFlightMode) {
-                controller.initChangeFlightMode(oldBookingIds);
-            }
+            if (isChangeFlightMode) controller.initChangeFlightMode(oldBookingIds);
 
             nextView.setScaleX(0.8); nextView.setScaleY(0.8); nextView.setOpacity(0.0); rootStackPane.getChildren().add(nextView);
             ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), mainContainer); scaleOut.setToX(1.2); scaleOut.setToY(1.2); FadeTransition fadeOut = new FadeTransition(Duration.millis(400), mainContainer); fadeOut.setToValue(0.0);
