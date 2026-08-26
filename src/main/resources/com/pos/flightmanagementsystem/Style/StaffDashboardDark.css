@@ -4,17 +4,9 @@
 
 .root { -fx-background-color: #06080D; }
 
-.dashboard-scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
+.dashboard-scroll-pane { -fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0; }
 .dashboard-scroll-pane > .viewport { -fx-background-color: transparent; }
-
-.super-dashboard-root, .super-content {
-    -fx-font-family: "Segoe UI", "Inter", sans-serif;
-    -fx-background-color: #06080D;
-}
+.super-dashboard-root, .super-content { -fx-font-family: "Segoe UI", "Inter", sans-serif; -fx-background-color: #06080D; }
 
 /* 📦 PANELS & CONTAINERS */
 .super-topbar, .super-metrics-row, .charts-container {
@@ -24,13 +16,10 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 5);
 }
 
-/* 🌟 TABLE PANELS (အလယ်က အဝိုင်းပုံစံ Radial Gradient နောက်ခံအတွက်) 🌟 */
 .super-panel {
     -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #1A212D 0%, #0B0E14 100%);
-    -fx-background-radius: 12px;
-    -fx-border-radius: 12px;
-    -fx-border-width: 1px;
-    -fx-border-color: #1F2633;
+    -fx-background-radius: 12px; -fx-border-radius: 12px;
+    -fx-border-width: 1px; -fx-border-color: #1F2633;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 5);
     -fx-padding: 24px 26px;
 }
@@ -68,77 +57,73 @@
 }
 
 /* 📊 TABLE VIEW */
-.super-table, .table-view {
-    -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;
-}
-.super-table .column-header-background {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent transparent #1F2633 transparent;
-    -fx-border-width: 0 0 1px 0;
-    -fx-padding: 0 0 10px 0;
-}
+.super-table, .table-view { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0; }
+.super-table .column-header-background { -fx-background-color: transparent; -fx-border-color: transparent transparent #1F2633 transparent; -fx-border-width: 0 0 1px 0; -fx-padding: 0 0 10px 0; }
 .super-table .column-header { -fx-background-color: transparent; -fx-border-width: 0; }
 .super-table .column-header .label { -fx-text-fill: #8B95A5; -fx-font-weight: bold; -fx-font-size: 12px; -fx-alignment: CENTER; }
-
-.super-table .table-row-cell {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-cell-size: 48px;
-}
+.super-table .table-row-cell { -fx-background-color: transparent; -fx-border-color: transparent; -fx-cell-size: 48px; }
 .super-table .table-row-cell:filled:hover { -fx-background-color: rgba(255, 255, 255, 0.04); }
 .super-table .table-cell { -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-border-width: 0; -fx-alignment: CENTER; }
 .super-table .placeholder .label { -fx-text-fill: #8B95A5; -fx-font-style: italic; -fx-font-size: 13px; }
 
 /* 🏷️ STATUS BADGES */
-.status-badge-green {
-    -fx-background-color: rgba(16, 185, 129, 0.15);
-    -fx-text-fill: #10B981;
-    -fx-background-radius: 6px;
-    -fx-padding: 3px 10px;
-    -fx-font-weight: bold;
-}
-.status-badge-blue {
-    -fx-background-color: rgba(49, 196, 180, 0.15);
-    -fx-text-fill: #31C4B4;
-    -fx-background-radius: 6px;
-    -fx-padding: 3px 10px;
-    -fx-font-weight: bold;
-}
-.status-badge-yellow {
-    -fx-background-color: rgba(248, 177, 44, 0.15);
-    -fx-text-fill: #F8B12C;
-    -fx-background-radius: 6px;
-    -fx-padding: 3px 10px;
-    -fx-font-weight: bold;
-}
-.status-badge-red {
-    -fx-background-color: rgba(244, 63, 94, 0.15);
-    -fx-text-fill: #F43F5E;
-    -fx-background-radius: 6px;
-    -fx-padding: 3px 10px;
-    -fx-font-weight: bold;
-}
+.status-badge-green { -fx-background-color: rgba(16, 185, 129, 0.15); -fx-text-fill: #10B981; -fx-background-radius: 6px; -fx-padding: 3px 10px; -fx-font-weight: bold; }
+.status-badge-blue { -fx-background-color: rgba(49, 196, 180, 0.15); -fx-text-fill: #31C4B4; -fx-background-radius: 6px; -fx-padding: 3px 10px; -fx-font-weight: bold; }
+.status-badge-yellow { -fx-background-color: rgba(248, 177, 44, 0.15); -fx-text-fill: #F8B12C; -fx-background-radius: 6px; -fx-padding: 3px 10px; -fx-font-weight: bold; }
+.status-badge-red { -fx-background-color: rgba(244, 63, 94, 0.15); -fx-text-fill: #F43F5E; -fx-background-radius: 6px; -fx-padding: 3px 10px; -fx-font-weight: bold; }
+
+/* 🌟 CHARTS STYLING (NEW) 🌟 */
+.chart-plot-background { -fx-background-color: transparent; }
+.chart-vertical-grid-lines { -fx-stroke: transparent; }
+.chart-horizontal-grid-lines { -fx-stroke: #1F2633; -fx-stroke-dash-array: 5 5; }
+.chart-legend { -fx-background-color: transparent; }
+.chart-legend-item { -fx-text-fill: #8B95A5; }
+
+/* Area Chart (My Weekly Sales) */
+.chart-series-area-line { -fx-stroke: #31C4B4; -fx-stroke-width: 3px; }
+.chart-series-area-fill { -fx-fill: linear-gradient(to bottom, rgba(49, 196, 180, 0.4), rgba(49, 196, 180, 0.0)); }
+.chart-line-symbol { -fx-background-color: #06080D, #31C4B4; -fx-background-insets: 0, 2; -fx-background-radius: 50%; -fx-padding: 4px; }
+
+/* Pie Chart (Today's Flight Status) */
+.chart-pie.default-color0 { -fx-pie-color: #31C4B4; -fx-border-color: #11151E; -fx-border-width: 2px; } /* Scheduled */
+.chart-pie.default-color1 { -fx-pie-color: #10B981; -fx-border-color: #11151E; -fx-border-width: 2px; } /* Departed */
+.chart-pie.default-color2 { -fx-pie-color: #F8B12C; -fx-border-color: #11151E; -fx-border-width: 2px; } /* Delayed */
+.chart-pie.default-color3 { -fx-pie-color: #F43F5E; -fx-border-color: #11151E; -fx-border-width: 2px; } /* Cancelled */
 
 /* 🔧 CUSTOM SCROLLBAR */
-.dashboard-scroll-pane .scroll-bar:vertical, .super-table .scroll-bar:vertical {
-    -fx-background-color: transparent; -fx-pref-width: 8px;
+.dashboard-scroll-pane .scroll-bar:vertical, .super-table .scroll-bar:vertical { -fx-background-color: transparent; -fx-pref-width: 8px; }
+.dashboard-scroll-pane .scroll-bar:vertical .track, .super-table .scroll-bar:vertical .track { -fx-background-color: transparent; -fx-border-color: transparent; }
+.dashboard-scroll-pane .scroll-bar:vertical .thumb, .super-table .scroll-bar:vertical .thumb { -fx-background-color: #2A3441; -fx-background-radius: 4px; }
+.dashboard-scroll-pane .scroll-bar:vertical .thumb:hover, .super-table .scroll-bar:vertical .thumb:hover { -fx-background-color: #31C4B4; }
+.dashboard-scroll-pane .scroll-bar:horizontal, .super-table .scroll-bar:horizontal { -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0; }
+.dashboard-scroll-pane .scroll-bar .increment-button, .dashboard-scroll-pane .scroll-bar .decrement-button, .super-table .scroll-bar .increment-button, .super-table .scroll-bar .decrement-button { -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0; -fx-padding: 0; }
+.dashboard-scroll-pane .corner, .super-table .corner { -fx-background-color: transparent; }
+
+/* ==========================================================
+   🌟 CHART TEXT & AXIS LABELS (DARK MODE FIX)
+========================================================== */
+
+/* 1. X & Y Axis (ဝင်ရိုးတန်းများရှိ ကိန်းဂဏန်းနှင့် စာသားများ) */
+.chart-axis-label,
+.axis-tick-mark-text,
+.chart-axis-tick-label {
+    -fx-fill: #8B95A5;
+    -fx-font-size: 11px;
 }
-.dashboard-scroll-pane .scroll-bar:vertical .track, .super-table .scroll-bar:vertical .track {
-    -fx-background-color: transparent; -fx-border-color: transparent;
+
+/* 2. Pie Chart Labels (Pie Chart ဘေးက စာသားများ) */
+.chart-pie-label {
+    -fx-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
 }
-.dashboard-scroll-pane .scroll-bar:vertical .thumb, .super-table .scroll-bar:vertical .thumb {
-    -fx-background-color: #2A3441; -fx-background-radius: 4px;
+.chart-pie-label-line {
+    -fx-stroke: #8B95A5;
 }
-.dashboard-scroll-pane .scroll-bar:vertical .thumb:hover, .super-table .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #31C4B4;
-}
-.dashboard-scroll-pane .scroll-bar:horizontal, .super-table .scroll-bar:horizontal {
-    -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0;
-}
-.dashboard-scroll-pane .scroll-bar .increment-button, .dashboard-scroll-pane .scroll-bar .decrement-button,
-.super-table .scroll-bar .increment-button, .super-table .scroll-bar .decrement-button {
-    -fx-pref-height: 0; -fx-max-height: 0; -fx-opacity: 0; -fx-padding: 0;
-}
-.dashboard-scroll-pane .corner, .super-table .corner {
-    -fx-background-color: transparent;
+
+/* 3. Axis Lines (ဝင်ရိုး မျဉ်းကြောင်းများ) */
+.axis-bottom .axis-line,
+.axis-left .axis-line {
+    -fx-stroke: #1F2633;
+    -fx-stroke-width: 1px;
 }

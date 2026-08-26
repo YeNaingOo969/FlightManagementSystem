@@ -98,11 +98,11 @@
                                     </children>
                                 </VBox>
 
-                                <!-- 🌟 Standard Airline Passenger Selection 🌟 -->
+                                <!-- 🌟 Standard Airline Passenger Selection (UPDATED FOR LIGHT/DARK THEME COMPATIBILITY) 🌟 -->
                                 <VBox spacing="8.0">
                                     <children>
                                         <Label styleClass="input-label" text="Passengers" />
-                                        <VBox spacing="10.0" style="-fx-border-color: #1F2633; -fx-border-radius: 8px; -fx-background-color: #0B0E14; -fx-background-radius: 8px;">
+                                        <VBox spacing="10.0" styleClass="passenger-box">
                                             <padding>
                                                 <Insets bottom="12.0" left="15.0" right="15.0" top="12.0" />
                                             </padding>
@@ -110,8 +110,8 @@
                                                 <!-- Adults -->
                                                 <HBox alignment="CENTER_LEFT">
                                                     <VBox>
-                                                        <Label style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-font-size: 13px;" text="Adults" />
-                                                        <Label style="-fx-text-fill: #8B95A5; -fx-font-size: 11px;" text="12+ yrs" />
+                                                        <Label styleClass="passenger-label-main" text="Adults" />
+                                                        <Label styleClass="passenger-label-sub" text="12+ yrs" />
                                                     </VBox>
                                                     <Region HBox.hgrow="ALWAYS" />
                                                     <Spinner fx:id="spinnerAdults" prefWidth="100.0" styleClass="custom-spinner" />
@@ -119,8 +119,8 @@
                                                 <!-- Children -->
                                                 <HBox alignment="CENTER_LEFT">
                                                     <VBox>
-                                                        <Label style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-font-size: 13px;" text="Children" />
-                                                        <Label style="-fx-text-fill: #8B95A5; -fx-font-size: 11px;" text="2-11 yrs" />
+                                                        <Label styleClass="passenger-label-main" text="Children" />
+                                                        <Label styleClass="passenger-label-sub" text="2-11 yrs" />
                                                     </VBox>
                                                     <Region HBox.hgrow="ALWAYS" />
                                                     <Spinner fx:id="spinnerChildren" prefWidth="100.0" styleClass="custom-spinner" />
@@ -128,8 +128,8 @@
                                                 <!-- Infants -->
                                                 <HBox alignment="CENTER_LEFT">
                                                     <VBox>
-                                                        <Label style="-fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-font-size: 13px;" text="Infants" />
-                                                        <Label style="-fx-text-fill: #8B95A5; -fx-font-size: 11px;" text="Under 2 yrs" />
+                                                        <Label styleClass="passenger-label-main" text="Infants" />
+                                                        <Label styleClass="passenger-label-sub" text="Under 2 yrs" />
                                                     </VBox>
                                                     <Region HBox.hgrow="ALWAYS" />
                                                     <Spinner fx:id="spinnerInfants" prefWidth="100.0" styleClass="custom-spinner" />

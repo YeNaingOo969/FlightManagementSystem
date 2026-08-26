@@ -86,8 +86,8 @@ public class StaffSeatSelectionController implements Initializable {
     private boolean isChangeFlightMode = false;
     private List<Integer> oldBookingIds;
 
-    // 🌟 ComboBox Error ကို ကာကွယ်ရန် သုံးသော Flag 🌟
     private boolean isProgrammaticSelection = false;
+    private List<String> preSelectedSeats = new ArrayList<>();
 
     class SeatData {
         String seatNumber, seatClass; boolean isAvailable;
@@ -104,7 +104,14 @@ public class StaffSeatSelectionController implements Initializable {
         this.oldBookingIds = oldBookingIds;
     }
 
+    public void restoreSelectedSeats(List<String> seats) {
+        this.preSelectedSeats = seats;
+    }
+
     public void setFlightData(String flightNo, String from, String to, String date, String price, int passengers) {
+        this.selectedSeatsList.clear();
+        this.totalSeatCharge = 0.0;
+
         this.currentFlightNo = flightNo; this.currentFrom = from; this.currentTo = to; this.currentDate = date; this.currentPrice = price; this.currentPassengers = passengers;
         lblTopFlight.setText("Flight: " + flightNo); lblTopRoute.setText(from + " ➔ " + to); lblTopDate.setText("Date: " + date); lblPassengerName.setText(passengers + " Pax");
         try {
@@ -112,117 +119,188 @@ public class StaffSeatSelectionController implements Initializable {
             ticketPriceValue = basePrice * passengers; currentTotalPrice = ticketPriceValue;
             lblTicketPrice.setText(String.format("%,.0f MMK", ticketPriceValue)); lblSeatCharge.setText("0 MMK"); lblTotal.setText(String.format("%,.0f MMK", ticketPriceValue));
         } catch (Exception e) { lblTicketPrice.setText("--"); lblSeatCharge.setText("--"); lblTotal.setText("--"); }
+
+        // 🌟 ခုံတွေကို အသစ်ပြန်ဆွဲထုတ်မယ့် Method ခေါ်ခြင်း 🌟
         fetchFlightDetailsAndBookedSeats();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 🌟 လေယာဉ်ပုံကြီး အပြင်သို့ ကျော်မထွက်စေရန် သေချာစွာ ဖြတ်ထုတ်ခြင်း (Clipping) 🌟
         Rectangle clipRect = new Rectangle();
         clipRect.widthProperty().bind(viewportPane.widthProperty());
         clipRect.heightProperty().bind(viewportPane.heightProperty());
-        clipRect.setX(0);
-        clipRect.setY(0);
+        clipRect.setX(0); clipRect.setY(0);
         viewportPane.setClip(clipRect);
 
         classComboBox.setOnAction(e -> {
-            if (!isProgrammaticSelection) {
-                animatePlaneToSection(classComboBox.getValue());
-            }
+            if (!isProgrammaticSelection) animatePlaneToSection(classComboBox.getValue());
         });
 
         setupScrollBehavior();
     }
 
-    // =========================================================================
-    // 🌟 DYNAMIC SCROLL BEHAVIOR LOGIC 🌟
-    // =========================================================================
     private void setupScrollBehavior() {
         if (viewportPane == null || topViewPlane == null) return;
-
         viewportPane.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (!isTopViewVisible) return;
-
-            // Scroll အတက်အဆင်း မြန်နှုန်း
             double deltaY = event.getDeltaY() * 1.5;
             double currentY = topViewPlane.getTranslateY();
             double newY = currentY + deltaY;
 
-            // 🌟 လေယာဉ်၏ စုစုပေါင်းအရှည်နှင့် မြင်ကွင်းအရှည်ကို တွက်ချက်ခြင်း 🌟
             double planeHeight = topViewPlane.getBoundsInLocal().getHeight();
             double viewHeight = viewportPane.getHeight();
 
-            double maxScrollUp = 0; // ထိပ်ဆုံး
+            double maxScrollUp = 0;
             double maxScrollDown = viewHeight - planeHeight;
 
-            if (maxScrollDown > 0) {
-                maxScrollDown = 0; // လေယာဉ်က Viewport ထက်တိုနေလျှင်
-            } else {
-                maxScrollDown -= 120; // နောက်ဆုံးခုံအောက်တွင် နေရာလွတ် အနည်းငယ် ချန်ထားရန် (Padding)
-            }
+            if (maxScrollDown > 0) maxScrollDown = 0;
+            else maxScrollDown -= 120;
 
-            // အပေါ် သို့မဟုတ် အောက် ကျော်မသွားစေရန် ထိန်းချုပ်ခြင်း (Clamping)
             if (newY > maxScrollUp) newY = maxScrollUp;
             if (newY < maxScrollDown) newY = maxScrollDown;
 
             topViewPlane.setTranslateY(newY);
-
-            // 🌟 Scroll ရောက်နေသည့် နေရာပေါ်မူတည်၍ ComboBox ကို အလိုအလျောက် ပြောင်းပေးခြင်း 🌟
             updateComboBoxBasedOnScroll(newY);
-
             event.consume();
         });
     }
 
     private void updateComboBoxBasedOnScroll(double currentY) {
         if (classComboBox.getItems().isEmpty()) return;
-
         String newClass = classComboBox.getValue();
         double absY = Math.abs(currentY);
-
-        // 🌟 အခန်းတစ်ခုချင်းစီ၏ နေရာကို တိတိကျကျ ယူခြင်း 🌟
         double premPos = premiumSection.getBoundsInParent().getMinY() - 150;
         double ecoPos = economySection.getBoundsInParent().getMinY() - 150;
 
-        if (absY < premPos && classComboBox.getItems().contains("Business Class")) {
-            newClass = "Business Class";
-        } else if (absY >= premPos && absY < ecoPos && classComboBox.getItems().contains("Premium Economic")) {
-            newClass = "Premium Economic";
-        } else if (absY >= ecoPos && classComboBox.getItems().contains("Economic")) {
-            newClass = "Economic";
-        }
+        if (absY < premPos && classComboBox.getItems().contains("Business")) newClass = "Business";
+        else if (absY >= premPos && absY < ecoPos && classComboBox.getItems().contains("Premium")) newClass = "Premium";
+        else if (absY >= ecoPos && classComboBox.getItems().contains("Economy")) newClass = "Economy";
 
         if (!newClass.equals(classComboBox.getValue())) {
-            // Error မဖြစ်စေရန် Flag သုံးပြီး Update လုပ်ခြင်း
             isProgrammaticSelection = true;
             classComboBox.setValue(newClass);
             isProgrammaticSelection = false;
         }
     }
 
+    private void initSectionBlueprint(Map<String, Map<Integer, List<SeatData>>> map, String className, int startRow, int endRow) {
+        map.put(className, new LinkedHashMap<>());
+        for (int i = startRow; i <= endRow; i++) {
+            List<SeatData> row = new ArrayList<>();
+            row.add(new SeatData(i + "A", className, false));
+            row.add(new SeatData(i + "B", className, false));
+            row.add(new SeatData(i + "C", className, false));
+            row.add(new SeatData(i + "D", className, false));
+            map.get(className).put(i, row);
+        }
+    }
+
     private void fetchFlightDetailsAndBookedSeats() {
         String flightQuery = "SELECT flight_id, TIME_FORMAT(departure_time, '%h:%i %p') as time_str FROM flights WHERE flight_number = ? AND DATE(departure_time) = ?";
         String seatsQuery = "SELECT seat_number, seat_class, is_available FROM seats WHERE flight_id = ? ORDER BY seat_id ASC";
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) return;
+
             try (PreparedStatement flightStmt = conn.prepareStatement(flightQuery)) {
-                flightStmt.setString(1, currentFlightNo); flightStmt.setString(2, currentDate);
-                try (ResultSet rs = flightStmt.executeQuery()) { if (rs.next()) { currentFlightId = rs.getInt("flight_id"); lblTopTime.setText("Time: " + rs.getString("time_str")); } }
+                flightStmt.setString(1, currentFlightNo);
+                flightStmt.setString(2, currentDate);
+                try (ResultSet rs = flightStmt.executeQuery()) {
+                    if (rs.next()) {
+                        currentFlightId = rs.getInt("flight_id");
+                        lblTopTime.setText("Time: " + rs.getString("time_str"));
+                    }
+                }
             }
             if (currentFlightId == -1) return;
+
+            // 🌟 ၁။ ရောင်းချပြီးသား ခုံများကို ရှာပါမည် (Error တက်ခဲ့ရင် UI မပျောက်အောင် သီးသန့် try-catch အုပ်ထားပါသည်) 🌟
+            List<String> generallyBookedSeats = new ArrayList<>();
+            try {
+                String bookedSeatsQuery = "SELECT seat_number FROM bookings WHERE flight_id = ? AND status IN ('Confirmed', 'Completed')";
+                try (PreparedStatement bookedStmt = conn.prepareStatement(bookedSeatsQuery)) {
+                    bookedStmt.setInt(1, currentFlightId);
+                    try (ResultSet rs = bookedStmt.executeQuery()) {
+                        while (rs.next()) {
+                            String s = rs.getString(1);
+                            if (s != null) generallyBookedSeats.add(s);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Could not fetch booked seats from bookings table: " + e.getMessage());
+            }
+
+            // 🌟 ၂။ Change Flight ဖြစ်ခဲ့လျှင် မိမိဝယ်ထားသော ခုံအဟောင်းများကို ရှာပါမည် 🌟
+            List<String> myOldSeats = new ArrayList<>();
+            if (isChangeFlightMode && oldBookingIds != null && !oldBookingIds.isEmpty()) {
+                try {
+                    StringBuilder placeholders = new StringBuilder();
+                    for (int i = 0; i < oldBookingIds.size(); i++) {
+                        placeholders.append("?");
+                        if (i < oldBookingIds.size() - 1) placeholders.append(",");
+                    }
+                    String myOldSeatsQuery = "SELECT seat_number FROM bookings WHERE flight_id = ? AND booking_id IN (" + placeholders + ")";
+                    try (PreparedStatement myOldSeatsStmt = conn.prepareStatement(myOldSeatsQuery)) {
+                        myOldSeatsStmt.setInt(1, currentFlightId);
+                        for (int i = 0; i < oldBookingIds.size(); i++) {
+                            myOldSeatsStmt.setInt(i + 2, oldBookingIds.get(i));
+                        }
+                        try (ResultSet rs = myOldSeatsStmt.executeQuery()) {
+                            while (rs.next()) {
+                                String s = rs.getString(1);
+                                if (s != null) myOldSeats.add(s);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("Could not fetch old seats: " + e.getMessage());
+                }
+            }
+
             Map<String, Map<Integer, List<SeatData>>> seatMap = new LinkedHashMap<>();
+            initSectionBlueprint(seatMap, "Business", 1, 3);
+            initSectionBlueprint(seatMap, "Premium", 4, 6);
+            initSectionBlueprint(seatMap, "Economy", 7, 20);
+
             try (PreparedStatement seatStmt = conn.prepareStatement(seatsQuery)) {
                 seatStmt.setInt(1, currentFlightId);
                 try (ResultSet rs = seatStmt.executeQuery()) {
                     while (rs.next()) {
-                        String sNum = rs.getString("seat_number"); String sClass = rs.getString("seat_class"); boolean isAvail = rs.getBoolean("is_available");
+                        String sNum = rs.getString("seat_number");
+                        String sClass = rs.getString("seat_class");
+                        boolean isAvail = rs.getBoolean("is_available"); // မူလ Status ကို အရင်ယူမယ်
+
+                        // 🌟 သူများ ဝယ်ထားရင် Disable လုပ်မယ်
+                        if (generallyBookedSeats.contains(sNum)) {
+                            isAvail = false;
+                        }
+                        // 🌟 ကိုယ့်ခုံအဟောင်း ဖြစ်နေရင်တော့ ပြန်ရွေးလို့ရအောင် Enable ပြန်လုပ်ပေးမယ်
+                        if (myOldSeats.contains(sNum)) {
+                            isAvail = true;
+                        }
+
                         int rowNum = extractRowNumber(sNum);
-                        seatMap.putIfAbsent(sClass, new LinkedHashMap<>()); seatMap.get(sClass).putIfAbsent(rowNum, new ArrayList<>()); seatMap.get(sClass).get(rowNum).add(new SeatData(sNum, sClass, isAvail));
+                        String mappedClass = sClass;
+                        if (sClass.toLowerCase().contains("business")) mappedClass = "Business";
+                        else if (sClass.toLowerCase().contains("premium")) mappedClass = "Premium";
+                        else if (sClass.toLowerCase().contains("econom")) mappedClass = "Economy";
+
+                        if (seatMap.containsKey(mappedClass) && seatMap.get(mappedClass).containsKey(rowNum)) {
+                            for (SeatData sd : seatMap.get(mappedClass).get(rowNum)) {
+                                if (sd.seatNumber.equals(sNum)) {
+                                    sd.isAvailable = isAvail;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
             Platform.runLater(() -> buildDynamicSeatUI(seatMap));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private int extractRowNumber(String seatNum) { String num = seatNum.replaceAll("[^0-9]", ""); return num.isEmpty() ? 0 : Integer.parseInt(num); }
@@ -232,7 +310,13 @@ public class StaffSeatSelectionController implements Initializable {
         for (String className : seatMap.keySet()) {
             classComboBox.getItems().add(className); VBox targetSection = getSectionForClass(className);
             if (targetSection != businessSection) { Separator sep = new Separator(); sep.getStyleClass().add("class-separator"); targetSection.getChildren().add(sep); }
-            Label titleLbl = new Label(className); titleLbl.getStyleClass().add("class-title"); targetSection.getChildren().add(titleLbl); targetSection.setSpacing(15);
+
+            String displayTitle = className;
+            if (className.equals("Business")) displayTitle = "Business Class";
+            else if (className.equals("Premium")) displayTitle = "Premium Economic";
+
+            Label titleLbl = new Label(displayTitle); titleLbl.getStyleClass().add("class-title"); targetSection.getChildren().add(titleLbl); targetSection.setSpacing(15);
+
             Map<Integer, List<SeatData>> rows = seatMap.get(className);
             for (Integer rowNum : rows.keySet()) {
                 HBox rowBox = new HBox(15); rowBox.setAlignment(Pos.CENTER);
@@ -250,11 +334,16 @@ public class StaffSeatSelectionController implements Initializable {
         businessSection.setVisible(!businessSection.getChildren().isEmpty()); businessSection.setManaged(!businessSection.getChildren().isEmpty());
         premiumSection.setVisible(!premiumSection.getChildren().isEmpty()); premiumSection.setManaged(!premiumSection.getChildren().isEmpty());
         economySection.setVisible(!economySection.getChildren().isEmpty()); economySection.setManaged(!economySection.getChildren().isEmpty());
+
         if (!classComboBox.getItems().isEmpty()) {
             isProgrammaticSelection = true;
             classComboBox.getSelectionModel().selectFirst();
             isProgrammaticSelection = false;
             Platform.runLater(() -> animatePlaneToSection(classComboBox.getValue()));
+        }
+
+        if (preSelectedSeats != null && !preSelectedSeats.isEmpty()) {
+            updateSummaryLabels();
         }
     }
 
@@ -262,39 +351,40 @@ public class StaffSeatSelectionController implements Initializable {
 
     private Button createDynamicSeatButton(SeatData seat) {
         Button btn = new Button(seat.seatNumber); btn.setUserData(seat.seatClass + "_" + seat.seatNumber); btn.setPrefSize(45, 45); btn.setStyle("-fx-cursor: hand; -fx-background-radius: 5;");
-        if (seat.isAvailable) { btn.getStyleClass().add("seat-available"); btn.setOnAction(this::selectSeat); } else { btn.getStyleClass().add("seat-booked"); btn.setDisable(true); }
+        if (seat.isAvailable) {
+            btn.getStyleClass().add("seat-available");
+            btn.setOnAction(this::selectSeat);
+
+            if (preSelectedSeats != null && preSelectedSeats.contains(seat.seatNumber)) {
+                selectedSeatsList.add(btn);
+                btn.getStyleClass().remove("seat-available");
+                btn.getStyleClass().add("seat-selected");
+                double thisSeatCharge = 0.0;
+                if (seat.seatClass.toLowerCase().contains("business")) thisSeatCharge = 676000.0;
+                else if (seat.seatClass.toLowerCase().contains("premium")) thisSeatCharge = 418000.0;
+                totalSeatCharge += thisSeatCharge;
+            }
+        } else {
+            btn.getStyleClass().add("seat-booked"); btn.setDisable(true);
+        }
         return btn;
     }
 
-    // =========================================================================
-    // 🌟 ANIMATE PLANE TO SELECTED SECTION LOGIC 🌟
-    // =========================================================================
     private void animatePlaneToSection(String selectedClass) {
         if (selectedClass == null) return;
-        topViewPlane.applyCss();
-        topViewPlane.layout();
+        topViewPlane.applyCss(); topViewPlane.layout();
 
-        double targetY = 0;
-        String lower = selectedClass.toLowerCase();
+        double targetY = 0; String lower = selectedClass.toLowerCase();
+        if (lower.contains("business")) targetY = 0;
+        else if (lower.contains("premium")) targetY = -(premiumSection.getBoundsInParent().getMinY() - 20);
+        else targetY = -(economySection.getBoundsInParent().getMinY() - 20);
 
-        if (lower.contains("business")) {
-            targetY = 0;
-        } else if (lower.contains("premium")) {
-            targetY = -(premiumSection.getBoundsInParent().getMinY() - 20);
-        } else {
-            targetY = -(economySection.getBoundsInParent().getMinY() - 20);
-        }
-
-        // 🌟 အောက်သို့ ကျော်မဆင်းသွားရန် အလုံခြုံဆုံး Clamp လုပ်ခြင်း 🌟
         double planeHeight = topViewPlane.getBoundsInLocal().getHeight();
         double viewHeight = viewportPane.getHeight();
         double maxScrollDown = viewHeight - planeHeight;
 
-        if (maxScrollDown > 0) {
-            maxScrollDown = 0;
-        } else {
-            maxScrollDown -= 120; // လေယာဉ်အောက်ဆုံး Padding
-        }
+        if (maxScrollDown > 0) maxScrollDown = 0;
+        else maxScrollDown -= 120;
 
         if (targetY < maxScrollDown) targetY = maxScrollDown;
         if (targetY > 0) targetY = 0;
@@ -307,18 +397,18 @@ public class StaffSeatSelectionController implements Initializable {
         }
 
         TranslateTransition slidePlane = new TranslateTransition(Duration.millis(800), topViewPlane);
-        slidePlane.setToY(targetY);
-        slidePlane.setInterpolator(Interpolator.EASE_OUT);
-        pt.getChildren().add(slidePlane);
-        pt.play();
+        slidePlane.setToY(targetY); slidePlane.setInterpolator(Interpolator.EASE_OUT);
+        pt.getChildren().add(slidePlane); pt.play();
     }
 
     @FXML void selectSeat(ActionEvent event) {
         Button clickedButton = (Button) event.getSource(); if (clickedButton.getStyleClass().contains("seat-booked") || clickedButton.isDisabled()) return;
         String[] seatData = clickedButton.getUserData().toString().split("_"); String selectedClass = seatData[0];
         double thisSeatCharge = 0.0; if (selectedClass.toLowerCase().contains("business")) thisSeatCharge = 676000.0; else if (selectedClass.toLowerCase().contains("premium")) thisSeatCharge = 418000.0;
+
         if (selectedSeatsList.contains(clickedButton)) {
             selectedSeatsList.remove(clickedButton); clickedButton.getStyleClass().remove("seat-selected"); clickedButton.getStyleClass().add("seat-available"); totalSeatCharge -= thisSeatCharge;
+            if (preSelectedSeats != null) preSelectedSeats.remove(clickedButton.getText());
         } else {
             if (selectedSeatsList.size() >= currentPassengers) { showWarningModal("Maximum Seats Reached", "You can only select " + currentPassengers + " seat(s)."); return; }
             selectedSeatsList.add(clickedButton); clickedButton.getStyleClass().remove("seat-available"); clickedButton.getStyleClass().add("seat-selected"); totalSeatCharge += thisSeatCharge;
@@ -337,8 +427,7 @@ public class StaffSeatSelectionController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(targetFxml)); Parent previousView = loader.load(); applyThemeRecursively(previousView, checkIsDarkMode());
 
             if (targetFxml.contains("StaffCreateNewBooking") && isChangeFlightMode) {
-                StaffCreateNewBookingController controller = loader.getController();
-                controller.initChangeFlightMode(oldBookingIds);
+                StaffCreateNewBookingController controller = loader.getController(); controller.initChangeFlightMode(oldBookingIds);
             }
 
             Pane parentContainer = (Pane) rootStackPane.getParent();
@@ -355,6 +444,7 @@ public class StaffSeatSelectionController implements Initializable {
         if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) { ObservableList<String> styles = node.getStylesheets(); for (int i = 0; i < styles.size(); i++) { String css = styles.get(i); if (isDarkMode && css.contains("Light")) styles.set(i, css.replace("Light", "Dark")); else if (!isDarkMode && css.contains("Dark")) styles.set(i, css.replace("Dark", "Light")); } }
         for (javafx.scene.Node child : node.getChildrenUnmodifiable()) { if (child instanceof Parent) applyThemeRecursively((Parent) child, isDarkMode); }
     }
+
     private boolean checkIsDarkMode() { boolean isDarkMode = true; Parent current = rootStackPane; while (current != null) { String currentStyles = current.getStylesheets().toString(); if (currentStyles.contains("Dark")) return true; else if (currentStyles.contains("Light")) return false; current = current.getParent(); } return isDarkMode; }
 
     @FXML void clickContinue(ActionEvent event) {
@@ -382,11 +472,10 @@ public class StaffSeatSelectionController implements Initializable {
 
             List<String> seatStrings = selectedSeatsList.stream().map(Button::getText).collect(Collectors.toList());
             String timeString = lblTopTime.getText().replace("Time: ", "").trim();
-            controller.setBookingData( currentFlightNo, currentFrom, currentTo, currentDate, timeString, seatStrings, currentTotalPrice, currentPassengers );
 
-            if (isChangeFlightMode) {
-                controller.initChangeFlightMode(oldBookingIds);
-            }
+            controller.setBookingData( currentFlightNo, currentFrom, currentTo, currentDate, timeString, seatStrings, currentTotalPrice, currentPassengers, currentPrice );
+
+            if (isChangeFlightMode) controller.initChangeFlightMode(oldBookingIds);
 
             nextView.setScaleX(0.8); nextView.setScaleY(0.8); nextView.setOpacity(0.0); rootStackPane.getChildren().add(nextView);
             ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), mainContainer); scaleOut.setToX(1.2); scaleOut.setToY(1.2); FadeTransition fadeOut = new FadeTransition(Duration.millis(400), mainContainer); fadeOut.setToValue(0.0);

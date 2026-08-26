@@ -1,189 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<VBox fx:id="dashboardRoot" prefHeight="700.0" prefWidth="1100.0" spacing="24.0" styleClass="super-dashboard-content" stylesheets="@../Style/AdminDashboardDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminDashboardController">
-   <padding>
-      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-   </padding>
-   <children>
-      <HBox alignment="CENTER_LEFT" spacing="18.0" styleClass="super-topbar">
+<ScrollPane fitToWidth="true" styleClass="dashboard-scroll-pane" stylesheets="@../Style/AdminDashboardDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.AdminDashboardController">
+   <content>
+      <VBox fx:id="contentArea" spacing="24.0" styleClass="super-content">
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
          <children>
-            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+            <!-- 🌟 TOPBAR 🌟 -->
+            <HBox alignment="CENTER_LEFT" spacing="18.0" styleClass="super-topbar">
                <children>
-                  <Label styleClass="super-page-kicker" text="ADMIN DASHBOARD" />
-                  <Label styleClass="super-page-title" text="Airline Operations Overview" />
-                  <Label styleClass="super-page-subtitle" text="Monitor pending cancellations, today's flights, and monthly revenue." />
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-
-      <HBox spacing="18.0" styleClass="super-metrics-row">
-         <children>
-
-            <HBox styleClass="super-metric-card-red" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
-               <children>
-                  <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                  <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label styleClass="super-metric-label" text="Pending Approvals" />
-                        <Label fx:id="lblPendingRequests" styleClass="super-metric-value" text="0" />
-                        <Label styleClass="super-metric-note" text="Awaiting your action" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="TOP_RIGHT">
-                     <children>
-                        <StackPane styleClass="super-metric-icon">
-                           <children>
-                              <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" styleClass="super-metric-icon-glyph" />
-                           </children>
-                        </StackPane>
+                        <Label styleClass="super-page-kicker" text="ADMIN DASHBOARD" />
+                        <Label styleClass="super-page-title" text="Airline Operations Overview" />
+                        <Label styleClass="super-page-subtitle" text="Monitor pending cancellations, today's flights, weather, and monthly revenue." />
                      </children>
                   </VBox>
                </children>
             </HBox>
 
-            <HBox styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
+            <!-- 🌟 4 METRIC CARDS 🌟 -->
+            <HBox spacing="18.0" styleClass="super-metrics-row">
                <children>
-                  <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                  <HBox styleClass="super-metric-card-red" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
                      <children>
-                        <Label styleClass="super-metric-label" text="Today's Flights" />
-                        <Label fx:id="lblTodayFlights" styleClass="super-metric-value" text="0" />
-                        <Label styleClass="super-metric-note" text="Scheduled departures" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="TOP_RIGHT">
-                     <children>
-                        <StackPane styleClass="super-metric-icon">
+                        <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
                            <children>
-                              <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" styleClass="super-metric-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-
-            <HBox styleClass="super-metric-card-green" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
-               <children>
-                  <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
-                     <children>
-                        <Label styleClass="super-metric-label" text="Monthly Bookings" />
-                        <Label fx:id="lblTotalBookings" styleClass="super-metric-value" text="0" />
-                        <Label styleClass="super-metric-note" text="New reservations" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="TOP_RIGHT">
-                     <children>
-                        <StackPane styleClass="super-metric-icon">
-                           <children>
-                              <SVGPath content="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z" styleClass="super-metric-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-
-            <HBox styleClass="super-metric-card-gold" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
-               <children>
-                  <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
-                     <children>
-                        <Label styleClass="super-metric-label" text="Monthly Revenue" />
-                        <Label fx:id="lblTotalRevenue" styleClass="super-metric-value" text="0 MMK" />
-                        <Label styleClass="super-metric-note" text="From confirmed bookings" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="TOP_RIGHT">
-                     <children>
-                        <StackPane styleClass="super-metric-icon">
-                           <children>
-                              <SVGPath content="M11 2h2v3.08c2.28.36 4 1.74 4 3.92h-2c0-1.19-1.26-2-3-2s-3 .81-3 2c0 1.32 1.36 1.77 3.56 2.36C15.03 12.02 17 12.96 17 15.5c0 2.25-1.72 3.89-4 4.35V23h-2v-3.11c-2.62-.38-4.5-1.98-4.5-4.39h2c0 1.45 1.42 2.5 3.5 2.5 1.93 0 3-.95 3-2.5 0-1.42-1.12-1.91-3.51-2.55C9.04 12.31 7 11.45 7 9c0-2.09 1.71-3.56 4-3.92V2Z" styleClass="super-metric-icon-glyph" />
-                           </children>
-                        </StackPane>
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-
-      <HBox spacing="18.0" VBox.vgrow="ALWAYS">
-         <children>
-            <VBox spacing="16.0" styleClass="super-panel" HBox.hgrow="ALWAYS">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="12.0">
-                     <children>
-                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label styleClass="super-section-title" text="Recent Cancellation Requests" />
-                              <Label styleClass="super-section-subtitle" text="Pending requests from staff awaiting admin approval." />
+                              <Label styleClass="super-metric-label" text="Pending Approvals" />
+                              <Label fx:id="lblPendingRequests" styleClass="super-metric-value" text="0" />
+                              <Label styleClass="super-metric-note" text="Awaiting your action" />
                            </children>
                         </VBox>
+                        <StackPane styleClass="super-metric-icon">
+                           <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" styleClass="super-metric-icon-glyph" />
+                        </StackPane>
                      </children>
                   </HBox>
-                  <TableView fx:id="tvPendingRequests" styleClass="super-table" VBox.vgrow="ALWAYS">
-                     <columns>
-                        <TableColumn fx:id="colReqId" prefWidth="90.0" text="Request ID" />
-                        <TableColumn fx:id="colPnr" prefWidth="120.0" text="PNR Code" />
-                        <TableColumn fx:id="colPassenger" prefWidth="180.0" text="Passenger Name" />
-                        <TableColumn fx:id="colReason" prefWidth="250.0" text="Reason" />
-                        <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
-                     </columns>
-                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                     </columnResizePolicy>
-                     <placeholder>
-                        <Label text="No pending requests at the moment." />
-                     </placeholder>
-                  </TableView>
-               </children>
-            </VBox>
 
-            <VBox prefWidth="310.0" spacing="18.0">
-               <children>
-                  <VBox spacing="12.0" styleClass="super-side-panel">
+                  <HBox styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
                      <children>
+                        <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="super-metric-label" text="Today's Flights" />
+                              <Label fx:id="lblTodayFlights" styleClass="super-metric-value" text="0" />
+                              <Label styleClass="super-metric-note" text="Scheduled departures" />
+                           </children>
+                        </VBox>
+                        <StackPane styleClass="super-metric-icon">
+                           <SVGPath content="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" styleClass="super-metric-icon-glyph" />
+                        </StackPane>
+                     </children>
+                  </HBox>
+
+                  <HBox styleClass="super-metric-card-green" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
+                     <children>
+                        <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="super-metric-label" text="Monthly Bookings" />
+                              <Label fx:id="lblTotalBookings" styleClass="super-metric-value" text="0" />
+                              <Label styleClass="super-metric-note" text="New reservations" />
+                           </children>
+                        </VBox>
+                        <StackPane styleClass="super-metric-icon">
+                           <SVGPath content="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z" styleClass="super-metric-icon-glyph" />
+                        </StackPane>
+                     </children>
+                  </HBox>
+
+                  <HBox styleClass="super-metric-card-gold" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT" spacing="10">
+                     <children>
+                        <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="super-metric-label" text="Monthly Revenue" />
+                              <Label fx:id="lblTotalRevenue" styleClass="super-metric-value" text="0 MMK" />
+                              <Label styleClass="super-metric-note" text="From confirmed bookings" />
+                           </children>
+                        </VBox>
+                        <StackPane styleClass="super-metric-icon">
+                           <SVGPath content="M11 2h2v3.08c2.28.36 4 1.74 4 3.92h-2c0-1.19-1.26-2-3-2s-3 .81-3 2c0 1.32 1.36 1.77 3.56 2.36C15.03 12.02 17 12.96 17 15.5c0 2.25-1.72 3.89-4 4.35V23h-2v-3.11c-2.62-.38-4.5-1.98-4.5-4.39h2c0 1.45 1.42 2.5 3.5 2.5 1.93 0 3-.95 3-2.5 0-1.42-1.12-1.91-3.51-2.55C9.04 12.31 7 11.45 7 9c0-2.09 1.71-3.56 4-3.92V2Z" styleClass="super-metric-icon-glyph" />
+                        </StackPane>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+
+            <!-- 🌟 CHARTS & WEATHER ROW 1 🌟 -->
+            <HBox spacing="18.0" VBox.vgrow="SOMETIMES">
+               <children>
+                  <!-- Bar Chart -->
+                  <VBox styleClass="super-panel" HBox.hgrow="ALWAYS" prefHeight="260.0">
+                     <Label styleClass="super-section-title" text="Today's Flights by Route" />
+                     <BarChart fx:id="dailyFlightsChart" legendVisible="false" VBox.vgrow="ALWAYS" styleClass="route-bar-chart" animated="true">
+                        <xAxis><CategoryAxis tickLabelFill="#8B95A5" /></xAxis>
+                        <yAxis><NumberAxis tickLabelFill="#8B95A5" /></yAxis>
+                     </BarChart>
+                  </VBox>
+
+                  <!-- Weather Widget -->
+                  <VBox styleClass="weather-widget-panel" prefWidth="350.0" alignment="CENTER" spacing="15.0">
+                     <Label text="LIVE WEATHER STATUS" styleClass="weather-kicker" />
+                     <Label fx:id="lblWeatherCity" text="Yangon, MM" styleClass="weather-city" />
+                     <HBox alignment="CENTER" spacing="15.0">
+                        <SVGPath content="M17.5 13c0 2.49-2.01 4.5-4.5 4.5H9c-2.76 0-5-2.24-5-5s2.24-5 5-5c.16 0 .32.01.48.03C10.28 4.88 12.47 3 15 3c3.31 0 6 2.69 6 6 0 1.35-.45 2.59-1.2 3.58.46.2.7.7.7 1.42 0 1.1-.9 2-2 2h-.5v-3h.5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-1V13z" styleClass="weather-icon" />
+                        <Label fx:id="lblWeatherTemp" text="-- °C" styleClass="weather-temp" />
+                     </HBox>
+                     <Label fx:id="lblWeatherDesc" text="Loading..." styleClass="weather-desc" />
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- 🌟 CHARTS ROW 2 🌟 -->
+            <HBox spacing="18.0" VBox.vgrow="SOMETIMES">
+               <children>
+                  <!-- Area Chart -->
+                  <VBox styleClass="super-panel" HBox.hgrow="ALWAYS" prefHeight="280.0">
+                     <Label styleClass="super-section-title" text="Weekly Booking Activity" />
+                     <Label styleClass="super-section-subtitle" text="Ticket sales volume over the last 7 days" />
+                     <AreaChart fx:id="weeklyBookingsChart" legendVisible="false" VBox.vgrow="ALWAYS" animated="true">
+                        <xAxis><CategoryAxis tickLabelFill="#8B95A5" /></xAxis>
+                        <yAxis><NumberAxis tickLabelFill="#8B95A5" /></yAxis>
+                     </AreaChart>
+                  </VBox>
+                  <!-- Pie Chart -->
+                  <VBox styleClass="super-panel" prefWidth="400.0" prefHeight="280.0">
+                     <Label styleClass="super-section-title" text="Cancellation Analysis" />
+                     <Label styleClass="super-section-subtitle" text="Common reasons for flight cancellations" />
+                     <PieChart fx:id="cancelReasonChart" VBox.vgrow="ALWAYS" animated="true" legendSide="BOTTOM" />
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- 🌟 BOTTOM ROW: Table & Side Panel 🌟 -->
+            <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox spacing="16.0" styleClass="super-panel" HBox.hgrow="ALWAYS" prefHeight="350.0">
+                     <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <Label styleClass="super-section-title" text="Recent Cancellation Requests" />
+                           <Label styleClass="super-section-subtitle" text="Pending requests from staff awaiting admin approval." />
+                        </VBox>
+                     </HBox>
+                     <TableView fx:id="tvPendingRequests" styleClass="super-table" VBox.vgrow="ALWAYS">
+                        <columns>
+                           <TableColumn fx:id="colReqId" prefWidth="90.0" text="Request ID" />
+                           <TableColumn fx:id="colPnr" prefWidth="120.0" text="PNR Code" />
+                           <TableColumn fx:id="colPassenger" prefWidth="180.0" text="Passenger Name" />
+                           <TableColumn fx:id="colReason" prefWidth="250.0" text="Reason" />
+                           <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+                        </columns>
+                        <columnResizePolicy>
+                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        </columnResizePolicy>
+                        <placeholder>
+                           <Label text="No pending requests at the moment." />
+                        </placeholder>
+                     </TableView>
+                  </VBox>
+
+                  <VBox prefWidth="310.0" spacing="18.0">
+                     <VBox spacing="12.0" styleClass="super-side-panel">
                         <Label styleClass="super-section-title" text="Today's Overview" />
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label styleClass="super-dot-green" text=" " />
-                              <Label fx:id="lblScheduled" styleClass="super-side-copy" text="Scheduled Flights: 0" />
-                           </children>
+                           <Label styleClass="super-dot-green" text=" " />
+                           <Label fx:id="lblScheduled" styleClass="super-side-copy" text="Scheduled Flights: 0" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label styleClass="super-dot-blue" text=" " />
-                              <Label fx:id="lblDeparted" styleClass="super-side-copy" text="Departed Flights: 0" />
-                           </children>
+                           <Label styleClass="super-dot-blue" text=" " />
+                           <Label fx:id="lblDeparted" styleClass="super-side-copy" text="Departed Flights: 0" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label styleClass="super-dot-gold" text=" " />
-                              <Label fx:id="lblDelayed" styleClass="super-side-copy" text="Delayed Flights: 0" />
-                           </children>
+                           <Label styleClass="super-dot-gold" text=" " />
+                           <Label fx:id="lblDelayed" styleClass="super-side-copy" text="Delayed Flights: 0" />
                         </HBox>
-                     </children>
-                  </VBox>
-                  <VBox spacing="10.0" styleClass="super-side-panel-accent">
-                     <children>
+                     </VBox>
+                     <VBox spacing="10.0" styleClass="super-side-panel-accent">
                         <Label styleClass="super-section-title-light" text="Quick Action Guide" />
                         <Label styleClass="super-side-copy-light" text="Click on the bell icon at the top right to quickly approve or reject pending requests." wrapText="true" />
-                     </children>
+                     </VBox>
                   </VBox>
-                  <Region VBox.vgrow="ALWAYS" />
                </children>
-            </VBox>
+            </HBox>
          </children>
-      </HBox>
-   </children>
-</VBox>
+      </VBox>
+   </content>
+</ScrollPane>

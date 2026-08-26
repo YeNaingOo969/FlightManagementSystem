@@ -232,3 +232,79 @@
 .action-column {
     -fx-alignment: CENTER !important;
 }
+
+/* ==========================================================
+   🌟 PASSENGER SELECTION BOX (LIGHT THEME) 🌟
+========================================================== */
+.passenger-box {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.passenger-label-main {
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.passenger-label-sub {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 11px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ==========================================================
+   🌟 MODERN SPINNER BUTTONS (LIGHT THEME FIX) 🌟
+========================================================== */
+.custom-spinner {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+/* စာသားပေါ်မည့်နေရာ (Text Field) */
+.custom-spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+/* အပေါ်နှင့် အောက် ခလုတ်များ၏ နောက်ခံ */
+.custom-spinner .increment-arrow-button,
+.custom-spinner .decrement-arrow-button {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: transparent;
+}
+
+/* ခလုတ်များ၏ ထောင့်ချိုး (Radius) */
+.custom-spinner .increment-arrow-button { -fx-background-radius: 0 5px 0 0; }
+.custom-spinner .decrement-arrow-button { -fx-background-radius: 0 0 5px 0; }
+
+/* 🌟 Hover လုပ်သည့်အခါ ပြောင်းလဲမည့် အရောင် (Light Blue) 🌟 */
+.custom-spinner .increment-arrow-button:hover,
+.custom-spinner .decrement-arrow-button:hover {
+    -fx-background-color: #e0f2fe;
+    -fx-cursor: hand;
+}
+.custom-spinner .increment-arrow-button:pressed,
+.custom-spinner .decrement-arrow-button:pressed {
+    -fx-background-color: #bae6fd;
+}
+
+/* မြားခေါင်း (Arrow) လေးများ၏ မူလအရောင် */
+.custom-spinner .increment-arrow,
+.custom-spinner .decrement-arrow {
+    -fx-background-color: #64748b;
+}
+
+/* 🌟 Hover လုပ်သည့်အခါ မြားခေါင်း အရောင် အပြာရောင်သို့ ပြောင်းရန် 🌟 */
+.custom-spinner .increment-arrow-button:hover .increment-arrow,
+.custom-spinner .decrement-arrow-button:hover .decrement-arrow {
+    -fx-background-color: #0ea5e9;
+}
