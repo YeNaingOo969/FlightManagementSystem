@@ -2,6 +2,10 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -10,10 +14,8 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.SVGPath?>
 
-<!-- 🌟 အလယ်က Content သာ Scroll ဖြစ်ရန် ScrollPane ဖြင့် အုပ်ပေးထားပါသည် 🌟 -->
-<ScrollPane fitToWidth="true" styleClass="dashboard-scroll-pane" stylesheets="@/com/pos/flightmanagementsystem/Style/StaffDashboardDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffDashboardController">
+<ScrollPane fitToWidth="true" styleClass="dashboard-scroll-pane" stylesheets="@../Style/StaffDashboardDark.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pos.flightmanagementsystem.controller.StaffDashboardController">
    <content>
       <VBox fx:id="contentArea" spacing="24.0" styleClass="super-content" minWidth="0">
          <padding>
@@ -43,28 +45,21 @@
             <!-- 🌟 METRICS ROW (4 Cards) 🌟 -->
             <HBox spacing="20.0" styleClass="super-metrics-row" minWidth="0">
                <children>
-                  <!-- 1. My Sales -->
                   <VBox styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS" minWidth="0">
                      <Label styleClass="super-metric-label" text="My Sales (This Month)" />
                      <Label fx:id="lblMySales" styleClass="super-metric-value" text="0 MMK" />
                      <Label styleClass="super-metric-note" text="Total revenue generated" />
                   </VBox>
-
-                  <!-- 2. My Bookings -->
                   <VBox styleClass="super-metric-card-green" HBox.hgrow="ALWAYS" minWidth="0">
                      <Label styleClass="super-metric-label" text="My Bookings (This Month)" />
                      <Label fx:id="lblMyBookings" styleClass="super-metric-value" text="0" />
                      <Label styleClass="super-metric-note" text="Tickets sold &amp; confirmed" />
                   </VBox>
-
-                  <!-- 3. Today's Flights -->
                   <VBox styleClass="super-metric-card-purple" HBox.hgrow="ALWAYS" minWidth="0">
                      <Label styleClass="super-metric-label" text="Today's Flights" />
                      <Label fx:id="lblTodayFlights" styleClass="super-metric-value" text="0" />
                      <Label styleClass="super-metric-note" text="Scheduled for departure today" />
                   </VBox>
-
-                  <!-- 4. Pending Cancel Requests -->
                   <VBox styleClass="super-metric-card-red" HBox.hgrow="ALWAYS" minWidth="0">
                      <Label styleClass="super-metric-label" text="Pending Cancel Requests" />
                      <Label fx:id="lblPendingCancels" styleClass="super-metric-value" text="0" />
@@ -73,10 +68,30 @@
                </children>
             </HBox>
 
+            <!-- 🌟 CHARTS ROW (NEWLY ADDED) 🌟 -->
+            <HBox spacing="18.0" VBox.vgrow="SOMETIMES" minWidth="0">
+               <children>
+                  <!-- Area Chart: My Weekly Sales -->
+                  <VBox styleClass="super-panel" HBox.hgrow="ALWAYS" prefHeight="280.0">
+                     <Label styleClass="super-section-title" text="My Weekly Sales" />
+                     <Label styleClass="super-section-subtitle" text="Revenue generated over the last 7 days" />
+                     <AreaChart fx:id="myWeeklySalesChart" legendVisible="false" VBox.vgrow="ALWAYS" animated="false">
+                        <xAxis><CategoryAxis tickLabelFill="#8B95A5" animated="false" /></xAxis>
+                        <yAxis><NumberAxis tickLabelFill="#8B95A5" autoRanging="true" animated="false" /></yAxis>
+                     </AreaChart>
+                  </VBox>
+                  <!-- Pie Chart: Today's Flight Status -->
+                  <VBox styleClass="super-panel" prefWidth="400.0" prefHeight="280.0">
+                     <Label styleClass="super-section-title" text="Today's Flight Status" />
+                     <Label styleClass="super-section-subtitle" text="Real-time flight departures &amp; delays" />
+                     <PieChart fx:id="flightStatusChart" VBox.vgrow="ALWAYS" animated="true" legendSide="BOTTOM" />
+                  </VBox>
+               </children>
+            </HBox>
+
             <!-- 🌟 BOTTOM SECTION (2 Tables Side-by-Side) 🌟 -->
             <HBox spacing="18.0" VBox.vgrow="ALWAYS" minWidth="0">
                <children>
-                  <!-- Left Table: Live Flight Board -->
                   <VBox spacing="16.0" styleClass="super-panel" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="500.0" minWidth="0">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
@@ -98,7 +113,6 @@
                      </children>
                   </VBox>
 
-                  <!-- Right Table: My Recent Bookings -->
                   <VBox spacing="16.0" styleClass="super-panel" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="500.0" minWidth="0">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
