@@ -48,6 +48,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -143,8 +145,12 @@ public class StaffManageBookingController implements Initializable {
 
                     {
                         btnChange.setStyle("-fx-background-color: transparent; -fx-border-color: #31C4B4; -fx-text-fill: #31C4B4; -fx-font-weight: bold; -fx-border-width: 1.5px; -fx-cursor: hand; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-border-radius: 6px; -fx-padding: 5px 12px;");
-                        btnChange.setOnMouseEntered(e -> btnChange.setStyle("-fx-background-color: rgba(49, 196, 180, 0.15); -fx-border-color: #31C4B4; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-width: 1.5px; -fx-cursor: hand; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-border-radius: 6px; -fx-padding: 5px 12px;"));
-                        btnChange.setOnMouseExited(e -> btnChange.setStyle("-fx-background-color: transparent; -fx-border-color: #31C4B4; -fx-text-fill: #31C4B4; -fx-font-weight: bold; -fx-border-width: 1.5px; -fx-cursor: hand; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-border-radius: 6px; -fx-padding: 5px 12px;"));
+                        btnChange.setOnMouseEntered(e -> {
+                            if (!btnChange.isDisabled()) btnChange.setStyle("-fx-background-color: rgba(49, 196, 180, 0.15); -fx-border-color: #31C4B4; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-border-width: 1.5px; -fx-cursor: hand; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-border-radius: 6px; -fx-padding: 5px 12px;");
+                        });
+                        btnChange.setOnMouseExited(e -> {
+                            if (!btnChange.isDisabled()) btnChange.setStyle("-fx-background-color: transparent; -fx-border-color: #31C4B4; -fx-text-fill: #31C4B4; -fx-font-weight: bold; -fx-border-width: 1.5px; -fx-cursor: hand; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-border-radius: 6px; -fx-padding: 5px 12px;");
+                        });
 
                         btnChange.setOnAction((ActionEvent event) -> {
                             BookingData data = getTableView().getItems().get(getIndex());
@@ -154,7 +160,7 @@ public class StaffManageBookingController implements Initializable {
                         btnCancel.getStyleClass().add("btn-cancel-table");
                         btnCancel.setOnAction((ActionEvent event) -> {
                             BookingData data = getTableView().getItems().get(getIndex());
-                            checkAndGoToCancelMode(data); // 🌟 Cancel အတွက် Group စစ်ဆေးမည့် နေရာသို့ ချိတ်ဆက်လိုက်ပါပြီ 🌟
+                            checkAndGoToCancelMode(data);
                         });
 
                         actionBox.setAlignment(Pos.CENTER);
@@ -191,6 +197,14 @@ public class StaffManageBookingController implements Initializable {
                                     setGraphic(lblRescheduled);
                                 }
                                 else {
+                                    // 🌟 Time ကို အတိအကျ စစ်ဆေးတဲ့ Logic ကို ခေါ်သုံးထားပါတယ် 🌟
+                                    if (data.isLessThan24Hours()) {
+                                        btnChange.setDisable(true);
+                                        btnChange.setStyle("-fx-background-color: transparent; -fx-border-color: #8B95A5; -fx-text-fill: #8B95A5; -fx-font-weight: bold; -fx-border-width: 1.5px; -fx-cursor: default; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-border-radius: 6px; -fx-padding: 5px 12px; -fx-opacity: 0.5;");
+                                    } else {
+                                        btnChange.setDisable(false);
+                                        btnChange.setStyle("-fx-background-color: transparent; -fx-border-color: #31C4B4; -fx-text-fill: #31C4B4; -fx-font-weight: bold; -fx-border-width: 1.5px; -fx-cursor: hand; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-border-radius: 6px; -fx-padding: 5px 12px;");
+                                    }
                                     setGraphic(actionBox);
                                 }
                             }
@@ -282,7 +296,7 @@ public class StaffManageBookingController implements Initializable {
     }
 
     // =========================================================================
-    // 🌟 CANCEL FLIGHT LOGIC (Group Selection Added) 🌟
+    // 🌟 CANCEL FLIGHT LOGIC 🌟
     // =========================================================================
     private void checkAndGoToCancelMode(BookingData data) {
         List<Integer> groupIds = getGroupIdsForPNR(data.getPnrCode());
@@ -290,14 +304,13 @@ public class StaffManageBookingController implements Initializable {
             showGroupCancelModal(data, groupIds);
         } else {
             List<Integer> singleId = new ArrayList<>(); singleId.add(data.getDbId());
-            openReasonModal(singleId); // 🌟 List ဖြင့် ပို့ပါမည် 🌟
+            openReasonModal(singleId);
         }
     }
 
     private void showGroupCancelModal(BookingData data, List<Integer> groupIds) {
         StackPane overlay = new StackPane(); overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);"); BoxBlur blur = new BoxBlur(8, 8, 3); mainContainer.setEffect(blur);
 
-        // 🌟 အနီရောင် Theme ဖြင့် ပြင်ဆင်ထားသော Modal 🌟
         VBox modalCard = new VBox(20); modalCard.setMaxSize(480, Region.USE_PREF_SIZE); modalCard.setStyle("-fx-background-color: #0B0E14; -fx-border-color: #FF4B72; -fx-border-width: 1.5px; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 24px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);");
 
         HBox header = new HBox(); header.setAlignment(Pos.CENTER_LEFT);
@@ -335,7 +348,6 @@ public class StaffManageBookingController implements Initializable {
         btnGroup.setOnAction(e -> { closeAction.run(); openReasonModal(groupIds); });
     }
 
-    // 🌟 List ဖြင့် အလုပ်လုပ်မည့် Reason Modal 🌟
     private void openReasonModal(List<Integer> bookingIdsToCancel) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/AdminCancelBookingReason.fxml"));
@@ -364,7 +376,6 @@ public class StaffManageBookingController implements Initializable {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // 🌟 List ထဲရှိ ID အားလုံးကို Database သို့ Request လှမ်းပို့မည့် Method 🌟
     private void processCancellationRequest(List<Integer> bookingIds, String reason) {
         int staffId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
         String insertRequestQuery = "INSERT INTO requests (booking_id, staff_id, reason, status) VALUES (?, ?, ?, 'Pending')";
@@ -392,7 +403,6 @@ public class StaffManageBookingController implements Initializable {
                 conn.setAutoCommit(true);
             }
 
-            // 🌟 Data များကို Refresh ပြန်လုပ်မည် 🌟
             String currentTab = "All";
             if (lblTabCompleted.getStyleClass().contains("active-tab")) currentTab = "Completed";
             else if (lblTabCancelled.getStyleClass().contains("active-tab")) currentTab = "Cancelled";
@@ -492,14 +502,26 @@ public class StaffManageBookingController implements Initializable {
 
     private void loadBookingsFromDatabase(String filterType) {
         bookingList.clear();
-        String query = "SELECT b.booking_id, b.pnr_code, p.full_name AS passenger_name, f.flight_number, dep_city.city_code AS dep_code, arr_city.city_code AS arr_code, DATE(f.departure_time) AS dep_date, b.status FROM bookings b JOIN passengers p ON b.passenger_id = p.passenger_id JOIN flights f ON b.flight_id = f.flight_id JOIN cities dep_city ON f.departure_city_id = dep_city.city_id JOIN cities arr_city ON f.arrival_city_id = arr_city.city_id ";
+        String query = "SELECT b.booking_id, b.pnr_code, p.full_name AS passenger_name, f.flight_number, dep_city.city_code AS dep_code, arr_city.city_code AS arr_code, DATE(f.departure_time) AS dep_date, f.departure_time, b.status FROM bookings b JOIN passengers p ON b.passenger_id = p.passenger_id JOIN flights f ON b.flight_id = f.flight_id JOIN cities dep_city ON f.departure_city_id = dep_city.city_id JOIN cities arr_city ON f.arrival_city_id = arr_city.city_id ";
         if (filterType.equals("Completed")) query += "WHERE b.status IN ('Confirmed', 'Completed') ";
         else if (filterType.equals("Cancelled")) query += "WHERE b.status IN ('Cancelled', 'Cancel Pending') ";
         query += "ORDER BY b.booking_date DESC";
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                BookingData data = new BookingData( rs.getInt("booking_id"), rs.getString("pnr_code"), rs.getString("passenger_name"), rs.getString("flight_number") + " (" + rs.getString("dep_code") + "-" + rs.getString("arr_code") + ")", rs.getString("dep_date"), rs.getString("status") );
+                Timestamp depTimestamp = rs.getTimestamp("departure_time");
+                LocalDateTime departureTime = (depTimestamp != null) ? depTimestamp.toLocalDateTime() : null;
+
+                BookingData data = new BookingData(
+                        rs.getInt("booking_id"),
+                        rs.getString("pnr_code"),
+                        rs.getString("passenger_name"),
+                        rs.getString("flight_number") + " (" + rs.getString("dep_code") + "-" + rs.getString("arr_code") + ")",
+                        rs.getString("dep_date"),
+                        rs.getString("status"),
+                        departureTime
+                );
+
                 if (data.getStatus().equalsIgnoreCase("Cancel Pending")) data.setCancelPending(true);
                 bookingList.add(data);
             }
@@ -535,10 +557,37 @@ public class StaffManageBookingController implements Initializable {
     }
 
     public static class BookingData {
-        private int dbId; private String pnrCode, passenger, route, date, status; private boolean cancelPending = false;
-        public BookingData(int dbId, String pnrCode, String passenger, String route, String date, String status) { this.dbId = dbId; this.pnrCode = pnrCode; this.passenger = passenger; this.route = route; this.date = date; this.status = status; }
-        public int getDbId() { return dbId; } public String getPnrCode() { return pnrCode; } public String getPassenger() { return passenger; }
-        public String getRoute() { return route; } public String getDate() { return date; } public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; } public boolean isCancelPending() { return cancelPending; } public void setCancelPending(boolean cancelPending) { this.cancelPending = cancelPending; }
+        private int dbId;
+        private String pnrCode, passenger, route, date, status;
+        private boolean cancelPending = false;
+        private LocalDateTime departureTime;
+
+        public BookingData(int dbId, String pnrCode, String passenger, String route, String date, String status, LocalDateTime departureTime) {
+            this.dbId = dbId; this.pnrCode = pnrCode; this.passenger = passenger; this.route = route; this.date = date; this.status = status;
+            this.departureTime = departureTime;
+        }
+
+        public int getDbId() { return dbId; }
+        public String getPnrCode() { return pnrCode; }
+        public String getPassenger() { return passenger; }
+        public String getRoute() { return route; }
+        public String getDate() { return date; }
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+        public boolean isCancelPending() { return cancelPending; }
+        public void setCancelPending(boolean cancelPending) { this.cancelPending = cancelPending; }
+
+        // 🌟 ပြင်ဆင်ထားသော စက္ကန့်တိကျသည့် ၂၄ နာရီ Logic 🌟
+        public boolean isLessThan24Hours() {
+            if (departureTime == null) return false;
+            LocalDateTime now = LocalDateTime.now();
+
+            // လက်ရှိအချိန်ကနေ ရှေ့ကို ၂၄ နာရီ အတိအကျ ပေါင်းထည့်လိုက်ပါတယ်
+            LocalDateTime exactly24HoursLater = now.plusHours(24);
+
+            // Database ထဲက Flight ထွက်မယ့်အချိန် (departureTime) ဟာ exactly24HoursLater ထက် မနောက်ကျဘူးဆိုရင် (စောနေတယ် သို့ အတူတူပဲဆိုရင်)
+            // ရည်ရွယ်ချက် - ၂၄ နာရီ အတိအကျ သို့မဟုတ် အောက်ရောက်သွားပြီမို့ True (Disable) ပြန်ပေးမည်
+            return !departureTime.isAfter(exactly24HoursLater);
+        }
     }
 }

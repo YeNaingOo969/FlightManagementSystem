@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javafx.scene.layout.Pane;
 
 public class StaffPassengerDetailsController implements Initializable {
 
@@ -86,8 +87,8 @@ public class StaffPassengerDetailsController implements Initializable {
     private int totalPassengers;
 
     private int currentIndex = 1;
+    private String originalBasePrice;
 
-    // 🌟 List ဖြင့် ချိတ်ဆက်ထားသော Change Flight Mode 🌟
     private boolean isChangeFlightMode = false;
     private List<Integer> oldBookingIds;
     private List<PassengerInfo> existingPassengersList = new ArrayList<>();
@@ -138,7 +139,6 @@ public class StaffPassengerDetailsController implements Initializable {
                 }
             }
 
-            // Loop ပြီးသွားလျှင် ပထမလူအတွက် UI ချက်ချင်း တင်ပေးပါမည်
             if (!existingPassengersList.isEmpty()) {
                 Platform.runLater(this::updateUIForCurrentPassenger);
             }
@@ -149,7 +149,6 @@ public class StaffPassengerDetailsController implements Initializable {
     }
 
     private void setupPaymentMethods() {
-        // ... (Payment Setup as before) ...
         ObservableList<String> paymentOptions = FXCollections.observableArrayList( "Cash", "KBZ Pay", "Wave Pay", "CB Pay", "AYA Pay", "Credit/Debit Card" );
         cmbPaymentMethod.setItems(paymentOptions); cmbPaymentMethod.getSelectionModel().selectFirst();
         Callback<ListView<String>, ListCell<String>> cellFactory = param -> new ListCell<String>() {
@@ -167,7 +166,13 @@ public class StaffPassengerDetailsController implements Initializable {
     }
 
     public void setBookingData(String flightNo, String from, String to, String date, String time, List<String> seats, double totalPrice, int totalPassengers) {
+        setBookingData(flightNo, from, to, date, time, seats, totalPrice, totalPassengers, String.valueOf(totalPrice));
+    }
+
+    public void setBookingData(String flightNo, String from, String to, String date, String time, List<String> seats, double totalPrice, int totalPassengers, String originalPrice) {
         this.currentFlightNo = flightNo; this.currentFrom = from; this.currentTo = to; this.currentDate = date; this.currentTime = time; this.selectedSeats = seats; this.currentTotalPrice = totalPrice; this.totalPassengers = totalPassengers;
+        this.originalBasePrice = originalPrice;
+
         lblFlightNo.setText(flightNo); lblFrom.setText(from); lblTo.setText(to); lblDeparture.setText(date); lblTotalPrice.setText(String.format("%,.0f MMK", totalPrice));
         updateUIForCurrentPassenger();
     }
@@ -176,7 +181,6 @@ public class StaffPassengerDetailsController implements Initializable {
         lblPassengerIndex.setText("Passenger " + currentIndex + " of " + totalPassengers);
         lblCurrentSeat.setText(selectedSeats.get(currentIndex - 1));
 
-        // 🌟 Change Flight Mode ဖြစ်လျှင် သက်ဆိုင်ရာ လူအဟောင်း၏ Data ကို Auto-fill မည် 🌟
         if (isChangeFlightMode && existingPassengersList.size() >= currentIndex) {
             PassengerInfo info = existingPassengersList.get(currentIndex - 1);
             txtFullName.setText(info.fullName);
@@ -188,17 +192,24 @@ public class StaffPassengerDetailsController implements Initializable {
 
             if ("Myanmar".equalsIgnoreCase(info.nationality)) {
                 try {
-                    String[] parts = info.nrcOrPassport.split("\\(N\\)|\\(E\\)|\\(P\\)|\\(T\\)|\\(F\\)|\\(S\\)");
-                    String firstPart = parts[0];
-                    String number = parts[1];
-                    String[] stateAndTownship = firstPart.split("/");
+                    if ("Student".equals(info.nrcOrPassport)) {
+                        cmbNrcState.setValue("");
+                        cmbNrcTownship.setValue("Student");
+                        txtNrcNumber.clear();
+                        cmbNrcType.getSelectionModel().clearSelection();
+                    } else {
+                        String[] parts = info.nrcOrPassport.split("\\(N\\)|\\(E\\)|\\(P\\)|\\(T\\)|\\(F\\)|\\(S\\)");
+                        String firstPart = parts[0];
+                        String number = parts[1];
+                        String[] stateAndTownship = firstPart.split("/");
 
-                    cmbNrcState.setValue(stateAndTownship[0] + "/");
-                    cmbNrcTownship.setValue(stateAndTownship[1]);
-                    txtNrcNumber.setText(number);
+                        cmbNrcState.setValue(stateAndTownship[0] + "/");
+                        cmbNrcTownship.setValue(stateAndTownship[1]);
+                        txtNrcNumber.setText(number);
 
-                    if(info.nrcOrPassport.contains("(N)")) cmbNrcType.setValue("(N)");
-                    else if(info.nrcOrPassport.contains("(E)")) cmbNrcType.setValue("(E)");
+                        if(info.nrcOrPassport.contains("(N)")) cmbNrcType.setValue("(N)");
+                        else if(info.nrcOrPassport.contains("(E)")) cmbNrcType.setValue("(E)");
+                    }
                 } catch (Exception e) {
                     txtNrcNumber.setText(info.nrcOrPassport);
                 }
@@ -211,10 +222,25 @@ public class StaffPassengerDetailsController implements Initializable {
             txtPassportNo.setDisable(true); txtPhone.setDisable(true); txtEmail.setDisable(true);
 
         } else {
-            // ရိုးရိုး Booking သစ်ဖြစ်လျှင် Form ကို ရှင်းမည်
             txtFullName.clear(); dpDateOfBirth.setValue(null); txtNrcNumber.clear(); txtPassportNo.clear();
-            if(currentIndex == 1) { txtPhone.clear(); txtEmail.clear(); }
-            else { txtPhone.setText(tempPassengersList.get(0).phone); txtEmail.setText(tempPassengersList.get(0).email); }
+
+            // 🌟 Back နှိပ်လိုက်တိုင်း "Student" default ဖြစ်မနေစေရန် ပုံမှန်အတိုင်း Reset ပြန်လုပ်ခြင်း 🌟
+            cmbNrcState.setDisable(false);
+            cmbNrcTownship.setDisable(false);
+            cmbNrcType.setDisable(false);
+            txtNrcNumber.setDisable(false);
+
+            cmbNrcState.getSelectionModel().select("12/");
+            cmbNrcType.getSelectionModel().selectFirst();
+
+            if(currentIndex == 1) {
+                txtPhone.clear(); txtEmail.clear();
+            } else {
+                if (!tempPassengersList.isEmpty()) {
+                    txtPhone.setText(tempPassengersList.get(0).phone);
+                    txtEmail.setText(tempPassengersList.get(0).email);
+                }
+            }
         }
 
         if (currentIndex == totalPassengers) {
@@ -235,12 +261,82 @@ public class StaffPassengerDetailsController implements Initializable {
     }
 
     private void setupNrcData() {
-        ObservableList<String> nrcStates = FXCollections.observableArrayList("1/", "2/", "3/", "4/", "5/", "6/", "7/", "8/", "9/", "10/", "11/", "12/", "13/", "14/");
-        cmbNrcState.setItems(nrcStates); ObservableList<String> nrcTypes = FXCollections.observableArrayList("(N)", "(E)", "(P)", "(T)", "(F)", "(S)"); cmbNrcType.setItems(nrcTypes);
-        Map<String, String[]> nrcTownshipsMap = new HashMap<>(); nrcTownshipsMap.put("12/", new String[]{"AHLN", "BTA", "DGA", "DLA", "KKA", "KMA", "LMA", "MGD", "MGA", "MRA", "SCA", "TKA", "TTA", "YKA"});
-        cmbNrcState.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> { if (newVal != null) { cmbNrcTownship.setItems(FXCollections.observableArrayList(nrcTownshipsMap.getOrDefault(newVal, new String[]{"MGD"}))); if (!cmbNrcTownship.getItems().isEmpty()) cmbNrcTownship.getSelectionModel().selectFirst(); } });
-        cmbNrcState.getSelectionModel().select("12/"); cmbNrcType.getSelectionModel().selectFirst();
-        txtNrcNumber.textProperty().addListener((observable, oldValue, newValue) -> { if (!newValue.matches("\\d*")) txtNrcNumber.setText(newValue.replaceAll("[^\\d]", "")); if (txtNrcNumber.getText().length() > 6) txtNrcNumber.setText(txtNrcNumber.getText().substring(0, 6)); });
+        ObservableList<String> nrcStates = FXCollections.observableArrayList("", "1/", "2/", "3/", "4/", "5/", "6/", "7/", "8/", "9/", "10/", "11/", "12/", "13/", "14/");
+        cmbNrcState.setItems(nrcStates);
+
+        ObservableList<String> nrcTypes = FXCollections.observableArrayList("(N)", "(E)", "(P)", "(T)", "(F)", "(S)");
+        cmbNrcType.setItems(nrcTypes);
+
+        Map<String, String[]> nrcTownshipsMap = new HashMap<>();
+        nrcTownshipsMap.put("12/", new String[]{"AHLN", "BTA", "DGA", "DLA", "KKA", "KMA", "LMA", "MGD", "MGA", "MRA", "SCA", "TKA", "TTA", "YKA"});
+
+        cmbNrcState.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.trim().isEmpty()) {
+                ObservableList<String> townships = FXCollections.observableArrayList(nrcTownshipsMap.getOrDefault(newVal, new String[]{"MGD"}));
+                if (!townships.contains("Student")) {
+                    townships.add("Student");
+                }
+                cmbNrcTownship.setItems(townships);
+
+                if ("Student".equals(cmbNrcTownship.getValue())) {
+                    cmbNrcTownship.getSelectionModel().clearSelection();
+                }
+
+                if (cmbNrcTownship.getValue() == null && !townships.isEmpty()) {
+                    cmbNrcTownship.getSelectionModel().selectFirst();
+                }
+            } else {
+                // 🌟 State အလွတ်ဖြစ်နေရင် Student ကို ရွေးနိုင်သလို၊ ပြန်ထွက်ချင်ရင် ရွေးဖို့ "-" (Empty) လေးပါ ထည့်ပေးမယ် 🌟
+                cmbNrcTownship.setItems(FXCollections.observableArrayList("-", "Student"));
+                if (cmbNrcTownship.getValue() == null || (!cmbNrcTownship.getValue().equals("Student") && !cmbNrcTownship.getValue().equals("-"))) {
+                    cmbNrcTownship.getSelectionModel().selectFirst();
+                }
+            }
+        });
+
+        cmbNrcTownship.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if ("Student".equals(newVal)) {
+                cmbNrcState.setDisable(true);
+                cmbNrcType.setDisable(true);
+                txtNrcNumber.setDisable(true);
+                txtNrcNumber.clear();
+                cmbNrcType.getSelectionModel().clearSelection();
+            } else {
+                // 🌟 Student ကနေ "-" ပြန်ရွေးလိုက်ရင် ပိတ်နေတဲ့ အကွက်တွေ အလိုအလျောက် ပြန်ပွင့်လာမယ် 🌟
+                cmbNrcState.setDisable(false);
+                cmbNrcType.setDisable(false);
+                txtNrcNumber.setDisable(false);
+            }
+        });
+
+        cmbNrcTownship.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setDisable(false);
+                } else {
+                    setText(item);
+                    String selectedState = cmbNrcState.getValue();
+                    if ("Student".equals(item) && selectedState != null && !selectedState.trim().isEmpty()) {
+                        setDisable(true);
+                        setStyle("-fx-text-fill: gray;");
+                    } else {
+                        setDisable(false);
+                        setStyle("");
+                    }
+                }
+            }
+        });
+
+        cmbNrcState.getSelectionModel().select("12/");
+        cmbNrcType.getSelectionModel().selectFirst();
+
+        txtNrcNumber.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) txtNrcNumber.setText(newValue.replaceAll("[^\\d]", ""));
+            if (txtNrcNumber.getText().length() > 6) txtNrcNumber.setText(txtNrcNumber.getText().substring(0, 6));
+        });
     }
 
     private void showCustomAlert(boolean isError, String title, String message, Runnable onOk) {
@@ -254,13 +350,20 @@ public class StaffPassengerDetailsController implements Initializable {
     }
 
     @FXML void clickBack(ActionEvent event) {
-        if (currentIndex > 1) { currentIndex--; tempPassengersList.remove(tempPassengersList.size() - 1); updateUIForCurrentPassenger(); }
-        else { navigateTo("/com/pos/flightmanagementsystem/view/StaffSeatSelection.fxml", true); }
+        if (currentIndex > 1) {
+            currentIndex--;
+            if (!tempPassengersList.isEmpty()) {
+                tempPassengersList.remove(tempPassengersList.size() - 1);
+            }
+            updateUIForCurrentPassenger();
+        }
+        else {
+            navigateTo("/com/pos/flightmanagementsystem/view/StaffSeatSelection.fxml", true);
+        }
     }
 
     @FXML
     void clickNext(ActionEvent event) {
-        // 🌟 Change Flight ဆိုလျှင် Validation အားလုံးကျော်ဖြတ်ပြီး List ထဲမှ Data ကိုသာ တန်းသုံးမည် 🌟
         if (isChangeFlightMode && existingPassengersList.size() >= currentIndex) {
             PassengerInfo pInfo = existingPassengersList.get(currentIndex - 1);
             pInfo.seatNo = selectedSeats.get(currentIndex - 1);
@@ -283,20 +386,49 @@ public class StaffPassengerDetailsController implements Initializable {
             return;
         }
 
-        String gender = cmbGender.getValue(); String fullName = txtFullName.getText(); LocalDate dob = dpDateOfBirth.getValue(); String nationality = cmbNationality.getValue(); String phone = txtPhone.getText(); String email = txtEmail.getText();
+        String gender = cmbGender.getValue();
+        String fullName = txtFullName.getText();
+        LocalDate dob = dpDateOfBirth.getValue();
+        String nationality = cmbNationality.getValue();
+        String phone = txtPhone.getText();
+        String email = txtEmail.getText();
         String finalNrcOrPassport;
 
         if ("Myanmar".equalsIgnoreCase(nationality)) {
-            String state = cmbNrcState.getValue(); String township = cmbNrcTownship.getValue(); String type = cmbNrcType.getValue(); String number = txtNrcNumber.getText();
-            if (state == null || township == null || type == null || number == null || number.trim().length() != 6) { showCustomAlert(true, "Incomplete NRC", "Please fill in all NRC fields completely and ensure the number is 6 digits.", null); return; }
-            finalNrcOrPassport = state + township + type + number;
+            String township = cmbNrcTownship.getValue();
+            if ("Student".equals(township)) {
+                finalNrcOrPassport = "Student";
+            } else {
+                String state = cmbNrcState.getValue();
+                String type = cmbNrcType.getValue();
+                String number = txtNrcNumber.getText();
+
+                // 🌟 "-" ကို ရွေးထားရင် Validation ကျ မပေးဖို့ စစ်ထားပါတယ် 🌟
+                if (state == null || state.trim().isEmpty() || township == null || township.equals("-") || type == null || number == null || number.trim().length() != 6) {
+                    showCustomAlert(true, "Incomplete NRC", "Please fill in all NRC fields completely and ensure the number is 6 digits.", null);
+                    return;
+                }
+                finalNrcOrPassport = state + township + type + number;
+            }
         } else {
-            finalNrcOrPassport = txtPassportNo.getText(); if (finalNrcOrPassport == null || finalNrcOrPassport.trim().isEmpty()) { showCustomAlert(true, "Incomplete Passport", "Please enter the Passport Number.", null); return; }
+            finalNrcOrPassport = txtPassportNo.getText();
+            if (finalNrcOrPassport == null || finalNrcOrPassport.trim().isEmpty()) {
+                showCustomAlert(true, "Incomplete Passport", "Please enter the Passport Number.", null);
+                return;
+            }
         }
 
-        if (fullName == null || fullName.trim().isEmpty() || dob == null) { showCustomAlert(true, "Incomplete Data", "Please fill in the passenger's details completely.", null); return; }
+        if (fullName == null || fullName.trim().isEmpty() || dob == null) {
+            showCustomAlert(true, "Incomplete Data", "Please fill in the passenger's details completely.", null);
+            return;
+        }
 
-        for (PassengerInfo p : tempPassengersList) { if (p.nrcOrPassport.equalsIgnoreCase(finalNrcOrPassport)) { showCustomAlert(true, "Duplicate ID Detected", "This NRC or Passport number has already been entered for another passenger. Each passenger must have a unique ID.", null); return; } }
+        for (PassengerInfo p : tempPassengersList) {
+            if (p.nrcOrPassport.equalsIgnoreCase(finalNrcOrPassport)) {
+                showCustomAlert(true, "Duplicate ID Detected", "This NRC or Passport number has already been entered for another passenger. Each passenger must have a unique ID.", null);
+                return;
+            }
+        }
 
         String assignedSeat = selectedSeats.get(currentIndex - 1);
         tempPassengersList.add(new PassengerInfo(fullName, gender, dob.toString(), nationality, finalNrcOrPassport, phone, email, assignedSeat));
@@ -339,11 +471,54 @@ public class StaffPassengerDetailsController implements Initializable {
     private void navigateTo(String fxmlPath, boolean isBack) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath)); Parent nextView = loader.load();
-            if (nextView.getStylesheets() != null && !nextView.getStylesheets().isEmpty()) { ObservableList<String> styles = nextView.getStylesheets(); for (int i = 0; i < styles.size(); i++) { String css = styles.get(i); if (css.contains("Light")) styles.set(i, css.replace("Light", "Dark")); } }
-            if (isBack) { nextView.setScaleX(1.2); nextView.setScaleY(1.2); } nextView.setOpacity(0.0); rootStackPane.getChildren().add(nextView);
-            ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), mainContainer); if (isBack) { scaleOut.setToX(0.8); scaleOut.setToY(0.8); } FadeTransition fadeOut = new FadeTransition(Duration.millis(400), mainContainer); fadeOut.setToValue(0.0);
-            ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), nextView); scaleIn.setToX(1.0); scaleIn.setToY(1.0); FadeTransition fadeIn = new FadeTransition(Duration.millis(400), nextView); fadeIn.setToValue(1.0);
-            ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn); pt.setInterpolator(Interpolator.EASE_BOTH); pt.setOnFinished(e -> rootStackPane.getChildren().remove(mainContainer)); pt.play();
+            if (nextView.getStylesheets() != null && !nextView.getStylesheets().isEmpty()) {
+                ObservableList<String> styles = nextView.getStylesheets();
+                for (int i = 0; i < styles.size(); i++) {
+                    String css = styles.get(i);
+                    if (css.contains("Light")) styles.set(i, css.replace("Light", "Dark"));
+                }
+            }
+
+            if (fxmlPath.contains("StaffSeatSelection.fxml")) {
+                StaffSeatSelectionController controller = loader.getController();
+                controller.setFlightData(currentFlightNo, currentFrom, currentTo, currentDate, originalBasePrice, totalPassengers);
+                if (isChangeFlightMode) controller.initChangeFlightMode(oldBookingIds);
+                controller.restoreSelectedSeats(selectedSeats);
+            }
+
+            Pane parentContainer = (Pane) rootStackPane.getParent();
+
+            if (parentContainer != null) {
+                if (isBack) { nextView.setScaleX(0.8); nextView.setScaleY(0.8); }
+                else { nextView.setScaleX(1.2); nextView.setScaleY(1.2); }
+                nextView.setOpacity(0.0);
+
+                parentContainer.getChildren().add(0, nextView);
+
+                ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), rootStackPane);
+                if (isBack) { scaleOut.setToX(1.2); scaleOut.setToY(1.2); }
+                else { scaleOut.setToX(0.8); scaleOut.setToY(0.8); }
+
+                FadeTransition fadeOut = new FadeTransition(Duration.millis(400), rootStackPane); fadeOut.setToValue(0.0);
+
+                ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), nextView); scaleIn.setToX(1.0); scaleIn.setToY(1.0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), nextView); fadeIn.setToValue(1.0);
+
+                ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn);
+                pt.setInterpolator(Interpolator.EASE_BOTH);
+                pt.setOnFinished(e -> parentContainer.getChildren().remove(rootStackPane));
+                pt.play();
+            } else {
+                rootStackPane.getChildren().add(nextView);
+                ScaleTransition scaleOut = new ScaleTransition(Duration.millis(400), mainContainer);
+                if (isBack) { scaleOut.setToX(1.2); scaleOut.setToY(1.2); }
+                FadeTransition fadeOut = new FadeTransition(Duration.millis(400), mainContainer); fadeOut.setToValue(0.0);
+                ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), nextView); scaleIn.setToX(1.0); scaleIn.setToY(1.0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(400), nextView); fadeIn.setToValue(1.0);
+                ParallelTransition pt = new ParallelTransition(scaleOut, fadeOut, scaleIn, fadeIn);
+                pt.setOnFinished(e -> rootStackPane.getChildren().remove(mainContainer));
+                pt.play();
+            }
         } catch (Exception e) { e.printStackTrace(); }
     }
 }

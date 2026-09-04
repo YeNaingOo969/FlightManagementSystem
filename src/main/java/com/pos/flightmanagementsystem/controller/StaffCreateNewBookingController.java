@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.DateCell; // Added for disabling past dates
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.HBox;
@@ -79,6 +80,17 @@ public class StaffCreateNewBookingController implements Initializable {
         spinnerInfants.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9, 0));
 
         departureDatePicker.setValue(LocalDate.now());
+
+        // 🌟 ယနေ့မတိုင်မီ ရက်စွဲများကို disable လုပ်ရန် 🌟
+        departureDatePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                LocalDate today = LocalDate.now();
+                setDisable(empty || date.compareTo(today) < 0);
+            }
+        });
+
         loadCitiesFromDatabase();
         setupToComboBoxDisableLogic();
         btnSearchFlights.setOnAction(this::handleSearchAction);
