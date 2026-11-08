@@ -16,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -75,6 +76,26 @@ public class StaffViewFlightScheduleController implements Initializable {
         departureDatePicker.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.isEmpty()) {
                 departureDatePicker.setValue(null);
+            }
+        });
+
+        // 🌟 ယနေ့မတိုင်ခင် ရက်များအား ရွေးချယ်ခွင့်ပိတ်ခြင်း (Disable Past Dates - Dark Theme) 🌟
+        departureDatePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                LocalDate today = LocalDate.now();
+
+                if (date != null && date.isBefore(today)) {
+                    setDisable(true);
+                    // Inline Style အစား CSS Class ကို လှမ်းချိတ်မည်
+                    if (!getStyleClass().contains("disabled-date")) {
+                        getStyleClass().add("disabled-date");
+                    }
+                } else {
+                    // အခြားရက်များအတွက် CSS ကို ပြန်ဖြုတ်မည်
+                    getStyleClass().remove("disabled-date");
+                }
             }
         });
 
@@ -271,7 +292,6 @@ public class StaffViewFlightScheduleController implements Initializable {
             String dateStr = flight.getDepartureTime() != null ? flight.getDepartureTime().toLocalDate().toString() : "Unknown Date";
             String priceStr = String.valueOf(flight.getBasePrice());
 
-            // 🌟 ဤနေရာတွင် Argument ၆ ခုသာ ထည့်ပါမည် ("Seat View Only" ကို ဖြုတ်လိုက်ပါပြီ) 🌟
             controller.setFlightData(flight.getFlightNumber(), flight.getDepartureCityName(), flight.getArrivalCityName(), dateStr, priceStr, 1);
             controller.setViewOnlyMode(true);
 
@@ -340,7 +360,7 @@ public class StaffViewFlightScheduleController implements Initializable {
                         "f.base_price, f.status " +
                         "FROM flights f " +
                         "JOIN cities c1 ON f.departure_city_id = c1.city_id " +
-                        "JOIN cities c2 ON f.arrival_city_id = c2.city_id WHERE 1=1"
+                        "JOIN cities c2 ON f.arrival_city_id = c2.city_id WHERE f.departure_time >= NOW()"
         );
 
         List<Object> parameters = new ArrayList<>();
@@ -357,6 +377,8 @@ public class StaffViewFlightScheduleController implements Initializable {
             queryBuilder.append(" AND DATE(f.departure_time) = ?");
             parameters.add(java.sql.Date.valueOf(depDate));
         }
+
+        queryBuilder.append(" ORDER BY f.departure_time ASC");
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(queryBuilder.toString())) {

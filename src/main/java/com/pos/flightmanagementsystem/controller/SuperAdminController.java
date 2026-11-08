@@ -23,7 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -99,7 +98,7 @@ public class SuperAdminController implements Initializable {
         this.loggedInImagePath = imagePath;
 
         if (topNavUsername != null) topNavUsername.setText(username);
-        if (topNavRole != null) topNavRole.setText(role.toUpperCase());
+        if (topNavRole != null && role != null) topNavRole.setText(role.toUpperCase());
 
         if (topNavAvatarCircle != null && imagePath != null && !imagePath.isEmpty()) {
             try {
@@ -123,6 +122,11 @@ public class SuperAdminController implements Initializable {
 
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
+
+            // 🌟 Profile တွင် နာမည် သို့မဟုတ် ပုံ ပြောင်းလိုက်သည်နှင့် ညာဘက်အပေါ်ထောင့် Navbar ကို ချက်ချင်း Update လုပ်မည် 🌟
+            controller.setOnProfileUpdateCallback((newUsername, newImagePath) -> {
+                setLoggedInUser(newUsername, loggedInRole, newImagePath);
+            });
 
             applyThemeRecursively(profileRoot);
 
@@ -205,7 +209,6 @@ public class SuperAdminController implements Initializable {
         updateTheme();
     }
 
-    // 🌟 File တကယ်ရှိမှသာ Theme ပြောင်းပေးမည့် Safe Logic 🌟
     private void applyThemeRecursively(Parent node) {
         if (node == null) return;
         if (node.getStylesheets() != null && !node.getStylesheets().isEmpty()) {

@@ -13,20 +13,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -113,7 +109,7 @@ public class AdminController implements Initializable {
         this.loggedInImagePath = imagePath;
 
         if (topNavUsername != null) topNavUsername.setText(username);
-        if (topNavRole != null) topNavRole.setText(role.toUpperCase());
+        if (topNavRole != null && role != null) topNavRole.setText(role.toUpperCase());
 
         if (topNavAvatarCircle != null && imagePath != null && !imagePath.isEmpty()) {
             try {
@@ -256,7 +252,6 @@ public class AdminController implements Initializable {
 
                 conn.commit();
 
-                // 🌟 Admin မှ Request အား အကြောင်းပြန်ကြောင်း System Log သို့ မှတ်တမ်းတင်မည် 🌟
                 String actionStr = isApprove ? "Approved" : "Rejected";
                 insertLog(adminId, actionStr + " cancellation request for PNR: " + pnrCode);
 
@@ -340,6 +335,11 @@ public class AdminController implements Initializable {
 
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
+
+            // 🌟 Admin မှ Profile နာမည်/ပုံ ပြင်လိုက်သည်နှင့် ညာဘက်အပေါ်ထောင့် Navbar နှင့် State ကို ချက်ချင်းပြောင်းမည် 🌟
+            controller.setOnProfileUpdateCallback((newUsername, newImagePath) -> {
+                setLoggedInUser(newUsername, loggedInRole, newImagePath);
+            });
 
             applyThemeRecursively(profileRoot);
             profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
@@ -554,7 +554,6 @@ public class AdminController implements Initializable {
 
         try {
             LoginController.isFromLogout = true;
-
             LoginController.isLightMode = !this.isDarkMode;
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/Login.fxml"));

@@ -502,10 +502,32 @@ public class StaffManageBookingController implements Initializable {
 
     private void loadBookingsFromDatabase(String filterType) {
         bookingList.clear();
+        String autoUpdateQuery = "UPDATE bookings b " +
+                "JOIN flights f ON b.flight_id = f.flight_id " +
+                "SET b.status = 'Completed' " +
+                "WHERE f.departure_time < NOW() AND b.status = 'Confirmed'";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement updateStmt = conn.prepareStatement(autoUpdateQuery)) {
+            updateStmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String query = "SELECT b.booking_id, b.pnr_code, p.full_name AS passenger_name, f.flight_number, dep_city.city_code AS dep_code, arr_city.city_code AS arr_code, DATE(f.departure_time) AS dep_date, f.departure_time, b.status FROM bookings b JOIN passengers p ON b.passenger_id = p.passenger_id JOIN flights f ON b.flight_id = f.flight_id JOIN cities dep_city ON f.departure_city_id = dep_city.city_id JOIN cities arr_city ON f.arrival_city_id = arr_city.city_id ";
-        if (filterType.equals("Completed")) query += "WHERE b.status IN ('Confirmed', 'Completed') ";
-        else if (filterType.equals("Cancelled")) query += "WHERE b.status IN ('Cancelled', 'Cancel Pending') ";
-        query += "ORDER BY b.booking_date DESC";
+        if (filterType.equals("Completed")) {
+            // Completed တွင် ပြီးခဲ့သော (NOW အောက်ငယ်သော) လေယာဉ်များကိုသာ ပြမည်။ (Cancel မဖြစ်သော)
+            query += "WHERE f.departure_time < NOW() AND b.status NOT IN ('Cancelled', 'Cancel Pending') ";
+            query += "ORDER BY f.departure_time DESC";
+        } else if (filterType.equals("Cancelled")) {
+            // Cancel တွင် Cancel ဖြစ်သောစာရင်းကိုသာ ပြမည်
+            query += "WHERE b.status IN ('Cancelled', 'Cancel Pending') ";
+            query += "ORDER BY f.departure_time DESC";
+        } else {
+            // All တွင် အကုန်ပြမည်၊ သို့သော် ယနေ့နှင့် နောက်ပိုင်းလာမည့် လေယာဉ်များကို အပေါ်ဆုံးတွင် ပြပြီး၊ အဟောင်းများကို အောက်ဘက်တွင် ပြမည်။
+            query += "ORDER BY " +
+                    "CASE WHEN f.departure_time >= NOW() THEN 0 ELSE 1 END ASC, " +
+                    "CASE WHEN f.departure_time >= NOW() THEN f.departure_time END ASC, " +
+                    "f.departure_time DESC";
+        }
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {

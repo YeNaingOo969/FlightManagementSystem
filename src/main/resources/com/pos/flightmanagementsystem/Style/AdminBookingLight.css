@@ -9,14 +9,15 @@
 }
 
 .super-content {
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
     -fx-background-color: transparent;
 }
 
 /* ==========================================================
-   CARDS (Top Bar & Main Panel)
+   CARDS (Top Bar, Main Panel & Modal)
 ========================================================== */
-.super-topbar, .super-panel {
-    -fx-background-color: rgba(255, 255, 255, 0.92);
+.super-topbar, .super-panel, .modal-card {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
     -fx-background-radius: 18px;
     -fx-border-radius: 18px;
     -fx-border-width: 1px;
@@ -34,12 +35,11 @@
     -fx-font-weight: bold;
 }
 
-.super-section-subtitle {
-    -fx-text-fill: #60728a;
-    -fx-font-size: 13px;
+.danger-text {
+    -fx-text-fill: #DC2626 !important;
 }
 
-.pagination-label {
+.super-section-subtitle, .form-label, .pagination-label {
     -fx-text-fill: #60728a;
     -fx-font-size: 13px;
 }
@@ -48,30 +48,34 @@
     -fx-min-width: 46px; -fx-min-height: 46px;
     -fx-max-width: 46px; -fx-max-height: 46px;
     -fx-background-color: #E0F2FE;
-    -fx-background-radius: 999;
+    -fx-background-radius: 12px;
     -fx-border-color: #0EA5E9;
-    -fx-border-radius: 999;
+    -fx-border-radius: 12px;
     -fx-border-width: 1.5px;
+    -fx-alignment: center;
 }
+
 .super-brand-logo-glyph {
     -fx-fill: #0EA5E9;
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
 }
 
 /* ==========================================================
    SEARCH FIELD
 ========================================================== */
 .search-field {
-    -fx-background-color: white;
+    -fx-background-color: #FFFFFF;
     -fx-border-color: #E2E8F0;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 6px 12px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 8px 15px;
 }
-.search-field:focused-within {
-    -fx-border-color: #00C6FF;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 198, 255, 0.15), 8, 0, 0, 0);
+
+.search-field:focus-within {
+    -fx-border-color: #0EA5E9;
+    -fx-effect: dropshadow(three-pass-box, rgba(14, 165, 233, 0.15), 8, 0, 0, 0);
 }
 
 .search-input {
@@ -79,6 +83,11 @@
     -fx-border-color: transparent;
     -fx-prompt-text-fill: #94A3B8;
     -fx-text-fill: #1E293B;
+    -fx-font-size: 13px;
+}
+
+.search-input:focused {
+    -fx-background-color: transparent;
 }
 
 .search-icon {
@@ -86,20 +95,50 @@
 }
 
 /* ==========================================================
+   🌟 FILTER TABS (Light Mode)
+========================================================== */
+.tab-container {
+    -fx-border-color: transparent transparent #E2E8F0 transparent;
+    -fx-border-width: 0 0 1.5px 0;
+    -fx-padding: 0 0 0 4px;
+}
+
+.tab-label {
+    -fx-text-fill: #64748B;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 4px 12px 4px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 2.5px 0;
+}
+
+.tab-label:hover {
+    -fx-text-fill: #0F172A;
+    -fx-border-color: transparent transparent rgba(14, 165, 233, 0.4) transparent;
+}
+
+.active-tab {
+    -fx-text-fill: #0EA5E9 !important;
+    -fx-border-color: transparent transparent #0EA5E9 transparent !important;
+    -fx-border-width: 0 0 2.5px 0 !important;
+}
+
+/* ==========================================================
    TABLE VIEW (Rounded, No Lines, Centered)
 ========================================================== */
 .table-view, .super-table {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #FFFFFF;
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
     -fx-border-color: #E5EDF3;
     -fx-border-width: 1.5px;
-    -fx-padding: 0px;
+    -fx-padding: 5px;
 }
 
 .table-view .column-header-background, .super-table .column-header-background {
     -fx-background-color: #F8FAFC;
-    -fx-background-radius: 11px 11px 0 0;
+    -fx-background-radius: 10px 10px 0 0;
     -fx-border-color: transparent transparent #E5EDF3 transparent;
     -fx-border-width: 0 0 1.5px 0;
 }
@@ -107,7 +146,8 @@
 .table-view .column-header, .super-table .column-header {
     -fx-background-color: transparent;
     -fx-border-width: 0px;
-    -fx-size: 45px;
+    -fx-alignment: CENTER;
+    -fx-size: 42px;
 }
 
 .table-view .column-header .label, .super-table .column-header .label {
@@ -118,7 +158,7 @@
 }
 
 .table-row-cell {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 0px;
     -fx-cell-size: 48px;
@@ -133,7 +173,7 @@
     -fx-border-width: 0px;
     -fx-text-fill: #1E293B;
     -fx-font-size: 13px;
-    -fx-alignment: CENTER; /* 🌟 စာသားများ အလယ်ရောက်စေရန် 🌟 */
+    -fx-alignment: CENTER;
     -fx-padding: 0 15px;
 }
 
@@ -143,10 +183,12 @@
 
 .table-row-cell:filled:hover {
     -fx-background-color: #F1F5F9;
+    -fx-background-radius: 8px;
 }
 
 .table-row-cell:selected, .table-row-cell:selected:focused {
     -fx-background-color: #E0F2FE !important;
+    -fx-background-radius: 8px;
 }
 
 .table-row-cell:selected .text, .table-row-cell:selected:focused .text {
@@ -154,7 +196,12 @@
     -fx-font-weight: bold;
 }
 
-/* ScrollBar နှင့် ထောင့်လွတ်များကို ဖျောက်ရန် */
+.table-view .placeholder .label, .super-table .placeholder .label {
+    -fx-text-fill: #64748B;
+    -fx-font-style: italic;
+    -fx-alignment: CENTER;
+}
+
 .table-view .filler, .table-view .corner {
     -fx-background-color: transparent;
 }
@@ -163,7 +210,7 @@
 }
 
 /* ==========================================================
-   TABLE ACTION BUTTON (Cancel Button အသေးစား)
+   BUTTONS (Table Action & Modal Buttons)
 ========================================================== */
 .btn-cancel-table {
     -fx-background-color: #FEE2E2;
@@ -180,35 +227,67 @@
 
 .btn-cancel-table:hover {
     -fx-background-color: #EF4444;
-    -fx-text-fill: white;
+    -fx-text-fill: #FFFFFF;
     -fx-border-color: #DC2626;
 }
 
 .btn-cancel-table:pressed {
     -fx-background-color: #B91C1C;
-    -fx-text-fill: white;
+    -fx-text-fill: #FFFFFF;
+}
+
+.btn-danger {
+    -fx-background-color: #FEE2E2;
+    -fx-border-color: #EF4444;
+    -fx-text-fill: #DC2626;
+    -fx-font-weight: bold;
+    -fx-border-width: 1.5px;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 8px 20px;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: #FFFFFF;
+}
+
+.btn-secondary {
+    -fx-background-color: #F1F5F9;
+    -fx-border-color: #CBD5E1;
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #0F172A;
 }
 
 /* ==========================================================
-   PAGINATION (Modern Flat Design)
+   PAGINATION & TEXT AREAS
 ========================================================== */
-.pagination {
+.pagination, .super-pagination {
     -fx-page-information-visible: false;
 }
 
-.pagination .pagination-control {
+.pagination .pagination-control, .super-pagination .control-box {
     -fx-background-color: transparent;
-}
-
-.pagination .control-box {
     -fx-spacing: 5;
     -fx-alignment: center;
 }
 
-.pagination .number-button,
-.pagination .left-arrow-button,
-.pagination .right-arrow-button {
-    -fx-background-color: white;
+.pagination .number-button, .pagination .left-arrow-button, .pagination .right-arrow-button,
+.super-pagination .number-button, .super-pagination .left-arrow-button, .super-pagination .right-arrow-button {
+    -fx-background-color: #FFFFFF;
     -fx-border-color: #E2E8F0;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
@@ -218,15 +297,33 @@
     -fx-font-weight: bold;
 }
 
-.pagination .number-button:hover,
-.pagination .left-arrow-button:hover,
-.pagination .right-arrow-button:hover {
+.pagination .number-button:hover, .pagination .left-arrow-button:hover, .pagination .right-arrow-button:hover,
+.super-pagination .number-button:hover, .super-pagination .left-arrow-button:hover, .super-pagination .right-arrow-button:hover {
     -fx-background-color: #F1F5F9;
 }
 
-.pagination .number-button:selected {
-    -fx-background-color: #16a3ff;
-    -fx-text-fill: white;
-    -fx-border-color: #16a3ff;
-    -fx-effect: dropshadow(gaussian, rgba(22, 163, 255, 0.3), 5, 0, 0, 2);
+.pagination .number-button:selected, .super-pagination .number-button:selected {
+    -fx-background-color: #0EA5E9;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #0EA5E9;
+}
+
+.text-area-reason {
+    -fx-background-color: #F8FAFC !important;
+    -fx-border-color: #CBD5E1 !important;
+    -fx-border-radius: 8px !important;
+    -fx-background-radius: 8px !important;
+    -fx-border-width: 1.5px !important;
+    -fx-font-size: 14px !important;
+    -fx-text-fill: #1E293B !important;
+    -fx-prompt-text-fill: #94A3B8 !important;
+}
+
+.text-area-reason .viewport, .text-area-reason .content {
+    -fx-background-color: #F8FAFC !important;
+    -fx-text-fill: #1E293B !important;
+}
+
+.text-area-reason:focused {
+    -fx-border-color: #0EA5E9 !important;
 }

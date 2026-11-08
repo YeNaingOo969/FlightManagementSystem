@@ -341,7 +341,6 @@ public class LoginController implements Initializable {
             return;
         }
 
-        // 🌟 Username ကိုသာ အရင်ရှာပြီး Database Persistent Lock ကို စစ်ဆေးပါမည် 🌟
         String query = "SELECT user_id, role, image_path, status, password, failed_attempts FROM users WHERE username = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -357,30 +356,34 @@ public class LoginController implements Initializable {
                 String dbPassword = rs.getString("password");
                 int dbFailedAttempts = rs.getInt("failed_attempts");
 
-                // Account Inactive စစ်ဆေးခြင်း
                 if (status == null || !status.equalsIgnoreCase("Active")) {
                     insertLog(userId, "Failed Login: Account Inactive");
                     showAlert(Alert.AlertType.ERROR, "Account Suspended", "Your account is currently inactive.\nPlease contact the administrator.");
                     return;
                 }
 
-                // 🌟 Persistent Database Lock Check 🌟
                 if (dbFailedAttempts >= MAX_ATTEMPTS) {
                     showAlert(Alert.AlertType.ERROR, "Account Locked", "You have exceeded the maximum login attempts. Please click 'Forgot Password' to reset your password.");
                     switchSection(emailRequestSection);
                     return;
                 }
 
-                // 🌟 Hashed Password တိုက်စစ်ခြင်း 🌟
                 String hashedInputPassword = hashPassword(password);
 
                 if (hashedInputPassword.equals(dbPassword)) {
-                    // Password မှန်သွားလျှင် Failed Attempts ကို Database တွင် Reset လုပ်မည်
+                    // Password မှန်သွားလျှင်
                     updateFailedAttempts(conn, username, 0);
+
+                    // 🌟 ဤနေရာတွင် is_online ကို 1 ဟု ပြောင်းလိုက်ပါပြီ 🌟
+                    updateOnlineStatus(conn, username, 1);
 
                     loggedInUser = new com.pos.flightmanagementsystem.model.User();
                     loggedInUser.setUserId(userId);
                     loggedInUser.setRole(role);
+
+                    // 🌟 ပြဿနာ၏ တရားခံ (ဒီစာကြောင်းလေးကို ထပ်ဖြည့်ထားပါတယ်) 🌟
+                    loggedInUser.setUsername(username);
+
                     insertLog(userId, "Login Successful");
 
                     Stage stage = (Stage) txtUsername.getScene().getWindow();
@@ -395,7 +398,6 @@ public class LoginController implements Initializable {
                         showAlert(Alert.AlertType.ERROR, "Access Denied", "Unknown role assigned to your account.");
                     }
                 } else {
-                    // Password မှားသွားလျှင် Database ထဲ၌ Failed Attempts တိုးမည်
                     int newAttempts = dbFailedAttempts + 1;
                     updateFailedAttempts(conn, username, newAttempts);
 
@@ -410,13 +412,24 @@ public class LoginController implements Initializable {
                     }
                 }
             } else {
-                // Username မရှိလျှင် (Generic Message ပြမည်)
                 insertLog(0, "Login Failed: Unknown username attempt");
                 showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to connect to the database.");
+        }
+    }
+
+    // 🌟 Database ထဲက is_online column ကို Update လုပ်ပေးမည့် Method အသစ် 🌟
+    private void updateOnlineStatus(Connection conn, String username, int status) {
+        String updateQuery = "UPDATE users SET is_online = ? WHERE username = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+            pstmt.setInt(1, status);
+            pstmt.setString(2, username);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

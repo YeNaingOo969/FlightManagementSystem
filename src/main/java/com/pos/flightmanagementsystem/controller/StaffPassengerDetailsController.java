@@ -33,16 +33,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.scene.layout.Pane;
 
@@ -59,7 +59,7 @@ public class StaffPassengerDetailsController implements Initializable {
     @FXML private Label lblNrcPassport;
     @FXML private HBox nrcContainer;
     @FXML private ComboBox<String> cmbNrcState;
-    @FXML private ComboBox<String> cmbNrcTownship;
+    @FXML private TextField txtNrcTownship;
     @FXML private ComboBox<String> cmbNrcType;
     @FXML private TextField txtNrcNumber;
     @FXML private TextField txtPassportNo;
@@ -110,7 +110,36 @@ public class StaffPassengerDetailsController implements Initializable {
         ObservableList<String> nationalityOptions = FXCollections.observableArrayList("Myanmar", "Foreigner");
         cmbNationality.setItems(nationalityOptions); cmbNationality.getSelectionModel().selectFirst();
 
-        setupNrcData(); setupNationalityToggle(); setupPaymentMethods();
+        setupDatePicker();
+        setupNrcData();
+        setupNationalityToggle();
+        setupPaymentMethods();
+    }
+
+    // 🌟 DatePicker ကို Type ရိုက်သွင်းလို့ရအောင် ပြင်ဆင်ခြင်း 🌟
+    private void setupDatePicker() {
+        dpDateOfBirth.setEditable(true);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        dpDateOfBirth.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) return formatter.format(date);
+                return "";
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.trim().isEmpty()) {
+                    try {
+                        return LocalDate.parse(string, formatter);
+                    } catch (Exception e) {
+                        return null; // Invalid format
+                    }
+                }
+                return null;
+            }
+        });
     }
 
     public void initChangeFlightMode(List<Integer> oldBookingIds) {
@@ -185,6 +214,8 @@ public class StaffPassengerDetailsController implements Initializable {
             PassengerInfo info = existingPassengersList.get(currentIndex - 1);
             txtFullName.setText(info.fullName);
             cmbGender.setValue(info.gender);
+
+            // Format string appropriately
             dpDateOfBirth.setValue(LocalDate.parse(info.dob));
             cmbNationality.setValue(info.nationality);
             txtPhone.setText(info.phone);
@@ -192,9 +223,9 @@ public class StaffPassengerDetailsController implements Initializable {
 
             if ("Myanmar".equalsIgnoreCase(info.nationality)) {
                 try {
-                    if ("Student".equals(info.nrcOrPassport)) {
-                        cmbNrcState.setValue("");
-                        cmbNrcTownship.setValue("Student");
+                    if ("Student".equalsIgnoreCase(info.nrcOrPassport)) {
+                        cmbNrcState.getSelectionModel().clearSelection();
+                        txtNrcTownship.setText("Student");
                         txtNrcNumber.clear();
                         cmbNrcType.getSelectionModel().clearSelection();
                     } else {
@@ -204,7 +235,7 @@ public class StaffPassengerDetailsController implements Initializable {
                         String[] stateAndTownship = firstPart.split("/");
 
                         cmbNrcState.setValue(stateAndTownship[0] + "/");
-                        cmbNrcTownship.setValue(stateAndTownship[1]);
+                        txtNrcTownship.setText(stateAndTownship[1]);
                         txtNrcNumber.setText(number);
 
                         if(info.nrcOrPassport.contains("(N)")) cmbNrcType.setValue("(N)");
@@ -218,19 +249,19 @@ public class StaffPassengerDetailsController implements Initializable {
             }
 
             txtFullName.setDisable(true); cmbGender.setDisable(true); dpDateOfBirth.setDisable(true); cmbNationality.setDisable(true);
-            cmbNrcState.setDisable(true); cmbNrcTownship.setDisable(true); cmbNrcType.setDisable(true); txtNrcNumber.setDisable(true);
+            cmbNrcState.setDisable(true); txtNrcTownship.setDisable(true); cmbNrcType.setDisable(true); txtNrcNumber.setDisable(true);
             txtPassportNo.setDisable(true); txtPhone.setDisable(true); txtEmail.setDisable(true);
 
         } else {
-            txtFullName.clear(); dpDateOfBirth.setValue(null); txtNrcNumber.clear(); txtPassportNo.clear();
+            txtFullName.clear(); dpDateOfBirth.setValue(null); dpDateOfBirth.getEditor().clear(); txtNrcNumber.clear(); txtPassportNo.clear();
 
-            // 🌟 Back နှိပ်လိုက်တိုင်း "Student" default ဖြစ်မနေစေရန် ပုံမှန်အတိုင်း Reset ပြန်လုပ်ခြင်း 🌟
             cmbNrcState.setDisable(false);
-            cmbNrcTownship.setDisable(false);
+            txtNrcTownship.setDisable(false);
             cmbNrcType.setDisable(false);
             txtNrcNumber.setDisable(false);
 
             cmbNrcState.getSelectionModel().select("12/");
+            txtNrcTownship.clear();
             cmbNrcType.getSelectionModel().selectFirst();
 
             if(currentIndex == 1) {
@@ -267,71 +298,28 @@ public class StaffPassengerDetailsController implements Initializable {
         ObservableList<String> nrcTypes = FXCollections.observableArrayList("(N)", "(E)", "(P)", "(T)", "(F)", "(S)");
         cmbNrcType.setItems(nrcTypes);
 
-        Map<String, String[]> nrcTownshipsMap = new HashMap<>();
-        nrcTownshipsMap.put("12/", new String[]{"AHLN", "BTA", "DGA", "DLA", "KKA", "KMA", "LMA", "MGD", "MGA", "MRA", "SCA", "TKA", "TTA", "YKA"});
+        cmbNrcState.getSelectionModel().select("12/");
+        cmbNrcType.getSelectionModel().selectFirst();
 
-        cmbNrcState.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.trim().isEmpty()) {
-                ObservableList<String> townships = FXCollections.observableArrayList(nrcTownshipsMap.getOrDefault(newVal, new String[]{"MGD"}));
-                if (!townships.contains("Student")) {
-                    townships.add("Student");
-                }
-                cmbNrcTownship.setItems(townships);
-
-                if ("Student".equals(cmbNrcTownship.getValue())) {
-                    cmbNrcTownship.getSelectionModel().clearSelection();
-                }
-
-                if (cmbNrcTownship.getValue() == null && !townships.isEmpty()) {
-                    cmbNrcTownship.getSelectionModel().selectFirst();
-                }
-            } else {
-                // 🌟 State အလွတ်ဖြစ်နေရင် Student ကို ရွေးနိုင်သလို၊ ပြန်ထွက်ချင်ရင် ရွေးဖို့ "-" (Empty) လေးပါ ထည့်ပေးမယ် 🌟
-                cmbNrcTownship.setItems(FXCollections.observableArrayList("-", "Student"));
-                if (cmbNrcTownship.getValue() == null || (!cmbNrcTownship.getValue().equals("Student") && !cmbNrcTownship.getValue().equals("-"))) {
-                    cmbNrcTownship.getSelectionModel().selectFirst();
-                }
+        txtNrcTownship.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) return;
+            if (!newValue.equals(newValue.toUpperCase())) {
+                txtNrcTownship.setText(newValue.toUpperCase());
             }
-        });
 
-        cmbNrcTownship.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if ("Student".equals(newVal)) {
+            if ("STUDENT".equalsIgnoreCase(newValue.trim())) {
                 cmbNrcState.setDisable(true);
                 cmbNrcType.setDisable(true);
                 txtNrcNumber.setDisable(true);
                 txtNrcNumber.clear();
+                cmbNrcState.getSelectionModel().clearSelection();
                 cmbNrcType.getSelectionModel().clearSelection();
             } else {
-                // 🌟 Student ကနေ "-" ပြန်ရွေးလိုက်ရင် ပိတ်နေတဲ့ အကွက်တွေ အလိုအလျောက် ပြန်ပွင့်လာမယ် 🌟
                 cmbNrcState.setDisable(false);
                 cmbNrcType.setDisable(false);
                 txtNrcNumber.setDisable(false);
             }
         });
-
-        cmbNrcTownship.setCellFactory(lv -> new ListCell<String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setDisable(false);
-                } else {
-                    setText(item);
-                    String selectedState = cmbNrcState.getValue();
-                    if ("Student".equals(item) && selectedState != null && !selectedState.trim().isEmpty()) {
-                        setDisable(true);
-                        setStyle("-fx-text-fill: gray;");
-                    } else {
-                        setDisable(false);
-                        setStyle("");
-                    }
-                }
-            }
-        });
-
-        cmbNrcState.getSelectionModel().select("12/");
-        cmbNrcType.getSelectionModel().selectFirst();
 
         txtNrcNumber.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) txtNrcNumber.setText(newValue.replaceAll("[^\\d]", ""));
@@ -388,23 +376,50 @@ public class StaffPassengerDetailsController implements Initializable {
 
         String gender = cmbGender.getValue();
         String fullName = txtFullName.getText();
-        LocalDate dob = dpDateOfBirth.getValue();
         String nationality = cmbNationality.getValue();
-        String phone = txtPhone.getText();
-        String email = txtEmail.getText();
+        String phone = txtPhone.getText().trim();
+        String email = txtEmail.getText().trim();
+
+        // 🌟 Validation: Date of Birth Validation 🌟
+        LocalDate dob = dpDateOfBirth.getValue();
+        if (dob == null && !dpDateOfBirth.getEditor().getText().trim().isEmpty()) {
+            try {
+                dob = LocalDate.parse(dpDateOfBirth.getEditor().getText().trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception e) {
+                showCustomAlert(true, "Invalid Date", "Please enter a valid Date of Birth in DD/MM/YYYY format.", null);
+                return;
+            }
+        }
+        if (dob == null) {
+            showCustomAlert(true, "Incomplete Data", "Please select or type a Date of Birth.", null);
+            return;
+        }
+
+        // 🌟 Validation: Phone Number Validation (09 + 9 digits) 🌟
+        if (phone.isEmpty() || !phone.matches("^09\\d{9}$")) {
+            showCustomAlert(true, "Invalid Phone Number", "Phone number must start with '09' and contain exactly 11 digits (e.g., 09123456789).", null);
+            return;
+        }
+
+        // 🌟 Validation: Email Validation 🌟
+        if (email.isEmpty() || !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")) {
+            showCustomAlert(true, "Invalid Email", "Please enter a valid email address.", null);
+            return;
+        }
+
         String finalNrcOrPassport;
 
         if ("Myanmar".equalsIgnoreCase(nationality)) {
-            String township = cmbNrcTownship.getValue();
-            if ("Student".equals(township)) {
+            String township = txtNrcTownship.getText().trim().toUpperCase();
+
+            if ("STUDENT".equals(township)) {
                 finalNrcOrPassport = "Student";
             } else {
                 String state = cmbNrcState.getValue();
                 String type = cmbNrcType.getValue();
                 String number = txtNrcNumber.getText();
 
-                // 🌟 "-" ကို ရွေးထားရင် Validation ကျ မပေးဖို့ စစ်ထားပါတယ် 🌟
-                if (state == null || state.trim().isEmpty() || township == null || township.equals("-") || type == null || number == null || number.trim().length() != 6) {
+                if (state == null || state.trim().isEmpty() || township.isEmpty() || type == null || number == null || number.trim().length() != 6) {
                     showCustomAlert(true, "Incomplete NRC", "Please fill in all NRC fields completely and ensure the number is 6 digits.", null);
                     return;
                 }
@@ -418,8 +433,8 @@ public class StaffPassengerDetailsController implements Initializable {
             }
         }
 
-        if (fullName == null || fullName.trim().isEmpty() || dob == null) {
-            showCustomAlert(true, "Incomplete Data", "Please fill in the passenger's details completely.", null);
+        if (fullName == null || fullName.trim().isEmpty()) {
+            showCustomAlert(true, "Incomplete Data", "Please enter the passenger's full name.", null);
             return;
         }
 

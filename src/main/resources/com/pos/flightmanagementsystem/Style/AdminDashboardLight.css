@@ -135,6 +135,50 @@
 .super-dot-green { -fx-background-color: #10b981; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
 .super-dot-gold, .super-dot-yellow { -fx-background-color: #f59e0b; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
 .super-dot-blue, .super-dot-cyan { -fx-background-color: #00bcd4; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-offline { -fx-background-color: #cbd5e1; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+
+/* ==========================================================
+   📈 CHARTS STYLING (LIGHT MODE)
+========================================================== */
+.chart-plot-background { -fx-background-color: transparent; }
+.chart-vertical-grid-lines { -fx-stroke: transparent; }
+.chart-horizontal-grid-lines { -fx-stroke: #e2e8f0; -fx-stroke-dash-array: 5 5; }
+.chart-legend { -fx-background-color: transparent; }
+.chart-legend-item { -fx-text-fill: #475569; }
+
+/* Bar Chart (Today's Flights) */
+.route-bar-chart { -fx-padding: 10px 0 0 0; }
+.route-bar-chart .bar { -fx-bar-fill: linear-gradient(to top, #059669, #10b981); -fx-background-radius: 6px 6px 0 0; }
+
+/* Area Chart (Weekly Bookings) */
+.chart-series-area-line { -fx-stroke: #10b981; -fx-stroke-width: 3px; }
+.chart-series-area-fill { -fx-fill: linear-gradient(to bottom, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.0)); }
+.chart-line-symbol { -fx-background-color: #ffffff, #10b981; -fx-background-insets: 0, 2; -fx-background-radius: 50%; -fx-padding: 4px; }
+
+/* ==========================================================
+   🌟 PIE CHART & LABELS (LIGHT MODE FIX)
+========================================================== */
+.chart-pie {
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2px;
+}
+.chart-pie.default-color0 { -fx-pie-color: #f43f5e; }
+.chart-pie.default-color1 { -fx-pie-color: #f59e0b; }
+.chart-pie.default-color2 { -fx-pie-color: #8b5cf6; }
+.chart-pie.default-color3 { -fx-pie-color: #06b6d4; }
+.chart-pie.default-color4 { -fx-pie-color: #3b82f6; }
+
+.chart-pie-label {
+    -fx-fill: #1e293b !important;
+    -fx-font-size: 11.5px !important;
+    -fx-font-weight: bold !important;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #64748b !important;
+    -fx-stroke-width: 1.5px !important;
+    -fx-fill: transparent !important;
+}
 
 /* ==========================================================
    📋 TABLE VIEW
@@ -313,4 +357,28 @@
     -fx-text-fill: #6b7280;
     -fx-font-size: 16px;
     -fx-font-style: italic;
+}
+
+/* ==========================================================
+   🟢 ACTIVE STAFF LIST (LIGHT MODE)
+========================================================== */
+.active-staff-list {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.active-staff-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10px 12px;
+}
+.active-staff-list .list-cell:filled:hover {
+    -fx-background-color: rgba(0, 188, 212, 0.08);
+    -fx-background-radius: 8px;
+}
+.active-staff-list .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 6px;
+}
+.active-staff-list .scroll-bar:vertical .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 4px;
 }

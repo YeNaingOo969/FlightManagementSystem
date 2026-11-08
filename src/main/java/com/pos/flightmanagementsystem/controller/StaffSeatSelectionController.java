@@ -120,7 +120,6 @@ public class StaffSeatSelectionController implements Initializable {
             lblTicketPrice.setText(String.format("%,.0f MMK", ticketPriceValue)); lblSeatCharge.setText("0 MMK"); lblTotal.setText(String.format("%,.0f MMK", ticketPriceValue));
         } catch (Exception e) { lblTicketPrice.setText("--"); lblSeatCharge.setText("--"); lblTotal.setText("--"); }
 
-        // 🌟 ခုံတွေကို အသစ်ပြန်ဆွဲထုတ်မယ့် Method ခေါ်ခြင်း 🌟
         fetchFlightDetailsAndBookedSeats();
     }
 
@@ -183,18 +182,6 @@ public class StaffSeatSelectionController implements Initializable {
         }
     }
 
-    private void initSectionBlueprint(Map<String, Map<Integer, List<SeatData>>> map, String className, int startRow, int endRow) {
-        map.put(className, new LinkedHashMap<>());
-        for (int i = startRow; i <= endRow; i++) {
-            List<SeatData> row = new ArrayList<>();
-            row.add(new SeatData(i + "A", className, false));
-            row.add(new SeatData(i + "B", className, false));
-            row.add(new SeatData(i + "C", className, false));
-            row.add(new SeatData(i + "D", className, false));
-            map.get(className).put(i, row);
-        }
-    }
-
     private void fetchFlightDetailsAndBookedSeats() {
         String flightQuery = "SELECT flight_id, TIME_FORMAT(departure_time, '%h:%i %p') as time_str FROM flights WHERE flight_number = ? AND DATE(departure_time) = ?";
         String seatsQuery = "SELECT seat_number, seat_class, is_available FROM seats WHERE flight_id = ? ORDER BY seat_id ASC";
@@ -214,7 +201,6 @@ public class StaffSeatSelectionController implements Initializable {
             }
             if (currentFlightId == -1) return;
 
-            // 🌟 ၁။ ရောင်းချပြီးသား ခုံများကို ရှာပါမည် (Error တက်ခဲ့ရင် UI မပျောက်အောင် သီးသန့် try-catch အုပ်ထားပါသည်) 🌟
             List<String> generallyBookedSeats = new ArrayList<>();
             try {
                 String bookedSeatsQuery = "SELECT seat_number FROM bookings WHERE flight_id = ? AND status IN ('Confirmed', 'Completed')";
@@ -231,7 +217,6 @@ public class StaffSeatSelectionController implements Initializable {
                 System.out.println("Could not fetch booked seats from bookings table: " + e.getMessage());
             }
 
-            // 🌟 ၂။ Change Flight ဖြစ်ခဲ့လျှင် မိမိဝယ်ထားသော ခုံအဟောင်းများကို ရှာပါမည် 🌟
             List<String> myOldSeats = new ArrayList<>();
             if (isChangeFlightMode && oldBookingIds != null && !oldBookingIds.isEmpty()) {
                 try {
@@ -258,10 +243,11 @@ public class StaffSeatSelectionController implements Initializable {
                 }
             }
 
+            // 🌟 ဤနေရာတွင် Hardcode (အသေ) ရေးထားခြင်းများကို ဖယ်ရှားပြီး Database မှ လာသမျှကို အလိုအလျောက် စီစဉ်ပေးမည် 🌟
             Map<String, Map<Integer, List<SeatData>>> seatMap = new LinkedHashMap<>();
-            initSectionBlueprint(seatMap, "Business", 1, 3);
-            initSectionBlueprint(seatMap, "Premium", 4, 6);
-            initSectionBlueprint(seatMap, "Economy", 7, 20);
+            seatMap.put("Business", new LinkedHashMap<>());
+            seatMap.put("Premium", new LinkedHashMap<>());
+            seatMap.put("Economy", new LinkedHashMap<>());
 
             try (PreparedStatement seatStmt = conn.prepareStatement(seatsQuery)) {
                 seatStmt.setInt(1, currentFlightId);
@@ -269,31 +255,22 @@ public class StaffSeatSelectionController implements Initializable {
                     while (rs.next()) {
                         String sNum = rs.getString("seat_number");
                         String sClass = rs.getString("seat_class");
-                        boolean isAvail = rs.getBoolean("is_available"); // မူလ Status ကို အရင်ယူမယ်
+                        boolean isAvail = rs.getBoolean("is_available");
 
-                        // 🌟 သူများ ဝယ်ထားရင် Disable လုပ်မယ်
                         if (generallyBookedSeats.contains(sNum)) {
                             isAvail = false;
                         }
-                        // 🌟 ကိုယ့်ခုံအဟောင်း ဖြစ်နေရင်တော့ ပြန်ရွေးလို့ရအောင် Enable ပြန်လုပ်ပေးမယ်
                         if (myOldSeats.contains(sNum)) {
                             isAvail = true;
                         }
 
                         int rowNum = extractRowNumber(sNum);
-                        String mappedClass = sClass;
+                        String mappedClass = "Economy";
                         if (sClass.toLowerCase().contains("business")) mappedClass = "Business";
                         else if (sClass.toLowerCase().contains("premium")) mappedClass = "Premium";
-                        else if (sClass.toLowerCase().contains("econom")) mappedClass = "Economy";
 
-                        if (seatMap.containsKey(mappedClass) && seatMap.get(mappedClass).containsKey(rowNum)) {
-                            for (SeatData sd : seatMap.get(mappedClass).get(rowNum)) {
-                                if (sd.seatNumber.equals(sNum)) {
-                                    sd.isAvailable = isAvail;
-                                    break;
-                                }
-                            }
-                        }
+                        seatMap.get(mappedClass).putIfAbsent(rowNum, new ArrayList<>());
+                        seatMap.get(mappedClass).get(rowNum).add(new SeatData(sNum, mappedClass, isAvail));
                     }
                 }
             }
@@ -308,6 +285,11 @@ public class StaffSeatSelectionController implements Initializable {
     private void buildDynamicSeatUI(Map<String, Map<Integer, List<SeatData>>> seatMap) {
         businessSection.getChildren().clear(); premiumSection.getChildren().clear(); economySection.getChildren().clear(); classComboBox.getItems().clear();
         for (String className : seatMap.keySet()) {
+            Map<Integer, List<SeatData>> rows = seatMap.get(className);
+
+            // 🌟 ထို Class တွင် ခုံတစ်ခုံမှ မရှိပါက ကျော်သွားမည် (UI တွင် အလွတ်ကြီး မပေါ်စေရန်) 🌟
+            if (rows.isEmpty()) continue;
+
             classComboBox.getItems().add(className); VBox targetSection = getSectionForClass(className);
             if (targetSection != businessSection) { Separator sep = new Separator(); sep.getStyleClass().add("class-separator"); targetSection.getChildren().add(sep); }
 
@@ -317,7 +299,6 @@ public class StaffSeatSelectionController implements Initializable {
 
             Label titleLbl = new Label(displayTitle); titleLbl.getStyleClass().add("class-title"); targetSection.getChildren().add(titleLbl); targetSection.setSpacing(15);
 
-            Map<Integer, List<SeatData>> rows = seatMap.get(className);
             for (Integer rowNum : rows.keySet()) {
                 HBox rowBox = new HBox(15); rowBox.setAlignment(Pos.CENTER);
                 List<SeatData> seatsInRow = rows.get(rowNum);

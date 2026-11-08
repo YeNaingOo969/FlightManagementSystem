@@ -47,7 +47,6 @@
 .super-metric-icon { -fx-min-width: 46; -fx-min-height: 46; -fx-max-width: 46; -fx-max-height: 46; -fx-background-color: rgba(255, 255, 255, 0.15); -fx-background-radius: 999; -fx-border-color: rgba(255, 255, 255, 0.25); -fx-border-radius: 999; -fx-border-width: 1px; }
 .super-metric-icon-glyph { -fx-fill: #FFFFFF; -fx-scale-x: 0.9; -fx-scale-y: 0.9; }
 
-
 /* 🌟 Weather Widget Panel */
 .weather-widget-panel {
     -fx-background-color: linear-gradient(to bottom right, #0F172A, #06080D);
@@ -59,6 +58,7 @@
 .super-dot-green { -fx-background-color: #1DA853; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
 .super-dot-gold { -fx-background-color: #F8B12C; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
 .super-dot-blue { -fx-background-color: #31C4B4; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
+.super-dot-offline { -fx-background-color: #4A5568; -fx-min-width: 8px; -fx-min-height: 8px; -fx-max-width: 8px; -fx-max-height: 8px; -fx-background-radius: 50%; }
 
 /* 🌟 Charts Styling */
 .chart-plot-background { -fx-background-color: transparent; }
@@ -76,11 +76,30 @@
 .chart-series-area-fill { -fx-fill: linear-gradient(to bottom, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.0)); }
 .chart-line-symbol { -fx-background-color: #06080D, #10B981; -fx-background-insets: 0, 2; -fx-background-radius: 50%; -fx-padding: 4px; }
 
-/* Pie Chart (Cancellation Reasons) */
-.chart-pie.default-color0 { -fx-pie-color: #F43F5E; -fx-border-color: #11151E; -fx-border-width: 2px; }
-.chart-pie.default-color1 { -fx-pie-color: #F8B12C; -fx-border-color: #11151E; -fx-border-width: 2px; }
-.chart-pie.default-color2 { -fx-pie-color: #8B5CF6; -fx-border-color: #11151E; -fx-border-width: 2px; }
-.chart-pie.default-color3 { -fx-pie-color: #31C4B4; -fx-border-color: #11151E; -fx-border-width: 2px; }
+/* ==========================================================
+   🌟 PIE CHART & LABELS (DARK MODE FIX)
+========================================================== */
+.chart-pie {
+    -fx-border-color: #11151E;
+    -fx-border-width: 2px;
+}
+.chart-pie.default-color0 { -fx-pie-color: #F43F5E; }
+.chart-pie.default-color1 { -fx-pie-color: #F8B12C; }
+.chart-pie.default-color2 { -fx-pie-color: #8B5CF6; }
+.chart-pie.default-color3 { -fx-pie-color: #31C4B4; }
+.chart-pie.default-color4 { -fx-pie-color: #3B82F6; }
+
+.chart-pie-label {
+    -fx-fill: #E2E8F0 !important;
+    -fx-font-size: 11.5px !important;
+    -fx-font-weight: bold !important;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #94A3B8 !important;
+    -fx-stroke-width: 1.5px !important;
+    -fx-fill: transparent !important;
+}
 
 /* 🌟 Table Styling */
 .super-table { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0; }
@@ -142,13 +161,25 @@
 }
 
 /* ==========================================================
-   🌟 PIE CHART LABELS (DARK MODE FIX)
+   🟢 ACTIVE STAFF LIST (DARK MODE)
 ========================================================== */
-.chart-pie-label {
-    -fx-fill: #FFFFFF; /* စာသားကို အဖြူရောင်ပြောင်းရန် */
-    -fx-font-size: 11px;
+.active-staff-list {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
-
-.chart-pie-label-line {
-    -fx-stroke: #8B95A5; /* စာသားနဲ့ Chart ကို ဆက်ထားတဲ့ မျဉ်းလေး မြင်ရစေရန် */
+.active-staff-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10px 12px;
+}
+.active-staff-list .list-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 8px;
+}
+.active-staff-list .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 6px;
+}
+.active-staff-list .scroll-bar:vertical .thumb {
+    -fx-background-color: #2A3441;
+    -fx-background-radius: 4px;
 }

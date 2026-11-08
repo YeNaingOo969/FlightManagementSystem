@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -18,8 +19,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -35,6 +38,11 @@ public class AdminBookingManagementController implements Initializable {
 
     @FXML private StackPane rootStackPane;
 
+    @FXML private TextField searchField;
+    @FXML private Label lblTabAll;
+    @FXML private Label lblTabCompleted;
+    @FXML private Label lblTabCancelled;
+
     @FXML private TableView<BookingData> bookingTable;
     @FXML private TableColumn<BookingData, String> colBookingId;
     @FXML private TableColumn<BookingData, String> colCustomer;
@@ -43,6 +51,9 @@ public class AdminBookingManagementController implements Initializable {
     @FXML private TableColumn<BookingData, String> colStatus;
     @FXML private TableColumn<BookingData, Void> colAction;
 
+    private final ObservableList<BookingData> masterBookingList = FXCollections.observableArrayList();
+    private String currentTabFilter = "ALL";
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         colBookingId.setCellValueFactory(new PropertyValueFactory<>("pnrCode"));
@@ -50,7 +61,15 @@ public class AdminBookingManagementController implements Initializable {
         colFlight.setCellValueFactory(new PropertyValueFactory<>("route"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
 
-        // 🌟 Status Column ကို Badge Style ဖြင့် အရောင်ခွဲခြားပြသခြင်း 🌟
+        if (lblTabAll != null) lblTabAll.setCursor(Cursor.HAND);
+        if (lblTabCompleted != null) lblTabCompleted.setCursor(Cursor.HAND);
+        if (lblTabCancelled != null) lblTabCancelled.setCursor(Cursor.HAND);
+
+        if (searchField != null) {
+            searchField.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        }
+
+        // 🌟 Status Column ကို Staff Portal ပုံစံ Pill Badge (Border + Background) ဖြင့် ပြသခြင်း 🌟
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colStatus.setCellFactory(column -> new TableCell<>() {
             @Override
@@ -63,29 +82,27 @@ public class AdminBookingManagementController implements Initializable {
                     Label lblStatus = new Label(status);
                     String lowerStatus = status.toLowerCase();
 
-                    // Base CSS Style
-                    String baseStyle = "-fx-font-weight: bold; -fx-padding: 6px 12px; -fx-background-radius: 8px; -fx-font-size: 12px;";
+                    String baseStyle = "-fx-font-weight: bold; -fx-padding: 4px 14px; -fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-width: 1px; -fx-font-size: 12px;";
 
-                    // Keyword ပေါ်မူတည်၍ အရောင်သတ်မှတ်ခြင်း
-                    if (lowerStatus.contains("confirm") || lowerStatus.contains("success")) {
-                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #31C4B4; -fx-background-color: rgba(49, 196, 180, 0.15);"); // Green/Teal
+                    if (lowerStatus.contains("confirm") || lowerStatus.contains("complete") || lowerStatus.contains("success")) {
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #31C4B4; -fx-background-color: rgba(49, 196, 180, 0.12); -fx-border-color: #31C4B4;");
                     } else if (lowerStatus.contains("cancel")) {
-                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #FF4B72; -fx-background-color: rgba(255, 75, 114, 0.15);"); // Red
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #FF4B72; -fx-background-color: rgba(255, 75, 114, 0.12); -fx-border-color: #FF4B72;");
                     } else if (lowerStatus.contains("reschedule")) {
-                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #3B82F6; -fx-background-color: rgba(59, 130, 246, 0.15);"); // Blue
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #3B82F6; -fx-background-color: rgba(59, 130, 246, 0.12); -fx-border-color: #3B82F6;");
                     } else if (lowerStatus.contains("pending")) {
-                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #F59E0B; -fx-background-color: rgba(245, 158, 11, 0.15);"); // Orange
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #94A3B8; -fx-background-color: rgba(148, 163, 184, 0.12); -fx-border-color: #64748B;");
                     } else {
-                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #E2E8F0; -fx-background-color: rgba(226, 232, 240, 0.1);"); // Gray Default
+                        lblStatus.setStyle(baseStyle + "-fx-text-fill: #E2E8F0; -fx-background-color: rgba(226, 232, 240, 0.1); -fx-border-color: #475569;");
                     }
 
                     setGraphic(lblStatus);
-                    setAlignment(Pos.CENTER); // 🌟 အလယ်တည့်တည့်နှင့် စာသားရှိသလောက်သာ Background ယူရန် 🌟
+                    setAlignment(Pos.CENTER);
                 }
             }
         });
 
-        // 🌟 Action Column အတွက် Cancel ခလုတ် 🌟
+        // 🌟 Action Column (Cancel ခလုတ် နှင့် Cancelled အနီရောင်စာသား) 🌟
         Callback<TableColumn<BookingData, Void>, TableCell<BookingData, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<BookingData, Void> call(final TableColumn<BookingData, Void> param) {
@@ -110,9 +127,9 @@ public class AdminBookingManagementController implements Initializable {
                         } else {
                             BookingData data = getTableView().getItems().get(getIndex());
                             if (data != null) {
-                                if (data.getStatus().toLowerCase().contains("cancel")) {
-                                    Label lblActionStatus = new Label("-");
-                                    lblActionStatus.setStyle("-fx-text-fill: #8B95A5; -fx-font-weight: bold;");
+                                if (data.getStatus() != null && data.getStatus().toLowerCase().contains("cancel")) {
+                                    Label lblActionStatus = new Label("Cancelled");
+                                    lblActionStatus.setStyle("-fx-text-fill: #FF4B72; -fx-font-weight: bold; -fx-font-size: 12px;");
                                     setGraphic(lblActionStatus);
                                 } else {
                                     setGraphic(btn);
@@ -128,11 +145,71 @@ public class AdminBookingManagementController implements Initializable {
         loadBookingsFromDatabase();
     }
 
-    // ==========================================
-    // 🌟 DATABASE မှ DATA အစစ်များကို ဆွဲထုတ်ခြင်း 🌟
-    // ==========================================
+    @FXML
+    void filterAll(MouseEvent event) {
+        currentTabFilter = "ALL";
+        updateActiveTabStyle(lblTabAll);
+        applyFilters();
+    }
+
+    @FXML
+    void filterCompleted(MouseEvent event) {
+        currentTabFilter = "COMPLETED";
+        updateActiveTabStyle(lblTabCompleted);
+        applyFilters();
+    }
+
+    @FXML
+    void filterCancelled(MouseEvent event) {
+        currentTabFilter = "CANCELLED";
+        updateActiveTabStyle(lblTabCancelled);
+        applyFilters();
+    }
+
+    private void updateActiveTabStyle(Label activeLabel) {
+        if (lblTabAll != null) lblTabAll.getStyleClass().remove("active-tab");
+        if (lblTabCompleted != null) lblTabCompleted.getStyleClass().remove("active-tab");
+        if (lblTabCancelled != null) lblTabCancelled.getStyleClass().remove("active-tab");
+
+        if (activeLabel != null && !activeLabel.getStyleClass().contains("active-tab")) {
+            activeLabel.getStyleClass().add("active-tab");
+        }
+    }
+
+    private void applyFilters() {
+        String keyword = (searchField != null && searchField.getText() != null)
+                ? searchField.getText().trim().toLowerCase()
+                : "";
+
+        ObservableList<BookingData> filteredList = FXCollections.observableArrayList();
+
+        for (BookingData item : masterBookingList) {
+            String statusLower = item.getStatus() != null ? item.getStatus().toLowerCase() : "";
+
+            boolean matchesTab = switch (currentTabFilter) {
+                case "COMPLETED" -> statusLower.contains("confirm") || statusLower.contains("complete") || statusLower.contains("success");
+                case "CANCELLED" -> statusLower.contains("cancel");
+                default -> true;
+            };
+
+            if (!matchesTab) continue;
+
+            boolean matchesKeyword = keyword.isEmpty()
+                    || (item.getPnrCode() != null && item.getPnrCode().toLowerCase().contains(keyword))
+                    || (item.getPassenger() != null && item.getPassenger().toLowerCase().contains(keyword))
+                    || (item.getRoute() != null && item.getRoute().toLowerCase().contains(keyword))
+                    || (item.getDate() != null && item.getDate().toLowerCase().contains(keyword));
+
+            if (matchesKeyword) {
+                filteredList.add(item);
+            }
+        }
+
+        bookingTable.setItems(filteredList);
+    }
+
     private void loadBookingsFromDatabase() {
-        ObservableList<BookingData> dbDataList = FXCollections.observableArrayList();
+        masterBookingList.clear();
 
         String query = "SELECT b.booking_id, b.pnr_code, p.full_name AS passenger_name, " +
                 "f.flight_number, dep_city.city_code AS dep_code, arr_city.city_code AS arr_code, " +
@@ -156,18 +233,15 @@ public class AdminBookingManagementController implements Initializable {
                 String date = rs.getString("dep_date");
                 String status = rs.getString("status");
 
-                dbDataList.add(new BookingData(dbId, pnrCode, passengerName, route, date, status));
+                masterBookingList.add(new BookingData(dbId, pnrCode, passengerName, route, date, status));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        bookingTable.setItems(dbDataList);
+        applyFilters();
     }
 
-    // ==========================================
-    // 🌟 CANCEL MODAL ဖွင့်ခြင်း နှင့် REASON တောင်းခြင်း 🌟
-    // ==========================================
     private void openCancelModal(BookingData data, Button sourceNode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/AdminCancelBookingReason.fxml"));
@@ -229,9 +303,6 @@ public class AdminBookingManagementController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 🌟 DATABASE UPDATE (Admin မှ တိုက်ရိုက် Cancel လုပ်ခြင်း) 🌟
-    // ==========================================
     private void processAdminCancellation(BookingData data, String reason) {
         int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
 
@@ -262,6 +333,7 @@ public class AdminBookingManagementController implements Initializable {
             insertLog(adminId, "Cancelled booking PNR: " + data.getPnrCode() + " (Reason: " + reason + ")");
 
             data.setStatus("Cancelled");
+            applyFilters();
             bookingTable.refresh();
 
         } catch (Exception e) {
@@ -301,9 +373,6 @@ public class AdminBookingManagementController implements Initializable {
         pt.play();
     }
 
-    // ==========================================
-    // 🌟 Booking Data Model 🌟
-    // ==========================================
     public static class BookingData {
         private int dbId;
         private String pnrCode, passenger, route, date, status;

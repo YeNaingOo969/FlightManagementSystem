@@ -4,9 +4,9 @@ import com.pos.flightmanagementsystem.model.User;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
-import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,7 +34,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
@@ -58,19 +57,18 @@ public class SuperAdminAccManagementController implements Initializable {
     @FXML private Label lblAdministrators;
 
     @FXML private TableView<User> usersTable;
-    @FXML private TableColumn<User, String> colUsername;
-    @FXML private TableColumn<User, String> colPassword;
-    @FXML private TableColumn<User, String> colRole;
-    @FXML private TableColumn<User, String> colEmail;
-    @FXML private TableColumn<User, String> colStatus;
+    @FXML private TableColumn<User,String> colUsername;
+    @FXML private TableColumn<User,String> colPassword;
+    @FXML private TableColumn<User,String> colRole;
+    @FXML private TableColumn<User,String> colEmail;
+    @FXML private TableColumn<User,String> colStatus;
 
     @FXML private HBox profileCardsContainer;
-
     @FXML private HBox notificationToast;
     @FXML private Label lblToastTitle;
     @FXML private Label lblToastMessage;
 
-    private ObservableList<User> userList = FXCollections.observableArrayList();
+    private final ObservableList<User> userList = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -80,49 +78,58 @@ public class SuperAdminAccManagementController implements Initializable {
                 colPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
                 colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
                 colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-
                 colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
                 setupStatusColumn();
             }
 
             if (comboFilterRole != null) {
-                comboFilterRole.getItems().addAll("All", "Admin", "Staff");
+                comboFilterRole.getItems().addAll("All","Admin","Staff");
                 comboFilterRole.setValue("All");
-                comboFilterRole.valueProperty().addListener((observable, oldValue, newValue) -> filterUsers());
+                comboFilterRole.valueProperty().addListener((observable,oldValue,newValue) -> filterUsers());
             }
 
             if (comboFilterStatus != null) {
-                comboFilterStatus.getItems().addAll("Active", "Inactive");
+                comboFilterStatus.getItems().addAll("Active","Inactive");
                 comboFilterStatus.setValue("Active");
-                comboFilterStatus.valueProperty().addListener((observable, oldValue, newValue) -> filterUsers());
+                comboFilterStatus.valueProperty().addListener((observable,oldValue,newValue) -> filterUsers());
             }
 
             if (txtSearch != null) {
-                txtSearch.textProperty().addListener((observable, oldValue, newValue) -> filterUsers());
+                txtSearch.textProperty().addListener((observable,oldValue,newValue) -> filterUsers());
             }
 
-            loadUserData("", "All", "Active");
+            loadUserData("","All","Active");
             updateDashboardStats();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void setupStatusColumn() {
-        colStatus.setCellFactory(column -> new TableCell<User, String>() {
+        colStatus.setCellFactory(column -> new TableCell<User,String>() {
             private final Button statusBtn = new Button();
+            private final Button editBtn = new Button("Edit");
+            private final HBox container = new HBox(8,editBtn,statusBtn);
 
             {
+                container.setAlignment(Pos.CENTER);
+                editBtn.getStyleClass().add("secondary-button");
+
+
                 statusBtn.setOnAction(event -> {
                     User user = getTableView().getItems().get(getIndex());
                     toggleUserStatus(user);
                 });
+
+                editBtn.setOnAction(event -> {
+                    User user = getTableView().getItems().get(getIndex());
+                    openEditUser(user);
+                });
             }
 
             @Override
-            protected void updateItem(String status, boolean empty) {
-                super.updateItem(status, empty);
+            protected void updateItem(String status,boolean empty) {
+                super.updateItem(status,empty);
                 if (empty || status == null) {
                     setGraphic(null);
                 } else {
@@ -132,13 +139,12 @@ public class SuperAdminAccManagementController implements Initializable {
                     } else {
                         statusBtn.getStyleClass().setAll("status-btn-inactive");
                     }
-                    setGraphic(statusBtn);
+                    setGraphic(container);
                 }
             }
         });
     }
 
-    // 🌟 Profile Card နှင့် Table များကို Real-Time ချက်ချင်း Update လုပ်ပေးမည့် Method 🌟
     private void toggleUserStatus(User user) {
         String newStatus = user.getStatus().equalsIgnoreCase("Active") ? "Inactive" : "Active";
         String sql = "UPDATE users SET status = ? WHERE user_id = ?";
@@ -146,42 +152,45 @@ public class SuperAdminAccManagementController implements Initializable {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, newStatus);
-            pstmt.setInt(2, user.getUserId());
+            pstmt.setString(1,newStatus);
+            pstmt.setInt(2,user.getUserId());
 
             if (pstmt.executeUpdate() > 0) {
-                // 🌟 Admin မှ User Status ကို ပြောင်းလဲကြောင်း Log မှတ်ခြင်း 🌟
-                int adminId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
-                insertLog(adminId, "Changed status of user '" + user.getUsername() + "' to " + newStatus);
-
-                // Database ထဲ ပြန်မခေါ်ဘဲ လက်ရှိ Object ကိုသာ တိုက်ရိုက်ပြောင်းပေးမည် (Dynamic Update)
+                int adminId = LoginController.loggedInUser != null ? LoginController.loggedInUser.getUserId() : 1;
+                insertLog(adminId,"Changed status of user '" + user.getUsername() + "' to " + newStatus);
                 user.setStatus(newStatus);
                 usersTable.refresh();
                 updateProfileCards();
                 updateDashboardStats();
-
-                showToast("Status Updated", user.getUsername() + "'s account is now " + newStatus + ".");
+                showToast("Status Updated",user.getUsername() + "'s account is now " + newStatus + ".");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 🌟 System Log ထဲသို့ သိမ်းဆည်းမည့် Method 🌟
-    private void insertLog(int userId, String action) {
+    private void insertLog(int userId,String action) {
         String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(logQuery)) {
-            if (userId > 0) pstmt.setInt(1, userId);
-            else pstmt.setNull(1, java.sql.Types.INTEGER);
-            pstmt.setString(2, action);
+
+            if (userId > 0) {
+                pstmt.setInt(1,userId);
+            } else {
+                pstmt.setNull(1,java.sql.Types.INTEGER);
+            }
+
+            pstmt.setString(2,action);
             pstmt.executeUpdate();
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateDashboardStats() {
         String query = "SELECT role, status, COUNT(*) as count FROM users GROUP BY role, status";
-        int total = 0, adminCount = 0, staffCount = 0, activeCount = 0;
+        int total = 0,adminCount = 0,staffCount = 0,activeCount = 0;
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
@@ -220,12 +229,15 @@ public class SuperAdminAccManagementController implements Initializable {
         String keyword = txtSearch != null ? txtSearch.getText() : "";
         String selectedRole = comboFilterRole != null ? comboFilterRole.getValue() : "All";
         String selectedStatus = comboFilterStatus != null ? comboFilterStatus.getValue() : "Active";
-        loadUserData(keyword, selectedRole, selectedStatus);
+        loadUserData(keyword,selectedRole,selectedStatus);
     }
 
-    public void loadUserData(String keyword, String roleFilter, String statusFilter) {
+    public void loadUserData(String keyword,String roleFilter,String statusFilter) {
         userList.clear();
-        StringBuilder query = new StringBuilder("SELECT user_id, username, email, password, role, status, image_path, created_at FROM users WHERE 1=1");
+
+        StringBuilder query = new StringBuilder(
+                "SELECT user_id, username, email, password, role, status, image_path, created_at FROM users WHERE 1=1"
+        );
 
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         boolean hasRole = roleFilter != null && !roleFilter.equals("All") && !roleFilter.trim().isEmpty();
@@ -239,9 +251,10 @@ public class SuperAdminAccManagementController implements Initializable {
              PreparedStatement pstmt = conn.prepareStatement(query.toString())) {
 
             int paramIndex = 1;
-            if (hasKeyword) pstmt.setString(paramIndex++, keyword.trim() + "%");
-            if (hasRole) pstmt.setString(paramIndex++, roleFilter.trim());
-            if (hasStatus) pstmt.setString(paramIndex++, statusFilter.trim());
+
+            if (hasKeyword) pstmt.setString(paramIndex++,keyword.trim() + "%");
+            if (hasRole) pstmt.setString(paramIndex++,roleFilter.trim());
+            if (hasStatus) pstmt.setString(paramIndex++,statusFilter.trim());
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -253,15 +266,14 @@ public class SuperAdminAccManagementController implements Initializable {
                     String status = rs.getString("status");
                     String imagePath = rs.getString("image_path");
                     java.sql.Timestamp timestamp = rs.getTimestamp("created_at");
-                    LocalDateTime createdAt = (timestamp != null) ? timestamp.toLocalDateTime() : null;
+                    LocalDateTime createdAt = timestamp != null ? timestamp.toLocalDateTime() : null;
 
-                    userList.add(new User(userId, username, email, password, role, status, imagePath, createdAt));
+                    userList.add(new User(userId,username,email,password,role,status,imagePath,createdAt));
                 }
             }
 
             if (usersTable != null) usersTable.setItems(userList);
             updateProfileCards();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -282,16 +294,18 @@ public class SuperAdminAccManagementController implements Initializable {
 
         StackPane iconPane = new StackPane();
         iconPane.getStyleClass().add("user-card-avatar-container");
-        VBox.setMargin(iconPane, new Insets(0, 0, 15.0, 0));
+        VBox.setMargin(iconPane,new Insets(0,0,15.0,0));
 
         boolean hasImage = false;
+
         if (user.getImagePath() != null && !user.getImagePath().trim().isEmpty()) {
             File imgFile = new File("src/main/resources/com/pos/flightmanagementsystem/image/" + user.getImagePath());
+
             if (imgFile.exists()) {
                 ImageView imageView = new ImageView(new Image(imgFile.toURI().toString()));
                 imageView.setFitWidth(80.0);
                 imageView.setFitHeight(80.0);
-                Circle clip = new Circle(40, 40, 40);
+                Circle clip = new Circle(40,40,40);
                 imageView.setClip(clip);
                 iconPane.getChildren().add(imageView);
                 hasImage = true;
@@ -309,92 +323,136 @@ public class SuperAdminAccManagementController implements Initializable {
 
         Label nameLbl = new Label(user.getUsername() != null ? user.getUsername() : "Unknown");
         nameLbl.getStyleClass().add("profile-label");
-        nameLbl.setPadding(new Insets(0, 0, 12.0, 0));
+        nameLbl.setPadding(new Insets(0,0,12.0,0));
 
         String roleStr = user.getRole() != null ? user.getRole().toUpperCase() : "STAFF";
         Label roleLbl = new Label(roleStr);
         roleLbl.getStyleClass().add("profile-label");
-        roleLbl.setPadding(new Insets(0, 0, 12.0, 0));
+        roleLbl.setPadding(new Insets(0,0,12.0,0));
 
         String currentStatus = user.getStatus() != null ? user.getStatus() : "Active";
         Label statusLbl = new Label(currentStatus.toUpperCase());
+
         if (currentStatus.equalsIgnoreCase("Active")) {
             statusLbl.getStyleClass().add("status-active");
         } else {
             statusLbl.getStyleClass().add("status-inactive");
         }
-        statusLbl.setPadding(new Insets(0, 0, 12.0, 0));
 
-        card.getChildren().addAll(iconPane, nameLbl, roleLbl, statusLbl);
+        statusLbl.setPadding(new Insets(0,0,12.0,0));
+        card.getChildren().addAll(iconPane,nameLbl,roleLbl,statusLbl);
         return card;
     }
 
     @FXML
     void openCreateUser(ActionEvent event) {
+        showUserDialog(null);
+    }
+
+    private void openEditUser(User user) {
+        showUserDialog(user);
+    }
+
+    private void showUserDialog(User userToEdit) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminCreateUser.fxml"));
-            Parent createUserRoot = loader.load();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/pos/flightmanagementsystem/view/SuperAdminCreateUser.fxml")
+            );
+
+            Parent dialogRoot = loader.load();
 
             if (!acRootPane.getStylesheets().isEmpty()) {
                 String currentMainStyle = acRootPane.getStylesheets().get(0);
-                createUserRoot.getStylesheets().clear();
+                dialogRoot.getStylesheets().clear();
 
                 if (currentMainStyle.contains("Light")) {
-                    createUserRoot.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/SuperAdminCreateUserLight.css").toExternalForm());
+                    dialogRoot.getStylesheets().add(
+                            getClass().getResource(
+                                    "/com/pos/flightmanagementsystem/Style/SuperAdminCreateUserLight.css"
+                            ).toExternalForm()
+                    );
                 } else {
-                    createUserRoot.getStylesheets().add(getClass().getResource("/com/pos/flightmanagementsystem/Style/SuperAdminCreateUserDark.css").toExternalForm());
+                    dialogRoot.getStylesheets().add(
+                            getClass().getResource(
+                                    "/com/pos/flightmanagementsystem/Style/SuperAdminCreateUserDark.css"
+                            ).toExternalForm()
+                    );
                 }
             }
 
-            SuperAdminCreateUserController createUserController = loader.getController();
+            SuperAdminCreateUserController controller = loader.getController();
+
+            if (userToEdit != null) {
+                controller.setEditMode(userToEdit);
+            }
 
             StackPane overlay = new StackPane();
             overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
-            overlay.getChildren().add(createUserRoot);
+            overlay.getChildren().add(dialogRoot);
 
             acRootPane.getChildren().add(overlay);
-            AnchorPane.setTopAnchor(overlay, 0.0); AnchorPane.setBottomAnchor(overlay, 0.0);
-            AnchorPane.setLeftAnchor(overlay, 0.0); AnchorPane.setRightAnchor(overlay, 0.0);
+
+            AnchorPane.setTopAnchor(overlay,0.0);
+            AnchorPane.setBottomAnchor(overlay,0.0);
+            AnchorPane.setLeftAnchor(overlay,0.0);
+            AnchorPane.setRightAnchor(overlay,0.0);
 
             Bounds btnBounds = btnCreateUser.localToScene(btnCreateUser.getBoundsInLocal());
             Bounds rootBounds = acRootPane.localToScene(acRootPane.getBoundsInLocal());
 
             double rootCenterX = rootBounds.getWidth() / 2;
             double rootCenterY = rootBounds.getHeight() / 2;
+
             double btnCenterX = btnBounds.getMinX() + (btnBounds.getWidth() / 2) - rootBounds.getMinX();
             double btnCenterY = btnBounds.getMinY() + (btnBounds.getHeight() / 2) - rootBounds.getMinY();
 
             double startTransX = btnCenterX - rootCenterX;
             double startTransY = btnCenterY - rootCenterY;
 
-            createUserController.setSuccessAction(() -> {
-                closePopup(overlay, createUserRoot, startTransX, startTransY);
+            controller.setSuccessAction(() -> {
+                closePopup(overlay,dialogRoot,startTransX,startTransY);
                 filterUsers();
                 updateDashboardStats();
-                showToast("Success!", "User account created successfully.");
+                String message = userToEdit != null
+                        ? "User account updated successfully."
+                        : "User account created successfully.";
+                showToast("Success!",message);
             });
 
-            createUserController.setCancelAnimationAction(() -> {
-                closePopup(overlay, createUserRoot, startTransX, startTransY);
+            controller.setCancelAnimationAction(() -> {
+                closePopup(overlay,dialogRoot,startTransX,startTransY);
             });
 
-            createUserRoot.setTranslateX(startTransX);
-            createUserRoot.setTranslateY(startTransY);
-            createUserRoot.setScaleX(0.0);
-            createUserRoot.setScaleY(0.0);
-            createUserRoot.setOpacity(0.0);
+            dialogRoot.setTranslateX(startTransX);
+            dialogRoot.setTranslateY(startTransY);
+            dialogRoot.setScaleX(0.0);
+            dialogRoot.setScaleY(0.0);
+            dialogRoot.setOpacity(0.0);
             overlay.setOpacity(0.0);
 
-            FadeTransition bgFade = new FadeTransition(Duration.millis(300), overlay); bgFade.setToValue(1.0);
-            ScaleTransition scaleUp = new ScaleTransition(Duration.millis(400), createUserRoot); scaleUp.setToX(1.0); scaleUp.setToY(1.0); scaleUp.setInterpolator(Interpolator.EASE_OUT);
-            TranslateTransition moveCenter = new TranslateTransition(Duration.millis(400), createUserRoot); moveCenter.setToX(0); moveCenter.setToY(0); moveCenter.setInterpolator(Interpolator.EASE_OUT);
-            FadeTransition formFade = new FadeTransition(Duration.millis(250), createUserRoot); formFade.setToValue(1.0);
+            FadeTransition bgFade = new FadeTransition(Duration.millis(300),overlay);
+            bgFade.setToValue(1.0);
 
-            ParallelTransition pt = new ParallelTransition(bgFade, scaleUp, moveCenter, formFade);
+            ScaleTransition scaleUp = new ScaleTransition(Duration.millis(400),dialogRoot);
+            scaleUp.setToX(1.0);
+            scaleUp.setToY(1.0);
+            scaleUp.setInterpolator(Interpolator.EASE_OUT);
+
+            TranslateTransition moveCenter = new TranslateTransition(Duration.millis(400),dialogRoot);
+            moveCenter.setToX(0);
+            moveCenter.setToY(0);
+            moveCenter.setInterpolator(Interpolator.EASE_OUT);
+
+            FadeTransition formFade = new FadeTransition(Duration.millis(250),dialogRoot);
+            formFade.setToValue(1.0);
+
+            ParallelTransition pt = new ParallelTransition(bgFade,scaleUp,moveCenter,formFade);
             pt.play();
 
             overlay.setOnMouseClicked(e -> {
-                if (e.getTarget() == overlay) closePopup(overlay, createUserRoot, startTransX, startTransY);
+                if (e.getTarget() == overlay) {
+                    closePopup(overlay,dialogRoot,startTransX,startTransY);
+                }
             });
 
         } catch (Exception e) {
@@ -402,32 +460,43 @@ public class SuperAdminAccManagementController implements Initializable {
         }
     }
 
-    private void closePopup(StackPane overlay, Parent createUserRoot, double endTransX, double endTransY) {
-        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(300), createUserRoot); scaleDown.setToX(0.0); scaleDown.setToY(0.0); scaleDown.setInterpolator(Interpolator.EASE_IN);
-        TranslateTransition moveBack = new TranslateTransition(Duration.millis(300), createUserRoot); moveBack.setToX(endTransX); moveBack.setToY(endTransY); moveBack.setInterpolator(Interpolator.EASE_IN);
-        FadeTransition formFadeOut = new FadeTransition(Duration.millis(200), createUserRoot); formFadeOut.setToValue(0.0);
-        FadeTransition bgFadeOut = new FadeTransition(Duration.millis(300), overlay); bgFadeOut.setToValue(0.0);
+    private void closePopup(StackPane overlay,Parent dialogRoot,double endTransX,double endTransY) {
+        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(300),dialogRoot);
+        scaleDown.setToX(0.0);
+        scaleDown.setToY(0.0);
+        scaleDown.setInterpolator(Interpolator.EASE_IN);
 
-        ParallelTransition pt = new ParallelTransition(scaleDown, moveBack, formFadeOut, bgFadeOut);
+        TranslateTransition moveBack = new TranslateTransition(Duration.millis(300),dialogRoot);
+        moveBack.setToX(endTransX);
+        moveBack.setToY(endTransY);
+        moveBack.setInterpolator(Interpolator.EASE_IN);
+
+        FadeTransition formFadeOut = new FadeTransition(Duration.millis(200),dialogRoot);
+        formFadeOut.setToValue(0.0);
+
+        FadeTransition bgFadeOut = new FadeTransition(Duration.millis(300),overlay);
+        bgFadeOut.setToValue(0.0);
+
+        ParallelTransition pt = new ParallelTransition(scaleDown,moveBack,formFadeOut,bgFadeOut);
         pt.setOnFinished(event -> acRootPane.getChildren().remove(overlay));
         pt.play();
     }
 
-    private void showToast(String title, String message) {
+    private void showToast(String title,String message) {
         lblToastTitle.setText(title);
         lblToastMessage.setText(message);
         notificationToast.setVisible(true);
 
-        TranslateTransition slideUp = new TranslateTransition(Duration.millis(300), notificationToast);
+        TranslateTransition slideUp = new TranslateTransition(Duration.millis(300),notificationToast);
         slideUp.setFromY(100);
         slideUp.setToY(0);
         slideUp.setInterpolator(Interpolator.EASE_OUT);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), notificationToast);
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300),notificationToast);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
 
-        ParallelTransition ptIn = new ParallelTransition(slideUp, fadeIn);
+        ParallelTransition ptIn = new ParallelTransition(slideUp,fadeIn);
         ptIn.play();
 
         PauseTransition delay = new PauseTransition(Duration.seconds(3));
@@ -437,14 +506,14 @@ public class SuperAdminAccManagementController implements Initializable {
 
     @FXML
     void closeToast(ActionEvent event) {
-        TranslateTransition slideDown = new TranslateTransition(Duration.millis(300), notificationToast);
+        TranslateTransition slideDown = new TranslateTransition(Duration.millis(300),notificationToast);
         slideDown.setToY(100);
         slideDown.setInterpolator(Interpolator.EASE_IN);
 
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), notificationToast);
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300),notificationToast);
         fadeOut.setToValue(0.0);
 
-        ParallelTransition ptOut = new ParallelTransition(slideDown, fadeOut);
+        ParallelTransition ptOut = new ParallelTransition(slideDown,fadeOut);
         ptOut.setOnFinished(e -> notificationToast.setVisible(false));
         ptOut.play();
     }

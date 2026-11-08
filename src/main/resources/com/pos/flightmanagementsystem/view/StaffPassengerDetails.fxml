@@ -48,7 +48,6 @@
                                 <HBox alignment="CENTER_LEFT">
                                     <Label styleClass="section-title" text="Passenger Information" />
                                     <Region HBox.hgrow="ALWAYS" />
-                                    <!-- 🌟 "Passenger 1 of 3" ဆိုပြီး ပြမည့်နေရာ 🌟 -->
                                     <Label fx:id="lblPassengerIndex" style="-fx-text-fill: #F59E0B; -fx-font-size: 16px; -fx-font-weight: bold;" text="Passenger 1 of 1" />
                                 </HBox>
 
@@ -94,7 +93,8 @@
                                                 <StackPane alignment="CENTER_LEFT">
                                                     <HBox fx:id="nrcContainer" spacing="8.0">
                                                         <ComboBox fx:id="cmbNrcState" prefWidth="80.0" promptText="12/" styleClass="custom-input" />
-                                                        <ComboBox fx:id="cmbNrcTownship" prefWidth="110.0" promptText="MGD" styleClass="custom-input" />
+                                                        <!-- 🌟 ComboBox အစား TextField သို့ ပြောင်းလဲထားပါသည် 🌟 -->
+                                                        <TextField fx:id="txtNrcTownship" prefWidth="110.0" promptText="MGD" styleClass="custom-input" />
                                                         <ComboBox fx:id="cmbNrcType" prefWidth="80.0" promptText="(N)" styleClass="custom-input" />
                                                         <TextField fx:id="txtNrcNumber" promptText="123456" styleClass="custom-input" HBox.hgrow="ALWAYS" />
                                                     </HBox>
@@ -155,7 +155,6 @@
                                                     <Region HBox.hgrow="ALWAYS" />
                                                     <Label fx:id="lblDeparture" styleClass="summary-value" text="--" />
                                                 </HBox>
-                                                <!-- 🌟 လက်ရှိလူအတွက် Assigned Seat ပြမည့်နေရာ 🌟 -->
                                                 <HBox alignment="CENTER_LEFT">
                                                     <Label styleClass="summary-label" text="Assigned Seat" />
                                                     <Region HBox.hgrow="ALWAYS" />
@@ -173,7 +172,6 @@
                                             <Label fx:id="lblTotalPrice" styleClass="summary-total-value" text="\$0.00" />
                                         </HBox>
 
-                                        <!-- 🌟 Payment Method Box (နောက်ဆုံးလူမှ ပေါ်မည်) 🌟 -->
                                         <VBox fx:id="paymentContainer" spacing="8.0" visible="false" managed="false">
                                             <Label styleClass="summary-label" text="Payment Method" />
                                             <ComboBox fx:id="cmbPaymentMethod" maxWidth="Infinity" promptText="Select Payment" styleClass="custom-combo-box" />
