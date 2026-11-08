@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -60,7 +59,6 @@ public class StaffController implements Initializable {
     @FXML private StackPane themeToggleBg, themeThumb;
     @FXML private SVGPath themeIcon;
 
-    // 🌟 Notification Variables 🌟
     @FXML private StackPane navNotificationBtn;
     @FXML private Label notificationBadge;
     @FXML private StackPane notificationOverlayBg;
@@ -76,7 +74,6 @@ public class StaffController implements Initializable {
     private String loggedInRole = "";
     private String loggedInImagePath = "";
 
-    // 🌟 Noti တစ်ခါကြည့်ပြီးသည်နှင့် Badge ဖျောက်ရန်အတွက် နောက်ဆုံးကြည့်ခဲ့သောအချိန်ကို မှတ်ထားမည့် Variable
     private LocalDateTime lastViewedTime = null;
 
     private final String MOON_SVG = "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z";
@@ -100,6 +97,21 @@ public class StaffController implements Initializable {
                 themeThumb.setStyle("-fx-background-color: #F59E0B; -fx-min-width: 20px; -fx-min-height: 20px; -fx-max-width: 20px; -fx-max-height: 20px; -fx-background-radius: 50%; -fx-alignment: center;");
             }
             updateTheme();
+
+            try {
+                Stage stage = (Stage) rootPane.getScene().getWindow();
+                if (stage != null) {
+                    stage.setOnCloseRequest(event -> {
+                        if (LoginController.loggedInUser != null) {
+                            setOfflineStatus(LoginController.loggedInUser.getUsername());
+                        }
+                        Platform.exit();
+                        System.exit(0);
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         Platform.runLater(() -> loadCenterView("/com/pos/flightmanagementsystem/view/StaffDashboard.fxml", false));
@@ -119,7 +131,7 @@ public class StaffController implements Initializable {
         this.loggedInImagePath = imagePath;
 
         if (topNavUsername != null) topNavUsername.setText(username);
-        if (topNavRole != null) topNavRole.setText(role.toUpperCase());
+        if (topNavRole != null && role != null) topNavRole.setText(role.toUpperCase());
 
         if (topNavAvatarCircle != null && imagePath != null && !imagePath.isEmpty()) {
             try {
@@ -133,16 +145,12 @@ public class StaffController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 🌟 GROUP NOTIFICATION SYSTEM FOR STAFF 🌟
-    // ==========================================
     private void fetchNotifications() {
         notificationListContainer.getChildren().clear();
         int unreadCount = 0;
         int totalCount = 0;
         int currentStaffId = (LoginController.loggedInUser != null) ? LoginController.loggedInUser.getUserId() : 1;
 
-        // 🌟 PNR Code တူညီသော Record များကို ပေါင်းပြမည့် Query 🌟
         String query = "SELECT r.status, r.reason, b.pnr_code, " +
                 "GROUP_CONCAT(p.full_name SEPARATOR ', ') AS passenger_names, " +
                 "COUNT(r.request_id) AS pax_count, " +
@@ -217,7 +225,6 @@ public class StaffController implements Initializable {
         lblMessage.getStyleClass().add("noti-request-reason");
         lblMessage.setWrapText(true);
 
-        // 🌟 ခရီးသည် အရေအတွက်ကို တွက်ချက်ပြသမည် 🌟
         String paxBadge = (paxCount > 1) ? " (" + paxCount + " Pax)" : " (1 Pax)";
 
         if (status.equals("Approved")) {
@@ -288,9 +295,6 @@ public class StaffController implements Initializable {
         }
     }
 
-    // ==========================================
-    // 🌟 TOP NAV PROFILE POPUP
-    // ==========================================
     @FXML
     void clickTopNavProfile(MouseEvent event) {
         if (isProfileOpen) return;
@@ -300,6 +304,11 @@ public class StaffController implements Initializable {
 
             ProfileController controller = loader.getController();
             controller.setUserData(loggedInUsername, loggedInRole, loggedInImagePath);
+
+            // 🌟 Staff မှ Profile နာမည်/ပုံ ပြင်လိုက်သည်နှင့် ညာဘက်အပေါ်ထောင့် Navbar နှင့် State ကို ချက်ချင်းပြောင်းမည် 🌟
+            controller.setOnProfileUpdateCallback((newUsername, newImagePath) -> {
+                setLoggedInUser(newUsername, loggedInRole, newImagePath);
+            });
 
             applyThemeRecursively(profileRoot);
             profileRoot.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.2, 0, 10); -fx-background-radius: 12px;");
@@ -365,13 +374,9 @@ public class StaffController implements Initializable {
         pt.play();
     }
 
-    // ==========================================
-    // 🌟 THEME & NAVIGATION 🌟
-    // ==========================================
     @FXML
     public void toggleTheme(MouseEvent event) {
         isDarkMode = !isDarkMode;
-
         LoginController.isLightMode = !isDarkMode;
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(300), themeThumb);
@@ -494,6 +499,9 @@ public class StaffController implements Initializable {
     void clickLogout(ActionEvent event) {
         if (LoginController.loggedInUser != null) {
             insertLog(LoginController.loggedInUser.getUserId(), "Log out");
+            setOfflineStatus(LoginController.loggedInUser.getUsername());
+        } else if (loggedInUsername != null && !loggedInUsername.isEmpty()) {
+            setOfflineStatus(loggedInUsername);
         }
 
         try {
@@ -556,5 +564,23 @@ public class StaffController implements Initializable {
             pstmt.setString(2, action);
             pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    private void setOfflineStatus(String username) {
+        String sql = "UPDATE users SET is_online = 0 WHERE username = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.executeUpdate();
+
+            try {
+                if (!conn.getAutoCommit()) {
+                    conn.commit();
+                }
+            } catch (Exception ignored) {}
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

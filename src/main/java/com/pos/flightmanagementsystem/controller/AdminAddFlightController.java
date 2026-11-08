@@ -88,8 +88,9 @@ public class AdminAddFlightController implements Initializable {
         setupStatusComboBox();
         setupDateValidations();
 
-        cmbTotalSeats.getItems().addAll("70", "120", "160", "180");
-        cmbTotalSeats.setValue("70");
+        // 🌟 70 အစား 72 သို့ ပြောင်းလဲထားပါသည် 🌟
+        cmbTotalSeats.getItems().addAll("72", "120", "160", "180");
+        cmbTotalSeats.setValue("72");
     }
 
     public void setFlightData(Flight flight) {
@@ -322,7 +323,6 @@ public class AdminAddFlightController implements Initializable {
                                 return;
                             }
 
-                            // 🌟 Flight အသစ်များ ထည့်သွင်းကြောင်း Log မှတ်ခြင်း 🌟
                             insertLog(adminId, "Added new flight schedule: " + flightNumber + " (" + generatedCount + " flights generated)");
                         }
 
@@ -351,7 +351,6 @@ public class AdminAddFlightController implements Initializable {
                             pstmt.executeUpdate();
                         }
 
-                        // 🌟 Flight Data Update လုပ်ကြောင်း Log မှတ်ခြင်း 🌟
                         insertLog(adminId, "Updated flight ID: " + currentFlightId + " (Flight Number: " + flightNumber + ")");
 
                         conn.commit();
@@ -371,7 +370,6 @@ public class AdminAddFlightController implements Initializable {
         }
     }
 
-    // 🌟 System Log ထဲသို့ သိမ်းဆည်းမည့် Method 🌟
     private void insertLog(int userId, String action) {
         String logQuery = "INSERT INTO logs (user_id, action, timestamp) VALUES (?, ?, NOW())";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -397,10 +395,11 @@ public class AdminAddFlightController implements Initializable {
 
                 String seatNumber = rowNumber + col;
 
-                String seatClass = "Economic";
+                // 🌟 FIX: Economy အဖြစ် ပြင်ဆင်ပြီး Class များကို UI နှင့် ညီအောင် သတ်မှတ်ထားပါသည် 🌟
+                String seatClass = "Economy";
                 if (rowNumber <= 3) {
                     seatClass = "Business";
-                } else if (rowNumber <= 8) {
+                } else if (rowNumber <= 6) {
                     seatClass = "Premium Economic";
                 }
 
@@ -524,6 +523,7 @@ public class AdminAddFlightController implements Initializable {
 
             ParallelTransition ptOut = new ParallelTransition(stOut, ftOut, bgFtOut);
             ptOut.setOnFinished(ev -> {
+
                 finalWindowRoot.getChildren().remove(overlay);
                 rootPane.setEffect(null);
             });

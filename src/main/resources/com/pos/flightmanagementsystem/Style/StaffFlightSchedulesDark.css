@@ -97,6 +97,13 @@
 .date-picker-popup .day-cell:hover { -fx-background-color: rgba(49, 196, 180, 0.2); -fx-background-radius: 6px; }
 .date-picker-popup .day-cell:selected { -fx-background-color: #31C4B4; -fx-text-fill: #06080D; -fx-background-radius: 6px; }
 
+/* --- Disabled Past Dates in DatePicker (Dark Theme) --- */
+.date-picker-popup .day-cell.disabled-date {
+    -fx-background-color: #0B0E14 !important; /* အမည်းရင့်ရောင် နောက်ခံ */
+    -fx-text-fill: #4A5568 !important; /* မှိန်နေသော မီးခိုးရောင် စာသား */
+    -fx-opacity: 0.6;
+}
+
 /* --- Search Button Styling --- */
 .btn-choose {
     -fx-background-color: transparent;

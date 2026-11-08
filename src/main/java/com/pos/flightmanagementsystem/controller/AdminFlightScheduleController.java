@@ -153,9 +153,14 @@ public class AdminFlightScheduleController implements Initializable {
     private void loadFlightData() {
         flightList.clear();
         LocalDate selectedDate = (dpFilterDate != null) ? dpFilterDate.getValue() : null;
-        String sql = "SELECT * FROM flights";
+        // ပြီးခဲ့တဲ့ အချိန်တွေကို မပြတော့ဘဲ NOW() ကနေစပြီး ရှေ့လာမည့်ဟာတွေကိုပဲ ပြမည်
+        String sql = "SELECT * FROM flights WHERE departure_time >= NOW()";
 
-        if (selectedDate != null) sql += " WHERE DATE(departure_time) = ?";
+        // Date ရွေးပြီး ရှာခဲ့ရင် WHERE အစား AND နဲ့ ဆက်ပေးရပါမည်
+        if (selectedDate != null) sql += " AND DATE(departure_time) = ?";
+
+        // အချိန်အစဉ်လိုက်လေး သပ်သပ်ရပ်ရပ်ဖြစ်သွားအောင် ORDER BY ပါ တစ်ခါတည်း ထည့်ပေးလိုက်ပါတယ်
+        sql += " ORDER BY departure_time ASC";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn == null) return;

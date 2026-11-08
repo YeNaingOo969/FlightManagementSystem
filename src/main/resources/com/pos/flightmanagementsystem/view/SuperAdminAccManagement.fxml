@@ -21,7 +21,6 @@
          <content>
             <VBox spacing="10.0">
                <children>
-                  <!-- 🌟 TOP BAR (Search, Status, Role, Button တို့ကို အစီအစဉ်ကျ ထားရှိသည်) 🌟 -->
                   <HBox maxWidth="1.7976931348623157E308" prefHeight="100.0" spacing="12.0" styleClass="super-topbar" VBox.vgrow="ALWAYS">
                      <children>
                         <VBox prefHeight="84.0" prefWidth="293.0">
@@ -31,21 +30,13 @@
                            </children>
                         </VBox>
                         <Region prefHeight="100.0" HBox.hgrow="ALWAYS" />
-
-                        <!-- 🔍 Search Bar -->
                         <TextField fx:id="txtSearch" promptText="search here......" styleClass="search-field" />
-
-                        <!-- 🟢 Status ComboBox (Search နှင့် Role ကြားသို့ ရွှေ့ထားသည်) -->
                         <ComboBox fx:id="comboFilterStatus" prefWidth="120.0" promptText="Status" styleClass="combo-box" />
-
-                        <!-- 👤 Role ComboBox -->
                         <ComboBox fx:id="comboFilterRole" prefWidth="120.0" promptText="Role" styleClass="combo-box" />
-
                         <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#openCreateUser" styleClass="primary-button" text="+ Create User" />
                      </children>
                   </HBox>
 
-                  <!-- 🌟 STAT CARDS 🌟 -->
                   <HBox prefHeight="100.0" prefWidth="200.0" styleClass="stat-cards-container" VBox.vgrow="ALWAYS">
                      <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" styleClass="super-metric-card-blue" HBox.hgrow="ALWAYS">
@@ -64,6 +55,7 @@
                               </StackPane>
                            </children>
                         </HBox>
+
                         <HBox prefHeight="141.0" prefWidth="213.0" styleClass="super-metric-card-carbon" HBox.hgrow="ALWAYS">
                            <children>
                               <VBox prefHeight="98.0" prefWidth="184.0">
@@ -80,6 +72,7 @@
                               </StackPane>
                            </children>
                         </HBox>
+
                         <HBox prefHeight="100.0" prefWidth="200.0" styleClass="super-metric-card-pink" HBox.hgrow="ALWAYS">
                            <children>
                               <VBox prefHeight="98.0" prefWidth="184.0">
@@ -96,6 +89,7 @@
                               </StackPane>
                            </children>
                         </HBox>
+
                         <HBox prefHeight="100.0" prefWidth="200.0" styleClass="super-metric-card-violet" HBox.hgrow="ALWAYS">
                            <children>
                               <VBox prefHeight="98.0" prefWidth="184.0">
@@ -123,7 +117,6 @@
 
                   <VBox maxWidth="1.7976931348623157E308" prefHeight="200.0" styleClass="table-card" VBox.vgrow="ALWAYS">
                      <children>
-                        <!-- 🌟 TABLE HEADER (Status ComboBox ကို အပေါ်ရွှေ့လိုက်ပြီဖြစ်၍ Label သာ ကျန်ပါမည်) 🌟 -->
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="12.0" VBox.vgrow="NEVER">
                            <children>
                               <Label styleClass="super-section-title" text="Users" />
@@ -153,7 +146,6 @@
          </content>
       </ScrollPane>
 
-      <!-- 🌟 TOAST NOTIFICATION 🌟 -->
       <HBox fx:id="notificationToast" alignment="CENTER_LEFT" prefWidth="380.0" styleClass="toast-notification" visible="false" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
          <children>
             <StackPane styleClass="toast-icon-bg">

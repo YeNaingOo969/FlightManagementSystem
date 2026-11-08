@@ -1,5 +1,7 @@
 package com.pos.flightmanagementsystem.controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,10 +13,17 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,6 +35,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AdminDashboardController implements Initializable {
@@ -46,10 +57,9 @@ public class AdminDashboardController implements Initializable {
     @FXML private AreaChart<String, Number> weeklyBookingsChart;
     @FXML private PieChart cancelReasonChart;
 
-    // 🌟 Flight Status Labels
-    @FXML private Label lblScheduled;
-    @FXML private Label lblDeparted;
-    @FXML private Label lblDelayed;
+    // 🌟 Active/All Staff ListView 🌟
+    @FXML private ListView<StaffData> lvActiveStaff;
+    private final ObservableList<StaffData> staffList = FXCollections.observableArrayList();
 
     // 🌟 Table Elements
     @FXML private TableView<RequestData> tvPendingRequests;
@@ -70,8 +80,109 @@ public class AdminDashboardController implements Initializable {
         loadCancellationReasonsChart();
         fetchLiveWeather();
         loadRecentRequests();
+
+        setupStaffPanel();
     }
 
+    private void setupStaffPanel() {
+        lvActiveStaff.setItems(staffList);
+
+        // 🌟 Custom ListCell for Dot + Circular Profile Pic + Name 🌟
+        lvActiveStaff.setCellFactory(listView -> new ListCell<StaffData>() {
+            private final HBox graphicBox = new HBox(12);
+            private final Label dot = new Label(" ");
+            private final ImageView avatar = new ImageView();
+            private final Label name = new Label();
+
+            {
+                // Profile Picture ကို အဝိုင်းလေးဖြစ်အောင် ဖြတ်မည် (Circular Clip)
+                Circle clip = new Circle(14, 14, 14);
+                avatar.setClip(clip);
+                avatar.setFitWidth(28);
+                avatar.setFitHeight(28);
+
+                graphicBox.setAlignment(Pos.CENTER_LEFT);
+                graphicBox.getChildren().addAll(dot, avatar, name);
+            }
+
+            @Override
+            protected void updateItem(StaffData item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    name.setText(item.getUsername());
+
+                    // 🌟 Online / Offline Status ခွဲခြားခြင်း 🌟
+                    dot.getStyleClass().removeAll("super-dot-green", "super-dot-offline");
+                    if (item.isOnline()) {
+                        dot.getStyleClass().add("super-dot-green");
+                        name.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold;");
+                        avatar.setOpacity(1.0); // လင်းနေမည်
+                    } else {
+                        dot.getStyleClass().add("super-dot-offline");
+                        name.setStyle("-fx-text-fill: #64748B; -fx-font-size: 13px;"); // မှိန်နေမည်
+                        avatar.setOpacity(0.4); // ပုံပါ မှိန်သွားမည်
+                    }
+
+                    // 🌟 Profile ပုံ ထည့်သွင်းခြင်း 🌟
+                    // 🌟 Profile ပုံ ထည့်သွင်းခြင်း (SuperAdmin မှ Path ယူပုံအတိုင်း ပြင်ဆင်ထားသည်) 🌟
+                    try {
+                        String path = item.getImagePath();
+                        if (path != null && !path.trim().isEmpty()) {
+                            // 🌟 Project အပြင်ဘက် လမ်းကြောင်းကို အတိအကျ ညွှန်းခြင်း 🌟
+                            java.io.File imgFile = new java.io.File("src/main/resources/com/pos/flightmanagementsystem/image/" + path);
+                            if (imgFile.exists()) {
+                                javafx.scene.image.Image img = new javafx.scene.image.Image(imgFile.toURI().toString());
+                                avatar.setImage(img);
+                            } else {
+                                avatar.setImage(null);
+                            }
+                        } else {
+                            avatar.setImage(null);
+                        }
+                    } catch (Exception e) {
+                        avatar.setImage(null);
+                    }
+
+                    setGraphic(graphicBox);
+                }
+            }
+        });
+
+        // 🌟 3 Seconds Polling 🌟
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> fetchStaffStatus()));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+
+        fetchStaffStatus(); // Initial Fetch
+    }
+
+    private void fetchStaffStatus() {
+        // 🌟 Online ဖြစ်နေသူများကို အပေါ်တွင်တင်ပြီး (DESC), နာမည်အက္ခရာစဉ်အတိုင်း (ASC) စီထားသည် 🌟
+        String sql = "SELECT username, image_path, is_online FROM users WHERE LOWER(role) = 'staff' ORDER BY is_online DESC, username ASC";
+        List<StaffData> currentStaffList = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                currentStaffList.add(new StaffData(
+                        rs.getString("username"),
+                        rs.getString("image_path"),
+                        rs.getInt("is_online") == 1
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Platform.runLater(() -> staffList.setAll(currentStaffList));
+    }
+
+    // ... (အောက်ပါ Code များသည် ယခင်အတိုင်းဖြစ်သည် - setupTableColumns, loadMetrics, Charts စသည်တို့) ...
     private void setupTableColumns() {
         colReqId.setCellValueFactory(new PropertyValueFactory<>("requestId"));
         colPnr.setCellValueFactory(new PropertyValueFactory<>("pnrCode"));
@@ -101,43 +212,21 @@ public class AdminDashboardController implements Initializable {
 
     private void loadDashboardMetrics() {
         try (Connection conn = DatabaseConnection.getConnection()) {
-            // 1. Pending Approvals
             String pendingSql = "SELECT COUNT(*) FROM requests WHERE status = 'Pending'";
             try (PreparedStatement ps = conn.prepareStatement(pendingSql); ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) lblPendingRequests.setText(String.valueOf(rs.getInt(1)));
             }
-
-            // 2. Today's Flights
             String flightsSql = "SELECT COUNT(*) FROM flights WHERE DATE(departure_time) = CURDATE()";
             try (PreparedStatement ps = conn.prepareStatement(flightsSql); ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) lblTodayFlights.setText(String.valueOf(rs.getInt(1)));
             }
-
-            // 3. Monthly Bookings
             String bookingsSql = "SELECT COUNT(*) FROM bookings WHERE MONTH(booking_date) = MONTH(CURDATE()) AND YEAR(booking_date) = YEAR(CURDATE())";
             try (PreparedStatement ps = conn.prepareStatement(bookingsSql); ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) lblTotalBookings.setText(String.valueOf(rs.getInt(1)));
             }
-
-            // 4. Monthly Revenue
             String revenueSql = "SELECT SUM(total_price) FROM bookings WHERE status IN ('Confirmed', 'Completed') AND MONTH(booking_date) = MONTH(CURDATE()) AND YEAR(booking_date) = YEAR(CURDATE())";
             try (PreparedStatement ps = conn.prepareStatement(revenueSql); ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) lblTotalRevenue.setText(String.format("%,.0f MMK", rs.getDouble(1)));
-            }
-
-            // 5. Today's Flight Status Breakdowns
-            String statusSql = "SELECT status, COUNT(*) FROM flights WHERE DATE(departure_time) = CURDATE() GROUP BY status";
-            try (PreparedStatement ps = conn.prepareStatement(statusSql); ResultSet rs = ps.executeQuery()) {
-                int sch = 0, dep = 0, del = 0;
-                while (rs.next()) {
-                    String status = rs.getString(1); int count = rs.getInt(2);
-                    if ("Scheduled".equalsIgnoreCase(status)) sch = count;
-                    else if ("Departed".equalsIgnoreCase(status)) dep = count;
-                    else if ("Delayed".equalsIgnoreCase(status)) del = count;
-                }
-                lblScheduled.setText("Scheduled Flights: " + sch);
-                lblDeparted.setText("Departed Flights: " + dep);
-                lblDelayed.setText("Delayed Flights: " + del);
             }
         } catch (SQLException e) { e.printStackTrace(); }
     }
@@ -170,7 +259,6 @@ public class AdminDashboardController implements Initializable {
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    // 🌟 Weekly Bookings Activity (Area Chart - Fully Dynamic & Bug-Free) 🌟
     private void loadWeeklyBookingsChart() {
         weeklyBookingsChart.setAnimated(false);
         weeklyBookingsChart.getData().clear();
@@ -207,13 +295,12 @@ public class AdminDashboardController implements Initializable {
                 series.getData().add(new XYChart.Data<>(today.minusDays(1).format(formatter), 65));
                 series.getData().add(new XYChart.Data<>(today.format(formatter), 40));
             }
-
             Platform.runLater(() -> weeklyBookingsChart.getData().add(series));
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
     private void loadCancellationReasonsChart() {
-        flightStatusChartAnimationReset(); // safe helper
+        flightStatusChartAnimationReset();
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         String query = "SELECT LEFT(reason, 30) as short_reason, COUNT(request_id) as total " +
                 "FROM requests GROUP BY short_reason ORDER BY total DESC LIMIT 5";
@@ -239,7 +326,7 @@ public class AdminDashboardController implements Initializable {
     private void fetchLiveWeather() {
         new Thread(() -> {
             try {
-                String apiKey = "YOUR_API_KEY";
+                String apiKey = "f0c9d84aeba864c94b895a3612cac6e4";
                 String city = "Yangon";
                 String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
 
@@ -302,6 +389,23 @@ public class AdminDashboardController implements Initializable {
             }
             tvPendingRequests.setItems(requestList);
         } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    // 🌟 Data Model for Staff 🌟
+    public static class StaffData {
+        private String username;
+        private String imagePath;
+        private boolean online;
+
+        public StaffData(String username, String imagePath, boolean online) {
+            this.username = username;
+            this.imagePath = imagePath;
+            this.online = online;
+        }
+
+        public String getUsername() { return username; }
+        public String getImagePath() { return imagePath; }
+        public boolean isOnline() { return online; }
     }
 
     public static class RequestData {

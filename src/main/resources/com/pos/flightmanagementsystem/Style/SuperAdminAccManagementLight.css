@@ -328,7 +328,6 @@
    🎚️ MODERN SCROLLBAR (LIGHT THEME)
    ========================================================================= */
 
-/* ScrollBar ရဲ့ အောက်ခံလမ်းကြောင်း (Track) ကို ပျောက်အောင် လုပ်ထားခြင်း */
 .scroll-bar:horizontal, .scroll-bar:vertical {
     -fx-background-color: transparent;
 }
@@ -338,13 +337,11 @@
     -fx-background-radius: 0;
 }
 
-/* ScrollBar ရဲ့ ဆွဲလို့ရတဲ့ အတုံးလေး (Thumb) */
 .scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
-    -fx-background-color: #CBD5E1; /* Light Slate Gray (ပုံမှန်အချိန်အရောင်ဖျော့ဖျော့လေး) */
+    -fx-background-color: #CBD5E1;
     -fx-background-radius: 10px;
 }
 
-/* Mouse ထောက်လိုက်ချိန် Thumb အရောင် (Theme နှင့် ညီစေရန် Teal အရောင်ပြောင်းမည်) */
 .scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover {
     -fx-background-color: #31C4B4;
 }
@@ -352,7 +349,6 @@
     -fx-background-color: #20E3B2;
 }
 
-/* အပေါ်/အောက်၊ ဘယ်/ညာ မြှားလေးများကို အပြီးတိုင် ဖျောက်ခြင်း (Modern Web-like Look) */
 .scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button,
 .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
     -fx-background-color: transparent;
@@ -368,7 +364,6 @@
     -fx-padding: 0;
 }
 
-/* Scrollbar အထူ/အပါး ညှိခြင်း (ပါးပါးလေးဖြစ်သွားစေရန်) */
 .scroll-bar:vertical {
     -fx-pref-width: 8px;
 }
@@ -376,7 +371,6 @@
     -fx-pref-height: 8px;
 }
 
-/* ထောင့်စွန်း (Corner) အကွက်ကို ဖျောက်ခြင်း */
 .corner {
     -fx-background-color: transparent;
 }
@@ -395,7 +389,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 15, 0, 0, 8);
 }
 
-/* Green Circle Background for Checkmark */
 .toast-icon-bg {
     -fx-background-color: #EAFBF2;
     -fx-background-radius: 50%;
@@ -405,33 +398,28 @@
     -fx-max-height: 42px;
 }
 
-/* Checkmark Icon */
 .toast-icon-glyph {
     -fx-fill: #22C55E;
     -fx-scale-x: 1.4;
     -fx-scale-y: 1.4;
 }
 
-/* Text Box Container */
 .toast-text-box {
     -fx-spacing: 4px;
     -fx-alignment: CENTER_LEFT;
 }
 
-/* Title Font */
 .toast-title {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #1F2937;
 }
 
-/* Subtitle Font */
 .toast-message {
     -fx-font-size: 13px;
     -fx-text-fill: #6B7280;
 }
 
-/* Close (X) Button */
 .toast-close-btn {
     -fx-background-color: transparent;
     -fx-cursor: hand;
@@ -439,15 +427,84 @@
     -fx-background-radius: 50%;
 }
 .toast-close-btn:hover {
-    -fx-background-color: #F1F5F9; /* Slight gray background on hover */
+    -fx-background-color: #F1F5F9;
 }
 
-/* Close (X) Icon */
 .toast-close-icon {
     -fx-fill: #9CA3AF;
     -fx-scale-x: 1.1;
     -fx-scale-y: 1.1;
 }
 .toast-close-btn:hover .toast-close-icon {
-    -fx-fill: #EF4444; /* Turn red on hover */
+    -fx-fill: #EF4444;
+}
+
+/* ==========================================================
+   LIGHT MODE BUTTONS (UPDATED FOR ALIGNMENT)
+========================================================== */
+
+/* LIGHT MODE - EDIT BUTTON */
+.secondary-button {
+    -fx-background-color: #F8FAFC;
+    -fx-text-fill: #2563EB;
+    -fx-border-color: #BFDBFE;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 7px 15px;
+    -fx-font-size: 13px;
+    -fx-min-width: 75px;
+    -fx-min-height: 34px;
+    -fx-alignment: center;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #EFF6FF;
+    -fx-border-color: #60A5FA;
+    -fx-text-fill: #1D4ED8;
+}
+
+/* LIGHT MODE - ACTIVE BUTTON */
+.status-btn-active {
+    -fx-background-color: #ECFDF5;
+    -fx-text-fill: #059669;
+    -fx-border-color: #A7F3D0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 7px 15px;
+    -fx-font-size: 13px;
+    -fx-min-width: 75px;
+    -fx-min-height: 34px;
+    -fx-alignment: center;
+}
+
+.status-btn-active:hover {
+    -fx-background-color: #D1FAE5;
+    -fx-border-color: #34D399;
+    -fx-text-fill: #047857;
+}
+
+/* LIGHT MODE - INACTIVE BUTTON */
+.status-btn-inactive {
+    -fx-background-color: #FEF2F2;
+    -fx-text-fill: #DC2626;
+    -fx-border-color: #FECACA;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+    -fx-padding: 7px 15px;
+    -fx-font-size: 13px;
+    -fx-min-width: 75px;
+    -fx-min-height: 34px;
+    -fx-alignment: center;
+}
+
+.status-btn-inactive:hover {
+    -fx-background-color: #FEE2E2;
+    -fx-border-color: #F87171;
+    -fx-text-fill: #B91C1C;
 }

@@ -79,7 +79,15 @@ public class StaffCreateNewBookingController implements Initializable {
         spinnerChildren.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9, 0));
         spinnerInfants.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9, 0));
 
-        departureDatePicker.setValue(LocalDate.now());
+        // 🌟 ၁။ အရင်က ယနေ့ရက်စွဲကို အသေထည့်ထားတာကို ဖြုတ်ပြီး Default အလွတ် (null) ထားလိုက်ပါပြီ 🌟
+        departureDatePicker.setValue(null);
+
+        // 🌟 ၂။ Date ရွေးပြီးမှ စာကို Keyboard နဲ့ ပြန်ဖျက်လိုက်ရင်လည်း null ပြန်ဖြစ်သွားအောင် Listener ထည့်ထားပါတယ် 🌟
+        departureDatePicker.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                departureDatePicker.setValue(null);
+            }
+        });
 
         // 🌟 ယနေ့မတိုင်မီ ရက်စွဲများကို disable လုပ်ရန် 🌟
         departureDatePicker.setDayCellFactory(picker -> new DateCell() {
@@ -220,16 +228,40 @@ public class StaffCreateNewBookingController implements Initializable {
         });
     }
 
+
     private void fetchAllFlightsFromDatabase() {
-        ObservableList<FlightDummy> allFlights = FXCollections.observableArrayList();
-        String query = "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, DATE(f.departure_time) AS dep_date, TIME(f.departure_time) AS dep_time, f.base_price FROM flights f INNER JOIN cities c1 ON f.departure_city_id = c1.city_id INNER JOIN cities c2 ON f.arrival_city_id = c2.city_id ORDER BY f.departure_time ASC";
-        try (Connection conn = DatabaseConnection.getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+        ObservableList allFlights = FXCollections.observableArrayList();
+
+        // 🌟 ပြင်ဆင်ချက်: WHERE f.departure_time >= NOW() ဆိုပြီး ထည့်လိုက်ပါတယ်။
+        // ပြီးခဲ့တဲ့ရက်တွေနဲ့ ဒီနေ့မှာ ထွက်သွားပြီးသား Flight တွေကို ပြတော့မှာ မဟုတ်ပါဘူး။
+        String query = "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, " +
+                "DATE(f.departure_time) AS dep_date, TIME(f.departure_time) AS dep_time, f.base_price " +
+                "FROM flights f " +
+                "INNER JOIN cities c1 ON f.departure_city_id = c1.city_id " +
+                "INNER JOIN cities c2 ON f.arrival_city_id = c2.city_id " +
+                "WHERE f.departure_time >= NOW() " +
+                "ORDER BY f.departure_time ASC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
             while (rs.next()) {
-                double price = rs.getDouble("base_price"); String formattedPrice = String.format("%,.0f MMK", price);
-                allFlights.add(new FlightDummy( rs.getString("flight_number"), rs.getString("from_city"), rs.getString("to_city"), rs.getString("dep_date"), rs.getString("dep_time"), formattedPrice ));
+                double price = rs.getDouble("base_price");
+                String formattedPrice = String.format("%,.0f MMK", price);
+                allFlights.add(new FlightDummy(
+                        rs.getString("flight_number"),
+                        rs.getString("from_city"),
+                        rs.getString("to_city"),
+                        rs.getString("dep_date"),
+                        rs.getString("dep_time"),
+                        formattedPrice
+                ));
             }
             flightsTable.setItems(allFlights);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleSearchAction(ActionEvent event) {
@@ -254,23 +286,52 @@ public class StaffCreateNewBookingController implements Initializable {
     }
 
     private void fetchFlightsFromDatabase(String fromCity, String toCity, LocalDate depDate) {
-        ObservableList<FlightDummy> searchResults = FXCollections.observableArrayList();
-        StringBuilder queryBuilder = new StringBuilder( "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, DATE(f.departure_time) AS dep_date, TIME(f.departure_time) AS dep_time, f.base_price FROM flights f INNER JOIN cities c1 ON f.departure_city_id = c1.city_id INNER JOIN cities c2 ON f.arrival_city_id = c2.city_id WHERE c1.city_name = ? AND c2.city_name = ?" );
-        if (depDate != null) queryBuilder.append(" AND DATE(f.departure_time) = ?");
-        else queryBuilder.append(" AND DATE(f.departure_time) >= CURRENT_DATE");
+        ObservableList searchResults = FXCollections.observableArrayList();
+        StringBuilder queryBuilder = new StringBuilder(
+                "SELECT f.flight_number, c1.city_name AS from_city, c2.city_name AS to_city, " +
+                        "DATE(f.departure_time) AS dep_date, TIME(f.departure_time) AS dep_time, f.base_price " +
+                        "FROM flights f " +
+                        "INNER JOIN cities c1 ON f.departure_city_id = c1.city_id " +
+                        "INNER JOIN cities c2 ON f.arrival_city_id = c2.city_id " +
+                        "WHERE c1.city_name = ? AND c2.city_name = ?"
+        );
+
+        // 🌟 ပြင်ဆင်ချက်: Search လုပ်တဲ့အခါမှာလည်း အချိန်ကျော်သွားတာတွေ မပေါ်အောင် NOW() နဲ့ စစ်ပေးထားပါတယ်
+        if (depDate != null) {
+            queryBuilder.append(" AND DATE(f.departure_time) = ? AND f.departure_time >= NOW()");
+        } else {
+            queryBuilder.append(" AND f.departure_time >= NOW()");
+        }
         queryBuilder.append(" ORDER BY f.departure_time ASC");
 
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(queryBuilder.toString())) {
-            pstmt.setString(1, fromCity); pstmt.setString(2, toCity);
-            if (depDate != null) pstmt.setDate(3, java.sql.Date.valueOf(depDate));
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(queryBuilder.toString())) {
+
+            pstmt.setString(1, fromCity);
+            pstmt.setString(2, toCity);
+
+            if (depDate != null) {
+                pstmt.setDate(3, java.sql.Date.valueOf(depDate));
+            }
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    double price = rs.getDouble("base_price"); String formattedPrice = String.format("%,.0f MMK", price);
-                    searchResults.add(new FlightDummy( rs.getString("flight_number"), rs.getString("from_city"), rs.getString("to_city"), rs.getString("dep_date"), rs.getString("dep_time"), formattedPrice ));
+                    double price = rs.getDouble("base_price");
+                    String formattedPrice = String.format("%,.0f MMK", price);
+                    searchResults.add(new FlightDummy(
+                            rs.getString("flight_number"),
+                            rs.getString("from_city"),
+                            rs.getString("to_city"),
+                            rs.getString("dep_date"),
+                            rs.getString("dep_time"),
+                            formattedPrice
+                    ));
                 }
             }
             flightsTable.setItems(searchResults);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupActionColumn() {

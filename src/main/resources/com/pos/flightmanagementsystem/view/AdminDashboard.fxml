@@ -7,6 +7,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -147,7 +148,7 @@
                </children>
             </HBox>
 
-            <!-- 🌟 BOTTOM ROW: Table & Side Panel 🌟 -->
+            <!-- 🌟 BOTTOM ROW: Table & Active Staff Panel 🌟 -->
             <HBox spacing="18.0" VBox.vgrow="ALWAYS">
                <children>
                   <VBox spacing="16.0" styleClass="super-panel" HBox.hgrow="ALWAYS" prefHeight="350.0">
@@ -174,27 +175,15 @@
                      </TableView>
                   </VBox>
 
-                  <VBox prefWidth="310.0" spacing="18.0">
-                     <VBox spacing="12.0" styleClass="super-side-panel">
-                        <Label styleClass="super-section-title" text="Today's Overview" />
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <Label styleClass="super-dot-green" text=" " />
-                           <Label fx:id="lblScheduled" styleClass="super-side-copy" text="Scheduled Flights: 0" />
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <Label styleClass="super-dot-blue" text=" " />
-                           <Label fx:id="lblDeparted" styleClass="super-side-copy" text="Departed Flights: 0" />
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <Label styleClass="super-dot-gold" text=" " />
-                           <Label fx:id="lblDelayed" styleClass="super-side-copy" text="Delayed Flights: 0" />
-                        </HBox>
-                     </VBox>
-                     <VBox spacing="10.0" styleClass="super-side-panel-accent">
-                        <Label styleClass="super-section-title-light" text="Quick Action Guide" />
-                        <Label styleClass="super-side-copy-light" text="Click on the bell icon at the top right to quickly approve or reject pending requests." wrapText="true" />
+                  <!-- 🌟 UPDATED: Staff Status Panel 🌟 -->
+                  <VBox prefWidth="310.0" spacing="18.0" HBox.hgrow="NEVER">
+                     <VBox spacing="12.0" styleClass="super-side-panel" VBox.vgrow="ALWAYS">
+                        <Label styleClass="super-section-title" text="Staff Status" />
+                        <Label styleClass="super-section-subtitle" text="Real-time personnel monitoring" />
+                        <ListView fx:id="lvActiveStaff" styleClass="active-staff-list" VBox.vgrow="ALWAYS" />
                      </VBox>
                   </VBox>
+
                </children>
             </HBox>
          </children>

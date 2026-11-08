@@ -9,20 +9,20 @@
 /* 🌟 1. MAIN SPLIT CARD */
 .profile-main-card {
     -fx-background-color: #11151E;
-    -fx-background-radius: 20px;
-    -fx-border-radius: 20px;
+    -fx-background-radius: 22px;
+    -fx-border-radius: 22px;
     -fx-border-color: #1F2633;
-    -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 25, 0, 0, 10);
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 30, 0, 0, 12);
 }
 
 /* 🌟 2. LEFT PANE (Visual Identity) */
 .profile-left-pane {
     -fx-background-color: linear-gradient(to bottom right, #1A212D 0%, #0B0E14 100%);
-    -fx-background-radius: 19px 0 0 19px;
+    -fx-background-radius: 21px 0 0 21px;
     -fx-border-color: transparent #1F2633 transparent transparent;
     -fx-border-width: 0 1px 0 0;
-    -fx-padding: 45px 30px;
+    -fx-padding: 40px 28px;
 }
 
 .profile-avatar-glow {
@@ -31,23 +31,42 @@
     -fx-border-width: 2.5px;
     -fx-background-radius: 50%;
     -fx-border-radius: 50%;
-    -fx-min-width: 100px; -fx-min-height: 100px;
-    -fx-max-width: 100px; -fx-max-height: 100px;
-    -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.35), 20, 0, 0, 0);
+    -fx-min-width: 114px; -fx-min-height: 114px;
+    -fx-max-width: 114px; -fx-max-height: 114px;
+    -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.35), 22, 0, 0, 0);
 }
-.profile-avatar-icon {
-    -fx-fill: #31C4B4;
-    -fx-scale-x: 2.2; -fx-scale-y: 2.2;
+
+/* Camera Floating Button on Avatar */
+.avatar-camera-btn {
+    -fx-background-color: #31C4B4;
+    -fx-background-radius: 50%;
+    -fx-border-color: #0B0E14;
+    -fx-border-width: 2.5px;
+    -fx-border-radius: 50%;
+    -fx-min-width: 36px; -fx-min-height: 36px;
+    -fx-max-width: 36px; -fx-max-height: 36px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 8, 0, 0, 2);
+}
+.avatar-camera-btn:hover {
+    -fx-background-color: #28ebda;
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
+.avatar-camera-icon {
+    -fx-fill: #06080D;
+    -fx-scale-x: 0.75;
+    -fx-scale-y: 0.75;
 }
 
 .profile-name-lg {
-    -fx-font-size: 24px;
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
     -fx-text-fill: #FFFFFF;
 }
 
 .profile-role-badge {
-    -fx-background-color: rgba(49, 196, 180, 0.1);
+    -fx-background-color: rgba(49, 196, 180, 0.12);
     -fx-border-color: #31C4B4;
     -fx-border-width: 1px;
     -fx-background-radius: 20px;
@@ -55,13 +74,60 @@
     -fx-text-fill: #31C4B4;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-padding: 5px 14px;
+    -fx-padding: 4px 16px;
+}
+
+.online-status-box {
+    -fx-background-color: rgba(29, 168, 83, 0.1);
+    -fx-border-color: rgba(29, 168, 83, 0.25);
+    -fx-border-width: 1px;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-padding: 4px 12px;
+}
+.online-dot {
+    -fx-fill: #1DA853;
+}
+.online-text {
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+}
+
+/* Left Pane Buttons */
+.profile-btn-edit {
+    -fx-background-color: rgba(49, 196, 180, 0.12);
+    -fx-border-color: #31C4B4;
+    -fx-border-width: 1.2px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-text-fill: #31C4B4;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-pref-width: 210px;
+    -fx-alignment: center;
+    -fx-graphic-text-gap: 10px;
+}
+.profile-btn-edit:hover {
+    -fx-background-color: #31C4B4;
+    -fx-text-fill: #06080D;
+    -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.35), 15, 0, 0, 0);
+}
+.profile-edit-icon-glyph {
+    -fx-fill: #31C4B4;
+    -fx-scale-x: 0.85;
+    -fx-scale-y: 0.85;
+}
+.profile-btn-edit:hover .profile-edit-icon-glyph {
+    -fx-fill: #06080D;
 }
 
 .profile-btn-change-pw {
     -fx-background-color: transparent;
-    -fx-border-color: #8B95A5;
-    -fx-border-width: 1px;
+    -fx-border-color: #334155;
+    -fx-border-width: 1.2px;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
     -fx-text-fill: #8B95A5;
@@ -69,7 +135,7 @@
     -fx-font-size: 13px;
     -fx-padding: 10px 20px;
     -fx-cursor: hand;
-    -fx-pref-width: 200px;
+    -fx-pref-width: 210px;
     -fx-alignment: center;
     -fx-graphic-text-gap: 10px;
 }
@@ -82,70 +148,158 @@
 .profile-btn-icon-glyph { -fx-fill: #8B95A5; }
 .profile-btn-change-pw:hover .profile-btn-icon-glyph { -fx-fill: #FFFFFF; }
 
-/* 🌟 3. RIGHT PANE (Data Details) */
+/* 🌟 3. RIGHT PANE (Data Details & Bento Grid) */
 .profile-right-pane {
     -fx-background-color: transparent;
-    -fx-padding: 45px 40px;
+    -fx-padding: 36px 38px;
 }
 
 .profile-section-title {
-    -fx-font-size: 20px;
+    -fx-font-size: 21px;
     -fx-font-weight: bold;
     -fx-text-fill: #FFFFFF;
 }
 .profile-section-subtitle {
-    -fx-font-size: 13px;
+    -fx-font-size: 12.5px;
     -fx-text-fill: #8B95A5;
 }
 
-/* Mini Metric Data Cards */
+.profile-close-btn {
+    -fx-background-color: rgba(255, 255, 255, 0.04);
+    -fx-background-radius: 50%;
+    -fx-min-width: 34px; -fx-min-height: 34px;
+    -fx-max-width: 34px; -fx-max-height: 34px;
+    -fx-cursor: hand;
+}
+.profile-close-btn:hover {
+    -fx-background-color: rgba(255, 75, 114, 0.15);
+}
+.profile-close-icon {
+    -fx-fill: #8B95A5;
+}
+.profile-close-btn:hover .profile-close-icon {
+    -fx-fill: #FF4B72;
+}
+
+/* Save & Cancel Action Buttons */
+.profile-btn-save {
+    -fx-background-color: #31C4B4;
+    -fx-text-fill: #06080D;
+    -fx-font-weight: bold;
+    -fx-font-size: 12.5px;
+    -fx-background-radius: 8px;
+    -fx-padding: 7px 16px;
+    -fx-cursor: hand;
+}
+.profile-btn-save:hover {
+    -fx-background-color: #28ebda;
+    -fx-effect: dropshadow(gaussian, rgba(49, 196, 180, 0.35), 10, 0, 0, 0);
+}
+
+.profile-btn-cancel {
+    -fx-background-color: transparent;
+    -fx-border-color: #475569;
+    -fx-border-width: 1px;
+    -fx-text-fill: #94A3B8;
+    -fx-font-weight: bold;
+    -fx-font-size: 12.5px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.profile-btn-cancel:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.06);
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Bento Mini Cards */
 .info-mini-card {
     -fx-background-color: #0B0E14;
     -fx-background-radius: 14px;
     -fx-border-radius: 14px;
     -fx-border-color: #1F2633;
     -fx-border-width: 1px;
-    -fx-padding: 22px;
-    -fx-transition: all 0.3s ease;
+    -fx-padding: 18px 20px;
 }
 .info-mini-card:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.02);
-    -fx-border-color: #31C4B4;
+    -fx-background-color: #0F141D;
+    -fx-border-color: rgba(49, 196, 180, 0.6);
+}
+.info-mini-card-editing {
+    -fx-border-color: #31C4B4 !important;
+    -fx-background-color: rgba(49, 196, 180, 0.04) !important;
 }
 
 .info-icon-box {
-    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-color: rgba(49, 196, 180, 0.1);
     -fx-background-radius: 8px;
     -fx-min-width: 32px; -fx-min-height: 32px;
     -fx-max-width: 32px; -fx-max-height: 32px;
 }
-.info-icon-glyph { -fx-fill: #8B95A5; -fx-scale-x: 0.9; -fx-scale-y: 0.9;}
-.info-mini-card:hover .info-icon-glyph { -fx-fill: #31C4B4; }
+.info-icon-glyph {
+    -fx-fill: #31C4B4;
+    -fx-scale-x: 0.85;
+    -fx-scale-y: 0.85;
+}
 
 .info-label {
     -fx-text-fill: #8B95A5;
-    -fx-font-size: 13px;
+    -fx-font-size: 12.5px;
     -fx-font-weight: bold;
 }
+
+.editable-tag {
+    -fx-background-color: rgba(49, 196, 180, 0.1);
+    -fx-text-fill: #31C4B4;
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 7px;
+    -fx-background-radius: 6px;
+}
+
+.locked-tag {
+    -fx-background-color: rgba(148, 163, 184, 0.1);
+    -fx-text-fill: #64748B;
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 7px;
+    -fx-background-radius: 6px;
+}
+
 .info-value {
     -fx-text-fill: #FFFFFF;
-    -fx-font-size: 16px;
+    -fx-font-size: 15.5px;
     -fx-font-weight: bold;
 }
 .info-value-accent {
-    -fx-text-fill: #7A3DF3; /* Purple Accent */
-    -fx-font-size: 16px;
+    -fx-text-fill: #7A3DF3;
+    -fx-font-size: 15.5px;
     -fx-font-weight: bold;
+}
+
+/* Inline Edit TextField */
+.info-edit-field {
+    -fx-background-color: #161C28;
+    -fx-border-color: #31C4B4;
+    -fx-border-width: 1.2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #64748B;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 10px;
 }
 
 /* Status Banner at bottom */
 .status-banner {
     -fx-background-color: rgba(29, 168, 83, 0.08);
-    -fx-border-color: rgba(29, 168, 83, 0.2);
+    -fx-border-color: rgba(29, 168, 83, 0.22);
     -fx-border-width: 1px;
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-padding: 16px 20px;
+    -fx-padding: 14px 18px;
 }
 .status-check-bg {
     -fx-background-color: #1DA853;
@@ -153,13 +307,13 @@
     -fx-min-width: 28px; -fx-min-height: 28px;
     -fx-max-width: 28px; -fx-max-height: 28px;
 }
-.status-check-glyph { -fx-fill: #11151E; -fx-scale-x: 0.8; -fx-scale-y: 0.8;}
-.status-banner-title { -fx-text-fill: #1DA853; -fx-font-size: 14px; -fx-font-weight: bold; }
+.status-check-glyph { -fx-fill: #11151E; -fx-scale-x: 0.8; -fx-scale-y: 0.8; }
+.status-banner-title { -fx-text-fill: #1DA853; -fx-font-size: 13.5px; -fx-font-weight: bold; }
 .status-banner-desc { -fx-text-fill: #8B95A5; -fx-font-size: 12px; }
 
 /* 🌟 4. MODAL & TOAST NOTIFICATION */
 .modal-overlay-bg {
-    -fx-background-color: rgba(6, 8, 13, 0.7);
+    -fx-background-color: rgba(6, 8, 13, 0.72);
 }
 
 .toast-notification-dark {

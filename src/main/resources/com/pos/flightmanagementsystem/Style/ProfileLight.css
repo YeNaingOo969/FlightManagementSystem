@@ -6,61 +6,128 @@
     -fx-background-color: transparent;
 }
 
-/* 🌟 1. MAIN SPLIT CARD (အဖြူရောင်နောက်ခံနှင့် အရိပ်အနု) */
+/* 🌟 1. MAIN SPLIT CARD */
 .profile-main-card {
     -fx-background-color: #FFFFFF;
-    -fx-background-radius: 20px;
-    -fx-border-radius: 20px;
+    -fx-background-radius: 22px;
+    -fx-border-radius: 22px;
     -fx-border-color: #E2E8F0;
-    -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.08), 25, 0, 0, 10);
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 30, 0, 0, 12);
 }
 
 /* 🌟 2. LEFT PANE (Visual Identity - Light Gradient) */
 .profile-left-pane {
     -fx-background-color: linear-gradient(to bottom right, #F8FAFC 0%, #E2E8F0 100%);
-    -fx-background-radius: 19px 0 0 19px;
+    -fx-background-radius: 21px 0 0 21px;
     -fx-border-color: transparent #E2E8F0 transparent transparent;
     -fx-border-width: 0 1px 0 0;
-    -fx-padding: 45px 30px;
+    -fx-padding: 40px 28px;
 }
 
 .profile-avatar-glow {
     -fx-background-color: #FFFFFF;
-    -fx-border-color: #0ea5e9; /* Sky Blue Accent */
+    -fx-border-color: #0ea5e9;
     -fx-border-width: 2.5px;
     -fx-background-radius: 50%;
     -fx-border-radius: 50%;
-    -fx-min-width: 100px; -fx-min-height: 100px;
-    -fx-max-width: 100px; -fx-max-height: 100px;
-    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.3), 20, 0, 0, 0);
+    -fx-min-width: 114px; -fx-min-height: 114px;
+    -fx-max-width: 114px; -fx-max-height: 114px;
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.28), 22, 0, 0, 0);
 }
-.profile-avatar-icon {
-    -fx-fill: #0ea5e9;
-    -fx-scale-x: 2.2; -fx-scale-y: 2.2;
+
+/* Camera Floating Button on Avatar */
+.avatar-camera-btn {
+    -fx-background-color: #0ea5e9;
+    -fx-background-radius: 50%;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 2.5px;
+    -fx-border-radius: 50%;
+    -fx-min-width: 36px; -fx-min-height: 36px;
+    -fx-max-width: 36px; -fx-max-height: 36px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.35), 8, 0, 0, 2);
+}
+.avatar-camera-btn:hover {
+    -fx-background-color: #0284c7;
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
+.avatar-camera-icon {
+    -fx-fill: #FFFFFF;
+    -fx-scale-x: 0.75;
+    -fx-scale-y: 0.75;
 }
 
 .profile-name-lg {
-    -fx-font-size: 24px;
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: #0f172a; /* Dark Slate */
+    -fx-text-fill: #0f172a;
 }
 
 .profile-role-badge {
     -fx-background-color: #e0f2fe;
-    -fx-border-color: transparent;
+    -fx-border-color: #bae6fd;
+    -fx-border-width: 1px;
     -fx-background-radius: 20px;
     -fx-border-radius: 20px;
     -fx-text-fill: #0284c7;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-padding: 5px 14px;
+    -fx-padding: 4px 16px;
+}
+
+.online-status-box {
+    -fx-background-color: #f0fdf4;
+    -fx-border-color: #bbf7d0;
+    -fx-border-width: 1px;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-padding: 4px 12px;
+}
+.online-dot {
+    -fx-fill: #22c55e;
+}
+.online-text {
+    -fx-text-fill: #15803d;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+}
+
+/* Left Pane Action Buttons */
+.profile-btn-edit {
+    -fx-background-color: #e0f2fe;
+    -fx-border-color: #0ea5e9;
+    -fx-border-width: 1.2px;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-text-fill: #0284c7;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-pref-width: 210px;
+    -fx-alignment: center;
+    -fx-graphic-text-gap: 10px;
+}
+.profile-btn-edit:hover {
+    -fx-background-color: #0ea5e9;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.35), 15, 0, 0, 0);
+}
+.profile-edit-icon-glyph {
+    -fx-fill: #0284c7;
+    -fx-scale-x: 0.85;
+    -fx-scale-y: 0.85;
+}
+.profile-btn-edit:hover .profile-edit-icon-glyph {
+    -fx-fill: #FFFFFF;
 }
 
 .profile-btn-change-pw {
     -fx-background-color: #FFFFFF;
-    -fx-border-color: #94a3b8;
-    -fx-border-width: 1px;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1.2px;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
     -fx-text-fill: #475569;
@@ -68,86 +135,173 @@
     -fx-font-size: 13px;
     -fx-padding: 10px 20px;
     -fx-cursor: hand;
-    -fx-pref-width: 200px;
+    -fx-pref-width: 210px;
     -fx-alignment: center;
     -fx-graphic-text-gap: 10px;
-    -fx-transition: all 0.2s ease;
 }
 .profile-btn-change-pw:hover {
-    -fx-background-color: #0ea5e9; /* Hover ဖြစ်ချိန် အပြာရောင်ပြောင်းမည် */
+    -fx-background-color: #0ea5e9;
     -fx-text-fill: #FFFFFF;
     -fx-border-color: #0ea5e9;
-    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.4), 15, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.35), 15, 0, 0, 0);
 }
 .profile-btn-icon-glyph { -fx-fill: #475569; }
 .profile-btn-change-pw:hover .profile-btn-icon-glyph { -fx-fill: #FFFFFF; }
 
-/* 🌟 3. RIGHT PANE (Data Details) */
+/* 🌟 3. RIGHT PANE (Data Details & Bento Grid) */
 .profile-right-pane {
     -fx-background-color: transparent;
-    -fx-padding: 45px 40px;
+    -fx-padding: 36px 38px;
 }
 
 .profile-section-title {
-    -fx-font-size: 20px;
+    -fx-font-size: 21px;
     -fx-font-weight: bold;
     -fx-text-fill: #0f172a;
 }
 .profile-section-subtitle {
-    -fx-font-size: 13px;
+    -fx-font-size: 12.5px;
     -fx-text-fill: #64748b;
 }
 
-/* Mini Metric Data Cards */
+.profile-close-btn {
+    -fx-background-color: #F1F5F9;
+    -fx-background-radius: 50%;
+    -fx-min-width: 34px; -fx-min-height: 34px;
+    -fx-max-width: 34px; -fx-max-height: 34px;
+    -fx-cursor: hand;
+}
+.profile-close-btn:hover {
+    -fx-background-color: #FEE2E2;
+}
+.profile-close-icon {
+    -fx-fill: #64748B;
+}
+.profile-close-btn:hover .profile-close-icon {
+    -fx-fill: #DC2626;
+}
+
+/* Save & Cancel Action Buttons */
+.profile-btn-save {
+    -fx-background-color: #0ea5e9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 12.5px;
+    -fx-background-radius: 8px;
+    -fx-padding: 7px 16px;
+    -fx-cursor: hand;
+}
+.profile-btn-save:hover {
+    -fx-background-color: #0284c7;
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.3), 10, 0, 0, 0);
+}
+
+.profile-btn-cancel {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #CBD5E1;
+    -fx-border-width: 1px;
+    -fx-text-fill: #475569;
+    -fx-font-weight: bold;
+    -fx-font-size: 12.5px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+.profile-btn-cancel:hover {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #0F172A;
+}
+
+/* Bento Mini Cards */
 .info-mini-card {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 14px;
     -fx-border-radius: 14px;
     -fx-border-color: #E2E8F0;
     -fx-border-width: 1px;
-    -fx-padding: 22px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.02), 10, 0, 0, 4);
-    -fx-transition: all 0.3s ease;
+    -fx-padding: 18px 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.03), 10, 0, 0, 4);
 }
 .info-mini-card:hover {
     -fx-background-color: #F8FAFC;
     -fx-border-color: #0ea5e9;
-    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.15), 10, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.12), 10, 0, 0, 4);
+}
+.info-mini-card-editing {
+    -fx-border-color: #0ea5e9 !important;
+    -fx-background-color: #F0F9FF !important;
 }
 
 .info-icon-box {
-    -fx-background-color: #F1F5F9;
+    -fx-background-color: #E0F2FE;
     -fx-background-radius: 8px;
     -fx-min-width: 32px; -fx-min-height: 32px;
     -fx-max-width: 32px; -fx-max-height: 32px;
 }
-.info-icon-glyph { -fx-fill: #64748b; -fx-scale-x: 0.9; -fx-scale-y: 0.9;}
-.info-mini-card:hover .info-icon-glyph { -fx-fill: #0ea5e9; }
+.info-icon-glyph {
+    -fx-fill: #0284c7;
+    -fx-scale-x: 0.85;
+    -fx-scale-y: 0.85;
+}
 
 .info-label {
     -fx-text-fill: #64748b;
-    -fx-font-size: 13px;
+    -fx-font-size: 12.5px;
     -fx-font-weight: bold;
 }
+
+.editable-tag {
+    -fx-background-color: #E0F2FE;
+    -fx-text-fill: #0284C7;
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 7px;
+    -fx-background-radius: 6px;
+}
+
+.locked-tag {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #64748B;
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+    -fx-padding: 2px 7px;
+    -fx-background-radius: 6px;
+}
+
 .info-value {
     -fx-text-fill: #0f172a;
-    -fx-font-size: 16px;
+    -fx-font-size: 15.5px;
     -fx-font-weight: bold;
 }
 .info-value-accent {
-    -fx-text-fill: #0ea5e9; /* Sky Blue Accent */
-    -fx-font-size: 16px;
+    -fx-text-fill: #0ea5e9;
+    -fx-font-size: 15.5px;
     -fx-font-weight: bold;
+}
+
+/* Inline Edit TextField */
+.info-edit-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #0ea5e9;
+    -fx-border-width: 1.2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-text-fill: #0f172a;
+    -fx-prompt-text-fill: #94A3B8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 6px 10px;
 }
 
 /* Status Banner at bottom */
 .status-banner {
-    -fx-background-color: #f0fdf4; /* Very Light Green */
+    -fx-background-color: #f0fdf4;
     -fx-border-color: #bbf7d0;
     -fx-border-width: 1px;
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-padding: 16px 20px;
+    -fx-padding: 14px 18px;
 }
 .status-check-bg {
     -fx-background-color: #22c55e;
@@ -155,16 +309,15 @@
     -fx-min-width: 28px; -fx-min-height: 28px;
     -fx-max-width: 28px; -fx-max-height: 28px;
 }
-.status-check-glyph { -fx-fill: #FFFFFF; -fx-scale-x: 0.8; -fx-scale-y: 0.8;}
-.status-banner-title { -fx-text-fill: #166534; -fx-font-size: 14px; -fx-font-weight: bold; }
+.status-check-glyph { -fx-fill: #FFFFFF; -fx-scale-x: 0.8; -fx-scale-y: 0.8; }
+.status-banner-title { -fx-text-fill: #166534; -fx-font-size: 13.5px; -fx-font-weight: bold; }
 .status-banner-desc { -fx-text-fill: #15803d; -fx-font-size: 12px; }
 
 /* 🌟 4. MODAL & TOAST NOTIFICATION */
 .modal-overlay-bg {
-    -fx-background-color: rgba(15, 23, 42, 0.4); /* Light Mode အတွက် အနည်းငယ် ဖျော့သော မှောင်ရိပ် */
+    -fx-background-color: rgba(15, 23, 42, 0.4);
 }
 
-/* (FXML တွင် toast-notification-dark ဟု နာမည်ပေးထားသော်လည်း Light Mode တွင် အဖြူရောင်ပေါ်စေရန် ဤနေရာတွင် ပြန်လည်ရေးသားထားပါသည်) */
 .toast-notification, .toast-notification-dark {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 12px;

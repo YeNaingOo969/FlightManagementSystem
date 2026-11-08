@@ -152,3 +152,37 @@
 .chart-pie-label-line {
     -fx-stroke: #8B95A5; /* စာသားနဲ့ Chart ကို ဆက်ထားတဲ့ မျဉ်းလေး မြင်ရစေရန် */
 }
+
+/* ==========================================================
+   🟢 ACTIVE STAFF LIST (NEW)
+========================================================== */
+.active-staff-list {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.active-staff-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10px 12px;
+}
+.active-staff-list .list-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 8px;
+}
+.active-staff-list .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 6px;
+}
+.active-staff-list .scroll-bar:vertical .thumb {
+    -fx-background-color: #2A3441;
+    -fx-background-radius: 4px;
+}
+
+/* 🔴 Offline Dot */
+.super-dot-offline {
+    -fx-background-color: #4A5568;
+    -fx-min-width: 8px;
+    -fx-min-height: 8px;
+    -fx-max-width: 8px;
+    -fx-max-height: 8px;
+    -fx-background-radius: 50%;
+}
