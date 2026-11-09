@@ -102,8 +102,8 @@ public class LoginController implements Initializable {
     @FXML private Label statusLabel;
 
     private String generatedOTP = "";
-    private final String senderEmail = "soethihapaing123@gmail.com";
-    private final String senderPassword = "dlkv vtlo zrhm hnmj";
+    private final String senderEmail = "luuarr344@gmail.com";
+    private final String senderPassword = "oksc gokm dgtr lgnu";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -371,17 +371,12 @@ public class LoginController implements Initializable {
                 String hashedInputPassword = hashPassword(password);
 
                 if (hashedInputPassword.equals(dbPassword)) {
-                    // Password မှန်သွားလျှင်
                     updateFailedAttempts(conn, username, 0);
-
-                    // 🌟 ဤနေရာတွင် is_online ကို 1 ဟု ပြောင်းလိုက်ပါပြီ 🌟
                     updateOnlineStatus(conn, username, 1);
 
                     loggedInUser = new com.pos.flightmanagementsystem.model.User();
                     loggedInUser.setUserId(userId);
                     loggedInUser.setRole(role);
-
-                    // 🌟 ပြဿနာ၏ တရားခံ (ဒီစာကြောင်းလေးကို ထပ်ဖြည့်ထားပါတယ်) 🌟
                     loggedInUser.setUsername(username);
 
                     insertLog(userId, "Login Successful");
@@ -407,6 +402,7 @@ public class LoginController implements Initializable {
                         switchSection(emailRequestSection);
                     } else {
                         int attemptsLeft = MAX_ATTEMPTS - newAttempts;
+
                         insertLog(userId, "Login Failed (" + newAttempts + "/3 attempts)");
                         showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Username or Password.\nYou have " + attemptsLeft + " attempt(s) left.");
                     }
@@ -421,7 +417,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    // 🌟 Database ထဲက is_online column ကို Update လုပ်ပေးမည့် Method အသစ် 🌟
     private void updateOnlineStatus(Connection conn, String username, int status) {
         String updateQuery = "UPDATE users SET is_online = ? WHERE username = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
@@ -545,7 +540,7 @@ public class LoginController implements Initializable {
     private void updateEyeIcon(boolean isVisible, PasswordField hiddenField, TextField visibleField, SVGPath icon) {
         if (isVisible) {
             visibleField.setVisible(true); hiddenField.setVisible(false);
-            icon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z");
+            icon.setContent("M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3 z");
             icon.setFill(Color.web(isLightMode ? "#00bcd4" : "#31C4B4"));
         } else {
             visibleField.setVisible(false); hiddenField.setVisible(true);
@@ -561,7 +556,6 @@ public class LoginController implements Initializable {
             statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Please enter a valid email address."); return;
         }
 
-        // 🌟 OTP Rate Limiting Check (၁ မိနစ်အတွင်း တစ်ကြိမ်သာ) 🌟
         if (lastOtpRequestTime != null && java.time.Duration.between(lastOtpRequestTime, LocalDateTime.now()).getSeconds() < 60) {
             statusLabel.setTextFill(Color.web("#FF4B72"));
             statusLabel.setText("Please wait 60 seconds before requesting another OTP.");
@@ -582,7 +576,6 @@ public class LoginController implements Initializable {
                 if (isSent) {
                     statusLabel.setTextFill(Color.web("#10B981")); statusLabel.setText("OTP sent successfully. Valid for 5 minutes."); switchSection(otpSection);
                 } else {
-                    // Failed to send, reset timer to allow immediate retry
                     lastOtpRequestTime = null;
                     statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Failed to send OTP. Check your connection.");
                 }
@@ -595,7 +588,6 @@ public class LoginController implements Initializable {
         String enteredOTP = otp1.getText() + otp2.getText() + otp3.getText() + otp4.getText() + otp5.getText() + otp6.getText();
         if (enteredOTP.length() < 6) { statusLabel.setTextFill(Color.web("#FF4B72")); statusLabel.setText("Please enter the complete 6-digit OTP."); return; }
 
-        // 🌟 OTP Expiration Check (၅ မိနစ် ကျော်လွန်သွားပါက Invalid ဖြစ်မည်) 🌟
         if (otpGeneratedTime == null || java.time.Duration.between(otpGeneratedTime, LocalDateTime.now()).toMinutes() > 5) {
             statusLabel.setTextFill(Color.web("#FF4B72"));
             statusLabel.setText("Your OTP has expired. Please request a new one.");
@@ -619,7 +611,6 @@ public class LoginController implements Initializable {
         if (newPassword.isEmpty() || confirmPassword.isEmpty()) { showAlert(Alert.AlertType.WARNING, "Validation Error", "Please fill in both password fields."); return; }
         if (!newPassword.equals(confirmPassword)) { showAlert(Alert.AlertType.ERROR, "Password Mismatch", "The new passwords do not match."); return; }
 
-        // 🌟 New Password ကို Encrypt ပြုလုပ်ပြီးမှ သိမ်းမည်၊ ထို့ပြင် Database Persistent Lock ကို ပြန်ဖွင့်ပေးမည် 🌟
         String hashedNewPassword = hashPassword(newPassword);
         String updateQuery = "UPDATE users SET password = ?, failed_attempts = 0, locked_until = NULL WHERE email = ?";
 
@@ -695,9 +686,24 @@ public class LoginController implements Initializable {
         Properties properties = new Properties(); properties.put("mail.smtp.auth", "true"); properties.put("mail.smtp.starttls.enable", "true"); properties.put("mail.smtp.host", "smtp.gmail.com"); properties.put("mail.smtp.port", "587");
         Session session = Session.getInstance(properties, new Authenticator() { @Override protected PasswordAuthentication getPasswordAuthentication() { return new PasswordAuthentication(senderEmail, senderPassword); } });
         try {
-            Message message = new MimeMessage(session); message.setFrom(new InternetAddress(senderEmail)); message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("Your Password Reset OTP - ArrLuuu Airline"); message.setText("Dear User,\n\nYour OTP for password reset is: " + otpCode + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nArrLuuu Airline Team");
-            Transport.send(message); return true;
-        } catch (MessagingException e) { e.printStackTrace(); return false; }
+            Message message = new MimeMessage(session);
+
+            // 🌟 Sender Name ကို Project / Airline နာမည်ဖြင့် ပေါ်စေရန် ပြင်ဆင်ထားသည် 🌟
+            try {
+                message.setFrom(new InternetAddress(senderEmail, "FlyPlan Airline System"));
+            } catch (Exception e) {
+                message.setFrom(new InternetAddress(senderEmail));
+            }
+
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            message.setSubject("Your Password Reset OTP - FlyPlan Airline");
+            message.setText("Dear User,\n\nYour OTP for password reset is: " + otpCode + "\n\nPlease do not share this code with anyone.\n\nBest Regards,\nFlyPlan Airline Team");
+
+            Transport.send(message);
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
